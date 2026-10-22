@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#ಅನ್ತರ್ಭಾವ "Python.h"
+#ಅನ್ತರ್ಭಾವ "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#ಅನ್ತರ್ಭಾವ "source.h"
 
-#define SOURCE_BUFFER_GROWTH_FACTOR 2
+#ವ್ಯಾಖ್ಯಾನಿಸು ಮೂಲ_ಬಫರ್_GROWTH_ಗುಣಕ 2
 
-void
-_PyTok_SourceInit(_PyTok_SourceText *source)
+ಶೂನ್ಯ
+Py_Tok_ಮೂಲ_Init(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ)
 {
-    *source = (_PyTok_SourceText){0};
+    *ಮೂಲ = (Py_Tok_ಮೂಲ_ಪಠ್ಯ){0};
 }
 
-void
-_PyTok_SourceClear(_PyTok_SourceText *source)
+ಶೂನ್ಯ
+Py_Tok_ಮೂಲ_Clear(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ)
 {
-    PyMem_Free(source->bytes);
-    _PyTok_SourceInit(source);
+    PyMem_Free(ಮೂಲ->ಬೈಟುಗಳು);
+    Py_Tok_ಮೂಲ_Init(ಮೂಲ);
 }
 
-void
-_PyTok_SourceDiscard(_PyTok_SourceText *source)
+ಶೂನ್ಯ
+Py_Tok_ಮೂಲ_Discard(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
-    source->base_offset += source->len;
-    source->len = 0;
-    if (source->bytes != NULL) {
-        source->bytes[0] = '\0';
+    ಪ್ರತಿಜ್ಞಾ(ಮೂಲ->ತಳ_ಸ್ಥಾನಾಂತರ <= PY_SSIZE_T_MAX - ಮೂಲ->len);
+    ಮೂಲ->ತಳ_ಸ್ಥಾನಾಂತರ += ಮೂಲ->len;
+    ಮೂಲ->len = 0;
+    ಆದರೆ (ಮೂಲ->ಬೈಟುಗಳು != ಖಾಲಿ) {
+        ಮೂಲ->ಬೈಟುಗಳು[0] = '\0';
     }
-    source->nlines = 0;
+    ಮೂಲ->nlines = 0;
 }
 
-static int
-reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+reserve_ಬೈಟುಗಳು(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    ಆದರೆ (needed <= ಮೂಲ->cap) {
+        ಹಿಂತಿರುಗಿ 0;
     }
-    Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    Py_ssize_t cap = ಮೂಲ->cap > 0 ? ಮೂಲ->cap : BUFSIZ;
+    ಆಗ (cap < needed) {
+        ಆದರೆ (cap > PY_SSIZE_T_MAX / ಮೂಲ_ಬಫರ್_GROWTH_ಗುಣಕ) {
             cap = needed;
-            break;
+            ನಿಲ್ಲಿಸು;
         }
-        cap *= SOURCE_BUFFER_GROWTH_FACTOR;
+        cap *= ಮೂಲ_ಬಫರ್_GROWTH_ಗುಣಕ;
     }
-    char *bytes;
-#ifdef Py_DEBUG
+    ಅಕ್ಷರ *ಬೈಟುಗಳು;
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
-    bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
-        memcpy(bytes, source->bytes, source->len);
+    ಬೈಟುಗಳು = PyMem_Malloc(cap);
+    ಆದರೆ (ಬೈಟುಗಳು != ಖಾಲಿ && ಮೂಲ->len > 0) {
+        ಸ್ಮರಣೆ_ನಕಲು(ಬೈಟುಗಳು, ಮೂಲ->ಬೈಟುಗಳು, ಮೂಲ->len);
     }
-#else
-    bytes = PyMem_Realloc(source->bytes, cap);
-#endif
-    if (bytes == NULL) {
-        PyErr_NoMemory();
-        return -1;
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಬೈಟುಗಳು = PyMem_Realloc(ಮೂಲ->ಬೈಟುಗಳು, cap);
+#ಆದರೆ_ಅಂತ್ಯ
+    ಆದರೆ (ಬೈಟುಗಳು == ಖಾಲಿ) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ -1;
     }
-#ifdef Py_DEBUG
-    if (source->bytes != NULL) {
-        memset(source->bytes, PYMEM_DEADBYTE, source->cap);
-        PyMem_Free(source->bytes);
+#ವ್ಯಾಖ್ಯಾನಿತವಾದರೆ Py_DEBUG
+    ಆದರೆ (ಮೂಲ->ಬೈಟುಗಳು != ಖಾಲಿ) {
+        memset(ಮೂಲ->ಬೈಟುಗಳು, PYMEM_DEADBYTE, ಮೂಲ->cap);
+        PyMem_Free(ಮೂಲ->ಬೈಟುಗಳು);
     }
-#endif
-    source->bytes = bytes;
-    source->cap = cap;
-    return 0;
+#ಆದರೆ_ಅಂತ್ಯ
+    ಮೂಲ->ಬೈಟುಗಳು = ಬೈಟುಗಳು;
+    ಮೂಲ->cap = cap;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+validate_ಸಾಲು(ಸ್ಥಿರಾಂಕ Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು,
+              Py_ssize_t len, ಪೂರ್ಣಾಂಕ append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
-            (source->nlines > 0 &&
-             (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ಆದರೆ (len < 0 || (len == 0 && !append_newline) || ಬೈಟುಗಳು == ಖಾಲಿ ||
+            (ಮೂಲ->nlines > 0 &&
+             (ಮೂಲ->len == 0 || ಮೂಲ->ಬೈಟುಗಳು[ಮೂಲ->len - 1] != '\n'))) {
+        Py_Err_ಗಣ_String(PyExc_SystemError, "invalid tokenizer source line");
+        ಹಿಂತಿರುಗಿ -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *newline = memchr(ಬೈಟುಗಳು, '\n', len);
+    ಆದರೆ (newline != ಖಾಲಿ && (append_newline || newline != ಬೈಟುಗಳು + len - 1)) {
+        Py_Err_ಗಣ_String(PyExc_SystemError, "invalid tokenizer source line");
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
-        PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+    ಆದರೆ (ಮೂಲ->nlines == ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ ||
+            (ಮೂಲ->nlines == ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ - 1 && (newline != ಖಾಲಿ || append_newline))) {
+        Py_Err_ಗಣ_String(Py_Exc_ಅತಿಪ್ರವಾಹ_Error, "too many tokenizer source lines");
+        ಹಿಂತಿರುಗಿ -1;
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+ಸ್ಥಿರ _PyTok_Off
+append_ಸಾಲು(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು,
+            Py_ssize_t len, ಪೂರ್ಣಾಂಕ append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    ಆದರೆ (validate_ಸಾಲು(ಮೂಲ, ಬೈಟುಗಳು, len, append_newline) < 0) {
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
-            source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
-        PyErr_NoMemory();
-        return -1;
+    ಆದರೆ (ಮೂಲ->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+            ಮೂಲ->ತಳ_ಸ್ಥಾನಾಂತರ > PY_SSIZE_T_MAX - ಮೂಲ->len - len - append_newline) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    ಆದರೆ (reserve_ಬೈಟುಗಳು(ಮೂಲ, ಮೂಲ->len + len + append_newline + 1) < 0) {
+        ಹಿಂತಿರುಗಿ -1;
     }
 
-    _PyTok_Off start = source->len;
-    memcpy(source->bytes + start, bytes, len);
-    source->len += len;
-    if (append_newline) {
-        source->bytes[source->len++] = '\n';
+    _PyTok_Off ಆರಂಭ = ಮೂಲ->len;
+    ಸ್ಮರಣೆ_ನಕಲು(ಮೂಲ->ಬೈಟುಗಳು + ಆರಂಭ, ಬೈಟುಗಳು, len);
+    ಮೂಲ->len += len;
+    ಆದರೆ (append_newline) {
+        ಮೂಲ->ಬೈಟುಗಳು[ಮೂಲ->len++] = '\n';
     }
-    source->bytes[source->len] = '\0';
-    source->nlines++;
-    return source->base_offset + start;
+    ಮೂಲ->ಬೈಟುಗಳು[ಮೂಲ->len] = '\0';
+    ಮೂಲ->nlines++;
+    ಹಿಂತಿರುಗಿ ಮೂಲ->ತಳ_ಸ್ಥಾನಾಂತರ + ಆರಂಭ;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ಮೂಲ_Append_ಸಾಲು(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    ಹಿಂತಿರುಗಿ append_ಸಾಲು(ಮೂಲ, ಬೈಟುಗಳು, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ಮೂಲ_Append_ಸಾಲು_With_Newline(Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    ಹಿಂತಿರುಗಿ append_ಸಾಲು(ಮೂಲ, ಬೈಟುಗಳು, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+Py_Tok_ಮೂಲ_ಸಾಲು_View(ಸ್ಥಿರಾಂಕ Py_Tok_ಮೂಲ_ಪಠ್ಯ *ಮೂಲ, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    ಪ್ರತಿಜ್ಞಾ(len != ಖಾಲಿ);
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು = Py_Tok_ಮೂಲ_ದತ್ತಾಂಶ(ಮೂಲ);
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಕೊನೆ = ಸಾಲು + ಮೂಲ->len;
+    ಆಗ (lineno > 1) {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *newline = memchr(ಸಾಲು, '\n', ಕೊನೆ - ಸಾಲು);
+        ಆದರೆ (newline == ಖಾಲಿ) {
+            ನಿಲ್ಲಿಸು;
         }
-        line = newline + 1;
+        ಸಾಲು = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *newline = memchr(ಸಾಲು, '\n', ಕೊನೆ - ಸಾಲು);
+    *len = (newline != ಖಾಲಿ ? newline : ಕೊನೆ) - ಸಾಲು;
+    ಹಿಂತಿರುಗಿ ಸಾಲು;
 }

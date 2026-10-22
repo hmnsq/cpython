@@ -1,27 +1,27 @@
-#ifndef Py_TOKENIZER_TYPES_H
-#define Py_TOKENIZER_TYPES_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ Py_TOKENIZER_TYPES_H
+#ವ್ಯಾಖ್ಯಾನಿಸು Py_TOKENIZER_TYPES_H
 
-#include "Python.h"
+#ಅನ್ತರ್ಭಾವ "Python.h"
 
-typedef Py_ssize_t _PyTok_Off;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
-    _PyTok_Off start;
-    _PyTok_Off end;
-} _PyTok_Span;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    _PyTok_Off ಆರಂಭ;
+    _PyTok_Off ಕೊನೆ;
+} Py_Tok_ಹರವು;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಪೂರ್ಣಾಂಕ lineno;
+    ಪೂರ್ಣಾಂಕ byte_ಲಂಬಸಾಲು;
 } _PyTok_Loc;
 
-static inline int
-_PyTok_SpanIsValid(_PyTok_Span span)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+Py_Tok_ಹರವು_Is_Valid(Py_Tok_ಹರವು ಹರವು)
 {
-    return span.start >= 0 && span.end >= span.start;
+    ಹಿಂತಿರುಗಿ ಹರವು.ಆರಂಭ >= 0 && ಹರವು.ಕೊನೆ >= ಹರವು.ಆರಂಭ;
 }
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ

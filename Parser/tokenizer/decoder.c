@@ -1,509 +1,509 @@
-#include "Python.h"
-#include "pycore_codecs.h"
-#include "pycore_global_strings.h"
-#include "pycore_runtime.h"
-#include "errcode.h"
+#ಅನ್ತರ್ಭಾವ "Python.h"
+#ಅನ್ತರ್ಭಾವ "pycore_codecs.h"
+#ಅನ್ತರ್ಭಾವ "pycore_global_strings.h"
+#ಅನ್ತರ್ಭಾವ "pycore_runtime.h"
+#ಅನ್ತರ್ಭಾವ "errcode.h"
 
-#include "reader_internal.h"
-#include "helpers.h"
-#include "../lexer/state.h"
+#ಅನ್ತರ್ಭಾವ "reader_internal.h"
+#ಅನ್ತರ್ಭಾವ "helpers.h"
+#ಅನ್ತರ್ಭಾವ "../lexer/state.h"
 
-#define UNICODE_BOM 0xFEFF
-#define UTF16_LE_BOM "\xff\xfe"
-#define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
-#define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#ವ್ಯಾಖ್ಯಾನಿಸು UNICODE_BOM 0xFEFF
+#ವ್ಯಾಖ್ಯಾನಿಸು UTF16_LE_BOM "\xff\xfe"
+#ವ್ಯಾಖ್ಯಾನಿಸು UTF16_BE_BOM "\xfe\xff"
+#ವ್ಯಾಖ್ಯಾನಿಸು UTF16_BOM_ಉದ್ದಳತೆ ((Py_ssize_t)(ಗಾತ್ರ(UTF16_LE_BOM) - 1))
+#ವ್ಯಾಖ್ಯಾನಿಸು UTF8_BOM "\xef\xbb\xbf"
+#ವ್ಯಾಖ್ಯಾನಿಸು UTF8_BOM_ಉದ್ದಳತೆ ((Py_ssize_t)(ಗಾತ್ರ(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+ಅಕ್ಷರ *
+Py_Tok_Copy_ಬೈಟುಗಳು(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    ಆದರೆ (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    ಅಕ್ಷರ *copy = PyMem_Malloc((ಗಾತ್ರ_t)len + 1);
+    ಆದರೆ (copy == ಖಾಲಿ) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    memcpy(copy, data, (size_t)len);
+    ಸ್ಮರಣೆ_ನಕಲು(copy, ದತ್ತಾಂಶ, (ಗಾತ್ರ_t)len);
     copy[len] = '\0';
-    return copy;
+    ಹಿಂತಿರುಗಿ copy;
 }
 
-static void
-chunk_release_data(_PyTok_Chunk *chunk)
+ಸ್ಥಿರ ಶೂನ್ಯ
+chunk_release_ದತ್ತಾಂಶ(_PyTok_Chunk *chunk)
 {
-    switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
-            PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+    ಆಯ್ಕೆ (chunk->ownership) {
+        ಸ್ಥಿತಿ _PYTOK_CHUNK_BORROWED:
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ _PYTOK_CHUNK_PYMEM:
+            PyMem_Free(chunk->ದತ್ತಾಂಶ);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            ನಿಲ್ಲಿಸು;
     }
 }
 
-void
+ಶೂನ್ಯ
 _PyTok_ChunkClear(_PyTok_Chunk *chunk)
 {
-    chunk_release_data(chunk);
+    chunk_release_ದತ್ತಾಂಶ(chunk);
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+chunk_ಗಣ_unicode(ರಚನೆ tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, ಪೂರ್ಣಾಂಕ strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *utf8 = Py_Unicode_As_UTF8_And_ಗಾತ್ರ(unicode, &utf8_len);
+    ಆದರೆ (utf8 == ಖಾಲಿ) {
         Py_DECREF(unicode);
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    ಆದರೆ (strip_bom && Py_Unicode_GET_ಉದ್ದಳತೆ(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
-        utf8 += UTF8_BOM_LENGTH;
-        utf8_len -= UTF8_BOM_LENGTH;
+        utf8 += UTF8_BOM_ಉದ್ದಳತೆ;
+        utf8_len -= UTF8_BOM_ಉದ್ದಳತೆ;
     }
-    chunk_release_data(chunk);
+    chunk_release_ದತ್ತಾಂಶ(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->ದತ್ತಾಂಶ = (ಅಕ್ಷರ *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
-                         Py_ssize_t *out_len)
+ಅಕ್ಷರ *
+_PyTok_NormalizeNewlines(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, Py_ssize_t len,
+                         Py_ssize_t *ಹೊರಹೋಗು_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    ಆದರೆ (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    ಅಕ್ಷರ *ಫಲಿತಾಂಶ = PyMem_Malloc((ಗಾತ್ರ_t)len + 1);
+    ಆದರೆ (ಫಲಿತಾಂಶ == ಖಾಲಿ) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
-                read++;
+    Py_ssize_t ಲಿಖ = 0;
+    ಗಾಗಿ (Py_ssize_t ಪಠ = 0; ಪಠ < len; ಪಠ++) {
+        ಅಕ್ಷರ c = ದತ್ತಾಂಶ[ಪಠ];
+        ಆದರೆ (c == '\r') {
+            ಆದರೆ (ಪಠ + 1 < len && ದತ್ತಾಂಶ[ಪಠ + 1] == '\n') {
+                ಪಠ++;
             }
             c = '\n';
         }
-        result[write++] = c;
+        ಫಲಿತಾಂಶ[ಲಿಖ++] = c;
     }
-    result[write] = '\0';
-    *out_len = write;
-    return result;
+    ಫಲಿತಾಂಶ[ಲಿಖ] = '\0';
+    *ಹೊರಹೋಗು_len = ಲಿಖ;
+    ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+ಪೂರ್ಣಾಂಕ
+Py_Tok_ಗಣ_Encoding(ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    ಅಕ್ಷರ *copy = Py_Tok_Copy_ಬೈಟುಗಳು(encoding, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(encoding));
+    ಆದರೆ (copy == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = E_NOMEM;
+        ಹಿಂತಿರುಗಿ -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+ಕಂಡುಹಿಡಿ_cookie(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು, Py_ssize_t len, ಅಕ್ಷರ **encoding, ಪೂರ್ಣಾಂಕ *ಪರಿಶೀಲನೆ_ಮುಂದಿನ)
 {
     Py_ssize_t i = 0;
-    *encoding = NULL;
-    *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    *encoding = ಖಾಲಿ;
+    *ಪರಿಶೀಲನೆ_ಮುಂದಿನ = 1;
+    ಗಾಗಿ (; i < len; i++) {
+        ಆದರೆ (ಸಾಲು[i] == '#') {
+            ನಿಲ್ಲಿಸು;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        ಆದರೆ (ಸಾಲು[i] == '\n' || ಸಾಲು[i] == '\r') {
+            ಹಿಂತಿರುಗಿ 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
-            *scan_next = 0;
-            return 0;
+        ಆದರೆ (ಸಾಲು[i] != ' ' && ಸಾಲು[i] != '\t' && ಸಾಲು[i] != '\f') {
+            *ಪರಿಶೀಲನೆ_ಮುಂದಿನ = 0;
+            ಹಿಂತಿರುಗಿ 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
-            continue;
+    ಸ್ಥಿರಾಂಕ Py_ssize_t marker_len = ಗಾತ್ರ("coding") - 1;
+    ಗಾಗಿ (; i < len - marker_len; i++) {
+        ಆದರೆ (memcmp(ಸಾಲು + i, "coding", marker_len) != 0) {
+            ಮುಂದುವರಿ;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
-            continue;
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *cursor = ಸಾಲು + i + marker_len;
+        ಆದರೆ (*cursor != ':' && *cursor != '=') {
+            ಮುಂದುವರಿ;
         }
-        do {
+        ಮಾಡು {
             cursor++;
-        } while (cursor < line + len &&
+        } ಆಗ (cursor < ಸಾಲು + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಆರಂಭ = cursor;
+        ಆಗ (cursor < ಸಾಲು + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
-            continue;
+        ಆದರೆ (cursor == ಆರಂಭ) {
+            ಮುಂದುವರಿ;
         }
-        Py_ssize_t encoding_len = cursor - start;
+        Py_ssize_t encoding_len = cursor - ಆರಂಭ;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
-        const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+        ಅಕ್ಷರ normalized[ಗಾತ್ರ("iso-latin-1-")];
+        ಸ್ಥಿರಾಂಕ Py_ssize_t ಪೂರ್ವಪ್ರತ್ಯಯ_len = Py_MIN(
+            encoding_len, (Py_ssize_t)ಗಾತ್ರ(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
-            normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
+        ಗಾಗಿ (n = 0; n < ಪೂರ್ವಪ್ರತ್ಯಯ_len; n++) {
+            normalized[n] = ಆರಂಭ[n] == '_' ? '-' : Py_TOLOWER(ಆರಂಭ[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *canonical = ಆರಂಭ;
+        ಆದರೆ (strcmp(normalized, "utf-8") == 0 ||
+                ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(normalized, "utf-8-", ಗಾತ್ರ("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(normalized, "latin-1-", ಗಾತ್ರ("latin-1-") - 1) == 0 ||
+                 ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(normalized, "iso-8859-1-", ಗಾತ್ರ("iso-8859-1-") - 1) == 0 ||
+                 ಅಕ್ಷರಸರಣಿ_ಹೋಲಿಕೆ(normalized, "iso-latin-1-", ಗಾತ್ರ("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
-            encoding_len = strlen(canonical);
+        ಆದರೆ (canonical != ಆರಂಭ) {
+            encoding_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(canonical);
         }
-        *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        *encoding = Py_Tok_Copy_ಬೈಟುಗಳು(canonical, encoding_len);
+        ಆದರೆ (*encoding == ಖಾಲಿ) {
+            ಹಿಂತಿರುಗಿ -1;
         }
-        *scan_next = 0;
-        return 0;
+        *ಪರಿಶೀಲನೆ_ಮುಂದಿನ = 0;
+        ಹಿಂತಿರುಗಿ 0;
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-_PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+Py_Tok_Encoding_ಫಲಿತಾಂಶ
+_PyTok_DetectEncoding(ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ _PyTok_Chunk *ಮೊದಲ,
+                      ಸ್ಥಿರಾಂಕ _PyTok_Chunk *ಎರಡನೇ, ಪೂರ್ಣಾಂಕ final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
-        memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
-    *bom_len = bom ? UTF8_BOM_LENGTH : 0;
+    ಪೂರ್ಣಾಂಕ bom = ಮೊದಲ->len >= UTF8_BOM_ಉದ್ದಳತೆ &&
+        memcmp(ಮೊದಲ->ದತ್ತಾಂಶ, UTF8_BOM, UTF8_BOM_ಉದ್ದಳತೆ) == 0;
+    *bom_len = bom ? UTF8_BOM_ಉದ್ದಳತೆ : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
-    Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    ಅಕ್ಷರ *cookie = ಖಾಲಿ;
+    ಪೂರ್ಣಾಂಕ ಪರಿಶೀಲನೆ_ಮುಂದಿನ = 0;
+    ಪೂರ್ಣಾಂಕ cookie_ಸಾಲು = 1;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಮೊದಲ_ದತ್ತಾಂಶ = ಮೊದಲ->ದತ್ತಾಂಶ + *bom_len;
+    Py_ssize_t ಮೊದಲ_len = ಮೊದಲ->len - *bom_len;
+    ಆದರೆ (ಕಂಡುಹಿಡಿ_cookie(ಮೊದಲ_ದತ್ತಾಂಶ, ಮೊದಲ_len, &cookie, &ಪರಿಶೀಲನೆ_ಮುಂದಿನ) < 0) {
+        ಹಿಂತಿರುಗಿ _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ಆದರೆ (cookie == ಖಾಲಿ && ಪರಿಶೀಲನೆ_ಮುಂದಿನ && ಎರಡನೇ != ಖಾಲಿ) {
+        ಆದರೆ (ಕಂಡುಹಿಡಿ_cookie(ಎರಡನೇ->ದತ್ತಾಂಶ, ಎರಡನೇ->len, &cookie, &ಪರಿಶೀಲನೆ_ಮುಂದಿನ) < 0) {
+            ಹಿಂತಿರುಗಿ _PYTOK_ENCODING_ERROR;
         }
-        cookie_line = 2;
+        cookie_ಸಾಲು = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (cookie == ಖಾಲಿ && ಪರಿಶೀಲನೆ_ಮುಂದಿನ && !final) {
+        ಹಿಂತಿರುಗಿ PYTOK_ENCODING_NEED_ಎರಡನೇ_ಸಾಲು;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ಆದರೆ (cookie == ಖಾಲಿ) {
+        ಆದರೆ (bom && Py_Tok_ಗಣ_Encoding(tok, "utf-8") < 0) {
+            ಹಿಂತಿರುಗಿ _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        ಹಿಂತಿರುಗಿ PYTOK_ENCODING_ಮುಗಿದ;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
-        const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
-        Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
-                            line_data[end_col - 1] == '\r')) {
-            end_col--;
+    ಆದರೆ (bom && strcmp(cookie, "utf-8") != 0) {
+        ಸ್ಥಿರಾಂಕ _PyTok_Chunk *ಸಾಲು = cookie_ಸಾಲು == 2 ? ಎರಡನೇ : ಮೊದಲ;
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು_ದತ್ತಾಂಶ = ಸಾಲು->ದತ್ತಾಂಶ + (cookie_ಸಾಲು == 1 ? *bom_len : 0);
+        Py_ssize_t ಸಾಲು_len = ಸಾಲು->len - (cookie_ಸಾಲು == 1 ? *bom_len : 0);
+        ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು = (ಪೂರ್ಣಾಂಕ)Py_MIN(ಸಾಲು_len, ಗರಿಷ್ಠ_ಪೂರ್ಣಾಂಕ);
+        ಆದರೆ (ಕೊನೆ_ಲಂಬಸಾಲು > 0 && (ಸಾಲು_ದತ್ತಾಂಶ[ಕೊನೆ_ಲಂಬಸಾಲು - 1] == '\n' ||
+                            ಸಾಲು_ದತ್ತಾಂಶ[ಕೊನೆ_ಲಂಬಸಾಲು - 1] == '\r')) {
+            ಕೊನೆ_ಲಂಬಸಾಲು--;
         }
         _PyTokenizer_syntaxerror_at(
-            tok, line_data, 0, cookie_line, 0, end_col,
+            tok, ಸಾಲು_ದತ್ತಾಂಶ, 0, cookie_ಸಾಲು, 0, ಕೊನೆ_ಲಂಬಸಾಲು,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        ಹಿಂತಿರುಗಿ _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    ಹಿಂತಿರುಗಿ PYTOK_ENCODING_ಮುಗಿದ;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+ಪೂರ್ಣಾಂಕ
+_PyTok_DecodeOnce(ರಚನೆ tok_state *tok, _PyTok_Chunk *chunk,
+                  ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *encoding, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
-        chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        chunk->ದತ್ತಾಂಶ, chunk->len, encoding, errors);
+    ಆದರೆ (unicode == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    ಹಿಂತಿರುಗಿ chunk_ಗಣ_unicode(tok, chunk, unicode, 0);
 }
 
-static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+ಸ್ಥಿರ Py_ssize_t
+raw_ಸಾಲು_ಉದ್ದಳತೆ(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಆದರೆ (ದತ್ತಾಂಶ[i] == '\n') {
+            ಹಿಂತಿರುಗಿ i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        ಆದರೆ (ದತ್ತಾಂಶ[i] == '\r') {
+            ಹಿಂತಿರುಗಿ i + 1 < len && ದತ್ತಾಂಶ[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    ಹಿಂತಿರುಗಿ len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+store_prepared_ಮೂಲ(ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ದತ್ತಾಂಶ, Py_ssize_t len,
+                      ಪೂರ್ಣಾಂಕ preserve_crlf, ಪೂರ್ಣಾಂಕ ಕೂಡಿಸು_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
-        Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
-            raw_line_len = newline == NULL
-                ? len - pos : newline - data - pos + 1;
+    ಆಗ (pos < len) {
+        Py_ssize_t raw_ಸಾಲು_len;
+        ಆದರೆ (preserve_crlf) {
+            ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *newline = memchr(ದತ್ತಾಂಶ + pos, '\n', len - pos);
+            raw_ಸಾಲು_len = newline == ಖಾಲಿ
+                ? len - pos : newline - ದತ್ತಾಂಶ - pos + 1;
         }
-        else {
-            raw_line_len = raw_line_length(data + pos, len - pos);
+        ಇಲ್ಲದಿದ್ದರೆ {
+            raw_ಸಾಲು_len = raw_ಸಾಲು_ಉದ್ದಳತೆ(ದತ್ತಾಂಶ + pos, len - pos);
         }
-        int terminated = preserve_crlf
-            ? data[pos + raw_line_len - 1] == '\n'
-            : data[pos + raw_line_len - 1] == '\n' ||
-              data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
-            pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        ಪೂರ್ಣಾಂಕ terminated = preserve_crlf
+            ? ದತ್ತಾಂಶ[pos + raw_ಸಾಲು_len - 1] == '\n'
+            : ದತ್ತಾಂಶ[pos + raw_ಸಾಲು_len - 1] == '\n' ||
+              ದತ್ತಾಂಶ[pos + raw_ಸಾಲು_len - 1] == '\r';
+        ಪೂರ್ಣಾಂಕ ಕೂಡಿಸು_newline = ಕೂಡಿಸು_final_newline &&
+            pos + raw_ಸಾಲು_len == len && !terminated;
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಾಲು = ದತ್ತಾಂಶ + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        ಆದರೆ (!preserve_crlf) {
+            ಆದರೆ (ಸಾಲು[raw_ಸಾಲು_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (raw_ಸಾಲು_len > 1 && ಸಾಲು[raw_ಸಾಲು_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
-            appended = _PyTok_SourceAppendLineWithNewline(
-                &tok->source, line, raw_line_len - terminator_len);
+        ಆದರೆ (terminator_len || ಕೂಡಿಸು_newline) {
+            appended = Py_Tok_ಮೂಲ_Append_ಸಾಲು_With_Newline(
+                &tok->ಮೂಲ, ಸಾಲು, raw_ಸಾಲು_len - terminator_len);
         }
-        else {
-            appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
+        ಇಲ್ಲದಿದ್ದರೆ {
+            appended = Py_Tok_ಮೂಲ_Append_ಸಾಲು(&tok->ಮೂಲ, ಸಾಲು, raw_ಸಾಲು_len);
         }
-        if (appended < 0) {
-            tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        ಆದರೆ (appended < 0) {
+            tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            ಹಿಂತಿರುಗಿ -1;
         }
-        tok->reader->prepared_final_newline = add_newline;
-        pos += raw_line_len;
+        tok->reader->prepared_final_newline = ಕೂಡಿಸು_newline;
+        pos += raw_ಸಾಲು_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    ಆದರೆ (ಕೂಡಿಸು_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
-        (len == 0 || data[len - 1] != '\r'))
+        (len == 0 || ದತ್ತಾಂಶ[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        ಆದರೆ (Py_Tok_ಮೂಲ_Append_ಸಾಲು(&tok->ಮೂಲ, "\n", 1) < 0) {
+            ಹಿಂತಿರುಗಿ -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+ಪೂರ್ಣಾಂಕ
+_PyTok_PrepareString(ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಒಳಹರಿವು, ಪೂರ್ಣಾಂಕ utf8_only,
+                     ಪೂರ್ಣಾಂಕ exec_ಒಳಹರಿವು, ಪೂರ್ಣಾಂಕ preserve_crlf)
 {
-    Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    Py_ssize_t raw_len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(ಒಳಹರಿವು);
+    ಅಕ್ಷರ *raw = (ಅಕ್ಷರ *)ಒಳಹರಿವು;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    ಆದರೆ (utf8_only) {
+        ಆದರೆ (Py_Tok_ಗಣ_Encoding(tok, "utf-8") < 0) {
+            ಹಿಂತಿರುಗಿ -1;
         }
     }
-    else {
-        Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
-        _PyTok_Chunk first = {
-            .data = raw,
-            .len = first_original_len,
+    ಇಲ್ಲದಿದ್ದರೆ {
+        Py_ssize_t ಮೊದಲ_original_len = raw_ಸಾಲು_ಉದ್ದಳತೆ(raw, raw_len);
+        _PyTok_Chunk ಮೊದಲ = {
+            .ದತ್ತಾಂಶ = raw,
+            .len = ಮೊದಲ_original_len,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
-        _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
-            second.data = raw + first_original_len;
-            second.len = raw_line_length(second.data,
-                                         raw_len - first_original_len);
+        _PyTok_Chunk ಎರಡನೇ = {0};
+        ಪೂರ್ಣಾಂಕ have_ಎರಡನೇ = ಮೊದಲ_original_len < raw_len;
+        ಆದರೆ (have_ಎರಡನೇ) {
+            ಎರಡನೇ.ದತ್ತಾಂಶ = raw + ಮೊದಲ_original_len;
+            ಎರಡನೇ.len = raw_ಸಾಲು_ಉದ್ದಳತೆ(ಎರಡನೇ.ದತ್ತಾಂಶ,
+                                         raw_len - ಮೊದಲ_original_len);
         }
         Py_ssize_t bom_len;
-        _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
-            tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        Py_Tok_Encoding_ಫಲಿತಾಂಶ detection = _PyTok_DetectEncoding(
+            tok, &ಮೊದಲ, have_ಎರಡನೇ ? &ಎರಡನೇ : ಖಾಲಿ, 1, &bom_len);
+        ಆದರೆ (detection == _PYTOK_ENCODING_ERROR) {
+            ಹಿಂತಿರುಗಿ -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
     }
 
     _PyTok_Chunk decoded = {
-        .data = raw,
+        .ದತ್ತಾಂಶ = raw,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
-                tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *encoding = tok->reader->encoding;
+    ಆದರೆ (encoding != ಖಾಲಿ && strcmp(encoding, "utf-8") != 0) {
+        ಆದರೆ (_PyTok_DecodeOnce(
+                tok, &decoded, encoding, ಖಾಲಿ) < 0) {
+            ಹಿಂತಿರುಗಿ -1;
         }
     }
 
-    int stored = store_prepared_source(
-        tok, decoded.data, decoded.len, preserve_crlf, exec_input);
+    ಪೂರ್ಣಾಂಕ stored = store_prepared_ಮೂಲ(
+        tok, decoded.ದತ್ತಾಂಶ, decoded.len, preserve_crlf, exec_ಒಳಹರಿವು);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    ಆದರೆ (stored < 0) {
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (!utf8_only &&
-            (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
-            !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+    ಆದರೆ (!utf8_only &&
+            (encoding == ಖಾಲಿ || strcmp(encoding, "utf-8") == 0) &&
+            !_PyTokenizer_ensure_utf8(Py_Tok_ಮೂಲ_ದತ್ತಾಂಶ(&tok->ಮೂಲ), tok, 1)) {
+        ಹಿಂತಿರುಗಿ -1;
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+ಪೂರ್ಣಾಂಕ
+Py_Tok_ಆರಂಭ_Decoder(ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    ಆದರೆ (reader->encoding == ಖಾಲಿ || reader->decoder != ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    ಆದರೆ (reader->ಬಗೆ == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        ಹಿಂತಿರುಗಿ 0;
     }
 
-    PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    PyObject *codec = Py_Codec_Lookup_ಪಠ್ಯ_Encoding(reader->encoding, ಖಾಲಿ);
+    ಆದರೆ (codec != ಖಾಲಿ) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    ಆದರೆ (reader->decoder == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ಆದರೆ (reader->ಬಗೆ == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != ಖಾಲಿ ? tok->filename : Py_None);
         }
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+ಪೂರ್ಣಾಂಕ
+_PyTok_DecodeChunk(ರಚನೆ tok_state *tok, _PyTok_Chunk *chunk, ಪೂರ್ಣಾಂಕ final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    ಆದರೆ (reader->decoder == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
-        chunk->len >= UTF16_BOM_LENGTH &&
-        (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
-         memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
-    PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
-            PyBytes_Check(chunk->owner) &&
-            chunk->data == PyBytes_AS_STRING(chunk->owner)) {
-        input = Py_NewRef(chunk->owner);
+    ಪೂರ್ಣಾಂಕ strip_bom = reader->ಬಗೆ == _PYTOK_READER_READLINE &&
+        chunk->len >= UTF16_BOM_ಉದ್ದಳತೆ &&
+        (memcmp(chunk->ದತ್ತಾಂಶ, UTF16_LE_BOM, UTF16_BOM_ಉದ್ದಳತೆ) == 0 ||
+         memcmp(chunk->ದತ್ತಾಂಶ, UTF16_BE_BOM, UTF16_BOM_ಉದ್ದಳತೆ) == 0);
+    PyObject *ಒಳಹರಿವು;
+    ಆದರೆ (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+            Py_ಬೈಟುಗಳು_Check(chunk->owner) &&
+            chunk->ದತ್ತಾಂಶ == Py_ಬೈಟುಗಳು_AS_STRING(chunk->owner)) {
+        ಒಳಹರಿವು = Py_NewRef(chunk->owner);
     }
-    else {
-        input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
+    ಇಲ್ಲದಿದ್ದರೆ {
+        ಒಳಹರಿವು = Py_ಬೈಟುಗಳು_From_String_And_ಗಾತ್ರ(chunk->ದತ್ತಾಂಶ, chunk->len);
     }
-    if (input == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    ಆದರೆ (ಒಳಹರಿವು == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = E_NOMEM;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    PyObject *unicode = PyObject_CallMethodObjArgs(
-        reader->decoder, &_Py_ID(decode), input,
-        final ? Py_True : Py_False, NULL);
-    Py_DECREF(input);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    PyObject *unicode = Py_Object_Call_ವಿಧಾನ_Obj_ವಾದಗಳು(
+        reader->decoder, &_Py_ID(decode), ಒಳಹರಿವು,
+        final ? Py_True : Py_False, ಖಾಲಿ);
+    Py_DECREF(ಒಳಹರಿವು);
+    ಆದರೆ (unicode == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ಆದರೆ (reader->ಬಗೆ == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != ಖಾಲಿ ? tok->filename : Py_None);
         }
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    ಆದರೆ (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
-        tok->done = E_DECODE;
-        return -1;
+        tok->ಮುಗಿದ = E_DECODE;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    ಹಿಂತಿರುಗಿ chunk_ಗಣ_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+ಪೂರ್ಣಾಂಕ
+Py_Tok_Decoder_Has_Buffered_ಒಳಹರಿವು(ರಚನೆ tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    ಆದರೆ (tok->reader->decoder == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ 0;
     }
-    PyObject *state = PyObject_CallMethodNoArgs(
+    PyObject *state = Py_Object_Call_ವಿಧಾನ_No_ವಾದಗಳು(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    ಆದರೆ (state == ಖಾಲಿ) {
+        tok->ಮುಗಿದ = PyErr_ExceptionMatches(Py_Exc_ಸ್ಮರಣೆ_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
-            !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
-            !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
+    ಆದರೆ (!PyTuple_Check(state) || Py_Tuple_GET_ಗಾತ್ರ(state) != 2 ||
+            !Py_ಬೈಟುಗಳು_Check(Py_Tuple_GET_ಅಂಶ(state, 0)) ||
+            !PyLong_Check(Py_Tuple_GET_ಅಂಶ(state, 1))) {
         Py_DECREF(state);
-        PyErr_SetString(PyExc_TypeError,
+        Py_Err_ಗಣ_String(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
-        tok->done = E_DECODE;
-        return -1;
+        tok->ಮುಗಿದ = E_DECODE;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    ಪೂರ್ಣಾಂಕ pending = Py_ಬೈಟುಗಳು_GET_ಗಾತ್ರ(Py_Tuple_GET_ಅಂಶ(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    ಹಿಂತಿರುಗಿ pending;
 }

@@ -1,707 +1,707 @@
-#include <Python.h>
-#include "pycore_pystate.h"         // _PyInterpreterState_GET()
-#include "pycore_runtime.h"         // _PyRuntime
-#include "pycore_unicodeobject.h"   // _PyUnicode_InternImmortal()
-#include "pycore_pyerrors.h"        // _PyErr_EmitSyntaxWarning()
+#ಅನ್ತರ್ಭಾವ <Python.h>
+#ಅನ್ತರ್ಭಾವ "pycore_pystate.h"         // _PyInterpreterState_GET()
+#ಅನ್ತರ್ಭಾವ "pycore_runtime.h"         // _PyRuntime
+#ಅನ್ತರ್ಭಾವ "pycore_unicodeobject.h"   // _PyUnicode_InternImmortal()
+#ಅನ್ತರ್ಭಾವ "pycore_pyerrors.h"        // _PyErr_EmitSyntaxWarning()
 
-#include "pegen.h"
-#include "string_parser.h"          // _PyPegen_decode_string()
-#include "lexer/state.h"            // tok_state
+#ಅನ್ತರ್ಭಾವ "pegen.h"
+#ಅನ್ತರ್ಭಾವ "string_parser.h"          // _PyPegen_decode_string()
+#ಅನ್ತರ್ಭಾವ "lexer/state.h"            // tok_state
 
 
-void *
+ಶೂನ್ಯ *
 _PyPegen_dummy_name(Parser *p, ...)
 {
-    return &_PyRuntime.parser.dummy_name;
+    ಹಿಂತಿರುಗಿ &_PyRuntime.parser.dummy_name;
 }
 
 /* Creates a single-element asdl_seq* that contains a */
 asdl_seq *
-_PyPegen_singleton_seq(Parser *p, void *a)
+_PyPegen_singleton_seq(Parser *p, ಶೂನ್ಯ *a)
 {
-    assert(a != NULL);
+    ಪ್ರತಿಜ್ಞಾ(a != ಖಾಲಿ);
     asdl_seq *seq = (asdl_seq*)_Py_asdl_generic_seq_new(1, p->arena);
-    if (!seq) {
-        return NULL;
+    ಆದರೆ (!seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_seq_SET_UNTYPED(seq, 0, a);
-    return seq;
+    asdl_seq_ಗಣ_UNTYPED(seq, 0, a);
+    ಹಿಂತಿರುಗಿ seq;
 }
 
 /* Creates a copy of seq and prepends a to it */
 asdl_seq *
-_PyPegen_seq_insert_in_front(Parser *p, void *a, asdl_seq *seq)
+Py_Pegen_seq_ಸೇರಿಸು_ಒಳ_front(Parser *p, ಶೂನ್ಯ *a, asdl_seq *seq)
 {
-    assert(a != NULL);
-    if (!seq) {
-        return _PyPegen_singleton_seq(p, a);
+    ಪ್ರತಿಜ್ಞಾ(a != ಖಾಲಿ);
+    ಆದರೆ (!seq) {
+        ಹಿಂತಿರುಗಿ _PyPegen_singleton_seq(p, a);
     }
 
     asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(asdl_seq_LEN(seq) + 1, p->arena);
-    if (!new_seq) {
-        return NULL;
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    asdl_seq_SET_UNTYPED(new_seq, 0, a);
-    for (Py_ssize_t i = 1, l = asdl_seq_LEN(new_seq); i < l; i++) {
-        asdl_seq_SET_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i - 1));
+    asdl_seq_ಗಣ_UNTYPED(new_seq, 0, a);
+    ಗಾಗಿ (Py_ssize_t i = 1, l = asdl_seq_LEN(new_seq); i < l; i++) {
+        asdl_seq_ಗಣ_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i - 1));
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Creates a copy of seq and appends a to it */
 asdl_seq *
-_PyPegen_seq_append_to_end(Parser *p, asdl_seq *seq, void *a)
+Py_Pegen_seq_append_ಗಮ್ಯ_ಕೊನೆ(Parser *p, asdl_seq *seq, ಶೂನ್ಯ *a)
 {
-    assert(a != NULL);
-    if (!seq) {
-        return _PyPegen_singleton_seq(p, a);
+    ಪ್ರತಿಜ್ಞಾ(a != ಖಾಲಿ);
+    ಆದರೆ (!seq) {
+        ಹಿಂತಿರುಗಿ _PyPegen_singleton_seq(p, a);
     }
 
     asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(asdl_seq_LEN(seq) + 1, p->arena);
-    if (!new_seq) {
-        return NULL;
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(new_seq); i + 1 < l; i++) {
-        asdl_seq_SET_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i));
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(new_seq); i + 1 < l; i++) {
+        asdl_seq_ಗಣ_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i));
     }
-    asdl_seq_SET_UNTYPED(new_seq, asdl_seq_LEN(new_seq) - 1, a);
-    return new_seq;
+    asdl_seq_ಗಣ_UNTYPED(new_seq, asdl_seq_LEN(new_seq) - 1, a);
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
-static Py_ssize_t
-_get_flattened_seq_size(asdl_seq *seqs)
+ಸ್ಥಿರ Py_ssize_t
+get_flattened_seq_ಗಾತ್ರ(asdl_seq *seqs)
 {
-    Py_ssize_t size = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
+    Py_ssize_t ಗಾತ್ರ_2 = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
         asdl_seq *inner_seq = asdl_seq_GET_UNTYPED(seqs, i);
-        size += asdl_seq_LEN(inner_seq);
+        ಗಾತ್ರ_2 += asdl_seq_LEN(inner_seq);
     }
-    return size;
+    ಹಿಂತಿರುಗಿ ಗಾತ್ರ_2;
 }
 
 /* Flattens an asdl_seq* of asdl_seq*s */
 asdl_seq *
 _PyPegen_seq_flatten(Parser *p, asdl_seq *seqs)
 {
-    Py_ssize_t flattened_seq_size = _get_flattened_seq_size(seqs);
-    assert(flattened_seq_size > 0);
+    Py_ssize_t flattened_seq_ಗಾತ್ರ = get_flattened_seq_ಗಾತ್ರ(seqs);
+    ಪ್ರತಿಜ್ಞಾ(flattened_seq_ಗಾತ್ರ > 0);
 
-    asdl_seq *flattened_seq = (asdl_seq*)_Py_asdl_generic_seq_new(flattened_seq_size, p->arena);
-    if (!flattened_seq) {
-        return NULL;
+    asdl_seq *flattened_seq = (asdl_seq*)_Py_asdl_generic_seq_new(flattened_seq_ಗಾತ್ರ, p->arena);
+    ಆದರೆ (!flattened_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    int flattened_seq_idx = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
+    ಪೂರ್ಣಾಂಕ flattened_seq_idx = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
         asdl_seq *inner_seq = asdl_seq_GET_UNTYPED(seqs, i);
-        for (Py_ssize_t j = 0, li = asdl_seq_LEN(inner_seq); j < li; j++) {
-            asdl_seq_SET_UNTYPED(flattened_seq, flattened_seq_idx++, asdl_seq_GET_UNTYPED(inner_seq, j));
+        ಗಾಗಿ (Py_ssize_t j = 0, li = asdl_seq_LEN(inner_seq); j < li; j++) {
+            asdl_seq_ಗಣ_UNTYPED(flattened_seq, flattened_seq_idx++, asdl_seq_GET_UNTYPED(inner_seq, j));
         }
     }
-    assert(flattened_seq_idx == flattened_seq_size);
+    ಪ್ರತಿಜ್ಞಾ(flattened_seq_idx == flattened_seq_ಗಾತ್ರ);
 
-    return flattened_seq;
+    ಹಿಂತಿರುಗಿ flattened_seq;
 }
 
-void *
-_PyPegen_seq_last_item(asdl_seq *seq)
+ಶೂನ್ಯ *
+Py_Pegen_seq_ಕೊನೆಯ_ಅಂಶ(asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    return asdl_seq_GET_UNTYPED(seq, len - 1);
+    ಹಿಂತಿರುಗಿ asdl_seq_GET_UNTYPED(seq, len - 1);
 }
 
-void *
-_PyPegen_seq_first_item(asdl_seq *seq)
+ಶೂನ್ಯ *
+Py_Pegen_seq_ಮೊದಲ_ಅಂಶ(asdl_seq *seq)
 {
-    return asdl_seq_GET_UNTYPED(seq, 0);
+    ಹಿಂತಿರುಗಿ asdl_seq_GET_UNTYPED(seq, 0);
 }
 
 /* Creates a new name of the form <first_name>.<second_name> */
-expr_ty
-_PyPegen_join_names_with_dot(Parser *p, expr_ty first_name, expr_ty second_name)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_join_ಹೆಸರುಗಳು_with_dot(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಮೊದಲ_name, ಅಭಿವ್ಯಕ್ತಿ_ty ಎರಡನೇ_name)
 {
-    assert(first_name != NULL && second_name != NULL);
+    ಪ್ರತಿಜ್ಞಾ(ಮೊದಲ_name != ಖಾಲಿ && ಎರಡನೇ_name != ಖಾಲಿ);
     PyObject *uni = PyUnicode_FromFormat("%U.%U",
-            first_name->v.Name.id, second_name->v.Name.id);
-    if (!uni) {
-        return NULL;
+            ಮೊದಲ_name->v.Name.id, ಎರಡನೇ_name->v.Name.id);
+    ಆದರೆ (!uni) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     PyInterpreterState *interp = _PyInterpreterState_GET();
     _PyUnicode_InternImmortal(interp, &uni);
-    if (_PyArena_AddPyObject(p->arena, uni) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, uni) < 0) {
         Py_DECREF(uni);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    return _PyAST_Name(uni, Load, EXTRA_EXPR(first_name, second_name));
+    ಹಿಂತಿರುಗಿ _PyAST_Name(uni, ತುಂಬು, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(ಮೊದಲ_name, ಎರಡನೇ_name));
 }
 
 /* Counts the total number of dots in seq's tokens */
-int
-_PyPegen_seq_count_dots(asdl_seq *seq)
+ಪೂರ್ಣಾಂಕ
+Py_Pegen_seq_ಎಣಿಕೆ_dots(asdl_seq *seq)
 {
-    int number_of_dots = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
-        Token *current_expr = asdl_seq_GET_UNTYPED(seq, i);
-        switch (current_expr->type) {
-            case ELLIPSIS:
-                number_of_dots += 3;
-                break;
-            case DOT:
-                number_of_dots += 1;
-                break;
-            default:
+    ಪೂರ್ಣಾಂಕ ಸಂಖ್ಯೆ_ದ_dots = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
+        Token *current_ಅಭಿವ್ಯಕ್ತಿ = asdl_seq_GET_UNTYPED(seq, i);
+        ಆಯ್ಕೆ (current_ಅಭಿವ್ಯಕ್ತಿ->type) {
+            ಸ್ಥಿತಿ ELLIPSIS:
+                ಸಂಖ್ಯೆ_ದ_dots += 3;
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ DOT:
+                ಸಂಖ್ಯೆ_ದ_dots += 1;
+                ನಿಲ್ಲಿಸು;
+            ಪೂರ್ವನಿಯೋಜಿತ:
                 Py_UNREACHABLE();
         }
     }
 
-    return number_of_dots;
+    ಹಿಂತಿರುಗಿ ಸಂಖ್ಯೆ_ದ_dots;
 }
 
 /* Creates an alias with '*' as the identifier name */
 alias_ty
-_PyPegen_alias_for_star(Parser *p, int lineno, int col_offset, int end_lineno,
-                        int end_col_offset, PyArena *arena) {
+Py_Pegen_alias_for_ನಕ್ಷತ್ರ(Parser *p, ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                        ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena) {
     PyObject *str = PyUnicode_InternFromString("*");
-    if (!str) {
-        return NULL;
+    ಆದರೆ (!str) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_alias(str, NULL, lineno, col_offset, end_lineno, end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _PyAST_alias(str, ಖಾಲಿ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
 /* Creates a new asdl_seq* with the identifiers of all the names in seq */
 asdl_identifier_seq *
-_PyPegen_map_names_to_ids(Parser *p, asdl_expr_seq *seq)
+Py_Pegen_map_ಹೆಸರುಗಳು_ಗಮ್ಯ_ids(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
     asdl_identifier_seq *new_seq = _Py_asdl_identifier_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty e = asdl_seq_GET(seq, i);
-        asdl_seq_SET(new_seq, i, e->v.Name.id);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty e = asdl_seq_GET(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, e->v.Name.id);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Constructs a CmpopExprPair */
-CmpopExprPair *
-_PyPegen_cmpop_expr_pair(Parser *p, cmpop_ty cmpop, expr_ty expr)
+Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair *
+Py_Pegen_cmpop_ಅಭಿವ್ಯಕ್ತಿ_pair(Parser *p, cmpop_ty cmpop, ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ)
 {
-    assert(expr != NULL);
-    CmpopExprPair *a = _PyArena_Malloc(p->arena, sizeof(CmpopExprPair));
-    if (!a) {
-        return NULL;
+    ಪ್ರತಿಜ್ಞಾ(ಅಭಿವ್ಯಕ್ತಿ != ಖಾಲಿ);
+    Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     a->cmpop = cmpop;
-    a->expr = expr;
-    return a;
+    a->ಅಭಿವ್ಯಕ್ತಿ = ಅಭಿವ್ಯಕ್ತಿ;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 asdl_int_seq *
 _PyPegen_get_cmpops(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
     asdl_int_seq *new_seq = _Py_asdl_int_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        CmpopExprPair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->cmpop);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->cmpop);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
-asdl_expr_seq *
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
 _PyPegen_get_exprs(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        CmpopExprPair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->expr);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->ಅಭಿವ್ಯಕ್ತಿ);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Creates an asdl_seq* where all the elements have been changed to have ctx as context */
-static asdl_expr_seq *
-_set_seq_context(Parser *p, asdl_expr_seq *seq, expr_context_ty ctx)
+ಸ್ಥಿರ asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+ಗಣ_seq_context(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    if (len == 0) {
-        return NULL;
+    ಆದರೆ (len == 0) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty e = asdl_seq_GET(seq, i);
-        expr_ty new_e = _PyPegen_set_expr_context(p, e, ctx);
-        if (!new_e) {
-            return NULL;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty e = asdl_seq_GET(seq, i);
+        ಅಭಿವ್ಯಕ್ತಿ_ty new_e = Py_Pegen_ಗಣ_ಅಭಿವ್ಯಕ್ತಿ_context(p, e, ctx);
+        ಆದರೆ (!new_e) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        asdl_seq_SET(new_seq, i, new_e);
+        asdl_seq_ಗಣ(new_seq, i, new_e);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
-static expr_ty
-_set_name_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_name_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    return _PyAST_Name(e->v.Name.id, ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_Name(e->v.Name.id, ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
-static expr_ty
-_set_tuple_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_tuple_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    asdl_expr_seq *seq = _set_seq_context(p, e->v.Tuple.elts, ctx);
-    if (!seq && PyErr_Occurred()) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq = ಗಣ_seq_context(p, e->v.Tuple.elts, ctx);
+    ಆದರೆ (!seq && PyErr_Occurred()) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Tuple(seq, ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_Tuple(seq, ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
-static expr_ty
-_set_list_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_list_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    asdl_expr_seq *seq = _set_seq_context(p, e->v.List.elts, ctx);
-    if (!seq && PyErr_Occurred()) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq = ಗಣ_seq_context(p, e->v.List.elts, ctx);
+    ಆದರೆ (!seq && PyErr_Occurred()) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_List(seq, ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_List(seq, ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
-static expr_ty
-_set_subscript_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_subscript_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    return _PyAST_Subscript(e->v.Subscript.value, e->v.Subscript.slice,
-                            ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_Subscript(e->v.Subscript.ಮೌಲ್ಯ, e->v.Subscript.ತುಂಡು,
+                            ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
-static expr_ty
-_set_attribute_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_attribute_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    return _PyAST_Attribute(e->v.Attribute.value, e->v.Attribute.attr,
-                            ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_Attribute(e->v.Attribute.ಮೌಲ್ಯ, e->v.Attribute.attr,
+                            ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
-static expr_ty
-_set_starred_context(Parser *p, expr_ty e, expr_context_ty ctx)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+ಗಣ_starred_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    expr_ty inner = _PyPegen_set_expr_context(p, e->v.Starred.value, ctx);
-    if (!inner) {
-        return NULL;
+    ಅಭಿವ್ಯಕ್ತಿ_ty inner = Py_Pegen_ಗಣ_ಅಭಿವ್ಯಕ್ತಿ_context(p, e->v.Starred.ಮೌಲ್ಯ, ctx);
+    ಆದರೆ (!inner) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Starred(inner, ctx, EXTRA_EXPR(e, e));
+    ಹಿಂತಿರುಗಿ _PyAST_Starred(inner, ctx, EXTRA_ಅಭಿವ್ಯಕ್ತಿ(e, e));
 }
 
 /* Creates an `expr_ty` equivalent to `expr` but with `ctx` as context */
-expr_ty
-_PyPegen_set_expr_context(Parser *p, expr_ty expr, expr_context_ty ctx)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_ಗಣ_ಅಭಿವ್ಯಕ್ತಿ_context(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ, ಅಭಿವ್ಯಕ್ತಿ_context_ty ctx)
 {
-    assert(expr != NULL);
+    ಪ್ರತಿಜ್ಞಾ(ಅಭಿವ್ಯಕ್ತಿ != ಖಾಲಿ);
 
-    expr_ty new = NULL;
-    switch (expr->kind) {
-        case Name_kind:
-            new = _set_name_context(p, expr, ctx);
-            break;
-        case Tuple_kind:
-            new = _set_tuple_context(p, expr, ctx);
-            break;
-        case List_kind:
-            new = _set_list_context(p, expr, ctx);
-            break;
-        case Subscript_kind:
-            new = _set_subscript_context(p, expr, ctx);
-            break;
-        case Attribute_kind:
-            new = _set_attribute_context(p, expr, ctx);
-            break;
-        case Starred_kind:
-            new = _set_starred_context(p, expr, ctx);
-            break;
-        default:
-            new = expr;
+    ಅಭಿವ್ಯಕ್ತಿ_ty new = ಖಾಲಿ;
+    ಆಯ್ಕೆ (ಅಭಿವ್ಯಕ್ತಿ->ಬಗೆ) {
+        ಸ್ಥಿತಿ Name_ಬಗೆ:
+            new = ಗಣ_name_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ Tuple_ಬಗೆ:
+            new = ಗಣ_tuple_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ List_ಬಗೆ:
+            new = ಗಣ_list_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ Subscript_ಬಗೆ:
+            new = ಗಣ_subscript_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ Attribute_ಬಗೆ:
+            new = ಗಣ_attribute_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಸ್ಥಿತಿ Starred_ಬಗೆ:
+            new = ಗಣ_starred_context(p, ಅಭಿವ್ಯಕ್ತಿ, ctx);
+            ನಿಲ್ಲಿಸು;
+        ಪೂರ್ವನಿಯೋಜಿತ:
+            new = ಅಭಿವ್ಯಕ್ತಿ;
     }
-    return new;
+    ಹಿಂತಿರುಗಿ new;
 }
 
 /* Invalid targets return NULL without raising, allowing parsing to backtrack.
    Copy valid targets to preserve the memoized expression's context. */
-expr_ty
-_PyPegen_make_target(Parser *p, expr_ty expr, TARGETS_TYPE targets_type)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_make_ಗುರಿ(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ, TARGETS_TYPE targets_type)
 {
-    assert(expr != NULL);
-    assert(targets_type != FOR_TARGETS);
-    if (_PyPegen_get_invalid_target(expr, targets_type) != NULL) {
-        return NULL;
+    ಪ್ರತಿಜ್ಞಾ(ಅಭಿವ್ಯಕ್ತಿ != ಖಾಲಿ);
+    ಪ್ರತಿಜ್ಞಾ(targets_type != FOR_TARGETS);
+    ಆದರೆ (Py_Pegen_get_invalid_ಗುರಿ(ಅಭಿವ್ಯಕ್ತಿ, targets_type) != ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyPegen_set_expr_context(
-        p, expr, targets_type == DEL_TARGETS ? Del : Store);
+    ಹಿಂತಿರುಗಿ Py_Pegen_ಗಣ_ಅಭಿವ್ಯಕ್ತಿ_context(
+        p, ಅಭಿವ್ಯಕ್ತಿ, targets_type == DEL_TARGETS ? Del : Store);
 }
 
 /* Constructs a KeyValuePair that is used when parsing a dict's key value pairs */
-KeyValuePair *
-_PyPegen_key_value_pair(Parser *p, expr_ty key, expr_ty value)
+ಕೀಲಿ_ಮೌಲ್ಯ_Pair *
+Py_Pegen_ಕೀಲಿ_ಮೌಲ್ಯ_pair(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಕೀಲಿ, ಅಭಿವ್ಯಕ್ತಿ_ty ಮೌಲ್ಯ)
 {
-    KeyValuePair *a = _PyArena_Malloc(p->arena, sizeof(KeyValuePair));
-    if (!a) {
-        return NULL;
+    ಕೀಲಿ_ಮೌಲ್ಯ_Pair *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(ಕೀಲಿ_ಮೌಲ್ಯ_Pair));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->key = key;
-    a->value = value;
-    return a;
+    a->ಕೀಲಿ = ಕೀಲಿ;
+    a->ಮೌಲ್ಯ = ಮೌಲ್ಯ;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Extracts all keys from an asdl_seq* of KeyValuePair*'s */
-asdl_expr_seq *
-_PyPegen_get_keys(Parser *p, asdl_seq *seq)
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+Py_Pegen_get_ಕೀಲಿಗಳು(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        KeyValuePair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->key);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಕೀಲಿ_ಮೌಲ್ಯ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->ಕೀಲಿ);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Extracts all values from an asdl_seq* of KeyValuePair*'s */
-asdl_expr_seq *
-_PyPegen_get_values(Parser *p, asdl_seq *seq)
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+Py_Pegen_get_ಮೌಲ್ಯಗಳು(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        KeyValuePair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->value);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಕೀಲಿ_ಮೌಲ್ಯ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->ಮೌಲ್ಯ);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Constructs a KeyPatternPair that is used when parsing mapping & class patterns */
-KeyPatternPair *
-_PyPegen_key_pattern_pair(Parser *p, expr_ty key, pattern_ty pattern)
+ಕೀಲಿ_ನಮೂನೆ_Pair *
+Py_Pegen_ಕೀಲಿ_ನಮೂನೆ_pair(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಕೀಲಿ, ನಮೂನೆ_ty ನಮೂನೆ)
 {
-    KeyPatternPair *a = _PyArena_Malloc(p->arena, sizeof(KeyPatternPair));
-    if (!a) {
-        return NULL;
+    ಕೀಲಿ_ನಮೂನೆ_Pair *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(ಕೀಲಿ_ನಮೂನೆ_Pair));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->key = key;
-    a->pattern = pattern;
-    return a;
+    a->ಕೀಲಿ = ಕೀಲಿ;
+    a->ನಮೂನೆ = ನಮೂನೆ;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Extracts all keys from an asdl_seq* of KeyPatternPair*'s */
-asdl_expr_seq *
-_PyPegen_get_pattern_keys(Parser *p, asdl_seq *seq)
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+Py_Pegen_get_ನಮೂನೆ_ಕೀಲಿಗಳು(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        KeyPatternPair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->key);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಕೀಲಿ_ನಮೂನೆ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->ಕೀಲಿ);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Extracts all patterns from an asdl_seq* of KeyPatternPair*'s */
-asdl_pattern_seq *
+asdl_ನಮೂನೆ_seq *
 _PyPegen_get_patterns(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    asdl_pattern_seq *new_seq = _Py_asdl_pattern_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ನಮೂನೆ_seq *new_seq = Py_asdl_ನಮೂನೆ_seq_new(len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        KeyPatternPair *pair = asdl_seq_GET_UNTYPED(seq, i);
-        asdl_seq_SET(new_seq, i, pair->pattern);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಕೀಲಿ_ನಮೂನೆ_Pair *pair = asdl_seq_GET_UNTYPED(seq, i);
+        asdl_seq_ಗಣ(new_seq, i, pair->ನಮೂನೆ);
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Constructs a NameDefaultPair */
 NameDefaultPair *
-_PyPegen_name_default_pair(Parser *p, arg_ty arg, expr_ty value, Token *tc)
+_PyPegen_name_default_pair(Parser *p, arg_ty arg, ಅಭಿವ್ಯಕ್ತಿ_ty ಮೌಲ್ಯ, Token *tc)
 {
-    NameDefaultPair *a = _PyArena_Malloc(p->arena, sizeof(NameDefaultPair));
-    if (!a) {
-        return NULL;
+    NameDefaultPair *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(NameDefaultPair));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->arg = _PyPegen_add_type_comment_to_arg(p, arg, tc);
-    if (!a->arg) {
-        return NULL;
+    a->arg = Py_Pegen_ಕೂಡಿಸು_type_comment_ಗಮ್ಯ_arg(p, arg, tc);
+    ಆದರೆ (!a->arg) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->value = value;
-    return a;
+    a->ಮೌಲ್ಯ = ಮೌಲ್ಯ;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Constructs a SlashWithDefault */
 SlashWithDefault *
-_PyPegen_slash_with_default(Parser *p, asdl_arg_seq *plain_names, asdl_seq *names_with_defaults)
+_PyPegen_slash_with_default(Parser *p, asdl_arg_seq *plain_ಹೆಸರುಗಳು, asdl_seq *ಹೆಸರುಗಳು_with_defaults)
 {
-    SlashWithDefault *a = _PyArena_Malloc(p->arena, sizeof(SlashWithDefault));
-    if (!a) {
-        return NULL;
+    SlashWithDefault *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(SlashWithDefault));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->plain_names = plain_names;
-    a->names_with_defaults = names_with_defaults;
-    return a;
+    a->plain_ಹೆಸರುಗಳು = plain_ಹೆಸರುಗಳು;
+    a->ಹೆಸರುಗಳು_with_defaults = ಹೆಸರುಗಳು_with_defaults;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Constructs a StarEtc */
-StarEtc *
-_PyPegen_star_etc(Parser *p, arg_ty vararg, asdl_seq *kwonlyargs, arg_ty kwarg)
+ನಕ್ಷತ್ರ_Etc *
+Py_Pegen_ನಕ್ಷತ್ರ_etc(Parser *p, arg_ty vararg, asdl_seq *kwonlyargs, arg_ty kwarg)
 {
-    StarEtc *a = _PyArena_Malloc(p->arena, sizeof(StarEtc));
-    if (!a) {
-        return NULL;
+    ನಕ್ಷತ್ರ_Etc *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(ನಕ್ಷತ್ರ_Etc));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     a->vararg = vararg;
     a->kwonlyargs = kwonlyargs;
     a->kwarg = kwarg;
-    return a;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 asdl_seq *
 _PyPegen_join_sequences(Parser *p, asdl_seq *a, asdl_seq *b)
 {
-    Py_ssize_t first_len = asdl_seq_LEN(a);
-    Py_ssize_t second_len = asdl_seq_LEN(b);
-    asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(first_len + second_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    Py_ssize_t ಮೊದಲ_len = asdl_seq_LEN(a);
+    Py_ssize_t ಎರಡನೇ_len = asdl_seq_LEN(b);
+    asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(ಮೊದಲ_len + ಎರಡನೇ_len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    int k = 0;
-    for (Py_ssize_t i = 0; i < first_len; i++) {
-        asdl_seq_SET_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(a, i));
+    ಪೂರ್ಣಾಂಕ k = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < ಮೊದಲ_len; i++) {
+        asdl_seq_ಗಣ_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(a, i));
     }
-    for (Py_ssize_t i = 0; i < second_len; i++) {
-        asdl_seq_SET_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(b, i));
+    ಗಾಗಿ (Py_ssize_t i = 0; i < ಎರಡನೇ_len; i++) {
+        asdl_seq_ಗಣ_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(b, i));
     }
 
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
-static asdl_arg_seq*
-_get_names(Parser *p, asdl_seq *names_with_defaults)
+ಸ್ಥಿರ asdl_arg_seq*
+get_ಹೆಸರುಗಳು(Parser *p, asdl_seq *ಹೆಸರುಗಳು_with_defaults)
 {
-    Py_ssize_t len = asdl_seq_LEN(names_with_defaults);
+    Py_ssize_t len = asdl_seq_LEN(ಹೆಸರುಗಳು_with_defaults);
     asdl_arg_seq *seq = _Py_asdl_arg_seq_new(len, p->arena);
-    if (!seq) {
-        return NULL;
+    ಆದರೆ (!seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        NameDefaultPair *pair = asdl_seq_GET_UNTYPED(names_with_defaults, i);
-        asdl_seq_SET(seq, i, pair->arg);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        NameDefaultPair *pair = asdl_seq_GET_UNTYPED(ಹೆಸರುಗಳು_with_defaults, i);
+        asdl_seq_ಗಣ(seq, i, pair->arg);
     }
-    return seq;
+    ಹಿಂತಿರುಗಿ seq;
 }
 
-static asdl_expr_seq *
-_get_defaults(Parser *p, asdl_seq *names_with_defaults)
+ಸ್ಥಿರ asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+_get_defaults(Parser *p, asdl_seq *ಹೆಸರುಗಳು_with_defaults)
 {
-    Py_ssize_t len = asdl_seq_LEN(names_with_defaults);
-    asdl_expr_seq *seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!seq) {
-        return NULL;
+    Py_ssize_t len = asdl_seq_LEN(ಹೆಸರುಗಳು_with_defaults);
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(len, p->arena);
+    ಆದರೆ (!seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
-        NameDefaultPair *pair = asdl_seq_GET_UNTYPED(names_with_defaults, i);
-        asdl_seq_SET(seq, i, pair->value);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        NameDefaultPair *pair = asdl_seq_GET_UNTYPED(ಹೆಸರುಗಳು_with_defaults, i);
+        asdl_seq_ಗಣ(seq, i, pair->ಮೌಲ್ಯ);
     }
-    return seq;
+    ಹಿಂತಿರುಗಿ seq;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
 _make_posonlyargs(Parser *p,
                   asdl_arg_seq *slash_without_default,
                   SlashWithDefault *slash_with_default,
                   asdl_arg_seq **posonlyargs) {
-    if (slash_without_default != NULL) {
+    ಆದರೆ (slash_without_default != ಖಾಲಿ) {
         *posonlyargs = slash_without_default;
     }
-    else if (slash_with_default != NULL) {
-        asdl_arg_seq *slash_with_default_names =
-                _get_names(p, slash_with_default->names_with_defaults);
-        if (!slash_with_default_names) {
-            return -1;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (slash_with_default != ಖಾಲಿ) {
+        asdl_arg_seq *slash_with_default_ಹೆಸರುಗಳು =
+                get_ಹೆಸರುಗಳು(p, slash_with_default->ಹೆಸರುಗಳು_with_defaults);
+        ಆದರೆ (!slash_with_default_ಹೆಸರುಗಳು) {
+            ಹಿಂತಿರುಗಿ -1;
         }
         *posonlyargs = (asdl_arg_seq*)_PyPegen_join_sequences(
                 p,
-                (asdl_seq*)slash_with_default->plain_names,
-                (asdl_seq*)slash_with_default_names);
+                (asdl_seq*)slash_with_default->plain_ಹೆಸರುಗಳು,
+                (asdl_seq*)slash_with_default_ಹೆಸರುಗಳು);
     }
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         *posonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
     }
-    return *posonlyargs == NULL ? -1 : 0;
+    ಹಿಂತಿರುಗಿ *posonlyargs == ಖಾಲಿ ? -1 : 0;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
 _make_posargs(Parser *p,
-              asdl_arg_seq *plain_names,
-              asdl_seq *names_with_default,
+              asdl_arg_seq *plain_ಹೆಸರುಗಳು,
+              asdl_seq *ಹೆಸರುಗಳು_with_default,
               asdl_arg_seq **posargs) {
 
-    if (names_with_default != NULL) {
-        if (plain_names != NULL) {
-            asdl_arg_seq *names_with_default_names = _get_names(p, names_with_default);
-            if (!names_with_default_names) {
-                return -1;
+    ಆದರೆ (ಹೆಸರುಗಳು_with_default != ಖಾಲಿ) {
+        ಆದರೆ (plain_ಹೆಸರುಗಳು != ಖಾಲಿ) {
+            asdl_arg_seq *ಹೆಸರುಗಳು_with_default_ಹೆಸರುಗಳು = get_ಹೆಸರುಗಳು(p, ಹೆಸರುಗಳು_with_default);
+            ಆದರೆ (!ಹೆಸರುಗಳು_with_default_ಹೆಸರುಗಳು) {
+                ಹಿಂತಿರುಗಿ -1;
             }
             *posargs = (asdl_arg_seq*)_PyPegen_join_sequences(
-                    p,(asdl_seq*)plain_names, (asdl_seq*)names_with_default_names);
+                    p,(asdl_seq*)plain_ಹೆಸರುಗಳು, (asdl_seq*)ಹೆಸರುಗಳು_with_default_ಹೆಸರುಗಳು);
         }
-        else {
-            *posargs = _get_names(p, names_with_default);
+        ಇಲ್ಲದಿದ್ದರೆ {
+            *posargs = get_ಹೆಸರುಗಳು(p, ಹೆಸರುಗಳು_with_default);
         }
     }
-    else {
-        if (plain_names != NULL) {
+    ಇಲ್ಲದಿದ್ದರೆ {
+        ಆದರೆ (plain_ಹೆಸರುಗಳು != ಖಾಲಿ) {
             // With the current grammar, we never get here.
             // If that has changed, remove the assert, and test thoroughly.
-            assert(0);
-            *posargs = plain_names;
+            ಪ್ರತಿಜ್ಞಾ(0);
+            *posargs = plain_ಹೆಸರುಗಳು;
         }
-        else {
+        ಇಲ್ಲದಿದ್ದರೆ {
             *posargs = _Py_asdl_arg_seq_new(0, p->arena);
         }
     }
-    return *posargs == NULL ? -1 : 0;
+    ಹಿಂತಿರುಗಿ *posargs == ಖಾಲಿ ? -1 : 0;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
 _make_posdefaults(Parser *p,
                   SlashWithDefault *slash_with_default,
-                  asdl_seq *names_with_default,
-                  asdl_expr_seq **posdefaults) {
-    if (slash_with_default != NULL && names_with_default != NULL) {
-        asdl_expr_seq *slash_with_default_values =
-                _get_defaults(p, slash_with_default->names_with_defaults);
-        if (!slash_with_default_values) {
-            return -1;
+                  asdl_seq *ಹೆಸರುಗಳು_with_default,
+                  asdl_ಅಭಿವ್ಯಕ್ತಿ_seq **posdefaults) {
+    ಆದರೆ (slash_with_default != ಖಾಲಿ && ಹೆಸರುಗಳು_with_default != ಖಾಲಿ) {
+        asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *slash_with_default_ಮೌಲ್ಯಗಳು =
+                _get_defaults(p, slash_with_default->ಹೆಸರುಗಳು_with_defaults);
+        ಆದರೆ (!slash_with_default_ಮೌಲ್ಯಗಳು) {
+            ಹಿಂತಿರುಗಿ -1;
         }
-        asdl_expr_seq *names_with_default_values = _get_defaults(p, names_with_default);
-        if (!names_with_default_values) {
-            return -1;
+        asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಹೆಸರುಗಳು_with_default_ಮೌಲ್ಯಗಳು = _get_defaults(p, ಹೆಸರುಗಳು_with_default);
+        ಆದರೆ (!ಹೆಸರುಗಳು_with_default_ಮೌಲ್ಯಗಳು) {
+            ಹಿಂತಿರುಗಿ -1;
         }
-        *posdefaults = (asdl_expr_seq*)_PyPegen_join_sequences(
+        *posdefaults = (asdl_ಅಭಿವ್ಯಕ್ತಿ_seq*)_PyPegen_join_sequences(
                 p,
-                (asdl_seq*)slash_with_default_values,
-                (asdl_seq*)names_with_default_values);
+                (asdl_seq*)slash_with_default_ಮೌಲ್ಯಗಳು,
+                (asdl_seq*)ಹೆಸರುಗಳು_with_default_ಮೌಲ್ಯಗಳು);
     }
-    else if (slash_with_default == NULL && names_with_default != NULL) {
-        *posdefaults = _get_defaults(p, names_with_default);
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (slash_with_default == ಖಾಲಿ && ಹೆಸರುಗಳು_with_default != ಖಾಲಿ) {
+        *posdefaults = _get_defaults(p, ಹೆಸರುಗಳು_with_default);
     }
-    else if (slash_with_default != NULL && names_with_default == NULL) {
-        *posdefaults = _get_defaults(p, slash_with_default->names_with_defaults);
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (slash_with_default != ಖಾಲಿ && ಹೆಸರುಗಳು_with_default == ಖಾಲಿ) {
+        *posdefaults = _get_defaults(p, slash_with_default->ಹೆಸರುಗಳು_with_defaults);
     }
-    else {
-        *posdefaults = _Py_asdl_expr_seq_new(0, p->arena);
+    ಇಲ್ಲದಿದ್ದರೆ {
+        *posdefaults = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(0, p->arena);
     }
-    return *posdefaults == NULL ? -1 : 0;
+    ಹಿಂತಿರುಗಿ *posdefaults == ಖಾಲಿ ? -1 : 0;
 }
 
-static int
-_make_kwargs(Parser *p, StarEtc *star_etc,
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+_make_kwargs(Parser *p, ನಕ್ಷತ್ರ_Etc *ನಕ್ಷತ್ರ_etc,
              asdl_arg_seq **kwonlyargs,
-             asdl_expr_seq **kwdefaults) {
-    if (star_etc != NULL && star_etc->kwonlyargs != NULL) {
-        *kwonlyargs = _get_names(p, star_etc->kwonlyargs);
+             asdl_ಅಭಿವ್ಯಕ್ತಿ_seq **kwdefaults) {
+    ಆದರೆ (ನಕ್ಷತ್ರ_etc != ಖಾಲಿ && ನಕ್ಷತ್ರ_etc->kwonlyargs != ಖಾಲಿ) {
+        *kwonlyargs = get_ಹೆಸರುಗಳು(p, ನಕ್ಷತ್ರ_etc->kwonlyargs);
     }
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         *kwonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
     }
 
-    if (*kwonlyargs == NULL) {
-        return -1;
+    ಆದರೆ (*kwonlyargs == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ -1;
     }
 
-    if (star_etc != NULL && star_etc->kwonlyargs != NULL) {
-        *kwdefaults = _get_defaults(p, star_etc->kwonlyargs);
+    ಆದರೆ (ನಕ್ಷತ್ರ_etc != ಖಾಲಿ && ನಕ್ಷತ್ರ_etc->kwonlyargs != ಖಾಲಿ) {
+        *kwdefaults = _get_defaults(p, ನಕ್ಷತ್ರ_etc->kwonlyargs);
     }
-    else {
-        *kwdefaults = _Py_asdl_expr_seq_new(0, p->arena);
-    }
-
-    if (*kwdefaults == NULL) {
-        return -1;
+    ಇಲ್ಲದಿದ್ದರೆ {
+        *kwdefaults = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(0, p->arena);
     }
 
-    return 0;
+    ಆದರೆ (*kwdefaults == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ -1;
+    }
+
+    ಹಿಂತಿರುಗಿ 0;
 }
 
 /* Constructs an arguments_ty object out of all the parsed constructs in the parameters rule */
 arguments_ty
 _PyPegen_make_arguments(Parser *p, asdl_arg_seq *slash_without_default,
-                        SlashWithDefault *slash_with_default, asdl_arg_seq *plain_names,
-                        asdl_seq *names_with_default, StarEtc *star_etc)
+                        SlashWithDefault *slash_with_default, asdl_arg_seq *plain_ಹೆಸರುಗಳು,
+                        asdl_seq *ಹೆಸರುಗಳು_with_default, ನಕ್ಷತ್ರ_Etc *ನಕ್ಷತ್ರ_etc)
 {
     asdl_arg_seq *posonlyargs;
-    if (_make_posonlyargs(p, slash_without_default, slash_with_default, &posonlyargs) == -1) {
-        return NULL;
+    ಆದರೆ (_make_posonlyargs(p, slash_without_default, slash_with_default, &posonlyargs) == -1) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     asdl_arg_seq *posargs;
-    if (_make_posargs(p, plain_names, names_with_default, &posargs) == -1) {
-        return NULL;
+    ಆದರೆ (_make_posargs(p, plain_ಹೆಸರುಗಳು, ಹೆಸರುಗಳು_with_default, &posargs) == -1) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    asdl_expr_seq *posdefaults;
-    if (_make_posdefaults(p,slash_with_default, names_with_default, &posdefaults) == -1) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *posdefaults;
+    ಆದರೆ (_make_posdefaults(p,slash_with_default, ಹೆಸರುಗಳು_with_default, &posdefaults) == -1) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    arg_ty vararg = NULL;
-    if (star_etc != NULL && star_etc->vararg != NULL) {
-        vararg = star_etc->vararg;
+    arg_ty vararg = ಖಾಲಿ;
+    ಆದರೆ (ನಕ್ಷತ್ರ_etc != ಖಾಲಿ && ನಕ್ಷತ್ರ_etc->vararg != ಖಾಲಿ) {
+        vararg = ನಕ್ಷತ್ರ_etc->vararg;
     }
 
     asdl_arg_seq *kwonlyargs;
-    asdl_expr_seq *kwdefaults;
-    if (_make_kwargs(p, star_etc, &kwonlyargs, &kwdefaults) == -1) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *kwdefaults;
+    ಆದರೆ (_make_kwargs(p, ನಕ್ಷತ್ರ_etc, &kwonlyargs, &kwdefaults) == -1) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    arg_ty kwarg = NULL;
-    if (star_etc != NULL && star_etc->kwarg != NULL) {
-        kwarg = star_etc->kwarg;
+    arg_ty kwarg = ಖಾಲಿ;
+    ಆದರೆ (ನಕ್ಷತ್ರ_etc != ಖಾಲಿ && ನಕ್ಷತ್ರ_etc->kwarg != ಖಾಲಿ) {
+        kwarg = ನಕ್ಷತ್ರ_etc->kwarg;
     }
 
-    return _PyAST_arguments(posonlyargs, posargs, vararg, kwonlyargs,
+    ಹಿಂತಿರುಗಿ _PyAST_arguments(posonlyargs, posargs, vararg, kwonlyargs,
                             kwdefaults, kwarg, posdefaults, p->arena);
 }
 
@@ -709,135 +709,135 @@ _PyPegen_make_arguments(Parser *p, asdl_arg_seq *slash_without_default,
 /* Constructs an empty arguments_ty object, that gets used when a function accepts no
  * arguments. */
 arguments_ty
-_PyPegen_empty_arguments(Parser *p)
+Py_Pegen_ಖಾಲಿಗಳು_arguments(Parser *p)
 {
     asdl_arg_seq *posonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!posonlyargs) {
-        return NULL;
+    ಆದರೆ (!posonlyargs) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     asdl_arg_seq *posargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!posargs) {
-        return NULL;
+    ಆದರೆ (!posargs) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_expr_seq *posdefaults = _Py_asdl_expr_seq_new(0, p->arena);
-    if (!posdefaults) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *posdefaults = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(0, p->arena);
+    ಆದರೆ (!posdefaults) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     asdl_arg_seq *kwonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!kwonlyargs) {
-        return NULL;
+    ಆದರೆ (!kwonlyargs) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_expr_seq *kwdefaults = _Py_asdl_expr_seq_new(0, p->arena);
-    if (!kwdefaults) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *kwdefaults = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(0, p->arena);
+    ಆದರೆ (!kwdefaults) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    return _PyAST_arguments(posonlyargs, posargs, NULL, kwonlyargs,
-                            kwdefaults, NULL, posdefaults, p->arena);
+    ಹಿಂತಿರುಗಿ _PyAST_arguments(posonlyargs, posargs, ಖಾಲಿ, kwonlyargs,
+                            kwdefaults, ಖಾಲಿ, posdefaults, p->arena);
 }
 
 /* Encapsulates the value of an operator_ty into an AugOperator struct */
 AugOperator *
-_PyPegen_augoperator(Parser *p, operator_ty kind)
+_PyPegen_augoperator(Parser *p, operator_ty ಬಗೆ)
 {
-    AugOperator *a = _PyArena_Malloc(p->arena, sizeof(AugOperator));
-    if (!a) {
-        return NULL;
+    AugOperator *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(AugOperator));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    a->kind = kind;
-    return a;
+    a->ಬಗೆ = ಬಗೆ;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Construct a FunctionDef equivalent to function_def, but with decorators */
 stmt_ty
-_PyPegen_function_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty function_def)
+_PyPegen_function_def_decorators(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *decorators, stmt_ty function_def)
 {
-    assert(function_def != NULL);
-    if (function_def->kind == AsyncFunctionDef_kind) {
-        return _PyAST_AsyncFunctionDef(
+    ಪ್ರತಿಜ್ಞಾ(function_def != ಖಾಲಿ);
+    ಆದರೆ (function_def->ಬಗೆ == Async_Function_Def_ಬಗೆ) {
+        ಹಿಂತಿರುಗಿ _PyAST_AsyncFunctionDef(
             function_def->v.AsyncFunctionDef.name,
-            function_def->v.AsyncFunctionDef.args,
+            function_def->v.AsyncFunctionDef.ವಾದಗಳು,
             function_def->v.AsyncFunctionDef.body, decorators,
             function_def->v.AsyncFunctionDef.returns,
             function_def->v.AsyncFunctionDef.type_comment,
             function_def->v.AsyncFunctionDef.type_params,
-            function_def->lineno, function_def->col_offset,
-            function_def->end_lineno, function_def->end_col_offset, p->arena);
+            function_def->lineno, function_def->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+            function_def->ಕೊನೆ_lineno, function_def->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
     }
 
-    return _PyAST_FunctionDef(
+    ಹಿಂತಿರುಗಿ _PyAST_FunctionDef(
         function_def->v.FunctionDef.name,
-        function_def->v.FunctionDef.args,
+        function_def->v.FunctionDef.ವಾದಗಳು,
         function_def->v.FunctionDef.body, decorators,
         function_def->v.FunctionDef.returns,
         function_def->v.FunctionDef.type_comment,
         function_def->v.FunctionDef.type_params,
-        function_def->lineno, function_def->col_offset,
-        function_def->end_lineno, function_def->end_col_offset, p->arena);
+        function_def->lineno, function_def->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+        function_def->ಕೊನೆ_lineno, function_def->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
 /* Construct a ClassDef equivalent to class_def, but with decorators */
 stmt_ty
-_PyPegen_class_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty class_def)
+_PyPegen_class_def_decorators(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *decorators, stmt_ty class_def)
 {
-    assert(class_def != NULL);
-    return _PyAST_ClassDef(
+    ಪ್ರತಿಜ್ಞಾ(class_def != ಖಾಲಿ);
+    ಹಿಂತಿರುಗಿ _PyAST_ClassDef(
         class_def->v.ClassDef.name,
         class_def->v.ClassDef.bases, class_def->v.ClassDef.keywords,
         class_def->v.ClassDef.body, decorators,
         class_def->v.ClassDef.type_params,
-        class_def->lineno, class_def->col_offset, class_def->end_lineno,
-        class_def->end_col_offset, p->arena);
+        class_def->lineno, class_def->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, class_def->ಕೊನೆ_lineno,
+        class_def->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
 /* Construct a KeywordOrStarred */
 KeywordOrStarred *
-_PyPegen_keyword_or_starred(Parser *p, void *element, int is_keyword)
+_PyPegen_keyword_or_starred(Parser *p, ಶೂನ್ಯ *element, ಪೂರ್ಣಾಂಕ is_keyword)
 {
-    KeywordOrStarred *a = _PyArena_Malloc(p->arena, sizeof(KeywordOrStarred));
-    if (!a) {
-        return NULL;
+    KeywordOrStarred *a = _PyArena_Malloc(p->arena, ಗಾತ್ರ(KeywordOrStarred));
+    ಆದರೆ (!a) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     a->element = element;
     a->is_keyword = is_keyword;
-    return a;
+    ಹಿಂತಿರುಗಿ a;
 }
 
 /* Get the number of starred expressions in an asdl_seq* of KeywordOrStarred*s */
-static int
-_seq_number_of_starred_exprs(asdl_seq *seq)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+seq_ಸಂಖ್ಯೆ_ದ_starred_exprs(asdl_seq *seq)
 {
-    int n = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
+    ಪೂರ್ಣಾಂಕ n = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(seq, i);
-        if (!k->is_keyword) {
+        ಆದರೆ (!k->is_keyword) {
             n++;
         }
     }
-    return n;
+    ಹಿಂತಿರುಗಿ n;
 }
 
 /* Extract the starred expressions of an asdl_seq* of KeywordOrStarred*s */
-asdl_expr_seq *
-_PyPegen_seq_extract_starred_exprs(Parser *p, asdl_seq *kwargs)
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+Py_Pegen_seq_ಹೊರತೆಗೆ_starred_exprs(Parser *p, asdl_seq *kwargs)
 {
-    int new_len = _seq_number_of_starred_exprs(kwargs);
-    if (new_len == 0) {
-        return NULL;
+    ಪೂರ್ಣಾಂಕ new_len = seq_ಸಂಖ್ಯೆ_ದ_starred_exprs(kwargs);
+    ಆದರೆ (new_len == 0) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(new_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *new_seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(new_len, p->arena);
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    int idx = 0;
-    for (Py_ssize_t i = 0, len = asdl_seq_LEN(kwargs); i < len; i++) {
+    ಪೂರ್ಣಾಂಕ idx = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, len = asdl_seq_LEN(kwargs); i < len; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(kwargs, i);
-        if (!k->is_keyword) {
-            asdl_seq_SET(new_seq, idx++, k->element);
+        ಆದರೆ (!k->is_keyword) {
+            asdl_seq_ಗಣ(new_seq, idx++, k->element);
         }
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
 /* Return a new asdl_seq* with only the keywords in kwargs */
@@ -845,189 +845,189 @@ asdl_keyword_seq*
 _PyPegen_seq_delete_starred_exprs(Parser *p, asdl_seq *kwargs)
 {
     Py_ssize_t len = asdl_seq_LEN(kwargs);
-    Py_ssize_t new_len = len - _seq_number_of_starred_exprs(kwargs);
-    if (new_len == 0) {
-        return NULL;
+    Py_ssize_t new_len = len - seq_ಸಂಖ್ಯೆ_ದ_starred_exprs(kwargs);
+    ಆದರೆ (new_len == 0) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     asdl_keyword_seq *new_seq = _Py_asdl_keyword_seq_new(new_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    ಆದರೆ (!new_seq) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    int idx = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
+    ಪೂರ್ಣಾಂಕ idx = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(kwargs, i);
-        if (k->is_keyword) {
-            asdl_seq_SET(new_seq, idx++, k->element);
+        ಆದರೆ (k->is_keyword) {
+            asdl_seq_ಗಣ(new_seq, idx++, k->element);
         }
     }
-    return new_seq;
+    ಹಿಂತಿರುಗಿ new_seq;
 }
 
-expr_ty
-_PyPegen_ensure_imaginary(Parser *p, expr_ty exp)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_ensure_imaginary(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಘಾತಾಂಕ)
 {
-    if (exp->kind != Constant_kind || !PyComplex_CheckExact(exp->v.Constant.value)) {
-        RAISE_SYNTAX_ERROR_KNOWN_LOCATION(exp, "imaginary number required in complex literal");
-        return NULL;
+    ಆದರೆ (ಘಾತಾಂಕ->ಬಗೆ != Constant_ಬಗೆ || !PyComplex_CheckExact(ಘಾತಾಂಕ->v.Constant.ಮೌಲ್ಯ)) {
+        RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(ಘಾತಾಂಕ, "imaginary number required in complex literal");
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return exp;
+    ಹಿಂತಿರುಗಿ ಘಾತಾಂಕ;
 }
 
-expr_ty
-_PyPegen_ensure_real(Parser *p, expr_ty exp)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_ensure_real(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಘಾತಾಂಕ)
 {
-    if (exp->kind != Constant_kind || PyComplex_CheckExact(exp->v.Constant.value)) {
-        RAISE_SYNTAX_ERROR_KNOWN_LOCATION(exp, "real number required in complex literal");
-        return NULL;
+    ಆದರೆ (ಘಾತಾಂಕ->ಬಗೆ != Constant_ಬಗೆ || PyComplex_CheckExact(ಘಾತಾಂಕ->v.Constant.ಮೌಲ್ಯ)) {
+        RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(ಘಾತಾಂಕ, "real number required in complex literal");
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return exp;
+    ಹಿಂತಿರುಗಿ ಘಾತಾಂಕ;
 }
 
 mod_ty
 _PyPegen_make_module(Parser *p, asdl_stmt_seq *a) {
-    asdl_type_ignore_seq *type_ignores = NULL;
-    Py_ssize_t num = p->type_ignore_comments.num_items;
-    if (num > 0) {
+    asdl_type_ignore_seq *type_ignores = ಖಾಲಿ;
+    Py_ssize_t ಅಂಕೆ = p->type_ignore_comments.ಅಂಕೆ_ವಸ್ತುಗಳು;
+    ಆದರೆ (ಅಂಕೆ > 0) {
         // Turn the raw (comment, lineno) pairs into TypeIgnore objects in the arena
-        type_ignores = _Py_asdl_type_ignore_seq_new(num, p->arena);
-        if (type_ignores == NULL) {
-            return NULL;
+        type_ignores = _Py_asdl_type_ignore_seq_new(ಅಂಕೆ, p->arena);
+        ಆದರೆ (type_ignores == ಖಾಲಿ) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        for (Py_ssize_t i = 0; i < num; i++) {
-            PyObject *tag = _PyPegen_new_type_comment(p, p->type_ignore_comments.items[i].comment);
-            if (tag == NULL) {
-                return NULL;
+        ಗಾಗಿ (Py_ssize_t i = 0; i < ಅಂಕೆ; i++) {
+            PyObject *ಟ್ಯಾಗ್ = _PyPegen_new_type_comment(p, p->type_ignore_comments.ವಸ್ತುಗಳು[i].comment);
+            ಆದರೆ (ಟ್ಯಾಗ್ == ಖಾಲಿ) {
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
             }
-            type_ignore_ty ti = _PyAST_TypeIgnore(p->type_ignore_comments.items[i].lineno,
-                                                  tag, p->arena);
-            if (ti == NULL) {
-                return NULL;
+            type_ignore_ty ti = _PyAST_TypeIgnore(p->type_ignore_comments.ವಸ್ತುಗಳು[i].lineno,
+                                                  ಟ್ಯಾಗ್, p->arena);
+            ಆದರೆ (ti == ಖಾಲಿ) {
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
             }
-            asdl_seq_SET(type_ignores, i, ti);
+            asdl_seq_ಗಣ(type_ignores, i, ti);
         }
     }
-    return _PyAST_Module(a, type_ignores, p->arena);
+    ಹಿಂತಿರುಗಿ _PyAST_Module(a, type_ignores, p->arena);
 }
 
 PyObject *
-_PyPegen_new_type_comment(Parser *p, const char *s)
+_PyPegen_new_type_comment(Parser *p, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *s)
 {
-    PyObject *res = PyUnicode_DecodeUTF8(s, strlen(s), NULL);
-    if (res == NULL) {
-        return NULL;
+    PyObject *res = PyUnicode_DecodeUTF8(s, ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(s), ಖಾಲಿ);
+    ಆದರೆ (res == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, res) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, res) < 0) {
         Py_DECREF(res);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return res;
+    ಹಿಂತಿರುಗಿ res;
 }
 
 arg_ty
-_PyPegen_add_type_comment_to_arg(Parser *p, arg_ty a, Token *tc)
+Py_Pegen_ಕೂಡಿಸು_type_comment_ಗಮ್ಯ_arg(Parser *p, arg_ty a, Token *tc)
 {
-    if (tc == NULL) {
-        return a;
+    ಆದರೆ (tc == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ a;
     }
-    const char *bytes = PyBytes_AsString(tc->bytes);
-    if (bytes == NULL) {
-        return NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು = Py_ಬೈಟುಗಳು_As_String(tc->ಬೈಟುಗಳು);
+    ಆದರೆ (ಬೈಟುಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    PyObject *tco = _PyPegen_new_type_comment(p, bytes);
-    if (tco == NULL) {
-        return NULL;
+    PyObject *tco = _PyPegen_new_type_comment(p, ಬೈಟುಗಳು);
+    ಆದರೆ (tco == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_arg(a->arg, a->annotation, tco,
-                      a->lineno, a->col_offset, a->end_lineno, a->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_arg(a->arg, a->annotation, tco,
+                      a->lineno, a->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, a->ಕೊನೆ_lineno, a->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                       p->arena);
 }
 
 /* Checks if the NOTEQUAL token is valid given the current parser flags
 0 indicates success and nonzero indicates failure (an exception may be set) */
-int
+ಪೂರ್ಣಾಂಕ
 _PyPegen_check_barry_as_flufl(Parser *p, Token* t) {
-    assert(t->bytes != NULL);
-    assert(t->type == NOTEQUAL);
+    ಪ್ರತಿಜ್ಞಾ(t->ಬೈಟುಗಳು != ಖಾಲಿ);
+    ಪ್ರತಿಜ್ಞಾ(t->type == NOTEQUAL);
 
-    const char* tok_str = PyBytes_AS_STRING(t->bytes);
-    if (p->flags & PyPARSE_BARRY_AS_BDFL && strcmp(tok_str, "<>") != 0) {
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* tok_str = Py_ಬೈಟುಗಳು_AS_STRING(t->ಬೈಟುಗಳು);
+    ಆದರೆ (p->flags & PyPARSE_BARRY_AS_BDFL && strcmp(tok_str, "<>") != 0) {
         RAISE_SYNTAX_ERROR("with Barry as BDFL, use '<>' instead of '!='");
-        return -1;
+        ಹಿಂತಿರುಗಿ -1;
     }
-    if (!(p->flags & PyPARSE_BARRY_AS_BDFL)) {
-        return strcmp(tok_str, "!=");
+    ಆದರೆ (!(p->flags & PyPARSE_BARRY_AS_BDFL)) {
+        ಹಿಂತಿರುಗಿ strcmp(tok_str, "!=");
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_PyPegen_check_legacy_stmt(Parser *p, expr_ty name) {
-    if (name->kind != Name_kind) {
-        return 0;
+ಪೂರ್ಣಾಂಕ
+_PyPegen_check_legacy_stmt(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty name) {
+    ಆದರೆ (name->ಬಗೆ != Name_ಬಗೆ) {
+        ಹಿಂತಿರುಗಿ 0;
     }
-    const char* candidates[2] = {"print", "exec"};
-    for (int i=0; i<2; i++) {
-        if (PyUnicode_CompareWithASCIIString(name->v.Name.id, candidates[i]) == 0) {
-            return 1;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* candidates[2] = {"print", "exec"};
+    ಗಾಗಿ (ಪೂರ್ಣಾಂಕ i=0; i<2; i++) {
+        ಆದರೆ (PyUnicode_CompareWithASCIIString(name->v.Name.id, candidates[i]) == 0) {
+            ಹಿಂತಿರುಗಿ 1;
         }
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-void *
-_PyPegen_raise_error_for_missing_comma(Parser *p, expr_ty a, expr_ty b)
+ಶೂನ್ಯ *
+_PyPegen_raise_error_for_missing_comma(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty a, ಅಭಿವ್ಯಕ್ತಿ_ty b)
 {
     // Don't raise for legacy statements like "print x" or "exec x"
-    if (_PyPegen_check_legacy_stmt(p, a)) {
-        return NULL;
+    ಆದರೆ (_PyPegen_check_legacy_stmt(p, a)) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     // Only raise inside parentheses/brackets (level > 0)
-    if (p->tokens[p->mark - 1]->level == 0) {
-        return NULL;
+    ಆದರೆ (p->ಟೋಕನುಗಳು[p->mark - 1]->level == 0) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     // For multi-line expressions (like string concatenations), point to the
     // last line instead of the first for a more helpful error message.
     // Use a->col_offset as the starting column since all strings in the
     // concatenation typically share the same indentation.
-    if (a->end_lineno > a->lineno) {
-        return RAISE_ERROR_KNOWN_LOCATION(
-            p, PyExc_SyntaxError, a->end_lineno, a->col_offset,
-            a->end_lineno, a->end_col_offset,
+    ಆದರೆ (a->ಕೊನೆ_lineno > a->lineno) {
+        ಹಿಂತಿರುಗಿ RAISE_ERROR_ತಿಳಿದ_LOCATION(
+            p, PyExc_SyntaxError, a->ಕೊನೆ_lineno, a->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+            a->ಕೊನೆ_lineno, a->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
             "invalid syntax. Perhaps you forgot a comma?"
         );
     }
-    return RAISE_ERROR_KNOWN_LOCATION(
-        p, PyExc_SyntaxError, a->lineno, a->col_offset,
-        b->end_lineno, b->end_col_offset,
+    ಹಿಂತಿರುಗಿ RAISE_ERROR_ತಿಳಿದ_LOCATION(
+        p, PyExc_SyntaxError, a->lineno, a->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+        b->ಕೊನೆ_lineno, b->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
         "invalid syntax. Perhaps you forgot a comma?"
     );
 }
 
-static ResultTokenWithMetadata *
-result_token_with_metadata(Parser *p, void *result, PyObject *metadata)
+ಸ್ಥಿರ ಫಲಿತಾಂಶ_Token_With_Metadata *
+ಫಲಿತಾಂಶ_token_with_metadata(Parser *p, ಶೂನ್ಯ *ಫಲಿತಾಂಶ, PyObject *metadata)
 {
-    ResultTokenWithMetadata *res = _PyArena_Malloc(p->arena, sizeof(ResultTokenWithMetadata));
-    if (res == NULL) {
-        return NULL;
+    ಫಲಿತಾಂಶ_Token_With_Metadata *res = _PyArena_Malloc(p->arena, ಗಾತ್ರ(ಫಲಿತಾಂಶ_Token_With_Metadata));
+    ಆದರೆ (res == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
     res->metadata = metadata;
-    res->result = result;
-    return res;
+    res->ಫಲಿತಾಂಶ = ಫಲಿತಾಂಶ;
+    ಹಿಂತಿರುಗಿ res;
 }
 
-static char
-formatted_string_prefix(const Parser *p)
+ಸ್ಥಿರ ಅಕ್ಷರ
+formatted_string_ಪೂರ್ವಪ್ರತ್ಯಯ(ಸ್ಥಿರಾಂಕ Parser *p)
 {
-    int nested = 0;
-    for (int i = p->mark - 1; i >= 0; i--) {
-        int type = p->tokens[i]->type;
-        if (type == FSTRING_END || type == TSTRING_END) {
+    ಪೂರ್ಣಾಂಕ nested = 0;
+    ಗಾಗಿ (ಪೂರ್ಣಾಂಕ i = p->mark - 1; i >= 0; i--) {
+        ಪೂರ್ಣಾಂಕ type = p->ಟೋಕನುಗಳು[i]->type;
+        ಆದರೆ (type == FSTRING_ಕೊನೆ || type == TSTRING_ಕೊನೆ) {
             nested++;
         }
-        else if (type == FSTRING_START || type == TSTRING_START) {
-            if (nested == 0) {
-                return type == TSTRING_START ? 't' : 'f';
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (type == FSTRING_ಆರಂಭ || type == TSTRING_ಆರಂಭ) {
+            ಆದರೆ (nested == 0) {
+                ಹಿಂತಿರುಗಿ type == TSTRING_ಆರಂಭ ? 't' : 'f';
             }
             nested--;
         }
@@ -1035,240 +1035,240 @@ formatted_string_prefix(const Parser *p)
     Py_UNREACHABLE();
 }
 
-ResultTokenWithMetadata *
-_PyPegen_check_fstring_conversion(Parser *p, Token* conv_token, expr_ty conv)
+ಫಲಿತಾಂಶ_Token_With_Metadata *
+_PyPegen_check_fstring_conversion(Parser *p, Token* conv_token, ಅಭಿವ್ಯಕ್ತಿ_ty conv)
 {
-    if (conv_token->lineno != conv->lineno || conv_token->end_col_offset != conv->col_offset) {
-        return RAISE_SYNTAX_ERROR_KNOWN_RANGE(
+    ಆದರೆ (conv_token->lineno != conv->lineno || conv_token->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ != conv->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ) {
+        ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR_ತಿಳಿದ_RANGE(
             conv_token, conv,
             "%c-string: conversion type must come right after the exclamation mark",
-            formatted_string_prefix(p)
+            formatted_string_ಪೂರ್ವಪ್ರತ್ಯಯ(p)
         );
     }
 
-    Py_UCS4 first = PyUnicode_READ_CHAR(conv->v.Name.id, 0);
-    if (PyUnicode_GET_LENGTH(conv->v.Name.id) > 1 ||
-            !(first == 's' || first == 'r' || first == 'a')) {
-        RAISE_SYNTAX_ERROR_KNOWN_LOCATION(conv,
+    Py_UCS4 ಮೊದಲ = PyUnicode_READ_CHAR(conv->v.Name.id, 0);
+    ಆದರೆ (Py_Unicode_GET_ಉದ್ದಳತೆ(conv->v.Name.id) > 1 ||
+            !(ಮೊದಲ == 's' || ಮೊದಲ == 'r' || ಮೊದಲ == 'a')) {
+        RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(conv,
                                             "%c-string: invalid conversion character %R: expected 's', 'r', or 'a'",
-                                            formatted_string_prefix(p),
+                                            formatted_string_ಪೂರ್ವಪ್ರತ್ಯಯ(p),
                                             conv->v.Name.id);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    return result_token_with_metadata(p, conv, conv_token->metadata);
+    ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ_token_with_metadata(p, conv, conv_token->metadata);
 }
 
-ResultTokenWithMetadata *
-_PyPegen_setup_full_format_spec(Parser *p, Token *colon, asdl_expr_seq *spec, int lineno, int col_offset,
-                                int end_lineno, int end_col_offset, PyArena *arena)
+ಫಲಿತಾಂಶ_Token_With_Metadata *
+Py_Pegen_ಸಿದ್ಧತೆ_ತುಂಬಿದ_format_spec(Parser *p, Token *colon, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *spec, ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena)
 {
-    if (!spec) {
-        return NULL;
+    ಆದರೆ (!spec) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     // This is needed to keep compatibility with 3.11, where an empty format
     // spec is parsed as an *empty* JoinedStr node, instead of having an empty
     // constant in it.
-    Py_ssize_t n_items = asdl_seq_LEN(spec);
-    Py_ssize_t non_empty_count = 0;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
-        expr_ty item = asdl_seq_GET(spec, i);
-        non_empty_count += !(item->kind == Constant_kind &&
-                             PyUnicode_CheckExact(item->v.Constant.value) &&
-                             PyUnicode_GET_LENGTH(item->v.Constant.value) == 0);
+    Py_ssize_t n_ವಸ್ತುಗಳು = asdl_seq_LEN(spec);
+    Py_ssize_t non_ಖಾಲಿಗಳು_ಎಣಿಕೆ = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < n_ವಸ್ತುಗಳು; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty ಅಂಶ = asdl_seq_GET(spec, i);
+        non_ಖಾಲಿಗಳು_ಎಣಿಕೆ += !(ಅಂಶ->ಬಗೆ == Constant_ಬಗೆ &&
+                             PyUnicode_CheckExact(ಅಂಶ->v.Constant.ಮೌಲ್ಯ) &&
+                             Py_Unicode_GET_ಉದ್ದಳತೆ(ಅಂಶ->v.Constant.ಮೌಲ್ಯ) == 0);
     }
-    if (non_empty_count != n_items) {
-        asdl_expr_seq *resized_spec =
-            _Py_asdl_expr_seq_new(non_empty_count, p->arena);
-        if (resized_spec == NULL) {
-            return NULL;
+    ಆದರೆ (non_ಖಾಲಿಗಳು_ಎಣಿಕೆ != n_ವಸ್ತುಗಳು) {
+        asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *resized_spec =
+            Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(non_ಖಾಲಿಗಳು_ಎಣಿಕೆ, p->arena);
+        ಆದರೆ (resized_spec == ಖಾಲಿ) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
         Py_ssize_t j = 0;
-        for (Py_ssize_t i = 0; i < n_items; i++) {
-            expr_ty item = asdl_seq_GET(spec, i);
-            if (item->kind == Constant_kind &&
-                PyUnicode_CheckExact(item->v.Constant.value) &&
-                PyUnicode_GET_LENGTH(item->v.Constant.value) == 0) {
-                continue;
+        ಗಾಗಿ (Py_ssize_t i = 0; i < n_ವಸ್ತುಗಳು; i++) {
+            ಅಭಿವ್ಯಕ್ತಿ_ty ಅಂಶ = asdl_seq_GET(spec, i);
+            ಆದರೆ (ಅಂಶ->ಬಗೆ == Constant_ಬಗೆ &&
+                PyUnicode_CheckExact(ಅಂಶ->v.Constant.ಮೌಲ್ಯ) &&
+                Py_Unicode_GET_ಉದ್ದಳತೆ(ಅಂಶ->v.Constant.ಮೌಲ್ಯ) == 0) {
+                ಮುಂದುವರಿ;
             }
-            asdl_seq_SET(resized_spec, j++, item);
+            asdl_seq_ಗಣ(resized_spec, j++, ಅಂಶ);
         }
-        assert(j == non_empty_count);
+        ಪ್ರತಿಜ್ಞಾ(j == non_ಖಾಲಿಗಳು_ಎಣಿಕೆ);
         spec = resized_spec;
     }
-    expr_ty res;
+    ಅಭಿವ್ಯಕ್ತಿ_ty res;
     Py_ssize_t n = asdl_seq_LEN(spec);
-    if (n == 0 || (n == 1 && asdl_seq_GET(spec, 0)->kind == Constant_kind)) {
-        res = _PyAST_JoinedStr(spec, lineno, col_offset, end_lineno,
-                                    end_col_offset, p->arena);
-    } else {
-        res = _PyPegen_concatenate_strings(p, spec,
-                             lineno, col_offset, end_lineno,
-                             end_col_offset, arena);
+    ಆದರೆ (n == 0 || (n == 1 && asdl_seq_GET(spec, 0)->ಬಗೆ == Constant_ಬಗೆ)) {
+        res = _PyAST_JoinedStr(spec, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno,
+                                    ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        res = Py_Pegen_concatenate_ಅಕ್ಷರಸರಣಿಗಳು(p, spec,
+                             lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno,
+                             ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
     }
-    if (!res) {
-        return NULL;
+    ಆದರೆ (!res) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return result_token_with_metadata(p, res, colon->metadata);
+    ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ_token_with_metadata(p, res, colon->metadata);
 }
 
-const char *
-_PyPegen_get_expr_name(expr_ty e)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+Py_Pegen_get_ಅಭಿವ್ಯಕ್ತಿ_name(ಅಭಿವ್ಯಕ್ತಿ_ty e)
 {
-    assert(e != NULL);
-    switch (e->kind) {
-        case Attribute_kind:
-            return "attribute";
-        case Subscript_kind:
-            return "subscript";
-        case Starred_kind:
-            return "starred";
-        case Name_kind:
-            return "name";
-        case List_kind:
-            return "list";
-        case Tuple_kind:
-            return "tuple";
-        case Lambda_kind:
-            return "lambda";
-        case Call_kind:
-            return "function call";
-        case BoolOp_kind:
-        case BinOp_kind:
-        case UnaryOp_kind:
-            return "expression";
-        case GeneratorExp_kind:
-            return "generator expression";
-        case Yield_kind:
-        case YieldFrom_kind:
-            return "yield expression";
-        case Await_kind:
-            return "await expression";
-        case ListComp_kind:
-            return "list comprehension";
-        case SetComp_kind:
-            return "set comprehension";
-        case DictComp_kind:
-            return "dict comprehension";
-        case Dict_kind:
-            return "dict literal";
-        case Set_kind:
-            return "set display";
-        case JoinedStr_kind:
-        case FormattedValue_kind:
-            return "f-string expression";
-        case TemplateStr_kind:
-        case Interpolation_kind:
-            return "t-string expression";
-        case Constant_kind: {
-            PyObject *value = e->v.Constant.value;
-            if (value == Py_None) {
-                return "None";
+    ಪ್ರತಿಜ್ಞಾ(e != ಖಾಲಿ);
+    ಆಯ್ಕೆ (e->ಬಗೆ) {
+        ಸ್ಥಿತಿ Attribute_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "attribute";
+        ಸ್ಥಿತಿ Subscript_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "subscript";
+        ಸ್ಥಿತಿ Starred_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "starred";
+        ಸ್ಥಿತಿ Name_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "name";
+        ಸ್ಥಿತಿ List_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "list";
+        ಸ್ಥಿತಿ Tuple_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "tuple";
+        ಸ್ಥಿತಿ Lambda_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "lambda";
+        ಸ್ಥಿತಿ Call_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "function call";
+        ಸ್ಥಿತಿ Bool_Op_ಬಗೆ:
+        ಸ್ಥಿತಿ Bin_Op_ಬಗೆ:
+        ಸ್ಥಿತಿ Unary_Op_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "expression";
+        ಸ್ಥಿತಿ Generator_Exp_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "generator expression";
+        ಸ್ಥಿತಿ Yield_ಬಗೆ:
+        ಸ್ಥಿತಿ Yield_From_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "yield expression";
+        ಸ್ಥಿತಿ Await_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "await expression";
+        ಸ್ಥಿತಿ List_Comp_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "list comprehension";
+        ಸ್ಥಿತಿ ಗಣ_Comp_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "set comprehension";
+        ಸ್ಥಿತಿ Dict_Comp_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "dict comprehension";
+        ಸ್ಥಿತಿ Dict_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "dict literal";
+        ಸ್ಥಿತಿ ಗಣ_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "set display";
+        ಸ್ಥಿತಿ Joined_Str_ಬಗೆ:
+        ಸ್ಥಿತಿ Formatted_ಮೌಲ್ಯ_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "f-string expression";
+        ಸ್ಥಿತಿ Template_Str_ಬಗೆ:
+        ಸ್ಥಿತಿ Interpolation_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "t-string expression";
+        ಸ್ಥಿತಿ Constant_ಬಗೆ: {
+            PyObject *ಮೌಲ್ಯ = e->v.Constant.ಮೌಲ್ಯ;
+            ಆದರೆ (ಮೌಲ್ಯ == Py_None) {
+                ಹಿಂತಿರುಗಿ "None";
             }
-            if (value == Py_False) {
-                return "False";
+            ಆದರೆ (ಮೌಲ್ಯ == Py_False) {
+                ಹಿಂತಿರುಗಿ "False";
             }
-            if (value == Py_True) {
-                return "True";
+            ಆದರೆ (ಮೌಲ್ಯ == Py_True) {
+                ಹಿಂತಿರುಗಿ "True";
             }
-            if (value == Py_Ellipsis) {
-                return "ellipsis";
+            ಆದರೆ (ಮೌಲ್ಯ == Py_Ellipsis) {
+                ಹಿಂತಿರುಗಿ "ellipsis";
             }
-            return "literal";
+            ಹಿಂತಿರುಗಿ "literal";
         }
-        case Compare_kind:
-            return "comparison";
-        case IfExp_kind:
-            return "conditional expression";
-        case NamedExpr_kind:
-            return "named expression";
-        default:
+        ಸ್ಥಿತಿ Compare_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "comparison";
+        ಸ್ಥಿತಿ If_Exp_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "conditional expression";
+        ಸ್ಥಿತಿ Named_ಅಭಿವ್ಯಕ್ತಿ_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ "named expression";
+        ಪೂರ್ವನಿಯೋಜಿತ:
             PyErr_Format(PyExc_SystemError,
                          "unexpected expression in assignment %d (line %d)",
-                         e->kind, e->lineno);
-            return NULL;
+                         e->ಬಗೆ, e->lineno);
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 }
 
-expr_ty
-_PyPegen_get_last_comprehension_item(comprehension_ty comprehension) {
-    if (comprehension->ifs == NULL || asdl_seq_LEN(comprehension->ifs) == 0) {
-        return comprehension->iter;
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_get_ಕೊನೆಯ_comprehension_ಅಂಶ(comprehension_ty comprehension) {
+    ಆದರೆ (comprehension->ifs == ಖಾಲಿ || asdl_seq_LEN(comprehension->ifs) == 0) {
+        ಹಿಂತಿರುಗಿ comprehension->iter;
     }
-    return PyPegen_last_item(comprehension->ifs, expr_ty);
+    ಹಿಂತಿರುಗಿ Py_Pegen_ಕೊನೆಯ_ಅಂಶ(comprehension->ifs, ಅಭಿವ್ಯಕ್ತಿ_ty);
 }
 
-expr_ty _PyPegen_collect_call_seqs(Parser *p, asdl_expr_seq *a, asdl_seq *b,
-                     int lineno, int col_offset, int end_lineno,
-                     int end_col_offset, PyArena *arena) {
-    Py_ssize_t args_len = asdl_seq_LEN(a);
-    Py_ssize_t total_len = args_len;
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_collect_call_seqs(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *a, asdl_seq *b,
+                     ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                     ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena) {
+    Py_ssize_t ವಾದಗಳು_len = asdl_seq_LEN(a);
+    Py_ssize_t ಒಟ್ಟು_len = ವಾದಗಳು_len;
 
-    if (b == NULL) {
-        return _PyAST_Call(_PyPegen_dummy_name(p), a, NULL, lineno, col_offset,
-                        end_lineno, end_col_offset, arena);
+    ಆದರೆ (b == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ _PyAST_Call(_PyPegen_dummy_name(p), a, ಖಾಲಿ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                        ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 
     }
 
-    asdl_expr_seq *starreds = _PyPegen_seq_extract_starred_exprs(p, b);
-    if (!starreds && PyErr_Occurred()) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *starreds = Py_Pegen_seq_ಹೊರತೆಗೆ_starred_exprs(p, b);
+    ಆದರೆ (!starreds && PyErr_Occurred()) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     asdl_keyword_seq *keywords = _PyPegen_seq_delete_starred_exprs(p, b);
-    if (!keywords && PyErr_Occurred()) {
-        return NULL;
+    ಆದರೆ (!keywords && PyErr_Occurred()) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    if (starreds) {
-        total_len += asdl_seq_LEN(starreds);
+    ಆದರೆ (starreds) {
+        ಒಟ್ಟು_len += asdl_seq_LEN(starreds);
     }
 
-    asdl_expr_seq *args = _Py_asdl_expr_seq_new(total_len, arena);
-    if (args == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ವಾದಗಳು = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(ಒಟ್ಟು_len, arena);
+    ಆದರೆ (ವಾದಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     Py_ssize_t i = 0;
-    for (i = 0; i < args_len; i++) {
-        asdl_seq_SET(args, i, asdl_seq_GET(a, i));
+    ಗಾಗಿ (i = 0; i < ವಾದಗಳು_len; i++) {
+        asdl_seq_ಗಣ(ವಾದಗಳು, i, asdl_seq_GET(a, i));
     }
-    for (; i < total_len; i++) {
-        asdl_seq_SET(args, i, asdl_seq_GET(starreds, i - args_len));
+    ಗಾಗಿ (; i < ಒಟ್ಟು_len; i++) {
+        asdl_seq_ಗಣ(ವಾದಗಳು, i, asdl_seq_GET(starreds, i - ವಾದಗಳು_len));
     }
 
-    return _PyAST_Call(_PyPegen_dummy_name(p), args, keywords, lineno,
-                       col_offset, end_lineno, end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _PyAST_Call(_PyPegen_dummy_name(p), ವಾದಗಳು, keywords, lineno,
+                       ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
 // AST Error reporting helpers
 
-expr_ty
-_PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_get_invalid_ಗುರಿ(ಅಭಿವ್ಯಕ್ತಿ_ty e, TARGETS_TYPE targets_type)
 {
-    if (e == NULL) {
-        return NULL;
+    ಆದರೆ (e == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    if (targets_type == SINGLE_TARGETS ||
+    ಆದರೆ (targets_type == SINGLE_TARGETS ||
         targets_type == ATTRIBUTE_OR_SUBSCRIPT_TARGETS) {
-        if (targets_type == SINGLE_TARGETS && e->kind == Name_kind) {
-            return NULL;
+        ಆದರೆ (targets_type == SINGLE_TARGETS && e->ಬಗೆ == Name_ಬಗೆ) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        return e->kind == Attribute_kind || e->kind == Subscript_kind ? NULL : e;
+        ಹಿಂತಿರುಗಿ e->ಬಗೆ == Attribute_ಬಗೆ || e->ಬಗೆ == Subscript_ಬಗೆ ? ಖಾಲಿ : e;
     }
 
-#define VISIT_CONTAINER(CONTAINER, TYPE) do { \
+#ವ್ಯಾಖ್ಯಾನಿಸು ಭೇಟಿ_CONTAINER(CONTAINER, TYPE) ಮಾಡು { \
         Py_ssize_t len = asdl_seq_LEN((CONTAINER)->v.TYPE.elts);\
-        for (Py_ssize_t i = 0; i < len; i++) {\
-            expr_ty other = asdl_seq_GET((CONTAINER)->v.TYPE.elts, i);\
-            expr_ty child = _PyPegen_get_invalid_target(other, targets_type);\
-            if (child != NULL) {\
-                return child;\
+        ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {\
+            ಅಭಿವ್ಯಕ್ತಿ_ty other = asdl_seq_GET((CONTAINER)->v.TYPE.elts, i);\
+            ಅಭಿವ್ಯಕ್ತಿ_ty ಮಗು = Py_Pegen_get_invalid_ಗುರಿ(other, targets_type);\
+            ಆದರೆ (ಮಗು != ಖಾಲಿ) {\
+                ಹಿಂತಿರುಗಿ ಮಗು;\
             }\
         }\
-    } while (0)
+    } ಆಗ (0)
 
     // We only need to visit List and Tuple nodes recursively as those
     // are the only ones that can contain valid names in targets when
@@ -1276,60 +1276,60 @@ _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type)
     // that is a container (like Sets or Dicts) is directly invalid and
     // we don't need to visit it recursively.
 
-    switch (e->kind) {
-        case List_kind:
-            VISIT_CONTAINER(e, List);
-            return NULL;
-        case Tuple_kind:
-            VISIT_CONTAINER(e, Tuple);
-            return NULL;
-        case Starred_kind:
-            if (targets_type == DEL_TARGETS) {
-                return e;
+    ಆಯ್ಕೆ (e->ಬಗೆ) {
+        ಸ್ಥಿತಿ List_ಬಗೆ:
+            ಭೇಟಿ_CONTAINER(e, List);
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+        ಸ್ಥಿತಿ Tuple_ಬಗೆ:
+            ಭೇಟಿ_CONTAINER(e, Tuple);
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+        ಸ್ಥಿತಿ Starred_ಬಗೆ:
+            ಆದರೆ (targets_type == DEL_TARGETS) {
+                ಹಿಂತಿರುಗಿ e;
             }
-            return _PyPegen_get_invalid_target(e->v.Starred.value, targets_type);
-        case Compare_kind:
+            ಹಿಂತಿರುಗಿ Py_Pegen_get_invalid_ಗುರಿ(e->v.Starred.ಮೌಲ್ಯ, targets_type);
+        ಸ್ಥಿತಿ Compare_ಬಗೆ:
             // This is needed, because the `a in b` in `for a in b` gets parsed
             // as a comparison, and so we need to search the left side of the comparison
             // for invalid targets.
-            if (targets_type == FOR_TARGETS) {
+            ಆದರೆ (targets_type == FOR_TARGETS) {
                 cmpop_ty cmpop = (cmpop_ty) asdl_seq_GET(e->v.Compare.ops, 0);
-                if (cmpop == In) {
-                    return _PyPegen_get_invalid_target(e->v.Compare.left, targets_type);
+                ಆದರೆ (cmpop == ಒಳ) {
+                    ಹಿಂತಿರುಗಿ Py_Pegen_get_invalid_ಗುರಿ(e->v.Compare.ಎಡ, targets_type);
                 }
-                return NULL;
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
             }
-            return e;
-        case Name_kind:
-        case Subscript_kind:
-        case Attribute_kind:
-            return NULL;
-        default:
-            return e;
+            ಹಿಂತಿರುಗಿ e;
+        ಸ್ಥಿತಿ Name_ಬಗೆ:
+        ಸ್ಥಿತಿ Subscript_ಬಗೆ:
+        ಸ್ಥಿತಿ Attribute_ಬಗೆ:
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
+        ಪೂರ್ವನಿಯೋಜಿತ:
+            ಹಿಂತಿರುಗಿ e;
     }
 }
 
-void *_PyPegen_arguments_parsing_error(Parser *p, expr_ty e) {
-    int kwarg_unpacking = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(e->v.Call.keywords); i < l; i++) {
+ಶೂನ್ಯ *_PyPegen_arguments_parsing_error(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty e) {
+    ಪೂರ್ಣಾಂಕ kwarg_unpacking = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0, l = asdl_seq_LEN(e->v.Call.keywords); i < l; i++) {
         keyword_ty keyword = asdl_seq_GET(e->v.Call.keywords, i);
-        if (!keyword->arg) {
+        ಆದರೆ (!keyword->arg) {
             kwarg_unpacking = 1;
         }
     }
 
-    const char *msg = NULL;
-    if (kwarg_unpacking) {
-        msg = "positional argument follows keyword argument unpacking";
-    } else {
-        msg = "positional argument follows keyword argument";
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ = ಖಾಲಿ;
+    ಆದರೆ (kwarg_unpacking) {
+        ಸಂದೇಶ = "positional argument follows keyword argument unpacking";
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        ಸಂದೇಶ = "positional argument follows keyword argument";
     }
 
-    return RAISE_SYNTAX_ERROR(msg);
+    ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR(ಸಂದೇಶ);
 }
 
-void *
-_PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq *comprehensions)
+ಶೂನ್ಯ *
+Py_Pegen_nonparen_genexp_ಒಳ_call(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ವಾದಗಳು, asdl_comprehension_seq *comprehensions)
 {
     /* The rule that calls this function is 'args for_if_clauses'.
        For the input f(L, x for x in y), L and x are in args and
@@ -1338,452 +1338,452 @@ _PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq
        gets successfully parsed and then we pass the last
        argument (x in the above example) as the location of the
        error */
-    Py_ssize_t len = asdl_seq_LEN(args->v.Call.args);
-    if (len <= 1) {
-        return NULL;
+    Py_ssize_t len = asdl_seq_LEN(ವಾದಗಳು->v.Call.ವಾದಗಳು);
+    ಆದರೆ (len <= 1) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    comprehension_ty last_comprehension = PyPegen_last_item(comprehensions, comprehension_ty);
+    comprehension_ty ಕೊನೆಯ_comprehension = Py_Pegen_ಕೊನೆಯ_ಅಂಶ(comprehensions, comprehension_ty);
 
-    return RAISE_SYNTAX_ERROR_KNOWN_RANGE(
-        (expr_ty) asdl_seq_GET(args->v.Call.args, len - 1),
-        _PyPegen_get_last_comprehension_item(last_comprehension),
+    ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR_ತಿಳಿದ_RANGE(
+        (ಅಭಿವ್ಯಕ್ತಿ_ty) asdl_seq_GET(ವಾದಗಳು->v.Call.ವಾದಗಳು, len - 1),
+        Py_Pegen_get_ಕೊನೆಯ_comprehension_ಅಂಶ(ಕೊನೆಯ_comprehension),
         "Generator expression must be parenthesized"
     );
 }
 
 // Fstring stuff
 
-static expr_ty
-_PyPegen_decode_fstring_part(Parser* p, int is_raw, expr_ty constant, Token* token) {
-    assert(PyUnicode_CheckExact(constant->v.Constant.value));
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_decode_fstring_part(Parser* p, ಪೂರ್ಣಾಂಕ is_raw, ಅಭಿವ್ಯಕ್ತಿ_ty constant, Token* token) {
+    ಪ್ರತಿಜ್ಞಾ(PyUnicode_CheckExact(constant->v.Constant.ಮೌಲ್ಯ));
 
-    const char* bstr = PyUnicode_AsUTF8(constant->v.Constant.value);
-    if (bstr == NULL) {
-        return NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* bstr = PyUnicode_AsUTF8(constant->v.Constant.ಮೌಲ್ಯ);
+    ಆದರೆ (bstr == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    size_t len;
-    if (strcmp(bstr, "{{") == 0 || strcmp(bstr, "}}") == 0) {
+    ಗಾತ್ರ_t len;
+    ಆದರೆ (strcmp(bstr, "{{") == 0 || strcmp(bstr, "}}") == 0) {
         len = 1;
-    } else {
-        len = strlen(bstr);
+    } ಇಲ್ಲದಿದ್ದರೆ {
+        len = ಅಕ್ಷರಸರಣಿ_ಉದ್ದ(bstr);
     }
 
-    is_raw = is_raw || strchr(bstr, '\\') == NULL;
+    is_raw = is_raw || strchr(bstr, '\\') == ಖಾಲಿ;
     PyObject *str = _PyPegen_decode_string(p, is_raw, bstr, len, token);
-    if (str == NULL) {
+    ಆದರೆ (str == ಖಾಲಿ) {
         _Pypegen_raise_decode_error(p);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Constant(str, NULL, constant->lineno, constant->col_offset,
-                           constant->end_lineno, constant->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(str, ಖಾಲಿ, constant->lineno, constant->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           constant->ಕೊನೆ_lineno, constant->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                            p->arena);
 }
 
-static asdl_expr_seq *
-_get_resized_exprs(Parser *p, Token *a, asdl_expr_seq *raw_expressions,
-                   Token *b, int is_tstring)
+ಸ್ಥಿರ asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+_get_resized_exprs(Parser *p, Token *a, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *raw_expressions,
+                   Token *b, ಪೂರ್ಣಾಂಕ is_tstring)
 {
-    Py_ssize_t n_items = asdl_seq_LEN(raw_expressions);
-    Py_ssize_t total_items = n_items;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
-        expr_ty item = asdl_seq_GET(raw_expressions, i);
-        if (item->kind == JoinedStr_kind) {
-            total_items += asdl_seq_LEN(item->v.JoinedStr.values) - 1;
+    Py_ssize_t n_ವಸ್ತುಗಳು = asdl_seq_LEN(raw_expressions);
+    Py_ssize_t ಒಟ್ಟು_ವಸ್ತುಗಳು = n_ವಸ್ತುಗಳು;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < n_ವಸ್ತುಗಳು; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty ಅಂಶ = asdl_seq_GET(raw_expressions, i);
+        ಆದರೆ (ಅಂಶ->ಬಗೆ == Joined_Str_ಬಗೆ) {
+            ಒಟ್ಟು_ವಸ್ತುಗಳು += asdl_seq_LEN(ಅಂಶ->v.JoinedStr.ಮೌಲ್ಯಗಳು) - 1;
         }
     }
 
-    const char* quote_str = PyBytes_AsString(a->bytes);
-    if (quote_str == NULL) {
-        return NULL;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* quote_str = Py_ಬೈಟುಗಳು_As_String(a->ಬೈಟುಗಳು);
+    ಆದರೆ (quote_str == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    int is_raw = strpbrk(quote_str, "rR") != NULL;
+    ಪೂರ್ಣಾಂಕ is_raw = strpbrk(quote_str, "rR") != ಖಾಲಿ;
 
-    asdl_expr_seq *seq = _Py_asdl_expr_seq_new(total_items, p->arena);
-    if (seq == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *seq = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(ಒಟ್ಟು_ವಸ್ತುಗಳು, p->arena);
+    ಆದರೆ (seq == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    Py_ssize_t index = 0;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
-        expr_ty item = asdl_seq_GET(raw_expressions, i);
+    Py_ssize_t ಸೂಚ್ಯಂಕ = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < n_ವಸ್ತುಗಳು; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty ಅಂಶ = asdl_seq_GET(raw_expressions, i);
 
         /* Debug expressions arrive as JoinedStr(text, value); flatten them
            into the surrounding string. */
-        if (item->kind == JoinedStr_kind) {
-            asdl_expr_seq *values = item->v.JoinedStr.values;
-            if (asdl_seq_LEN(values) != 2) {
+        ಆದರೆ (ಅಂಶ->ಬಗೆ == Joined_Str_ಬಗೆ) {
+            asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಮೌಲ್ಯಗಳು = ಅಂಶ->v.JoinedStr.ಮೌಲ್ಯಗಳು;
+            ಆದರೆ (asdl_seq_LEN(ಮೌಲ್ಯಗಳು) != 2) {
                 PyErr_Format(PyExc_SystemError,
                              is_tstring
                              ? "unexpected TemplateStr node without debug data in t-string at line %d"
                              : "unexpected JoinedStr node without debug data in f-string at line %d",
-                             item->lineno);
-                return NULL;
+                             ಅಂಶ->lineno);
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
             }
 
-            expr_ty first = asdl_seq_GET(values, 0);
-            assert(first->kind == Constant_kind);
-            asdl_seq_SET(seq, index++, first);
+            ಅಭಿವ್ಯಕ್ತಿ_ty ಮೊದಲ = asdl_seq_GET(ಮೌಲ್ಯಗಳು, 0);
+            ಪ್ರತಿಜ್ಞಾ(ಮೊದಲ->ಬಗೆ == Constant_ಬಗೆ);
+            asdl_seq_ಗಣ(seq, ಸೂಚ್ಯಂಕ++, ಮೊದಲ);
 
-            expr_ty second = asdl_seq_GET(values, 1);
-            assert((is_tstring &&
-                    second->kind == Interpolation_kind) ||
-                   second->kind == FormattedValue_kind);
-            asdl_seq_SET(seq, index++, second);
+            ಅಭಿವ್ಯಕ್ತಿ_ty ಎರಡನೇ = asdl_seq_GET(ಮೌಲ್ಯಗಳು, 1);
+            ಪ್ರತಿಜ್ಞಾ((is_tstring &&
+                    ಎರಡನೇ->ಬಗೆ == Interpolation_ಬಗೆ) ||
+                   ಎರಡನೇ->ಬಗೆ == Formatted_ಮೌಲ್ಯ_ಬಗೆ);
+            asdl_seq_ಗಣ(seq, ಸೂಚ್ಯಂಕ++, ಎರಡನೇ);
 
-            continue;
+            ಮುಂದುವರಿ;
         }
 
-        if (item->kind == Constant_kind) {
-            item = _PyPegen_decode_fstring_part(p, is_raw, item, b);
-            if (item == NULL) {
-                return NULL;
+        ಆದರೆ (ಅಂಶ->ಬಗೆ == Constant_ಬಗೆ) {
+            ಅಂಶ = _PyPegen_decode_fstring_part(p, is_raw, ಅಂಶ, b);
+            ಆದರೆ (ಅಂಶ == ಖಾಲಿ) {
+                ಹಿಂತಿರುಗಿ ಖಾಲಿ;
             }
 
             /* Tokenizer emits string parts even when the underlying string
             might become an empty value (e.g. FSTRING_MIDDLE with the value \\n)
             so we need to check for them and simplify it here. */
-            if (PyUnicode_CheckExact(item->v.Constant.value)
-                && PyUnicode_GET_LENGTH(item->v.Constant.value) == 0) {
-                continue;
+            ಆದರೆ (PyUnicode_CheckExact(ಅಂಶ->v.Constant.ಮೌಲ್ಯ)
+                && Py_Unicode_GET_ಉದ್ದಳತೆ(ಅಂಶ->v.Constant.ಮೌಲ್ಯ) == 0) {
+                ಮುಂದುವರಿ;
             }
         }
-        asdl_seq_SET(seq, index++, item);
+        asdl_seq_ಗಣ(seq, ಸೂಚ್ಯಂಕ++, ಅಂಶ);
     }
 
-    asdl_expr_seq *resized_exprs;
-    if (index != total_items) {
-        resized_exprs = _Py_asdl_expr_seq_new(index, p->arena);
-        if (resized_exprs == NULL) {
-            return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *resized_exprs;
+    ಆದರೆ (ಸೂಚ್ಯಂಕ != ಒಟ್ಟು_ವಸ್ತುಗಳು) {
+        resized_exprs = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(ಸೂಚ್ಯಂಕ, p->arena);
+        ಆದರೆ (resized_exprs == ಖಾಲಿ) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        for (Py_ssize_t i = 0; i < index; i++) {
-            asdl_seq_SET(resized_exprs, i, asdl_seq_GET(seq, i));
+        ಗಾಗಿ (Py_ssize_t i = 0; i < ಸೂಚ್ಯಂಕ; i++) {
+            asdl_seq_ಗಣ(resized_exprs, i, asdl_seq_GET(seq, i));
         }
     }
-    else {
+    ಇಲ್ಲದಿದ್ದರೆ {
         resized_exprs = seq;
     }
-    return resized_exprs;
+    ಹಿಂತಿರುಗಿ resized_exprs;
 }
 
-expr_ty
-_PyPegen_template_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b) {
+ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_template_str(Parser *p, Token *a, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *raw_expressions, Token *b) {
 
-    asdl_expr_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 1);
-    if (resized_exprs == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 1);
+    ಆದರೆ (resized_exprs == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_TemplateStr(resized_exprs, a->lineno, a->col_offset,
-                              b->end_lineno, b->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_TemplateStr(resized_exprs, a->lineno, a->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                              b->ಕೊನೆ_lineno, b->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                               p->arena);
 }
 
-expr_ty
-_PyPegen_joined_str(Parser *p, Token* a, asdl_expr_seq* raw_expressions, Token*b) {
+ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_joined_str(Parser *p, Token* a, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq* raw_expressions, Token*b) {
 
-    asdl_expr_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 0);
-    if (resized_exprs == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 0);
+    ಆದರೆ (resized_exprs == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_JoinedStr(resized_exprs, a->lineno, a->col_offset,
-                            b->end_lineno, b->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_JoinedStr(resized_exprs, a->lineno, a->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                            b->ಕೊನೆ_lineno, b->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                             p->arena);
 }
 
-expr_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok) {
+    ಆದರೆ (tok->ಬೈಟುಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ Py_Pegen_raise_incomplete_ಒಳಹರಿವು(p);
     }
-    Py_ssize_t bsize = PyBytes_GET_SIZE(tok->bytes);
-    const char *bstr = PyBytes_AS_STRING(tok->bytes);
+    Py_ssize_t bsize = Py_ಬೈಟುಗಳು_GET_ಗಾತ್ರ(tok->ಬೈಟುಗಳು);
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *bstr = Py_ಬೈಟುಗಳು_AS_STRING(tok->ಬೈಟುಗಳು);
 
-    int is_raw = tok->is_raw;
+    ಪೂರ್ಣಾಂಕ is_raw = tok->is_raw;
 
     PyObject* str = _PyPegen_decode_string(p, is_raw, bstr, bsize, tok);
-    if (str == NULL) {
-        return NULL;
+    ಆದರೆ (str == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Constant(str, NULL, tok->lineno, tok->col_offset,
-                           tok->end_lineno, tok->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(str, ಖಾಲಿ, tok->lineno, tok->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           tok->ಕೊನೆ_lineno, tok->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                            p->arena);
 }
 
-expr_ty _PyPegen_constant_from_token(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_constant_from_token(Parser* p, Token* tok) {
+    ಆದರೆ (tok->ಬೈಟುಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ Py_Pegen_raise_incomplete_ಒಳಹರಿವು(p);
     }
-    const char *bstr = PyBytes_AS_STRING(tok->bytes);
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *bstr = Py_ಬೈಟುಗಳು_AS_STRING(tok->ಬೈಟುಗಳು);
     PyObject* str = PyUnicode_FromString(bstr);
-    if (str == NULL) {
-        return NULL;
+    ಆದರೆ (str == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Constant(str, NULL, tok->lineno, tok->col_offset,
-                           tok->end_lineno, tok->end_col_offset,
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(str, ಖಾಲಿ, tok->lineno, tok->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           tok->ಕೊನೆ_lineno, tok->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                            p->arena);
 }
 
-expr_ty _PyPegen_constant_from_string(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_constant_from_string(Parser* p, Token* tok) {
+    ಆದರೆ (tok->ಬೈಟುಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ Py_Pegen_raise_incomplete_ಒಳಹರಿವು(p);
     }
-    const char *the_str = PyBytes_AS_STRING(tok->bytes);
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *the_str = Py_ಬೈಟುಗಳು_AS_STRING(tok->ಬೈಟುಗಳು);
     PyObject *s = _PyPegen_parse_string(p, tok);
-    if (s == NULL) {
+    ಆದರೆ (s == ಖಾಲಿ) {
         _Pypegen_raise_decode_error(p);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, s) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, s) < 0) {
         Py_DECREF(s);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    PyObject *kind = NULL;
-    if (the_str && the_str[0] == 'u') {
-        kind = _PyPegen_new_identifier(p, "u");
-        if (kind == NULL) {
-            return NULL;
+    PyObject *ಬಗೆ = ಖಾಲಿ;
+    ಆದರೆ (the_str && the_str[0] == 'u') {
+        ಬಗೆ = _PyPegen_new_identifier(p, "u");
+        ಆದರೆ (ಬಗೆ == ಖಾಲಿ) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
     }
-    return _PyAST_Constant(s, kind, tok->lineno, tok->col_offset, tok->end_lineno, tok->end_col_offset, p->arena);
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(s, ಬಗೆ, tok->lineno, tok->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, tok->ಕೊನೆ_lineno, tok->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
-static int
-_get_interpolation_conversion(Parser *p, Token *debug, ResultTokenWithMetadata *conversion,
-                              ResultTokenWithMetadata *format)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+_get_interpolation_conversion(Parser *p, Token *debug, ಫಲಿತಾಂಶ_Token_With_Metadata *conversion,
+                              ಫಲಿತಾಂಶ_Token_With_Metadata *format)
 {
-    if (conversion != NULL) {
-        expr_ty conversion_expr = (expr_ty) conversion->result;
-        assert(conversion_expr->kind == Name_kind);
-        Py_UCS4 first = PyUnicode_READ_CHAR(conversion_expr->v.Name.id, 0);
-        return Py_SAFE_DOWNCAST(first, Py_UCS4, int);
+    ಆದರೆ (conversion != ಖಾಲಿ) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty conversion_ಅಭಿವ್ಯಕ್ತಿ = (ಅಭಿವ್ಯಕ್ತಿ_ty) conversion->ಫಲಿತಾಂಶ;
+        ಪ್ರತಿಜ್ಞಾ(conversion_ಅಭಿವ್ಯಕ್ತಿ->ಬಗೆ == Name_ಬಗೆ);
+        Py_UCS4 ಮೊದಲ = PyUnicode_READ_CHAR(conversion_ಅಭಿವ್ಯಕ್ತಿ->v.Name.id, 0);
+        ಹಿಂತಿರುಗಿ Py_ಸುರಕ್ಷಿತ_DOWNCAST(ಮೊದಲ, Py_UCS4, ಪೂರ್ಣಾಂಕ);
     }
-    else if (debug && !format) {
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (debug && !format) {
         /* If no conversion is specified, use !r for debug expressions */
-        return (int)'r';
+        ಹಿಂತಿರುಗಿ (ಪೂರ್ಣಾಂಕ)'r';
     }
-    return -1;
+    ಹಿಂತಿರುಗಿ -1;
 }
 
-static PyObject *
-_strip_interpolation_debug_expr(PyObject *exprstr)
+ಸ್ಥಿರ PyObject *
+strip_interpolation_debug_ಅಭಿವ್ಯಕ್ತಿ(PyObject *exprstr)
 {
-    Py_ssize_t len = PyUnicode_GET_LENGTH(exprstr);
+    Py_ssize_t len = Py_Unicode_GET_ಉದ್ದಳತೆ(exprstr);
 
     /* Discard whitespace and explicit line continuations after the debug "="
        but preserve whitespace before it. */
-    while (len > 0) {
-        int has_newline = 0;
-        while (len > 0) {
+    ಆಗ (len > 0) {
+        ಪೂರ್ಣಾಂಕ has_newline = 0;
+        ಆಗ (len > 0) {
             Py_UCS4 c = PyUnicode_READ_CHAR(exprstr, len - 1);
-            if (!_PyUnicode_IsWhitespace(c)) {
-                break;
+            ಆದರೆ (!_PyUnicode_IsWhitespace(c)) {
+                ನಿಲ್ಲಿಸು;
             }
-            if (c == '\r' || c == '\n') {
+            ಆದರೆ (c == '\r' || c == '\n') {
                 has_newline = 1;
             }
             len--;
         }
-        if (!has_newline || len == 0 ||
+        ಆದರೆ (!has_newline || len == 0 ||
             PyUnicode_READ_CHAR(exprstr, len - 1) != '\\')
         {
-            break;
+            ನಿಲ್ಲಿಸು;
         }
         len--;
     }
 
     /* Preserve unexpected metadata instead of dropping source text. */
-    if (len == 0 || PyUnicode_READ_CHAR(exprstr, len - 1) != '=') {
-        return Py_NewRef(exprstr);
+    ಆದರೆ (len == 0 || PyUnicode_READ_CHAR(exprstr, len - 1) != '=') {
+        ಹಿಂತಿರುಗಿ Py_NewRef(exprstr);
     }
 
-    return PyUnicode_Substring(exprstr, 0, len - 1);
+    ಹಿಂತಿರುಗಿ PyUnicode_Substring(exprstr, 0, len - 1);
 }
 
-expr_ty _PyPegen_interpolation(Parser *p, expr_ty expression, Token *debug, ResultTokenWithMetadata *conversion,
-                                 ResultTokenWithMetadata *format, Token *closing_brace, int lineno, int col_offset,
-                                 int end_lineno, int end_col_offset, PyArena *arena) {
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_interpolation(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ_2, Token *debug, ಫಲಿತಾಂಶ_Token_With_Metadata *conversion,
+                                 ಫಲಿತಾಂಶ_Token_With_Metadata *format, Token *closing_brace, ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                 ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena) {
 
-    int conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
+    ಪೂರ್ಣಾಂಕ conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
 
     /* Find the non whitespace token after the "=" */
-    int debug_end_line, debug_end_offset;
+    ಪೂರ್ಣಾಂಕ debug_ಕೊನೆ_ಸಾಲು, debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ;
     PyObject *debug_metadata;
     constant exprstr;
 
-    if (conversion) {
-        debug_end_line = ((expr_ty) conversion->result)->lineno;
-        debug_end_offset = ((expr_ty) conversion->result)->col_offset;
+    ಆದರೆ (conversion) {
+        debug_ಕೊನೆ_ಸಾಲು = ((ಅಭಿವ್ಯಕ್ತಿ_ty) conversion->ಫಲಿತಾಂಶ)->lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ((ಅಭಿವ್ಯಕ್ತಿ_ty) conversion->ಫಲಿತಾಂಶ)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
         debug_metadata = exprstr = conversion->metadata;
     }
-    else if (format) {
-        debug_end_line = ((expr_ty) format->result)->lineno;
-        debug_end_offset = ((expr_ty) format->result)->col_offset + 1;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (format) {
+        debug_ಕೊನೆ_ಸಾಲು = ((ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ)->lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ((ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1;
         debug_metadata = exprstr = format->metadata;
     }
-    else {
-        debug_end_line = end_lineno;
-        debug_end_offset = end_col_offset;
+    ಇಲ್ಲದಿದ್ದರೆ {
+        debug_ಕೊನೆ_ಸಾಲು = ಕೊನೆ_lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
         debug_metadata = exprstr = closing_brace->metadata;
     }
 
-    assert(exprstr != NULL);
+    ಪ್ರತಿಜ್ಞಾ(exprstr != ಖಾಲಿ);
     PyObject *final_exprstr = debug
-        ? _strip_interpolation_debug_expr(exprstr)
+        ? strip_interpolation_debug_ಅಭಿವ್ಯಕ್ತಿ(exprstr)
         : Py_NewRef(exprstr);
-    if (!final_exprstr || _PyArena_AddPyObject(arena, final_exprstr) < 0) {
+    ಆದರೆ (!final_exprstr || Py_Arena_ಕೂಡಿಸು_Py_Object(arena, final_exprstr) < 0) {
         Py_XDECREF(final_exprstr);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    expr_ty interpolation = _PyAST_Interpolation(
-        expression, final_exprstr, conversion_val, format ? (expr_ty) format->result : NULL,
-        lineno, col_offset, end_lineno,
-        end_col_offset, arena
+    ಅಭಿವ್ಯಕ್ತಿ_ty interpolation = _PyAST_Interpolation(
+        ಅಭಿವ್ಯಕ್ತಿ_2, final_exprstr, conversion_val, format ? (ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ : ಖಾಲಿ,
+        lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno,
+        ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena
     );
 
-    if (!interpolation || !debug) {
-        return interpolation;
+    ಆದರೆ (!interpolation || !debug) {
+        ಹಿಂತಿರುಗಿ interpolation;
     }
 
-    expr_ty debug_text = _PyAST_Constant(debug_metadata, NULL, lineno, col_offset + 1, debug_end_line,
-                                            debug_end_offset - 1, p->arena);
-    if (!debug_text) {
-        return NULL;
+    ಅಭಿವ್ಯಕ್ತಿ_ty debug_ಪಠ್ಯ = _PyAST_Constant(debug_metadata, ಖಾಲಿ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1, debug_ಕೊನೆ_ಸಾಲು,
+                                            debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ - 1, p->arena);
+    ಆದರೆ (!debug_ಪಠ್ಯ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    asdl_expr_seq *values = _Py_asdl_expr_seq_new(2, arena);
-    if (!values) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಮೌಲ್ಯಗಳು = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(2, arena);
+    ಆದರೆ (!ಮೌಲ್ಯಗಳು) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_seq_SET(values, 0, debug_text);
-    asdl_seq_SET(values, 1, interpolation);
-    return _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
+    asdl_seq_ಗಣ(ಮೌಲ್ಯಗಳು, 0, debug_ಪಠ್ಯ);
+    asdl_seq_ಗಣ(ಮೌಲ್ಯಗಳು, 1, interpolation);
+    ಹಿಂತಿರುಗಿ _PyAST_JoinedStr(ಮೌಲ್ಯಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, debug_ಕೊನೆ_ಸಾಲು, debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
-expr_ty _PyPegen_formatted_value(Parser *p, expr_ty expression, Token *debug, ResultTokenWithMetadata *conversion,
-                                 ResultTokenWithMetadata *format, Token *closing_brace, int lineno, int col_offset,
-                                 int end_lineno, int end_col_offset, PyArena *arena) {
-    int conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_formatted_ಮೌಲ್ಯ(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ_2, Token *debug, ಫಲಿತಾಂಶ_Token_With_Metadata *conversion,
+                                 ಫಲಿತಾಂಶ_Token_With_Metadata *format, Token *closing_brace, ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                 ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena) {
+    ಪೂರ್ಣಾಂಕ conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
 
-    expr_ty formatted_value = _PyAST_FormattedValue(
-        expression, conversion_val, format ? (expr_ty) format->result : NULL,
-        lineno, col_offset, end_lineno,
-        end_col_offset, arena
+    ಅಭಿವ್ಯಕ್ತಿ_ty formatted_ಮೌಲ್ಯ = Py_AST_Formatted_ಮೌಲ್ಯ(
+        ಅಭಿವ್ಯಕ್ತಿ_2, conversion_val, format ? (ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ : ಖಾಲಿ,
+        lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno,
+        ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena
     );
 
-    if (!formatted_value || !debug) {
-        return formatted_value;
+    ಆದರೆ (!formatted_ಮೌಲ್ಯ || !debug) {
+        ಹಿಂತಿರುಗಿ formatted_ಮೌಲ್ಯ;
     }
 
     /* Find the non whitespace token after the "=" */
-    int debug_end_line, debug_end_offset;
+    ಪೂರ್ಣಾಂಕ debug_ಕೊನೆ_ಸಾಲು, debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ;
     PyObject *debug_metadata;
 
-    if (conversion) {
-        debug_end_line = ((expr_ty) conversion->result)->lineno;
-        debug_end_offset = ((expr_ty) conversion->result)->col_offset;
+    ಆದರೆ (conversion) {
+        debug_ಕೊನೆ_ಸಾಲು = ((ಅಭಿವ್ಯಕ್ತಿ_ty) conversion->ಫಲಿತಾಂಶ)->lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ((ಅಭಿವ್ಯಕ್ತಿ_ty) conversion->ಫಲಿತಾಂಶ)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
         debug_metadata = conversion->metadata;
     }
-    else if (format) {
-        debug_end_line = ((expr_ty) format->result)->lineno;
-        debug_end_offset = ((expr_ty) format->result)->col_offset + 1;
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (format) {
+        debug_ಕೊನೆ_ಸಾಲು = ((ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ)->lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ((ಅಭಿವ್ಯಕ್ತಿ_ty) format->ಫಲಿತಾಂಶ)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1;
         debug_metadata = format->metadata;
     }
-    else {
-        debug_end_line = end_lineno;
-        debug_end_offset = end_col_offset;
+    ಇಲ್ಲದಿದ್ದರೆ {
+        debug_ಕೊನೆ_ಸಾಲು = ಕೊನೆ_lineno;
+        debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ = ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
         debug_metadata = closing_brace->metadata;
     }
-    expr_ty debug_text = _PyAST_Constant(debug_metadata, NULL, lineno, col_offset + 1, debug_end_line,
-                                            debug_end_offset - 1, p->arena);
-    if (!debug_text) {
-        return NULL;
+    ಅಭಿವ್ಯಕ್ತಿ_ty debug_ಪಠ್ಯ = _PyAST_Constant(debug_metadata, ಖಾಲಿ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1, debug_ಕೊನೆ_ಸಾಲು,
+                                            debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ - 1, p->arena);
+    ಆದರೆ (!debug_ಪಠ್ಯ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    asdl_expr_seq *values = _Py_asdl_expr_seq_new(2, arena);
-    if (!values) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಮೌಲ್ಯಗಳು = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(2, arena);
+    ಆದರೆ (!ಮೌಲ್ಯಗಳು) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    asdl_seq_SET(values, 0, debug_text);
-    asdl_seq_SET(values, 1, formatted_value);
-    return _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
+    asdl_seq_ಗಣ(ಮೌಲ್ಯಗಳು, 0, debug_ಪಠ್ಯ);
+    asdl_seq_ಗಣ(ಮೌಲ್ಯಗಳು, 1, formatted_ಮೌಲ್ಯ);
+    ಹಿಂತಿರುಗಿ _PyAST_JoinedStr(ಮೌಲ್ಯಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, debug_ಕೊನೆ_ಸಾಲು, debug_ಕೊನೆ_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
-static expr_ty
-_build_concatenated_bytes(Parser *p, asdl_expr_seq *strings, int lineno,
-                        int col_offset, int end_lineno, int end_col_offset,
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+build_concatenated_ಬೈಟುಗಳು(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು, ಪೂರ್ಣಾಂಕ lineno,
+                        ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                         PyArena *arena)
 {
-    Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    Py_ssize_t len = asdl_seq_LEN(ಅಕ್ಷರಸರಣಿಗಳು);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
     /* Bytes literals never get a kind, but just for consistency
         since they are represented as Constant nodes, we'll mirror
         the same behavior as unicode strings for determining the
         kind. */
-    PyObject *kind = asdl_seq_GET(strings, 0)->v.Constant.kind;
+    PyObject *ಬಗೆ = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, 0)->v.Constant.ಬಗೆ;
 
-    Py_ssize_t total = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty elem = asdl_seq_GET(strings, i);
-        PyObject *bytes = elem->v.Constant.value;
-        Py_ssize_t part = PyBytes_GET_SIZE(bytes);
-        if (part > PY_SSIZE_T_MAX - total) {
-            PyErr_NoMemory();
-            return NULL;
+    Py_ssize_t ಒಟ್ಟು = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        PyObject *ಬೈಟುಗಳು = elem->v.Constant.ಮೌಲ್ಯ;
+        Py_ssize_t part = Py_ಬೈಟುಗಳು_GET_ಗಾತ್ರ(ಬೈಟುಗಳು);
+        ಆದರೆ (part > PY_SSIZE_T_MAX - ಒಟ್ಟು) {
+            Py_Err_No_ಸ್ಮರಣೆ();
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        total += part;
+        ಒಟ್ಟು += part;
     }
 
-    PyBytesWriter *writer = PyBytesWriter_Create(total);
-    if (writer == NULL) {
-        return NULL;
+    Py_ಬೈಟುಗಳು_Writer *writer = Py_ಬೈಟುಗಳು_Writer_Create(ಒಟ್ಟು);
+    ಆದರೆ (writer == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    char *out = PyBytesWriter_GetData(writer);
+    ಅಕ್ಷರ *ಹೊರಹೋಗು = Py_ಬೈಟುಗಳು_Writer_Get_ದತ್ತಾಂಶ(writer);
 
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty elem = asdl_seq_GET(strings, i);
-        PyObject *bytes = elem->v.Constant.value;
-        Py_ssize_t part = PyBytes_GET_SIZE(bytes);
-        if (part > 0) {
-            memcpy(out, PyBytes_AS_STRING(bytes), part);
-            out += part;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        PyObject *ಬೈಟುಗಳು = elem->v.Constant.ಮೌಲ್ಯ;
+        Py_ssize_t part = Py_ಬೈಟುಗಳು_GET_ಗಾತ್ರ(ಬೈಟುಗಳು);
+        ಆದರೆ (part > 0) {
+            ಸ್ಮರಣೆ_ನಕಲು(ಹೊರಹೋಗು, Py_ಬೈಟುಗಳು_AS_STRING(ಬೈಟುಗಳು), part);
+            ಹೊರಹೋಗು += part;
         }
     }
 
-    PyObject *res = PyBytesWriter_Finish(writer);
-    if (res == NULL) {
-        return NULL;
+    PyObject *res = Py_ಬೈಟುಗಳು_Writer_ಮುಕ್ತಾಯ(writer);
+    ಆದರೆ (res == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(arena, res) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(arena, res) < 0) {
         Py_DECREF(res);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Constant(res, kind, lineno, col_offset, end_lineno, end_col_offset, p->arena);
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(res, ಬಗೆ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
-static expr_ty
-_build_concatenated_unicode(Parser *p, asdl_expr_seq *strings, int lineno,
-                        int col_offset, int end_lineno, int end_col_offset,
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+_build_concatenated_unicode(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು, ಪೂರ್ಣಾಂಕ lineno,
+                        ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                         PyArena *arena)
 {
-    Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 1);
+    Py_ssize_t len = asdl_seq_LEN(ಅಕ್ಷರಸರಣಿಗಳು);
+    ಪ್ರತಿಜ್ಞಾ(len > 1);
 
-    expr_ty first = asdl_seq_GET(strings, 0);
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಮೊದಲ = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, 0);
 
     /* When a string is getting concatenated, the kind of the string
         is determined by the first string in the concatenation
@@ -1791,131 +1791,131 @@ _build_concatenated_unicode(Parser *p, asdl_expr_seq *strings, int lineno,
 
         u"abc" "def" -> u"abcdef"
         "abc" u"abc" ->  "abcabc" */
-    PyObject *kind = first->v.Constant.kind;
+    PyObject *ಬಗೆ = ಮೊದಲ->v.Constant.ಬಗೆ;
 
     PyUnicodeWriter *writer = PyUnicodeWriter_Create(0);
-    if (writer == NULL) {
-        return NULL;
+    ಆದರೆ (writer == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty current_elem = asdl_seq_GET(strings, i);
-        assert(current_elem->kind == Constant_kind);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty current_elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        ಪ್ರತಿಜ್ಞಾ(current_elem->ಬಗೆ == Constant_ಬಗೆ);
 
-        if (PyUnicodeWriter_WriteStr(writer,
-                                     current_elem->v.Constant.value)) {
+        ಆದರೆ (PyUnicodeWriter_WriteStr(writer,
+                                     current_elem->v.Constant.ಮೌಲ್ಯ)) {
             PyUnicodeWriter_Discard(writer);
-            return NULL;
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
     }
 
-    PyObject *final = PyUnicodeWriter_Finish(writer);
-    if (final == NULL) {
-        return NULL;
+    PyObject *final = Py_Unicode_Writer_ಮುಕ್ತಾಯ(writer);
+    ಆದರೆ (final == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (_PyArena_AddPyObject(p->arena, final) < 0) {
+    ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, final) < 0) {
         Py_DECREF(final);
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_Constant(final, kind, lineno, col_offset,
-                           end_lineno, end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _PyAST_Constant(final, ಬಗೆ, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
-static asdl_expr_seq *
-_build_concatenated_str(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+ಸ್ಥಿರ asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *
+_build_concatenated_str(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು,
+                               ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                               ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena)
 {
-    Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    Py_ssize_t len = asdl_seq_LEN(ಅಕ್ಷರಸರಣಿಗಳು);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
     Py_ssize_t n_flattened_elements = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case JoinedStr_kind:
-                n_flattened_elements += asdl_seq_LEN(elem->v.JoinedStr.values);
-                break;
-            case TemplateStr_kind:
-                n_flattened_elements += asdl_seq_LEN(elem->v.TemplateStr.values);
-                break;
-            default:
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        ಆಯ್ಕೆ(elem->ಬಗೆ) {
+            ಸ್ಥಿತಿ Joined_Str_ಬಗೆ:
+                n_flattened_elements += asdl_seq_LEN(elem->v.JoinedStr.ಮೌಲ್ಯಗಳು);
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ Template_Str_ಬಗೆ:
+                n_flattened_elements += asdl_seq_LEN(elem->v.TemplateStr.ಮೌಲ್ಯಗಳು);
+                ನಿಲ್ಲಿಸು;
+            ಪೂರ್ವನಿಯೋಜಿತ:
                 n_flattened_elements++;
-                break;
+                ನಿಲ್ಲಿಸು;
         }
     }
 
 
-    asdl_expr_seq* flattened = _Py_asdl_expr_seq_new(n_flattened_elements, p->arena);
-    if (flattened == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq* flattened = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(n_flattened_elements, p->arena);
+    ಆದರೆ (flattened == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     /* build flattened list */
     Py_ssize_t current_pos = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
-        expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case JoinedStr_kind:
-                for (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.JoinedStr.values); j++) {
-                    expr_ty subvalue = asdl_seq_GET(elem->v.JoinedStr.values, j);
-                    if (subvalue == NULL) {
-                        return NULL;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        ಆಯ್ಕೆ(elem->ಬಗೆ) {
+            ಸ್ಥಿತಿ Joined_Str_ಬಗೆ:
+                ಗಾಗಿ (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.JoinedStr.ಮೌಲ್ಯಗಳು); j++) {
+                    ಅಭಿವ್ಯಕ್ತಿ_ty subvalue = asdl_seq_GET(elem->v.JoinedStr.ಮೌಲ್ಯಗಳು, j);
+                    ಆದರೆ (subvalue == ಖಾಲಿ) {
+                        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                     }
-                    asdl_seq_SET(flattened, current_pos++, subvalue);
+                    asdl_seq_ಗಣ(flattened, current_pos++, subvalue);
                 }
-                break;
-            case TemplateStr_kind:
-                for (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.TemplateStr.values); j++) {
-                    expr_ty subvalue = asdl_seq_GET(elem->v.TemplateStr.values, j);
-                    if (subvalue == NULL) {
-                        return NULL;
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ Template_Str_ಬಗೆ:
+                ಗಾಗಿ (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.TemplateStr.ಮೌಲ್ಯಗಳು); j++) {
+                    ಅಭಿವ್ಯಕ್ತಿ_ty subvalue = asdl_seq_GET(elem->v.TemplateStr.ಮೌಲ್ಯಗಳು, j);
+                    ಆದರೆ (subvalue == ಖಾಲಿ) {
+                        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                     }
-                    asdl_seq_SET(flattened, current_pos++, subvalue);
+                    asdl_seq_ಗಣ(flattened, current_pos++, subvalue);
                 }
-                break;
-            default:
-                asdl_seq_SET(flattened, current_pos++, elem);
-                break;
+                ನಿಲ್ಲಿಸು;
+            ಪೂರ್ವನಿಯೋಜಿತ:
+                asdl_seq_ಗಣ(flattened, current_pos++, elem);
+                ನಿಲ್ಲಿಸು;
         }
     }
 
     /* calculate folded element count */
     Py_ssize_t n_elements = 0;
-    int prev_is_constant = 0;
-    for (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
-        expr_ty elem = asdl_seq_GET(flattened, i);
+    ಪೂರ್ಣಾಂಕ prev_is_constant = 0;
+    ಗಾಗಿ (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(flattened, i);
 
         /* The concatenation of a FormattedValue and an empty Constant should
            lead to the FormattedValue itself. Thus, we will not take any empty
            constants into account, just as in `_PyPegen_joined_str` */
-        if (elem->kind == Constant_kind &&
-            PyUnicode_CheckExact(elem->v.Constant.value) &&
-            PyUnicode_GET_LENGTH(elem->v.Constant.value) == 0)
-            continue;
+        ಆದರೆ (elem->ಬಗೆ == Constant_ಬಗೆ &&
+            PyUnicode_CheckExact(elem->v.Constant.ಮೌಲ್ಯ) &&
+            Py_Unicode_GET_ಉದ್ದಳತೆ(elem->v.Constant.ಮೌಲ್ಯ) == 0)
+            ಮುಂದುವರಿ;
 
-        if (!prev_is_constant || elem->kind != Constant_kind) {
+        ಆದರೆ (!prev_is_constant || elem->ಬಗೆ != Constant_ಬಗೆ) {
             n_elements++;
         }
-        prev_is_constant = elem->kind == Constant_kind;
+        prev_is_constant = elem->ಬಗೆ == Constant_ಬಗೆ;
     }
 
-    asdl_expr_seq* values = _Py_asdl_expr_seq_new(n_elements, p->arena);
-    if (values == NULL) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq* ಮೌಲ್ಯಗಳು = Py_asdl_ಅಭಿವ್ಯಕ್ತಿ_seq_new(n_elements, p->arena);
+    ಆದರೆ (ಮೌಲ್ಯಗಳು == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     /* build folded list */
     current_pos = 0;
-    for (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
-        expr_ty elem = asdl_seq_GET(flattened, i);
+    ಗಾಗಿ (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(flattened, i);
 
         /* if the current elem and the following are constants,
            fold them and all consequent constants */
-        if (elem->kind == Constant_kind) {
-            if (i + 1 < n_flattened_elements &&
-                asdl_seq_GET(flattened, i + 1)->kind == Constant_kind) {
-                expr_ty first_elem = elem;
+        ಆದರೆ (elem->ಬಗೆ == Constant_ಬಗೆ) {
+            ಆದರೆ (i + 1 < n_flattened_elements &&
+                asdl_seq_GET(flattened, i + 1)->ಬಗೆ == Constant_ಬಗೆ) {
+                ಅಭಿವ್ಯಕ್ತಿ_ty ಮೊದಲ_elem = elem;
 
                 /* When a string is getting concatenated, the kind of the string
                    is determined by the first string in the concatenation
@@ -1923,250 +1923,250 @@ _build_concatenated_str(Parser *p, asdl_expr_seq *strings,
 
                    u"abc" "def" -> u"abcdef"
                    "abc" u"abc" ->  "abcabc" */
-                PyObject *kind = elem->v.Constant.kind;
+                PyObject *ಬಗೆ = elem->v.Constant.ಬಗೆ;
 
                 PyUnicodeWriter *writer = PyUnicodeWriter_Create(0);
-                if (writer == NULL) {
-                    return NULL;
+                ಆದರೆ (writer == ಖಾಲಿ) {
+                    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                 }
-                expr_ty last_elem = elem;
+                ಅಭಿವ್ಯಕ್ತಿ_ty ಕೊನೆಯ_elem = elem;
                 Py_ssize_t j;
-                for (j = i; j < n_flattened_elements; j++) {
-                    expr_ty current_elem = asdl_seq_GET(flattened, j);
-                    if (current_elem->kind == Constant_kind) {
-                        if (PyUnicodeWriter_WriteStr(writer,
-                                                     current_elem->v.Constant.value)) {
+                ಗಾಗಿ (j = i; j < n_flattened_elements; j++) {
+                    ಅಭಿವ್ಯಕ್ತಿ_ty current_elem = asdl_seq_GET(flattened, j);
+                    ಆದರೆ (current_elem->ಬಗೆ == Constant_ಬಗೆ) {
+                        ಆದರೆ (PyUnicodeWriter_WriteStr(writer,
+                                                     current_elem->v.Constant.ಮೌಲ್ಯ)) {
                             PyUnicodeWriter_Discard(writer);
-                            return NULL;
+                            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                         }
-                        last_elem = current_elem;
-                    } else {
-                        break;
+                        ಕೊನೆಯ_elem = current_elem;
+                    } ಇಲ್ಲದಿದ್ದರೆ {
+                        ನಿಲ್ಲಿಸು;
                     }
                 }
                 i = j - 1;
 
-                PyObject *concat_str = PyUnicodeWriter_Finish(writer);
-                if (concat_str == NULL) {
-                    return NULL;
+                PyObject *concat_str = Py_Unicode_Writer_ಮುಕ್ತಾಯ(writer);
+                ಆದರೆ (concat_str == ಖಾಲಿ) {
+                    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                 }
-                if (_PyArena_AddPyObject(p->arena, concat_str) < 0) {
+                ಆದರೆ (Py_Arena_ಕೂಡಿಸು_Py_Object(p->arena, concat_str) < 0) {
                     Py_DECREF(concat_str);
-                    return NULL;
+                    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                 }
-                elem = _PyAST_Constant(concat_str, kind, first_elem->lineno,
-                                       first_elem->col_offset,
-                                       last_elem->end_lineno,
-                                       last_elem->end_col_offset, p->arena);
-                if (elem == NULL) {
-                    return NULL;
+                elem = _PyAST_Constant(concat_str, ಬಗೆ, ಮೊದಲ_elem->lineno,
+                                       ಮೊದಲ_elem->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                       ಕೊನೆಯ_elem->ಕೊನೆ_lineno,
+                                       ಕೊನೆಯ_elem->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
+                ಆದರೆ (elem == ಖಾಲಿ) {
+                    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
                 }
             }
 
             /* Drop all empty contanst strings */
-            if (PyUnicode_CheckExact(elem->v.Constant.value) &&
-                PyUnicode_GET_LENGTH(elem->v.Constant.value) == 0) {
-                continue;
+            ಆದರೆ (PyUnicode_CheckExact(elem->v.Constant.ಮೌಲ್ಯ) &&
+                Py_Unicode_GET_ಉದ್ದಳತೆ(elem->v.Constant.ಮೌಲ್ಯ) == 0) {
+                ಮುಂದುವರಿ;
             }
         }
 
-        asdl_seq_SET(values, current_pos++, elem);
+        asdl_seq_ಗಣ(ಮೌಲ್ಯಗಳು, current_pos++, elem);
     }
 
-    assert(current_pos == n_elements);
-    return values;
+    ಪ್ರತಿಜ್ಞಾ(current_pos == n_elements);
+    ಹಿಂತಿರುಗಿ ಮೌಲ್ಯಗಳು;
 }
 
-static expr_ty
-_build_concatenated_joined_str(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+ಸ್ಥಿರ ಅಭಿವ್ಯಕ್ತಿ_ty
+_build_concatenated_joined_str(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು,
+                               ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                               ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena)
 {
-    asdl_expr_seq *values = _build_concatenated_str(p, strings, lineno,
-        col_offset, end_lineno, end_col_offset, arena);
-    if (!values) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಮೌಲ್ಯಗಳು = _build_concatenated_str(p, ಅಕ್ಷರಸರಣಿಗಳು, lineno,
+        ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
+    ಆದರೆ (!ಮೌಲ್ಯಗಳು) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_JoinedStr(values, lineno, col_offset, end_lineno, end_col_offset, p->arena);
+    ಹಿಂತಿರುಗಿ _PyAST_JoinedStr(ಮೌಲ್ಯಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena);
 }
 
-expr_ty
-_PyPegen_concatenate_tstrings(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+_PyPegen_concatenate_tstrings(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು,
+                               ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                               ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena)
 {
-    asdl_expr_seq *values = _build_concatenated_str(p, strings, lineno,
-        col_offset, end_lineno, end_col_offset, arena);
-    if (!values) {
-        return NULL;
+    asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಮೌಲ್ಯಗಳು = _build_concatenated_str(p, ಅಕ್ಷರಸರಣಿಗಳು, lineno,
+        ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
+    ಆದರೆ (!ಮೌಲ್ಯಗಳು) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    return _PyAST_TemplateStr(values, lineno, col_offset, end_lineno,
-        end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _PyAST_TemplateStr(ಮೌಲ್ಯಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno,
+        ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
-expr_ty
-_PyPegen_concatenate_strings(Parser *p, asdl_expr_seq *strings,
-                             int lineno, int col_offset, int end_lineno,
-                             int end_col_offset, PyArena *arena)
+ಅಭಿವ್ಯಕ್ತಿ_ty
+Py_Pegen_concatenate_ಅಕ್ಷರಸರಣಿಗಳು(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *ಅಕ್ಷರಸರಣಿಗಳು,
+                             ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                             ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena)
 {
-    Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    Py_ssize_t len = asdl_seq_LEN(ಅಕ್ಷರಸರಣಿಗಳು);
+    ಪ್ರತಿಜ್ಞಾ(len > 0);
 
-    int f_string_found = 0;
-    int unicode_string_found = 0;
-    int bytes_found = 0;
+    ಪೂರ್ಣಾಂಕ f_string_ಸಿಕ್ಕಿತು = 0;
+    ಪೂರ್ಣಾಂಕ unicode_string_ಸಿಕ್ಕಿತು = 0;
+    ಪೂರ್ಣಾಂಕ ಬೈಟುಗಳು_ಸಿಕ್ಕಿತು = 0;
 
     Py_ssize_t i = 0;
-    for (i = 0; i < len; i++) {
-        expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case Constant_kind:
-                if (PyBytes_CheckExact(elem->v.Constant.value)) {
-                    bytes_found = 1;
-                } else {
-                    unicode_string_found = 1;
+    ಗಾಗಿ (i = 0; i < len; i++) {
+        ಅಭಿವ್ಯಕ್ತಿ_ty elem = asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, i);
+        ಆಯ್ಕೆ(elem->ಬಗೆ) {
+            ಸ್ಥಿತಿ Constant_ಬಗೆ:
+                ಆದರೆ (Py_ಬೈಟುಗಳು_Check_Exact(elem->v.Constant.ಮೌಲ್ಯ)) {
+                    ಬೈಟುಗಳು_ಸಿಕ್ಕಿತು = 1;
+                } ಇಲ್ಲದಿದ್ದರೆ {
+                    unicode_string_ಸಿಕ್ಕಿತು = 1;
                 }
-                break;
-            case JoinedStr_kind:
-                f_string_found = 1;
-                break;
-            case TemplateStr_kind:
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ Joined_Str_ಬಗೆ:
+                f_string_ಸಿಕ್ಕಿತು = 1;
+                ನಿಲ್ಲಿಸು;
+            ಸ್ಥಿತಿ Template_Str_ಬಗೆ:
                 // python.gram handles this; we should never get here
-                assert(0);
-                break;
-            default:
-                f_string_found = 1;
-                break;
+                ಪ್ರತಿಜ್ಞಾ(0);
+                ನಿಲ್ಲಿಸು;
+            ಪೂರ್ವನಿಯೋಜಿತ:
+                f_string_ಸಿಕ್ಕಿತು = 1;
+                ನಿಲ್ಲಿಸು;
         }
     }
 
     // Cannot mix unicode and bytes
-    if ((unicode_string_found || f_string_found) && bytes_found) {
+    ಆದರೆ ((unicode_string_ಸಿಕ್ಕಿತು || f_string_ಸಿಕ್ಕಿತು) && ಬೈಟುಗಳು_ಸಿಕ್ಕಿತು) {
         RAISE_SYNTAX_ERROR("cannot mix bytes and nonbytes literals");
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
 
     // If it's only bytes or only unicode string, do a simple concat
-    if (!f_string_found) {
-        if (len == 1) {
-            return asdl_seq_GET(strings, 0);
+    ಆದರೆ (!f_string_ಸಿಕ್ಕಿತು) {
+        ಆದರೆ (len == 1) {
+            ಹಿಂತಿರುಗಿ asdl_seq_GET(ಅಕ್ಷರಸರಣಿಗಳು, 0);
         }
-        else if (bytes_found) {
-            return _build_concatenated_bytes(p, strings, lineno, col_offset,
-                end_lineno, end_col_offset, arena);
+        ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (ಬೈಟುಗಳು_ಸಿಕ್ಕಿತು) {
+            ಹಿಂತಿರುಗಿ build_concatenated_ಬೈಟುಗಳು(p, ಅಕ್ಷರಸರಣಿಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
         }
-        else {
-            return _build_concatenated_unicode(p, strings, lineno, col_offset,
-                end_lineno, end_col_offset, arena);
+        ಇಲ್ಲದಿದ್ದರೆ {
+            ಹಿಂತಿರುಗಿ _build_concatenated_unicode(p, ಅಕ್ಷರಸರಣಿಗಳು, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
         }
     }
 
-    return _build_concatenated_joined_str(p, strings, lineno,
-        col_offset, end_lineno, end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _build_concatenated_joined_str(p, ಅಕ್ಷರಸರಣಿಗಳು, lineno,
+        ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
-static int
-_warn_relative_import_of_lazy(Parser *p, asdl_seq *dots, expr_ty module)
+ಸ್ಥಿರ ಪೂರ್ಣಾಂಕ
+warn_relative_import_ದ_lazy(Parser *p, asdl_seq *dots, ಅಭಿವ್ಯಕ್ತಿ_ty module)
 {
     // Warn about `from . lazy import x`: the whitespace between the dots and
     // the module name is insignificant, so this is parsed exactly like
     // `from .lazy import x` (an import of the relative module "lazy"), but it
     // is most likely a transposition of `lazy from . import x` (PEP 810).
-    if (p->call_invalid_rules) {
-        return 0;
+    ಆದರೆ (p->call_invalid_ನಿಯಮಗಳು) {
+        ಹಿಂತಿರುಗಿ 0;
     }
 
     // Only fire if there is whitespace between the last dot and the name,
     // i.e. not for the common `from .lazy import x` spelling.
-    Token *last_dot = asdl_seq_GET_UNTYPED(dots, asdl_seq_LEN(dots) - 1);
-    if (
-        last_dot->end_lineno == module->lineno
-        && last_dot->end_col_offset == module->col_offset
+    Token *ಕೊನೆಯ_dot = asdl_seq_GET_UNTYPED(dots, asdl_seq_LEN(dots) - 1);
+    ಆದರೆ (
+        ಕೊನೆಯ_dot->ಕೊನೆ_lineno == module->lineno
+        && ಕೊನೆಯ_dot->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ == module->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ
     ) {
-        return 0;
+        ಹಿಂತಿರುಗಿ 0;
     }
 
-    int count = _PyPegen_seq_count_dots(dots);
-    char *buf = PyMem_RawMalloc(count + 1);
-    if (buf == NULL) {
-        PyErr_NoMemory();
-        return -1;
+    ಪೂರ್ಣಾಂಕ ಎಣಿಕೆ_2 = Py_Pegen_seq_ಎಣಿಕೆ_dots(dots);
+    ಅಕ್ಷರ *buf = PyMem_RawMalloc(ಎಣಿಕೆ_2 + 1);
+    ಆದರೆ (buf == ಖಾಲಿ) {
+        Py_Err_No_ಸ್ಮರಣೆ();
+        ಹಿಂತಿರುಗಿ -1;
     }
-    memset(buf, '.', count);
-    buf[count] = '\0';
+    memset(buf, '.', ಎಣಿಕೆ_2);
+    buf[ಎಣಿಕೆ_2] = '\0';
 
-    PyObject *msg = PyUnicode_FromFormat(
+    PyObject *ಸಂದೇಶ = PyUnicode_FromFormat(
         "'from %s lazy import' is the same as 'from %slazy import'; "
         "did you mean 'lazy from %s import'?",
         buf, buf, buf);
     PyMem_RawFree(buf);
-    if (msg == NULL) {
-        return -1;
+    ಆದರೆ (ಸಂದೇಶ == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ -1;
     }
 
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    int res = _PyErr_EmitSyntaxWarning(msg,
+    ಪೂರ್ಣಾಂಕ res = _PyErr_EmitSyntaxWarning(ಸಂದೇಶ,
                                        info.filename,
                                        module->lineno,
-                                       module->col_offset + 1,
-                                       module->end_lineno,
-                                       module->end_col_offset + 1,
+                                       module->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1,
+                                       module->ಕೊನೆ_lineno,
+                                       module->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1,
                                        info.module);
-    Py_DECREF(msg);
-    return res;
+    Py_DECREF(ಸಂದೇಶ);
+    ಹಿಂತಿರುಗಿ res;
 }
 
 stmt_ty
-_PyPegen_checked_from_import(Parser *p, asdl_seq *dots, expr_ty module_name,
-                             asdl_alias_seq *names, expr_ty lazy_token, int lineno,
-                             int col_offset, int end_lineno, int end_col_offset,
+_PyPegen_checked_from_import(Parser *p, asdl_seq *dots, ಅಭಿವ್ಯಕ್ತಿ_ty module_name,
+                             asdl_alias_seq *ಹೆಸರುಗಳು, ಅಭಿವ್ಯಕ್ತಿ_ty lazy_token, ಪೂರ್ಣಾಂಕ lineno,
+                             ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                              PyArena *arena)
 {
     identifier module = module_name->v.Name.id;
-    int level = _PyPegen_seq_count_dots(dots);
-    if (level == 0 && PyUnicode_CompareWithASCIIString(module, "__future__") == 0) {
-        if (lazy_token) {
-            RAISE_SYNTAX_ERROR_KNOWN_LOCATION(lazy_token,
+    ಪೂರ್ಣಾಂಕ level = Py_Pegen_seq_ಎಣಿಕೆ_dots(dots);
+    ಆದರೆ (level == 0 && PyUnicode_CompareWithASCIIString(module, "__future__") == 0) {
+        ಆದರೆ (lazy_token) {
+            RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(lazy_token,
                 "lazy from __future__ import is not allowed");
-            return NULL;
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
-        for (Py_ssize_t i = 0; i < asdl_seq_LEN(names); i++) {
-            alias_ty alias = asdl_seq_GET(names, i);
-            if (PyUnicode_CompareWithASCIIString(alias->name, "barry_as_FLUFL") == 0) {
+        ಗಾಗಿ (Py_ssize_t i = 0; i < asdl_seq_LEN(ಹೆಸರುಗಳು); i++) {
+            alias_ty alias = asdl_seq_GET(ಹೆಸರುಗಳು, i);
+            ಆದರೆ (PyUnicode_CompareWithASCIIString(alias->name, "barry_as_FLUFL") == 0) {
                 p->flags |= PyPARSE_BARRY_AS_BDFL;
                 p->tok->barry_as_bdfl = 1;
             }
         }
     }
-    else if (
+    ಇಲ್ಲದಿದ್ದರೆ ಆದರೆ (
         level > 0
-        && lazy_token == NULL
+        && lazy_token == ಖಾಲಿ
         && PyUnicode_CompareWithASCIIString(module, "lazy") == 0
     ) {
-        if (_warn_relative_import_of_lazy(p, dots, module_name) < 0) {
-            return NULL;
+        ಆದರೆ (warn_relative_import_ದ_lazy(p, dots, module_name) < 0) {
+            ಹಿಂತಿರುಗಿ ಖಾಲಿ;
         }
     }
-    return _PyAST_ImportFrom(module, names, level, lazy_token ? 1 : 0, lineno,
-                             col_offset, end_lineno, end_col_offset, arena);
+    ಹಿಂತಿರುಗಿ _PyAST_ImportFrom(module, ಹೆಸರುಗಳು, level, lazy_token ? 1 : 0, lineno,
+                             ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, arena);
 }
 
 asdl_stmt_seq*
-_PyPegen_register_stmts(Parser *p, asdl_stmt_seq* stmts) {
-    if (!p->call_invalid_rules) {
-        return stmts;
+Py_Pegen_ರಿಜಿಸ್ಟರ್_stmts(Parser *p, asdl_stmt_seq* stmts) {
+    ಆದರೆ (!p->call_invalid_ನಿಯಮಗಳು) {
+        ಹಿಂತಿರುಗಿ stmts;
     }
     Py_ssize_t len = asdl_seq_LEN(stmts);
-    if (len == 0) {
-        return stmts;
+    ಆದರೆ (len == 0) {
+        ಹಿಂತಿರುಗಿ stmts;
     }
-    stmt_ty last_stmt = asdl_seq_GET(stmts, len - 1);
-    if (p->last_stmt_location.lineno > last_stmt->lineno) {
-        return stmts;
+    stmt_ty ಕೊನೆಯ_stmt = asdl_seq_GET(stmts, len - 1);
+    ಆದರೆ (p->ಕೊನೆಯ_stmt_location.lineno > ಕೊನೆಯ_stmt->lineno) {
+        ಹಿಂತಿರುಗಿ stmts;
     }
-    p->last_stmt_location.lineno = last_stmt->lineno;
-    p->last_stmt_location.col_offset = last_stmt->col_offset;
-    p->last_stmt_location.end_lineno = last_stmt->end_lineno;
-    p->last_stmt_location.end_col_offset = last_stmt->end_col_offset;
-    return stmts;
+    p->ಕೊನೆಯ_stmt_location.lineno = ಕೊನೆಯ_stmt->lineno;
+    p->ಕೊನೆಯ_stmt_location.ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ = ಕೊನೆಯ_stmt->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
+    p->ಕೊನೆಯ_stmt_location.ಕೊನೆ_lineno = ಕೊನೆಯ_stmt->ಕೊನೆ_lineno;
+    p->ಕೊನೆಯ_stmt_location.ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ = ಕೊನೆಯ_stmt->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
+    ಹಿಂತಿರುಗಿ stmts;
 }

@@ -19,9 +19,9 @@
 # [1] "The Zephyr Abstract Syntax Description Language" by Wang, et. al. See
 #     http://asdl.sourceforge.net/
 #-------------------------------------------------------------------------------
-from collections import namedtuple
-import enum
-import re
+ತಃ collections ಆಮದು namedtuple
+ಆಮದು enum
+ಆಮದು re
 
 __all__ = [
     'builtin_types', 'parse', 'AST', 'Module', 'Type', 'Constructor',
@@ -36,98 +36,98 @@ __all__ = [
 
 builtin_types = {'identifier', 'string', 'int', 'constant'}
 
-class AST:
-    def __repr__(self):
-        raise NotImplementedError
+ವರ್ಗ AST:
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಎತ್ತು NotImplementedError
 
-class Module(AST):
-    def __init__(self, name, dfns):
+ವರ್ಗ Module(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, name, dfns):
         self.name = name
         self.dfns = dfns
-        self.types = {type.name: type.value for type in dfns}
+        self.types = {type.name: type.ಮೌಲ್ಯ ಗಾಗಿ type ಒಳಗೆ dfns}
 
-    def __repr__(self):
-        return 'Module({0.name}, {0.dfns})'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಹಿಂತಿರುಗಿ 'Module({0.name}, {0.dfns})'.format(self)
 
-class Type(AST):
-    def __init__(self, name, value):
+ವರ್ಗ Type(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, name, ಮೌಲ್ಯ):
         self.name = name
-        self.value = value
+        self.ಮೌಲ್ಯ = ಮೌಲ್ಯ
 
-    def __repr__(self):
-        return 'Type({0.name}, {0.value})'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಹಿಂತಿರುಗಿ 'Type({0.name}, {0.value})'.format(self)
 
-class Constructor(AST):
-    def __init__(self, name, fields=None):
+ವರ್ಗ Constructor(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, name, fields=ಏನೂಇಲ್ಲ):
         self.name = name
-        self.fields = fields or []
+        self.fields = fields ಅಥವಾ []
 
-    def __repr__(self):
-        return 'Constructor({0.name}, {0.fields})'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಹಿಂತಿರುಗಿ 'Constructor({0.name}, {0.fields})'.format(self)
 
-class Quantifier(enum.Enum):
+ವರ್ಗ Quantifier(enum.Enum):
     OPTIONAL = enum.auto()
     SEQUENCE = enum.auto()
 
-class Field(AST):
-    def __init__(self, type, name=None, quantifiers=None):
+ವರ್ಗ ಕ್ಷೇತ್ರ(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, type, name=ಏನೂಇಲ್ಲ, quantifiers=ಏನೂಇಲ್ಲ):
         self.type = type
         self.name = name
-        self.seq = False
-        self.opt = False
-        self.quantifiers = quantifiers or []
-        if len(self.quantifiers) > 0:
-            self.seq = self.quantifiers[-1] is Quantifier.SEQUENCE
-            self.opt = self.quantifiers[-1] is Quantifier.OPTIONAL
+        self.seq = ಸುಳ್ಳು
+        self.opt = ಸುಳ್ಳು
+        self.quantifiers = quantifiers ಅಥವಾ []
+        ಆದರೆ ಉದ್ದ(self.quantifiers) > 0:
+            self.seq = self.quantifiers[-1] ಆಗಿರುವ Quantifier.SEQUENCE
+            self.opt = self.quantifiers[-1] ಆಗಿರುವ Quantifier.OPTIONAL
 
-    def __str__(self):
+    ವ್ಯಾಖ್ಯಾನ __str__(self):
         extra = ""
-        for mod in self.quantifiers:
-            if mod is Quantifier.SEQUENCE:
+        ಗಾಗಿ mod ಒಳಗೆ self.quantifiers:
+            ಆದರೆ mod ಆಗಿರುವ Quantifier.SEQUENCE:
                 extra += "*"
-            elif mod is Quantifier.OPTIONAL:
+            ಅಥವಾಆದರೆ mod ಆಗಿರುವ Quantifier.OPTIONAL:
                 extra += "?"
 
-        return "{}{} {}".format(self.type, extra, self.name)
+        ಹಿಂತಿರುಗಿ "{}{} {}".format(self.type, extra, self.name)
 
-    def __repr__(self):
-        if self.quantifiers:
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಆದರೆ self.quantifiers:
             texts = []
-            for mod in self.quantifiers:
-                if mod is Quantifier.SEQUENCE:
+            ಗಾಗಿ mod ಒಳಗೆ self.quantifiers:
+                ಆದರೆ mod ಆಗಿರುವ Quantifier.SEQUENCE:
                     texts.append("SEQUENCE")
-                elif mod is Quantifier.OPTIONAL:
+                ಅಥವಾಆದರೆ mod ಆಗಿರುವ Quantifier.OPTIONAL:
                     texts.append("OPTIONAL")
             extra = ", quantifiers=[{}]".format(", ".join(texts))
-        else:
+        ಇಲ್ಲದಿದ್ದರೆ:
             extra = ""
 
-        if self.name is None:
-            return 'Field({0.type}{1})'.format(self, extra)
-        else:
-            return 'Field({0.type}, {0.name}{1})'.format(self, extra)
+        ಆದರೆ self.name ಆಗಿರುವ ಏನೂಇಲ್ಲ:
+            ಹಿಂತಿರುಗಿ 'Field({0.type}{1})'.format(self, extra)
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಹಿಂತಿರುಗಿ 'Field({0.type}, {0.name}{1})'.format(self, extra)
 
-class Sum(AST):
-    def __init__(self, types, attributes=None):
+ವರ್ಗ ಮೊತ್ತ(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, types, ಗುಣಲಕ್ಷಣಗಳು=ಏನೂಇಲ್ಲ):
         self.types = types
-        self.attributes = attributes or []
+        self.ಗುಣಲಕ್ಷಣಗಳು = ಗುಣಲಕ್ಷಣಗಳು ಅಥವಾ []
 
-    def __repr__(self):
-        if self.attributes:
-            return 'Sum({0.types}, {0.attributes})'.format(self)
-        else:
-            return 'Sum({0.types})'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಆದರೆ self.ಗುಣಲಕ್ಷಣಗಳು:
+            ಹಿಂತಿರುಗಿ 'Sum({0.types}, {0.attributes})'.format(self)
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಹಿಂತಿರುಗಿ 'Sum({0.types})'.format(self)
 
-class Product(AST):
-    def __init__(self, fields, attributes=None):
+ವರ್ಗ ಗುಣಲಬ್ಧ(AST):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, fields, ಗುಣಲಕ್ಷಣಗಳು=ಏನೂಇಲ್ಲ):
         self.fields = fields
-        self.attributes = attributes or []
+        self.ಗುಣಲಕ್ಷಣಗಳು = ಗುಣಲಕ್ಷಣಗಳು ಅಥವಾ []
 
-    def __repr__(self):
-        if self.attributes:
-            return 'Product({0.fields}, {0.attributes})'.format(self)
-        else:
-            return 'Product({0.fields})'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __repr__(self):
+        ಆದರೆ self.ಗುಣಲಕ್ಷಣಗಳು:
+            ಹಿಂತಿರುಗಿ 'Product({0.fields}, {0.attributes})'.format(self)
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಹಿಂತಿರುಗಿ 'Product({0.fields})'.format(self)
 
 # A generic visitor for the meta-AST that describes ASDL. This can be used by
 # emitters. Note that this visitor does not provide a generic visit method, so a
@@ -135,247 +135,247 @@ class Product(AST):
 # interesting node.
 # We also define a Check visitor that makes sure the parsed ASDL is well-formed.
 
-class VisitorBase(object):
+ವರ್ಗ Visitor_ತಳ(object):
     """Generic tree visitor for ASTs."""
-    def __init__(self):
+    ವ್ಯಾಖ್ಯಾನ __init__(self):
         self.cache = {}
 
-    def visit(self, obj, *args):
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ(self, obj, *ವಾದಗಳು):
         klass = obj.__class__
         meth = self.cache.get(klass)
-        if meth is None:
+        ಆದರೆ meth ಆಗಿರುವ ಏನೂಇಲ್ಲ:
             methname = "visit" + klass.__name__
-            meth = getattr(self, methname, None)
+            meth = getattr(self, methname, ಏನೂಇಲ್ಲ)
             self.cache[klass] = meth
-        if meth:
-            try:
-                meth(obj, *args)
-            except Exception as e:
-                print("Error visiting %r: %s" % (obj, e))
-                raise
+        ಆದರೆ meth:
+            ಪ್ರಯತ್ನಿಸು:
+                meth(obj, *ವಾದಗಳು)
+            ಅಪವಾದ Exception ಇವ e:
+                ಮುದ್ರಿಸು("Error visiting %r: %s" % (obj, e))
+                ಎತ್ತು
 
-class Check(VisitorBase):
+ವರ್ಗ Check(Visitor_ತಳ):
     """A visitor that checks a parsed ASDL tree for correctness.
 
     Errors are printed and accumulated.
     """
-    def __init__(self):
-        super(Check, self).__init__()
+    ವ್ಯಾಖ್ಯಾನ __init__(self):
+        ಪರ(Check, self).__init__()
         self.cons = {}
         self.errors = 0
         self.types = {}
 
-    def visitModule(self, mod):
-        for dfn in mod.dfns:
-            self.visit(dfn)
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_Module(self, mod):
+        ಗಾಗಿ dfn ಒಳಗೆ mod.dfns:
+            self.ಭೇಟಿ(dfn)
 
-    def visitType(self, type):
-        self.visit(type.value, str(type.name))
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_Type(self, type):
+        self.ಭೇಟಿ(type.ಮೌಲ್ಯ, str(type.name))
 
-    def visitSum(self, sum, name):
-        for t in sum.types:
-            self.visit(t, name)
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_ಮೊತ್ತ(self, ಮೊತ್ತ_2, name):
+        ಗಾಗಿ t ಒಳಗೆ ಮೊತ್ತ_2.types:
+            self.ಭೇಟಿ(t, name)
 
-    def visitConstructor(self, cons, name):
-        key = str(cons.name)
-        conflict = self.cons.get(key)
-        if conflict is None:
-            self.cons[key] = name
-        else:
-            print('Redefinition of constructor {}'.format(key))
-            print('Defined in {} and {}'.format(conflict, name))
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_Constructor(self, cons, name):
+        ಕೀಲಿ = str(cons.name)
+        conflict = self.cons.get(ಕೀಲಿ)
+        ಆದರೆ conflict ಆಗಿರುವ ಏನೂಇಲ್ಲ:
+            self.cons[ಕೀಲಿ] = name
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಮುದ್ರಿಸು('Redefinition of constructor {}'.format(ಕೀಲಿ))
+            ಮುದ್ರಿಸು('Defined in {} and {}'.format(conflict, name))
             self.errors += 1
-        for f in cons.fields:
-            self.visit(f, key)
+        ಗಾಗಿ f ಒಳಗೆ cons.fields:
+            self.ಭೇಟಿ(f, ಕೀಲಿ)
 
-    def visitField(self, field, name):
-        key = str(field.type)
-        l = self.types.setdefault(key, [])
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_ಕ್ಷೇತ್ರ(self, ಕ್ಷೇತ್ರ_2, name):
+        ಕೀಲಿ = str(ಕ್ಷೇತ್ರ_2.type)
+        l = self.types.setdefault(ಕೀಲಿ, [])
         l.append(name)
 
-    def visitProduct(self, prod, name):
-        for f in prod.fields:
-            self.visit(f, name)
+    ವ್ಯಾಖ್ಯಾನ ಭೇಟಿ_ಗುಣಲಬ್ಧ(self, prod, name):
+        ಗಾಗಿ f ಒಳಗೆ prod.fields:
+            self.ಭೇಟಿ(f, name)
 
-def check(mod):
+ವ್ಯಾಖ್ಯಾನ check(mod):
     """Check the parsed ASDL tree for correctness.
 
     Return True if success. For failure, the errors are printed out and False
     is returned.
     """
     v = Check()
-    v.visit(mod)
+    v.ಭೇಟಿ(mod)
 
-    for t in v.types:
-        if t not in mod.types and not t in builtin_types:
+    ಗಾಗಿ t ಒಳಗೆ v.types:
+        ಆದರೆ t ಅಲ್ಲ ಒಳಗೆ mod.types ಮತ್ತು ಅಲ್ಲ t ಒಳಗೆ builtin_types:
             v.errors += 1
-            uses = ", ".join(v.types[t])
-            print('Undefined type {}, used in {}'.format(t, uses))
-    return not v.errors
+            ಬಳಸುತ್ತದೆ = ", ".join(v.types[t])
+            ಮುದ್ರಿಸು('Undefined type {}, used in {}'.format(t, ಬಳಸುತ್ತದೆ))
+    ಹಿಂತಿರುಗಿ ಅಲ್ಲ v.errors
 
 # The ASDL parser itself comes next. The only interesting external interface
 # here is the top-level parse function.
 
-def parse(filename):
+ವ್ಯಾಖ್ಯಾನ parse(filename):
     """Parse ASDL from the given file and return a Module node describing it."""
-    with open(filename, encoding="utf-8") as f:
+    ಜೊತೆ open(filename, encoding="utf-8") ಇವ f:
         parser = ASDLParser()
-        return parser.parse(f.read())
+        ಹಿಂತಿರುಗಿ parser.parse(f.ಪಠ())
 
 # Types for describing tokens in an ASDL specification.
-class TokenKind:
+ವರ್ಗ Token_ಬಗೆ:
     """TokenKind is provides a scope for enumerated token kinds."""
     (ConstructorId, TypeId, Equals, Comma, Question, Pipe, Asterisk,
-     LParen, RParen, LBrace, RBrace) = range(11)
+     LParen, RParen, LBrace, RBrace) = ಶ್ರೇಣಿ(11)
 
-    operator_table = {
+    operator_ಕೋಷ್ಟಕ = {
         '=': Equals, ',': Comma,    '?': Question, '|': Pipe,    '(': LParen,
         ')': RParen, '*': Asterisk, '{': LBrace,   '}': RBrace}
 
 Token = namedtuple('Token', 'kind value lineno')
 
-class ASDLSyntaxError(Exception):
-    def __init__(self, msg, lineno=None):
-        self.msg = msg
-        self.lineno = lineno or '<unknown>'
+ವರ್ಗ ASDLSyntaxError(Exception):
+    ವ್ಯಾಖ್ಯಾನ __init__(self, ಸಂದೇಶ, lineno=ಏನೂಇಲ್ಲ):
+        self.ಸಂದೇಶ = ಸಂದೇಶ
+        self.lineno = lineno ಅಥವಾ '<unknown>'
 
-    def __str__(self):
-        return 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
+    ವ್ಯಾಖ್ಯಾನ __str__(self):
+        ಹಿಂತಿರುಗಿ 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
 
-def tokenize_asdl(buf):
+ವ್ಯಾಖ್ಯಾನ tokenize_asdl(buf):
     """Tokenize the given buffer. Yield Token objects."""
-    for lineno, line in enumerate(buf.splitlines(), 1):
-        for m in re.finditer(r'\s*(\w+|--.*|.)', line.strip()):
-            c = m.group(1)
-            if c[0].isalpha():
+    ಗಾಗಿ lineno, ಸಾಲು ಒಳಗೆ enumerate(buf.splitlines(), 1):
+        ಗಾಗಿ m ಒಳಗೆ re.finditer(r'\s*(\w+|--.*|.)', ಸಾಲು.strip()):
+            c = m.ಗುಂಪು(1)
+            ಆದರೆ c[0].isalpha():
                 # Some kind of identifier
-                if c[0].isupper():
-                    yield Token(TokenKind.ConstructorId, c, lineno)
-                else:
-                    yield Token(TokenKind.TypeId, c, lineno)
-            elif c[:2] == '--':
+                ಆದರೆ c[0].isupper():
+                    ನೀಡು Token(Token_ಬಗೆ.ConstructorId, c, lineno)
+                ಇಲ್ಲದಿದ್ದರೆ:
+                    ನೀಡು Token(Token_ಬಗೆ.TypeId, c, lineno)
+            ಅಥವಾಆದರೆ c[:2] == '--':
                 # Comment
-                break
-            else:
+                ನಿಲ್ಲಿಸು
+            ಇಲ್ಲದಿದ್ದರೆ:
                 # Operators
-                try:
-                    op_kind = TokenKind.operator_table[c]
-                except KeyError:
-                    raise ASDLSyntaxError('Invalid operator %s' % c, lineno)
-                yield Token(op_kind, c, lineno)
+                ಪ್ರಯತ್ನಿಸು:
+                    op_ಬಗೆ = Token_ಬಗೆ.operator_ಕೋಷ್ಟಕ[c]
+                ಅಪವಾದ ಕೀಲಿ_Error:
+                    ಎತ್ತು ASDLSyntaxError('Invalid operator %s' % c, lineno)
+                ನೀಡು Token(op_ಬಗೆ, c, lineno)
 
-class ASDLParser:
+ವರ್ಗ ASDLParser:
     """Parser for ASDL files.
 
     Create, then call the parse method on a buffer containing ASDL.
     This is a simple recursive descent parser that uses tokenize_asdl for the
     lexing.
     """
-    def __init__(self):
-        self._tokenizer = None
-        self.cur_token = None
+    ವ್ಯಾಖ್ಯಾನ __init__(self):
+        self._tokenizer = ಏನೂಇಲ್ಲ
+        self.cur_token = ಏನೂಇಲ್ಲ
 
-    def parse(self, buf):
+    ವ್ಯಾಖ್ಯಾನ parse(self, buf):
         """Parse the ASDL in the buffer and return an AST with a Module root.
         """
         self._tokenizer = tokenize_asdl(buf)
         self._advance()
-        return self._parse_module()
+        ಹಿಂತಿರುಗಿ self._parse_module()
 
-    def _parse_module(self):
-        if self._at_keyword('module'):
+    ವ್ಯಾಖ್ಯಾನ _parse_module(self):
+        ಆದರೆ self._at_keyword('module'):
             self._advance()
-        else:
-            raise ASDLSyntaxError(
-                'Expected "module" (found {})'.format(self.cur_token.value),
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಎತ್ತು ASDLSyntaxError(
+                'Expected "module" (found {})'.format(self.cur_token.ಮೌಲ್ಯ),
                 self.cur_token.lineno)
-        name = self._match(self._id_kinds)
-        self._match(TokenKind.LBrace)
+        name = self.ಹೊಂದಿಕೆ(self._id_kinds)
+        self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.LBrace)
         defs = self._parse_definitions()
-        self._match(TokenKind.RBrace)
-        return Module(name, defs)
+        self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.RBrace)
+        ಹಿಂತಿರುಗಿ Module(name, defs)
 
-    def _parse_definitions(self):
+    ವ್ಯಾಖ್ಯಾನ _parse_definitions(self):
         defs = []
-        while self.cur_token.kind == TokenKind.TypeId:
+        ಆಗ self.cur_token.ಬಗೆ == Token_ಬಗೆ.TypeId:
             typename = self._advance()
-            self._match(TokenKind.Equals)
+            self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.Equals)
             type = self._parse_type()
             defs.append(Type(typename, type))
-        return defs
+        ಹಿಂತಿರುಗಿ defs
 
-    def _parse_type(self):
-        if self.cur_token.kind == TokenKind.LParen:
+    ವ್ಯಾಖ್ಯಾನ _parse_type(self):
+        ಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.LParen:
             # If we see a (, it's a product
-            return self._parse_product()
-        else:
+            ಹಿಂತಿರುಗಿ self.parse_ಗುಣಲಬ್ಧ()
+        ಇಲ್ಲದಿದ್ದರೆ:
             # Otherwise it's a sum. Look for ConstructorId
-            sumlist = [Constructor(self._match(TokenKind.ConstructorId),
+            sumlist = [Constructor(self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.ConstructorId),
                                    self._parse_optional_fields())]
-            while self.cur_token.kind  == TokenKind.Pipe:
+            ಆಗ self.cur_token.ಬಗೆ  == Token_ಬಗೆ.Pipe:
                 # More constructors
                 self._advance()
                 sumlist.append(Constructor(
-                                self._match(TokenKind.ConstructorId),
+                                self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.ConstructorId),
                                 self._parse_optional_fields()))
-            return Sum(sumlist, self._parse_optional_attributes())
+            ಹಿಂತಿರುಗಿ ಮೊತ್ತ(sumlist, self.parse_optional_ಗುಣಲಕ್ಷಣಗಳು())
 
-    def _parse_product(self):
-        return Product(self._parse_fields(), self._parse_optional_attributes())
+    ವ್ಯಾಖ್ಯಾನ parse_ಗುಣಲಬ್ಧ(self):
+        ಹಿಂತಿರುಗಿ ಗುಣಲಬ್ಧ(self._parse_fields(), self.parse_optional_ಗುಣಲಕ್ಷಣಗಳು())
 
-    def _parse_fields(self):
+    ವ್ಯಾಖ್ಯಾನ _parse_fields(self):
         fields = []
-        self._match(TokenKind.LParen)
-        while self.cur_token.kind == TokenKind.TypeId:
+        self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.LParen)
+        ಆಗ self.cur_token.ಬಗೆ == Token_ಬಗೆ.TypeId:
             typename = self._advance()
-            quantifiers = self._parse_optional_field_quantifier()
-            id = (self._advance() if self.cur_token.kind in self._id_kinds
-                                  else None)
-            fields.append(Field(typename, id, quantifiers=quantifiers))
-            if self.cur_token.kind == TokenKind.RParen:
-                break
-            elif self.cur_token.kind == TokenKind.Comma:
+            quantifiers = self.parse_optional_ಕ್ಷೇತ್ರ_quantifier()
+            id = (self._advance() ಆದರೆ self.cur_token.ಬಗೆ ಒಳಗೆ self._id_kinds
+                                  ಇಲ್ಲದಿದ್ದರೆ ಏನೂಇಲ್ಲ)
+            fields.append(ಕ್ಷೇತ್ರ(typename, id, quantifiers=quantifiers))
+            ಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.RParen:
+                ನಿಲ್ಲಿಸು
+            ಅಥವಾಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.Comma:
                 self._advance()
-        self._match(TokenKind.RParen)
-        return fields
+        self.ಹೊಂದಿಕೆ(Token_ಬಗೆ.RParen)
+        ಹಿಂತಿರುಗಿ fields
 
-    def _parse_optional_fields(self):
-        if self.cur_token.kind == TokenKind.LParen:
-            return self._parse_fields()
-        else:
-            return None
+    ವ್ಯಾಖ್ಯಾನ _parse_optional_fields(self):
+        ಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.LParen:
+            ಹಿಂತಿರುಗಿ self._parse_fields()
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಹಿಂತಿರುಗಿ ಏನೂಇಲ್ಲ
 
-    def _parse_optional_attributes(self):
-        if self._at_keyword('attributes'):
+    ವ್ಯಾಖ್ಯಾನ parse_optional_ಗುಣಲಕ್ಷಣಗಳು(self):
+        ಆದರೆ self._at_keyword('attributes'):
             self._advance()
-            return self._parse_fields()
-        else:
-            return None
+            ಹಿಂತಿರುಗಿ self._parse_fields()
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಹಿಂತಿರುಗಿ ಏನೂಇಲ್ಲ
 
-    def _parse_optional_field_quantifier(self):
+    ವ್ಯಾಖ್ಯಾನ parse_optional_ಕ್ಷೇತ್ರ_quantifier(self):
         quantifiers = []
-        while self.cur_token.kind in (TokenKind.Asterisk, TokenKind.Question):
-            if self.cur_token.kind == TokenKind.Asterisk:
+        ಆಗ self.cur_token.ಬಗೆ ಒಳಗೆ (Token_ಬಗೆ.Asterisk, Token_ಬಗೆ.Question):
+            ಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.Asterisk:
                 quantifiers.append(Quantifier.SEQUENCE)
-            elif self.cur_token.kind == TokenKind.Question:
+            ಅಥವಾಆದರೆ self.cur_token.ಬಗೆ == Token_ಬಗೆ.Question:
                 quantifiers.append(Quantifier.OPTIONAL)
             self._advance()
-        return quantifiers
+        ಹಿಂತಿರುಗಿ quantifiers
 
-    def _advance(self):
+    ವ್ಯಾಖ್ಯಾನ _advance(self):
         """ Return the value of the current token and read the next one into
             self.cur_token.
         """
-        cur_val = None if self.cur_token is None else self.cur_token.value
-        try:
-            self.cur_token = next(self._tokenizer)
-        except StopIteration:
-            self.cur_token = None
-        return cur_val
+        cur_val = ಏನೂಇಲ್ಲ ಆದರೆ self.cur_token ಆಗಿರುವ ಏನೂಇಲ್ಲ ಇಲ್ಲದಿದ್ದರೆ self.cur_token.ಮೌಲ್ಯ
+        ಪ್ರಯತ್ನಿಸು:
+            self.cur_token = ಮುಂದಿನ(self._tokenizer)
+        ಅಪವಾದ StopIteration:
+            self.cur_token = ಏನೂಇಲ್ಲ
+        ಹಿಂತಿರುಗಿ cur_val
 
-    _id_kinds = (TokenKind.ConstructorId, TokenKind.TypeId)
+    _id_kinds = (Token_ಬಗೆ.ConstructorId, Token_ಬಗೆ.TypeId)
 
-    def _match(self, kind):
+    ವ್ಯಾಖ್ಯಾನ ಹೊಂದಿಕೆ(self, ಬಗೆ):
         """The 'match' primitive of RD parsers.
 
         * Verifies that the current token is of the given kind (kind can
@@ -383,17 +383,17 @@ class ASDLParser:
         * Returns the value of the current token
         * Reads in the next token
         """
-        if (isinstance(kind, tuple) and self.cur_token.kind in kind or
-            self.cur_token.kind == kind
+        ಆದರೆ (isinstance(ಬಗೆ, tuple) ಮತ್ತು self.cur_token.ಬಗೆ ಒಳಗೆ ಬಗೆ ಅಥವಾ
+            self.cur_token.ಬಗೆ == ಬಗೆ
             ):
-            value = self.cur_token.value
+            ಮೌಲ್ಯ = self.cur_token.ಮೌಲ್ಯ
             self._advance()
-            return value
-        else:
-            raise ASDLSyntaxError(
-                'Unmatched {} (found {})'.format(kind, self.cur_token.kind),
+            ಹಿಂತಿರುಗಿ ಮೌಲ್ಯ
+        ಇಲ್ಲದಿದ್ದರೆ:
+            ಎತ್ತು ASDLSyntaxError(
+                'Unmatched {} (found {})'.format(ಬಗೆ, self.cur_token.ಬಗೆ),
                 self.cur_token.lineno)
 
-    def _at_keyword(self, keyword):
-        return (self.cur_token.kind == TokenKind.TypeId and
-                self.cur_token.value == keyword)
+    ವ್ಯಾಖ್ಯಾನ _at_keyword(self, keyword):
+        ಹಿಂತಿರುಗಿ (self.cur_token.ಬಗೆ == Token_ಬಗೆ.TypeId ಮತ್ತು
+                self.cur_token.ಮೌಲ್ಯ == keyword)

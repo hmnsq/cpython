@@ -1,99 +1,99 @@
-#include "Python.h"
-#include "errcode.h"
-#include "pycore_token.h"
+#ಅನ್ತರ್ಭಾವ "Python.h"
+#ಅನ್ತರ್ಭಾವ "errcode.h"
+#ಅನ್ತರ್ಭಾವ "pycore_token.h"
 
-#include "tokenizer.h"
-#include "reader.h"
-#include "reader_internal.h"
-#include "../lexer/state.h"
+#ಅನ್ತರ್ಭಾವ "tokenizer.h"
+#ಅನ್ತರ್ಭಾವ "reader.h"
+#ಅನ್ತರ್ಭಾವ "reader_internal.h"
+#ಅನ್ತರ್ಭಾವ "../lexer/state.h"
 
-int
-_PyTokenizer_GetStatus(const struct tok_state *tok)
+ಪೂರ್ಣಾಂಕ
+Py_Tokenizer_Get_ಸ್ಥಿತಿ(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok)
 {
-    return tok->done;
+    ಹಿಂತಿರುಗಿ tok->ಮುಗಿದ;
 }
 
-int
-_PyTokenizer_GetNewlineRequirements(const struct tok_state *tok)
+ಪೂರ್ಣಾಂಕ
+_PyTokenizer_GetNewlineRequirements(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok)
 {
-    return tok->needs_newline;
+    ಹಿಂತಿರುಗಿ tok->needs_newline;
 }
 
 _PyTokenizer_Info
-_PyTokenizer_GetInfo(const struct tok_state *tok)
+_PyTokenizer_GetInfo(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok)
 {
     _PyTokenizer_Info info = {
-        .status = tok->done,
+        .ಸ್ಥಿತಿ_2 = tok->ಮುಗಿದ,
         .implicit_newline = tok->implicit_newline,
         .diagnostic = tok->diagnostic,
-        .location = {tok->lineno, tok->line_start < 0
-            ? -1 : (int)(tok->cur - tok->line_start)},
+        .location = {tok->lineno, tok->ಸಾಲು_ಆರಂಭ < 0
+            ? -1 : (ಪೂರ್ಣಾಂಕ)(tok->cur - tok->ಸಾಲು_ಆರಂಭ)},
         .cursor = tok->cur,
-        .input_span = {tok->buf_offset, tok->inp},
-        .line_span = {tok->line_start, tok->inp},
+        .ಒಳಹರಿವು_ಹರವು = {tok->buf_ಸ್ಥಾನಾಂತರ, tok->inp},
+        .ಸಾಲು_ಹರವು = {tok->ಸಾಲು_ಆರಂಭ, tok->inp},
         .level = tok->level,
         .delimiter_loc = {-1, -1},
-        .in_formatted_string = tok->ftstring_depth != 0,
+        .ಒಳ_formatted_string = tok->ftstring_ಆಳ != 0,
         .is_interactive = _PyTok_ReaderIsInteractive(tok),
-        .is_file = tok->reader->fp != NULL && tok->reader->fp != stdin,
+        .is_file = tok->reader->fp != ಖಾಲಿ && tok->reader->fp != stdin,
         .filename = tok->filename,
         .module = tok->module,
         .encoding = tok->reader->encoding,
     };
-    if (tok->level > 0) {
-        int level = tok->level - 1;
+    ಆದರೆ (tok->level > 0) {
+        ಪೂರ್ಣಾಂಕ level = tok->level - 1;
         info.delimiter = tok->parenstack[level];
         info.delimiter_loc = (_PyTok_Loc){
             tok->parenlinenostack[level], tok->parencolstack[level]};
     }
-    return info;
+    ಹಿಂತಿರುಗಿ info;
 }
 
-const char *
-_PyToken_TextView(const struct tok_state *tok, const struct token *token,
-                  Py_ssize_t *length)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+Py_Token_ಪಠ್ಯ_View(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ರಚನೆ token *token,
+                  Py_ssize_t *ಉದ್ದಳತೆ)
 {
-    assert(length != NULL);
-    if (token->span.start < 0) {
-        assert(token->span.start == -1 && token->span.end == -1);
-        *length = 0;
-        return "";
+    ಪ್ರತಿಜ್ಞಾ(ಉದ್ದಳತೆ != ಖಾಲಿ);
+    ಆದರೆ (token->ಹರವು.ಆರಂಭ < 0) {
+        ಪ್ರತಿಜ್ಞಾ(token->ಹರವು.ಆರಂಭ == -1 && token->ಹರವು.ಕೊನೆ == -1);
+        *ಉದ್ದಳತೆ = 0;
+        ಹಿಂತಿರುಗಿ "";
     }
-    return _PyTok_SourceSpanView(&tok->source, token->span, length);
+    ಹಿಂತಿರುಗಿ Py_Tok_ಮೂಲ_ಹರವು_View(&tok->ಮೂಲ, token->ಹರವು, ಉದ್ದಳತೆ);
 }
 
-const char *
-_PyTokenizer_SpanView(const struct tok_state *tok, _PyTok_Span span,
-                      Py_ssize_t *length)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+Py_Tokenizer_ಹರವು_View(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok, Py_Tok_ಹರವು ಹರವು,
+                      Py_ssize_t *ಉದ್ದಳತೆ)
 {
-    return _PyTok_SourceSpanView(&tok->source, span, length);
+    ಹಿಂತಿರುಗಿ Py_Tok_ಮೂಲ_ಹರವು_View(&tok->ಮೂಲ, ಹರವು, ಉದ್ದಳತೆ);
 }
 
-void
-_PyToken_GetView(const struct tok_state *tok, const struct token *token,
+ಶೂನ್ಯ
+_PyToken_GetView(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok, ಸ್ಥಿರಾಂಕ ರಚನೆ token *token,
                  _PyToken_View *view)
 {
-    assert(view != NULL);
-    view->text = _PyToken_TextView(tok, token, &view->length);
-    view->end_line_start = tok->line_start;
-    view->line_span = (_PyTok_Span){
+    ಪ್ರತಿಜ್ಞಾ(view != ಖಾಲಿ);
+    view->ಪಠ್ಯ = Py_Token_ಪಠ್ಯ_View(tok, token, &view->ಉದ್ದಳತೆ);
+    view->ಕೊನೆ_ಸಾಲು_ಆರಂಭ = tok->ಸಾಲು_ಆರಂಭ;
+    view->ಸಾಲು_ಹರವು = (Py_Tok_ಹರವು){
         ISSTRINGLIT(token->type)
-            ? token->span.start - token->start_loc.byte_col : tok->line_start,
+            ? token->ಹರವು.ಆರಂಭ - token->ಆರಂಭ_loc.byte_ಲಂಬಸಾಲು : tok->ಸಾಲು_ಆರಂಭ,
         tok->inp,
     };
     view->implicit_newline = tok->implicit_newline;
-    view->at_eof = tok->done == E_EOF;
+    view->at_eof = tok->ಮುಗಿದ == E_EOF;
 }
 
-const char *
-_PyTokenizer_LineView(const struct tok_state *tok, Py_ssize_t lineno,
-                      Py_ssize_t *length)
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *
+Py_Tokenizer_ಸಾಲು_View(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok, Py_ssize_t lineno,
+                      Py_ssize_t *ಉದ್ದಳತೆ)
 {
-    return _PyTok_SourceLineView(&tok->source, lineno, length);
+    ಹಿಂತಿರುಗಿ Py_Tok_ಮೂಲ_ಸಾಲು_View(&tok->ಮೂಲ, lineno, ಉದ್ದಳತೆ);
 }
 
-void
-_PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
+ಶೂನ್ಯ
+Py_Tokenizer_ಗಣ_Context(ರಚನೆ tok_state *tok, PyObject *filename,
                         PyObject *module)
 {
     Py_XINCREF(filename);
@@ -102,61 +102,61 @@ _PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
     Py_XSETREF(tok->module, module);
 }
 
-void
-_PyTokenizer_SetOptions(struct tok_state *tok, int extra_tokens,
-                        int type_comments)
+ಶೂನ್ಯ
+Py_Tokenizer_ಗಣ_Options(ರಚನೆ tok_state *tok, ಪೂರ್ಣಾಂಕ extra_ಟೋಕನುಗಳು,
+                        ಪೂರ್ಣಾಂಕ type_comments)
 {
-    tok->tok_extra_tokens = extra_tokens;
+    tok->tok_extra_ಟೋಕನುಗಳು = extra_ಟೋಕನುಗಳು;
     tok->type_comments = type_comments;
 }
 
-void
-_PyTokenizer_ImplyDedents(struct tok_state *tok)
+ಶೂನ್ಯ
+_PyTokenizer_ImplyDedents(ರಚನೆ tok_state *tok)
 {
     _PyLexer_ImplyDedents(tok);
 }
 
-void
-_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, int allow)
+ಶೂನ್ಯ
+Py_Tokenizer_Allow_Incomplete_ಒಳಹರಿವು(ರಚನೆ tok_state *tok, ಪೂರ್ಣಾಂಕ allow)
 {
-    tok->allow_incomplete_input = allow != 0;
+    tok->allow_incomplete_ಒಳಹರಿವು = allow != 0;
 }
 
-int
-_PyTokenizer_HasTrailingStatement(const struct tok_state *tok)
+ಪೂರ್ಣಾಂಕ
+_PyTokenizer_HasTrailingStatement(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok)
 {
     _PyTok_Off cur = tok->cur;
-    _PyTok_Off end = tok->source.base_offset + tok->source.len;
-    while (cur < end) {
-        int c = _PyTok_SourceByte(&tok->source, cur++);
-        if (c == '\0') {
-            return 0;
+    _PyTok_Off ಕೊನೆ = tok->ಮೂಲ.ತಳ_ಸ್ಥಾನಾಂತರ + tok->ಮೂಲ.len;
+    ಆಗ (cur < ಕೊನೆ) {
+        ಪೂರ್ಣಾಂಕ c = Py_Tok_ಮೂಲ_Byte(&tok->ಮೂಲ, cur++);
+        ಆದರೆ (c == '\0') {
+            ಹಿಂತಿರುಗಿ 0;
         }
-        if (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
-            continue;
+        ಆದರೆ (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
+            ಮುಂದುವರಿ;
         }
-        if (c != '#') {
-            return 1;
+        ಆದರೆ (c != '#') {
+            ಹಿಂತಿರುಗಿ 1;
         }
-        while (cur < end) {
-            c = _PyTok_SourceByte(&tok->source, cur);
-            if (c == '\0' || c == '\n') {
-                break;
+        ಆಗ (cur < ಕೊನೆ) {
+            c = Py_Tok_ಮೂಲ_Byte(&tok->ಮೂಲ, cur);
+            ಆದರೆ (c == '\0' || c == '\n') {
+                ನಿಲ್ಲಿಸು;
             }
             cur++;
         }
     }
-    return 0;
+    ಹಿಂತಿರುಗಿ 0;
 }
 
-int
-_PyTokenizer_IsInteractive(const struct tok_state *tok)
+ಪೂರ್ಣಾಂಕ
+_PyTokenizer_IsInteractive(ಸ್ಥಿರಾಂಕ ರಚನೆ tok_state *tok)
 {
-    return _PyTok_ReaderIsInteractive(tok);
+    ಹಿಂತಿರುಗಿ _PyTok_ReaderIsInteractive(tok);
 }
 
-void
-_PyTokenizer_StopInteractive(struct tok_state *tok)
+ಶೂನ್ಯ
+_PyTokenizer_StopInteractive(ರಚನೆ tok_state *tok)
 {
     _PyTok_ReaderStopInteractive(tok);
 }

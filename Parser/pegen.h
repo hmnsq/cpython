@@ -1,209 +1,209 @@
-#ifndef PEGEN_H
-#define PEGEN_H
+#ವ್ಯಾಖ್ಯಾನಿತವಾಗದಿದ್ದರೆ PEGEN_H
+#ವ್ಯಾಖ್ಯಾನಿಸು PEGEN_H
 
-#include <Python.h>
-#include <pycore_ast.h>
-#include <pycore_token.h>
-#include <pycore_ceval.h>     // _Py_ReachedRecursionLimitWithMargin()
-#include <pycore_pystate.h>   // _Py_get_machine_stack_pointer()
-#include <pycore_pythonrun.h> // _PyOS_STACK_MARGIN_BYTES
+#ಅನ್ತರ್ಭಾವ <Python.h>
+#ಅನ್ತರ್ಭಾವ <pycore_ast.h>
+#ಅನ್ತರ್ಭಾವ <pycore_token.h>
+#ಅನ್ತರ್ಭಾವ <pycore_ceval.h>     // _Py_ReachedRecursionLimitWithMargin()
+#ಅನ್ತರ್ಭಾವ <pycore_pystate.h>   // _Py_get_machine_stack_pointer()
+#ಅನ್ತರ್ಭಾವ <pycore_pythonrun.h> // _PyOS_STACK_MARGIN_BYTES
 
-#include "tokenizer/tokenizer.h"
+#ಅನ್ತರ್ಭಾವ "tokenizer/tokenizer.h"
 
-#if 0
-#define PyPARSE_YIELD_IS_KEYWORD        0x0001
-#endif
+#ಆದರೆ 0
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_YIELD_IS_KEYWORD        0x0001
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define PyPARSE_DONT_IMPLY_DEDENT       0x0002
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_DONT_IMPLY_DEDENT       0x0002
 
-#if 0
-#define PyPARSE_WITH_IS_KEYWORD         0x0003
-#define PyPARSE_PRINT_IS_FUNCTION       0x0004
-#define PyPARSE_UNICODE_LITERALS        0x0008
-#endif
+#ಆದರೆ 0
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_WITH_IS_KEYWORD         0x0003
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_PRINT_IS_FUNCTION       0x0004
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_UNICODE_LITERALS        0x0008
+#ಆದರೆ_ಅಂತ್ಯ
 
-#define PyPARSE_IGNORE_COOKIE 0x0010
-#define PyPARSE_BARRY_AS_BDFL 0x0020
-#define PyPARSE_TYPE_COMMENTS 0x0040
-#define PyPARSE_ALLOW_INCOMPLETE_INPUT 0x0100
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_IGNORE_COOKIE 0x0010
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_BARRY_AS_BDFL 0x0020
+#ವ್ಯಾಖ್ಯಾನಿಸು PyPARSE_TYPE_COMMENTS 0x0040
+#ವ್ಯಾಖ್ಯಾನಿಸು Py_PARSE_ALLOW_INCOMPLETE_ಒಳಹರಿವು 0x0100
 
-#define CURRENT_POS (-5)
+#ವ್ಯಾಖ್ಯಾನಿಸು CURRENT_POS (-5)
 
-typedef struct _memo {
-    int type;
-    void *node;
-    int mark;
-    struct _memo *next;
-} Memo;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ ಜ್ಞಾಪನ_2 {
+    ಪೂರ್ಣಾಂಕ type;
+    ಶೂನ್ಯ *ಗಂಟು;
+    ಪೂರ್ಣಾಂಕ mark;
+    ರಚನೆ ಜ್ಞಾಪನ_2 *ಮುಂದಿನ;
+} ಜ್ಞಾಪನ;
 
-typedef struct {
-    int type;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಪೂರ್ಣಾಂಕ type;
     // Text required by grammar actions or helpers; otherwise NULL.
     // An unfinished string token also has NULL text. Its grammar action
     // requests more input only if the token is valid at that position.
-    PyObject *bytes;
-    int level;
-    int is_raw;
-    int lineno, col_offset, end_lineno, end_col_offset;
-    Memo *memo;
+    PyObject *ಬೈಟುಗಳು;
+    ಪೂರ್ಣಾಂಕ level;
+    ಪೂರ್ಣಾಂಕ is_raw;
+    ಪೂರ್ಣಾಂಕ lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
+    ಜ್ಞಾಪನ *ಜ್ಞಾಪನ_3;
     // Filter over the rule types present in `memo` (bit `type & 63` is set
     // for every entry): lets lookups skip walking the list on definite
     // misses, which are the common case.
-    uint64_t memo_mask;
+    uint64_t ಜ್ಞಾಪನ_ಮುಖವಾಡ;
     PyObject *metadata;
 } Token;
 
-typedef struct {
-    const char *str;
-    int type;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *str;
+    ಪೂರ್ಣಾಂಕ type;
 } KeywordToken;
 
 
-typedef struct {
-    struct {
-        int lineno;
-        char *comment;  // The " <tag>" in "# type: ignore <tag>"
-    } *items;
-    size_t size;
-    size_t num_items;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ರಚನೆ {
+        ಪೂರ್ಣಾಂಕ lineno;
+        ಅಕ್ಷರ *comment;  // The " <tag>" in "# type: ignore <tag>"
+    } *ವಸ್ತುಗಳು;
+    ಗಾತ್ರ_t ಗಾತ್ರ_2;
+    ಗಾತ್ರ_t ಅಂಕೆ_ವಸ್ತುಗಳು;
 } growable_comment_array;
 
-typedef struct {
-    int lineno;
-    int col_offset;
-    int end_lineno;
-    int end_col_offset;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಪೂರ್ಣಾಂಕ lineno;
+    ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
+    ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno;
+    ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
 } location;
 
-typedef struct _identifier_cache_entry IdentifierCacheEntry;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ identifier_cache_ನಮೂದು Identifier_Cache_ನಮೂದು;
 
-typedef struct {
-    struct tok_state *tok;
-    Token **tokens;
-    int mark;
-    int fill, size;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ರಚನೆ tok_state *tok;
+    Token **ಟೋಕನುಗಳು;
+    ಪೂರ್ಣಾಂಕ mark;
+    ಪೂರ್ಣಾಂಕ fill, ಗಾತ್ರ_2;
     PyArena *arena;
     KeywordToken **keywords;
-    char **soft_keywords;
-    int n_keyword_lists;
-    int start_rule;
-    int *errcode;
-    unsigned char parsing_started;
-    unsigned char input_exhausted;
+    ಅಕ್ಷರ **soft_keywords;
+    ಪೂರ್ಣಾಂಕ n_keyword_lists;
+    ಪೂರ್ಣಾಂಕ ಆರಂಭ_ನಿಯಮ;
+    ಪೂರ್ಣಾಂಕ *errcode;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ parsing_started;
+    ಚಿಹ್ನೆರಹಿತ ಅಕ್ಷರ ಒಳಹರಿವು_exhausted;
     PyObject* normalize;
-    int starting_lineno;
-    int starting_col_offset;
-    int error_indicator;
-    int flags;
-    int feature_version;
+    ಪೂರ್ಣಾಂಕ starting_lineno;
+    ಪೂರ್ಣಾಂಕ starting_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ;
+    ಪೂರ್ಣಾಂಕ error_indicator;
+    ಪೂರ್ಣಾಂಕ flags;
+    ಪೂರ್ಣಾಂಕ feature_ಆವೃತ್ತಿ;
     growable_comment_array type_ignore_comments;
-    Token *known_err_token;
-    int level;
-    int call_invalid_rules;
-    int debug;
-    location last_stmt_location;
-    IdentifierCacheEntry *identifier_cache;
+    Token *ತಿಳಿದ_err_token;
+    ಪೂರ್ಣಾಂಕ level;
+    ಪೂರ್ಣಾಂಕ call_invalid_ನಿಯಮಗಳು;
+    ಪೂರ್ಣಾಂಕ debug;
+    location ಕೊನೆಯ_stmt_location;
+    Identifier_Cache_ನಮೂದು *identifier_cache;
     PyThreadState *tstate;
     // Cached copy of tstate->c_stack_soft_limit offset by one margin toward
     // the stack top, so the per-rule stack check is a single inline comparison.
-    uintptr_t stack_soft_limit;
+    uintptr_t ರಾಶಿ_soft_ಎಲ್ಲೆ;
 } Parser;
 
 // C-stack exhaustion check run on every rule entry. The fast path compares
 // the machine stack pointer against the soft limit cached in the Parser;
 // only when the stack is nearly exhausted is the full check called.
-static inline int
-_PyPegen_stack_exhausted(Parser *p)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಪೂರ್ಣಾಂಕ
+Py_Pegen_ರಾಶಿ_exhausted(Parser *p)
 {
-#if _Py_STACK_GROWS_DOWN
-    if (_Py_get_machine_stack_pointer() > p->stack_soft_limit) {
-#else
-    if (_Py_get_machine_stack_pointer() <= p->stack_soft_limit) {
-#endif
-        assert(!_Py_ReachedRecursionLimitWithMargin(p->tstate, 1));
-        return 0;
+#ಆದರೆ Py_ರಾಶಿ_GROWS_ಕೆಳಕ್ಕೆ
+    ಆದರೆ (Py_get_machine_ರಾಶಿ_ಸೂಚಕ() > p->ರಾಶಿ_soft_ಎಲ್ಲೆ) {
+#ಇಲ್ಲದಿದ್ದರೆ
+    ಆದರೆ (Py_get_machine_ರಾಶಿ_ಸೂಚಕ() <= p->ರಾಶಿ_soft_ಎಲ್ಲೆ) {
+#ಆದರೆ_ಅಂತ್ಯ
+        ಪ್ರತಿಜ್ಞಾ(!Py_Reached_Recursion_ಎಲ್ಲೆ_With_Margin(p->tstate, 1));
+        ಹಿಂತಿರುಗಿ 0;
     }
-    return _Py_ReachedRecursionLimitWithMargin(p->tstate, 1);
+    ಹಿಂತಿರುಗಿ Py_Reached_Recursion_ಎಲ್ಲೆ_With_Margin(p->tstate, 1);
 }
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     cmpop_ty cmpop;
-    expr_ty expr;
-} CmpopExprPair;
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಅಭಿವ್ಯಕ್ತಿ;
+} Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair;
 
-typedef struct {
-    expr_ty key;
-    expr_ty value;
-} KeyValuePair;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಕೀಲಿ;
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಮೌಲ್ಯ;
+} ಕೀಲಿ_ಮೌಲ್ಯ_Pair;
 
-typedef struct {
-    expr_ty key;
-    pattern_ty pattern;
-} KeyPatternPair;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಕೀಲಿ;
+    ನಮೂನೆ_ty ನಮೂನೆ;
+} ಕೀಲಿ_ನಮೂನೆ_Pair;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     arg_ty arg;
-    expr_ty value;
+    ಅಭಿವ್ಯಕ್ತಿ_ty ಮೌಲ್ಯ;
 } NameDefaultPair;
 
-typedef struct {
-    asdl_arg_seq *plain_names;
-    asdl_seq *names_with_defaults; // asdl_seq* of NameDefaultsPair's
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    asdl_arg_seq *plain_ಹೆಸರುಗಳು;
+    asdl_seq *ಹೆಸರುಗಳು_with_defaults; // asdl_seq* of NameDefaultsPair's
 } SlashWithDefault;
 
-typedef struct {
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
     arg_ty vararg;
     asdl_seq *kwonlyargs; // asdl_seq* of NameDefaultsPair's
     arg_ty kwarg;
-} StarEtc;
+} ನಕ್ಷತ್ರ_Etc;
 
-typedef struct { operator_ty kind; } AugOperator;
-typedef struct {
-    void *element;
-    int is_keyword;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ { operator_ty ಬಗೆ; } AugOperator;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಶೂನ್ಯ *element;
+    ಪೂರ್ಣಾಂಕ is_keyword;
 } KeywordOrStarred;
 
-typedef struct {
-    void *result;
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ರಚನೆ {
+    ಶೂನ್ಯ *ಫಲಿತಾಂಶ;
     PyObject *metadata;
-} ResultTokenWithMetadata;
+} ಫಲಿತಾಂಶ_Token_With_Metadata;
 
 // Internal parser functions
-#if defined(Py_DEBUG)
-void _PyPegen_clear_memo_statistics(void);
-PyObject *_PyPegen_get_memo_statistics(void);
-#endif
+#ಆದರೆ defined(Py_DEBUG)
+ಶೂನ್ಯ Py_Pegen_clear_ಜ್ಞಾಪನ_statistics(ಶೂನ್ಯ);
+PyObject *Py_Pegen_get_ಜ್ಞಾಪನ_statistics(ಶೂನ್ಯ);
+#ಆದರೆ_ಅಂತ್ಯ
 
-int _PyPegen_insert_memo(Parser *p, int mark, int type, void *node);
-int _PyPegen_update_memo(Parser *p, int mark, int type, void *node);
-Memo *_PyPegen_insert_memo_direct(Parser *p, int mark, int type);
-int _PyPegen_is_memoized(Parser *p, int type, void *pres);
+ಪೂರ್ಣಾಂಕ Py_Pegen_ಸೇರಿಸು_ಜ್ಞಾಪನ(Parser *p, ಪೂರ್ಣಾಂಕ mark, ಪೂರ್ಣಾಂಕ type, ಶೂನ್ಯ *ಗಂಟು);
+ಪೂರ್ಣಾಂಕ Py_Pegen_update_ಜ್ಞಾಪನ(Parser *p, ಪೂರ್ಣಾಂಕ mark, ಪೂರ್ಣಾಂಕ type, ಶೂನ್ಯ *ಗಂಟು);
+ಜ್ಞಾಪನ *Py_Pegen_ಸೇರಿಸು_ಜ್ಞಾಪನ_ನೇರ(Parser *p, ಪೂರ್ಣಾಂಕ mark, ಪೂರ್ಣಾಂಕ type);
+ಪೂರ್ಣಾಂಕ _PyPegen_is_memoized(Parser *p, ಪೂರ್ಣಾಂಕ type, ಶೂನ್ಯ *pres);
 
-int _PyPegen_lookahead(int, void *(func)(Parser *), Parser *);
-int _PyPegen_lookahead_for_expr(int, expr_ty (func)(Parser *), Parser *);
-int _PyPegen_lookahead_for_stmt(int, stmt_ty (func)(Parser *), Parser *);
-int _PyPegen_lookahead_with_int(int, Token *(func)(Parser *, int), Parser *, int);
-int _PyPegen_lookahead_with_string(int, expr_ty (func)(Parser *, const char*), Parser *, const char*);
+ಪೂರ್ಣಾಂಕ _PyPegen_lookahead(ಪೂರ್ಣಾಂಕ, ಶೂನ್ಯ *(func)(Parser *), Parser *);
+ಪೂರ್ಣಾಂಕ Py_Pegen_lookahead_for_ಅಭಿವ್ಯಕ್ತಿ(ಪೂರ್ಣಾಂಕ, ಅಭಿವ್ಯಕ್ತಿ_ty (func)(Parser *), Parser *);
+ಪೂರ್ಣಾಂಕ _PyPegen_lookahead_for_stmt(ಪೂರ್ಣಾಂಕ, stmt_ty (func)(Parser *), Parser *);
+ಪೂರ್ಣಾಂಕ _PyPegen_lookahead_with_int(ಪೂರ್ಣಾಂಕ, Token *(func)(Parser *, ಪೂರ್ಣಾಂಕ), Parser *, ಪೂರ್ಣಾಂಕ);
+ಪೂರ್ಣಾಂಕ _PyPegen_lookahead_with_string(ಪೂರ್ಣಾಂಕ, ಅಭಿವ್ಯಕ್ತಿ_ty (func)(Parser *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*), Parser *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*);
 
-Token *_PyPegen_expect_token(Parser *p, int type);
-void* _PyPegen_expect_forced_result(Parser *p, void* result, const char* expected);
-Token *_PyPegen_expect_forced_token(Parser *p, int type, const char* expected);
-expr_ty _PyPegen_expect_soft_keyword(Parser *p, const char *keyword);
-expr_ty _PyPegen_soft_keyword_token(Parser *p);
-expr_ty _PyPegen_fstring_middle_token(Parser* p);
-Token *_PyPegen_get_last_nonnwhitespace_token(Parser *);
-int _PyPegen_fill_token(Parser *p);
+Token *_PyPegen_expect_token(Parser *p, ಪೂರ್ಣಾಂಕ type);
+ಶೂನ್ಯ* Py_Pegen_expect_forced_ಫಲಿತಾಂಶ(Parser *p, ಶೂನ್ಯ* ಫಲಿತಾಂಶ, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* expected);
+Token *_PyPegen_expect_forced_token(Parser *p, ಪೂರ್ಣಾಂಕ type, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ* expected);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_expect_soft_keyword(Parser *p, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *keyword);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_soft_keyword_token(Parser *p);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_fstring_ಮಧ್ಯ_token(Parser* p);
+Token *Py_Pegen_get_ಕೊನೆಯ_nonnwhitespace_token(Parser *);
+ಪೂರ್ಣಾಂಕ _PyPegen_fill_token(Parser *p);
 // Return -1 on failure, leaving the buffer and capacity unchanged.
-int _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity);
-expr_ty _PyPegen_name_token(Parser *p);
-expr_ty _PyPegen_number_token(Parser *p);
-void *_PyPegen_string_token(Parser *p);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset_raw(const char*, Py_ssize_t col_offset);
+ಪೂರ್ಣಾಂಕ Py_Pegen_grow_loop_ಬಫರ್(ಶೂನ್ಯ ***ಬಫರ್, Py_ssize_t *ಸಾಮರ್ಥ್ಯ);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_name_token(Parser *p);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_ಸಂಖ್ಯೆ_token(Parser *p);
+ಶೂನ್ಯ *_PyPegen_string_token(Parser *p);
+Py_ssize_t Py_Pegen_byte_ಸ್ಥಾನಾಂತರ_ಗಮ್ಯ_character_ಸ್ಥಾನಾಂತರ_ಸಾಲು(PyObject *ಸಾಲು, Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, Py_ssize_t ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ);
+Py_ssize_t Py_Pegen_byte_ಸ್ಥಾನಾಂತರ_ಗಮ್ಯ_character_ಸ್ಥಾನಾಂತರ(PyObject *ಸಾಲು, Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ);
+Py_ssize_t Py_Pegen_byte_ಸ್ಥಾನಾಂತರ_ಗಮ್ಯ_character_ಸ್ಥಾನಾಂತರ_raw(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*, Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ);
 
-typedef enum {
-    STAR_TARGETS,
+ಪ್ರಕಾರವ್ಯಾಖ್ಯೆ ಎಣಿಕೆ {
+    ನಕ್ಷತ್ರ_TARGETS,
     DEL_TARGETS,
     FOR_TARGETS,
     SINGLE_TARGETS,
@@ -211,225 +211,225 @@ typedef enum {
 } TARGETS_TYPE;
 
 // Error handling functions and APIs
-int _Pypegen_raise_decode_error(Parser *p);
-int _Pypegen_tokenizer_error(Parser *p);
-void *_PyPegen_raise_incomplete_input(Parser *p);
-void *_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...);
-void *_PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
-                                          Py_ssize_t lineno, Py_ssize_t col_offset,
-                                          Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                                          const char *errmsg, va_list va);
-void _Pypegen_set_syntax_error(Parser* p, Token* last_token);
-void _Pypegen_stack_overflow(Parser *p);
+ಪೂರ್ಣಾಂಕ _Pypegen_raise_decode_error(Parser *p);
+ಪೂರ್ಣಾಂಕ _Pypegen_tokenizer_error(Parser *p);
+ಶೂನ್ಯ *Py_Pegen_raise_incomplete_ಒಳಹರಿವು(Parser *p);
+ಶೂನ್ಯ *_PyPegen_raise_error(Parser *p, PyObject *errtype, ಪೂರ್ಣಾಂಕ use_mark, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errmsg, ...);
+ಶೂನ್ಯ *Py_Pegen_raise_error_ತಿಳಿದ_location(Parser *p, PyObject *errtype,
+                                          Py_ssize_t lineno, Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                          Py_ssize_t ಕೊನೆ_lineno, Py_ssize_t ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                                          ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errmsg, va_list va);
+ಶೂನ್ಯ Pypegen_ಗಣ_syntax_error(Parser* p, Token* ಕೊನೆಯ_token);
+ಶೂನ್ಯ Pypegen_ರಾಶಿ_ಅತಿಪ್ರವಾಹ(Parser *p);
 
-static inline void *
-RAISE_ERROR_KNOWN_LOCATION(Parser *p, PyObject *errtype,
-                           Py_ssize_t lineno, Py_ssize_t col_offset,
-                           Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                           const char *errmsg, ...)
+ಸ್ಥಿರ ಸಾಲೊಳಗೆ ಶೂನ್ಯ *
+RAISE_ERROR_ತಿಳಿದ_LOCATION(Parser *p, PyObject *errtype,
+                           Py_ssize_t lineno, Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           Py_ssize_t ಕೊನೆ_lineno, Py_ssize_t ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
+                           ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *errmsg, ...)
 {
     va_list va;
-    va_start(va, errmsg);
-    Py_ssize_t _col_offset = (col_offset == CURRENT_POS ? CURRENT_POS : col_offset + 1);
-    Py_ssize_t _end_col_offset = (end_col_offset == CURRENT_POS ? CURRENT_POS : end_col_offset + 1);
-    _PyPegen_raise_error_known_location(p, errtype, lineno, _col_offset, end_lineno, _end_col_offset, errmsg, va);
-    va_end(va);
-    return NULL;
+    va_ಆರಂಭ(va, errmsg);
+    Py_ssize_t ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2 = (ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ == CURRENT_POS ? CURRENT_POS : ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1);
+    Py_ssize_t ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2 = (ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ == CURRENT_POS ? CURRENT_POS : ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ + 1);
+    Py_Pegen_raise_error_ತಿಳಿದ_location(p, errtype, lineno, ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2, ಕೊನೆ_lineno, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2, errmsg, va);
+    va_ಕೊನೆ(va);
+    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
-#define RAISE_SYNTAX_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, msg, ##__VA_ARGS__)
-#define RAISE_INDENTATION_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_ON_NEXT_TOKEN(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_RANGE(a, b, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (b)->end_lineno, (b)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (a)->end_lineno, (a)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_STARTING_FROM(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, CURRENT_POS, CURRENT_POS, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_INVALID_TARGET(type, e) _RAISE_SYNTAX_ERROR_INVALID_TARGET(p, type, e)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR(ಸಂದೇಶ, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_INDENTATION_ERROR(ಸಂದೇಶ, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR_ON_ಮುಂದಿನ_TOKEN(ಸಂದೇಶ, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR_ತಿಳಿದ_RANGE(a, b, ಸಂದೇಶ, ...) \
+    RAISE_ERROR_ತಿಳಿದ_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, (b)->ಕೊನೆ_lineno, (b)->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(a, ಸಂದೇಶ, ...) \
+    RAISE_ERROR_ತಿಳಿದ_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, (a)->ಕೊನೆ_lineno, (a)->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR_STARTING_FROM(a, ಸಂದೇಶ, ...) \
+    RAISE_ERROR_ತಿಳಿದ_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, CURRENT_POS, CURRENT_POS, ಸಂದೇಶ, ##__VA_ARGS__)
+#ವ್ಯಾಖ್ಯಾನಿಸು RAISE_SYNTAX_ERROR_INVALID_ಗುರಿ(type, e) RAISE_SYNTAX_ERROR_INVALID_ಗುರಿ_2(p, type, e)
 
-Py_LOCAL_INLINE(int)
-_PyPegen_tokens_are_adjacent(Token *a, Token *b)
+Py_LOCAL_INLINE(ಪೂರ್ಣಾಂಕ)
+Py_Pegen_ಟೋಕನುಗಳು_are_adjacent(Token *a, Token *b)
 {
-    return (a->end_lineno == b->lineno) && (a->end_col_offset == b->col_offset);
+    ಹಿಂತಿರುಗಿ (a->ಕೊನೆ_lineno == b->lineno) && (a->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ == b->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ);
 }
 
-Py_LOCAL_INLINE(void *)
-CHECK_CALL(Parser *p, void *result)
+Py_LOCAL_INLINE(ಶೂನ್ಯ *)
+CHECK_CALL(Parser *p, ಶೂನ್ಯ *ಫಲಿತಾಂಶ)
 {
-    if (result == NULL) {
-        assert(PyErr_Occurred());
+    ಆದರೆ (ಫಲಿತಾಂಶ == ಖಾಲಿ) {
+        ಪ್ರತಿಜ್ಞಾ(PyErr_Occurred());
         p->error_indicator = 1;
     }
-    return result;
+    ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
 /* This is needed for helper functions that are allowed to
    return NULL without an error. Example: _PyPegen_seq_extract_starred_exprs */
-Py_LOCAL_INLINE(void *)
-CHECK_CALL_NULL_ALLOWED(Parser *p, void *result)
+Py_LOCAL_INLINE(ಶೂನ್ಯ *)
+CHECK_CALL_NULL_ALLOWED(Parser *p, ಶೂನ್ಯ *ಫಲಿತಾಂಶ)
 {
-    if (result == NULL && PyErr_Occurred()) {
+    ಆದರೆ (ಫಲಿತಾಂಶ == ಖಾಲಿ && PyErr_Occurred()) {
         p->error_indicator = 1;
     }
-    return result;
+    ಹಿಂತಿರುಗಿ ಫಲಿತಾಂಶ;
 }
 
-#define CHECK(type, result) ((type) CHECK_CALL(p, result))
-#define CHECK_NULL_ALLOWED(type, result) ((type) CHECK_CALL_NULL_ALLOWED(p, result))
+#ವ್ಯಾಖ್ಯಾನಿಸು CHECK(type, ಫಲಿತಾಂಶ) ((type) CHECK_CALL(p, ಫಲಿತಾಂಶ))
+#ವ್ಯಾಖ್ಯಾನಿಸು CHECK_NULL_ALLOWED(type, ಫಲಿತಾಂಶ) ((type) CHECK_CALL_NULL_ALLOWED(p, ಫಲಿತಾಂಶ))
 
-expr_ty _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type);
-const char *_PyPegen_get_expr_name(expr_ty);
-Py_LOCAL_INLINE(void *)
-_RAISE_SYNTAX_ERROR_INVALID_TARGET(Parser *p, TARGETS_TYPE type, void *e)
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_get_invalid_ಗುರಿ(ಅಭಿವ್ಯಕ್ತಿ_ty e, TARGETS_TYPE targets_type);
+ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *Py_Pegen_get_ಅಭಿವ್ಯಕ್ತಿ_name(ಅಭಿವ್ಯಕ್ತಿ_ty);
+Py_LOCAL_INLINE(ಶೂನ್ಯ *)
+RAISE_SYNTAX_ERROR_INVALID_ಗುರಿ_2(Parser *p, TARGETS_TYPE type, ಶೂನ್ಯ *e)
 {
-    expr_ty invalid_target = CHECK_NULL_ALLOWED(expr_ty, _PyPegen_get_invalid_target(e, type));
-    if (invalid_target != NULL) {
-        const char *msg;
-        if (type == STAR_TARGETS || type == FOR_TARGETS) {
-            msg = "cannot assign to %s";
+    ಅಭಿವ್ಯಕ್ತಿ_ty invalid_ಗುರಿ = CHECK_NULL_ALLOWED(ಅಭಿವ್ಯಕ್ತಿ_ty, Py_Pegen_get_invalid_ಗುರಿ(e, type));
+    ಆದರೆ (invalid_ಗುರಿ != ಖಾಲಿ) {
+        ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಸಂದೇಶ;
+        ಆದರೆ (type == ನಕ್ಷತ್ರ_TARGETS || type == FOR_TARGETS) {
+            ಸಂದೇಶ = "cannot assign to %s";
         }
-        else {
-            msg = "cannot delete %s";
+        ಇಲ್ಲದಿದ್ದರೆ {
+            ಸಂದೇಶ = "cannot delete %s";
         }
-        return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
-            invalid_target,
-            msg,
-            _PyPegen_get_expr_name(invalid_target)
+        ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(
+            invalid_ಗುರಿ,
+            ಸಂದೇಶ,
+            Py_Pegen_get_ಅಭಿವ್ಯಕ್ತಿ_name(invalid_ಗುರಿ)
         );
-        return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(invalid_target, "invalid syntax");
+        ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR_ತಿಳಿದ_LOCATION(invalid_ಗುರಿ, "invalid syntax");
     }
-    return NULL;
+    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
 // Action utility functions
 
-void *_PyPegen_dummy_name(Parser *p, ...);
-void * _PyPegen_seq_last_item(asdl_seq *seq);
-#define PyPegen_last_item(seq, type) ((type)_PyPegen_seq_last_item((asdl_seq*)seq))
-void * _PyPegen_seq_first_item(asdl_seq *seq);
-#define PyPegen_first_item(seq, type) ((type)_PyPegen_seq_first_item((asdl_seq*)seq))
-#define UNUSED(expr) do { (void)(expr); } while (0)
-#define EXTRA_EXPR(head, tail) head->lineno, (head)->col_offset, (tail)->end_lineno, (tail)->end_col_offset, p->arena
-#define EXTRA _start_lineno, _start_col_offset, _end_lineno, _end_col_offset, p->arena
-PyObject *_PyPegen_new_type_comment(Parser *, const char *);
+ಶೂನ್ಯ *_PyPegen_dummy_name(Parser *p, ...);
+ಶೂನ್ಯ * Py_Pegen_seq_ಕೊನೆಯ_ಅಂಶ(asdl_seq *seq);
+#ವ್ಯಾಖ್ಯಾನಿಸು Py_Pegen_ಕೊನೆಯ_ಅಂಶ(seq, type) ((type)Py_Pegen_seq_ಕೊನೆಯ_ಅಂಶ((asdl_seq*)seq))
+ಶೂನ್ಯ * Py_Pegen_seq_ಮೊದಲ_ಅಂಶ(asdl_seq *seq);
+#ವ್ಯಾಖ್ಯಾನಿಸು Py_Pegen_ಮೊದಲ_ಅಂಶ(seq, type) ((type)Py_Pegen_seq_ಮೊದಲ_ಅಂಶ((asdl_seq*)seq))
+#ವ್ಯಾಖ್ಯಾನಿಸು ಬಳಸದ(ಅಭಿವ್ಯಕ್ತಿ) ಮಾಡು { (ಶೂನ್ಯ)(ಅಭಿವ್ಯಕ್ತಿ); } ಆಗ (0)
+#ವ್ಯಾಖ್ಯಾನಿಸು EXTRA_ಅಭಿವ್ಯಕ್ತಿ(ತಲೆ, ಬಾಲ) ತಲೆ->lineno, (ತಲೆ)->ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, (ಬಾಲ)->ಕೊನೆ_lineno, (ಬಾಲ)->ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, p->arena
+#ವ್ಯಾಖ್ಯಾನಿಸು EXTRA ಆರಂಭ_lineno, ಆರಂಭ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2, ಕೊನೆ_lineno_2, ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ_2, p->arena
+PyObject *_PyPegen_new_type_comment(Parser *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
 
 Py_LOCAL_INLINE(PyObject *)
 NEW_TYPE_COMMENT(Parser *p, Token *tc)
 {
-    if (tc == NULL) {
-        return NULL;
+    ಆದರೆ (tc == ಖಾಲಿ) {
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    const char *bytes = PyBytes_AsString(tc->bytes);
-    if (bytes == NULL) {
-        goto error;
+    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *ಬೈಟುಗಳು = Py_ಬೈಟುಗಳು_As_String(tc->ಬೈಟುಗಳು);
+    ಆದರೆ (ಬೈಟುಗಳು == ಖಾಲಿ) {
+        ಹೋಗು error;
     }
-    PyObject *tco = _PyPegen_new_type_comment(p, bytes);
-    if (tco == NULL) {
-        goto error;
+    PyObject *tco = _PyPegen_new_type_comment(p, ಬೈಟುಗಳು);
+    ಆದರೆ (tco == ಖಾಲಿ) {
+        ಹೋಗು error;
     }
-    return tco;
+    ಹಿಂತಿರುಗಿ tco;
  error:
     p->error_indicator = 1;  // Inline CHECK_CALL
-    return NULL;
+    ಹಿಂತಿರುಗಿ ಖಾಲಿ;
 }
 
-Py_LOCAL_INLINE(void *)
-INVALID_VERSION_CHECK(Parser *p, int version, char *msg, void *node)
+Py_LOCAL_INLINE(ಶೂನ್ಯ *)
+INVALID_ಆವೃತ್ತಿ_CHECK(Parser *p, ಪೂರ್ಣಾಂಕ ಆವೃತ್ತಿ, ಅಕ್ಷರ *ಸಂದೇಶ, ಶೂನ್ಯ *ಗಂಟು)
 {
-    if (node == NULL) {
+    ಆದರೆ (ಗಂಟು == ಖಾಲಿ) {
         p->error_indicator = 1;  // Inline CHECK_CALL
-        return NULL;
+        ಹಿಂತಿರುಗಿ ಖಾಲಿ;
     }
-    if (p->feature_version < version) {
+    ಆದರೆ (p->feature_ಆವೃತ್ತಿ < ಆವೃತ್ತಿ) {
         p->error_indicator = 1;
-        return RAISE_SYNTAX_ERROR("%s only supported in Python 3.%i and greater",
-                                  msg, version);
+        ಹಿಂತಿರುಗಿ RAISE_SYNTAX_ERROR("%s only supported in Python 3.%i and greater",
+                                  ಸಂದೇಶ, ಆವೃತ್ತಿ);
     }
-    return node;
+    ಹಿಂತಿರುಗಿ ಗಂಟು;
 }
 
-#define CHECK_VERSION(type, version, msg, node) ((type) INVALID_VERSION_CHECK(p, version, msg, node))
+#ವ್ಯಾಖ್ಯಾನಿಸು CHECK_ಆವೃತ್ತಿ(type, ಆವೃತ್ತಿ, ಸಂದೇಶ, ಗಂಟು) ((type) INVALID_ಆವೃತ್ತಿ_CHECK(p, ಆವೃತ್ತಿ, ಸಂದೇಶ, ಗಂಟು))
 
-arg_ty _PyPegen_add_type_comment_to_arg(Parser *, arg_ty, Token *);
-PyObject *_PyPegen_new_identifier(Parser *, const char *);
-asdl_seq *_PyPegen_singleton_seq(Parser *, void *);
-asdl_seq *_PyPegen_seq_insert_in_front(Parser *, void *, asdl_seq *);
-asdl_seq *_PyPegen_seq_append_to_end(Parser *, asdl_seq *, void *);
+arg_ty Py_Pegen_ಕೂಡಿಸು_type_comment_ಗಮ್ಯ_arg(Parser *, arg_ty, Token *);
+PyObject *_PyPegen_new_identifier(Parser *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *);
+asdl_seq *_PyPegen_singleton_seq(Parser *, ಶೂನ್ಯ *);
+asdl_seq *Py_Pegen_seq_ಸೇರಿಸು_ಒಳ_front(Parser *, ಶೂನ್ಯ *, asdl_seq *);
+asdl_seq *Py_Pegen_seq_append_ಗಮ್ಯ_ಕೊನೆ(Parser *, asdl_seq *, ಶೂನ್ಯ *);
 asdl_seq *_PyPegen_seq_flatten(Parser *, asdl_seq *);
-expr_ty _PyPegen_join_names_with_dot(Parser *, expr_ty, expr_ty);
-int _PyPegen_seq_count_dots(asdl_seq *);
-alias_ty _PyPegen_alias_for_star(Parser *, int, int, int, int, PyArena *);
-asdl_identifier_seq *_PyPegen_map_names_to_ids(Parser *, asdl_expr_seq *);
-CmpopExprPair *_PyPegen_cmpop_expr_pair(Parser *, cmpop_ty, expr_ty);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_join_ಹೆಸರುಗಳು_with_dot(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, ಅಭಿವ್ಯಕ್ತಿ_ty);
+ಪೂರ್ಣಾಂಕ Py_Pegen_seq_ಎಣಿಕೆ_dots(asdl_seq *);
+alias_ty Py_Pegen_alias_for_ನಕ್ಷತ್ರ(Parser *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
+asdl_identifier_seq *Py_Pegen_map_ಹೆಸರುಗಳು_ಗಮ್ಯ_ids(Parser *, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *);
+Cmpop_ಅಭಿವ್ಯಕ್ತಿ_Pair *Py_Pegen_cmpop_ಅಭಿವ್ಯಕ್ತಿ_pair(Parser *, cmpop_ty, ಅಭಿವ್ಯಕ್ತಿ_ty);
 asdl_int_seq *_PyPegen_get_cmpops(Parser *p, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_set_expr_context(Parser *, expr_ty, expr_context_ty);
-expr_ty _PyPegen_make_target(Parser *, expr_ty, TARGETS_TYPE);
-KeyValuePair *_PyPegen_key_value_pair(Parser *, expr_ty, expr_ty);
-asdl_expr_seq *_PyPegen_get_keys(Parser *, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_values(Parser *, asdl_seq *);
-KeyPatternPair *_PyPegen_key_pattern_pair(Parser *, expr_ty, pattern_ty);
-asdl_expr_seq *_PyPegen_get_pattern_keys(Parser *, asdl_seq *);
-asdl_pattern_seq *_PyPegen_get_patterns(Parser *, asdl_seq *);
-NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, expr_ty, Token *);
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_ಗಣ_ಅಭಿವ್ಯಕ್ತಿ_context(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, ಅಭಿವ್ಯಕ್ತಿ_context_ty);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_make_ಗುರಿ(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, TARGETS_TYPE);
+ಕೀಲಿ_ಮೌಲ್ಯ_Pair *Py_Pegen_ಕೀಲಿ_ಮೌಲ್ಯ_pair(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, ಅಭಿವ್ಯಕ್ತಿ_ty);
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *Py_Pegen_get_ಕೀಲಿಗಳು(Parser *, asdl_seq *);
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *Py_Pegen_get_ಮೌಲ್ಯಗಳು(Parser *, asdl_seq *);
+ಕೀಲಿ_ನಮೂನೆ_Pair *Py_Pegen_ಕೀಲಿ_ನಮೂನೆ_pair(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, ನಮೂನೆ_ty);
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *Py_Pegen_get_ನಮೂನೆ_ಕೀಲಿಗಳು(Parser *, asdl_seq *);
+asdl_ನಮೂನೆ_seq *_PyPegen_get_patterns(Parser *, asdl_seq *);
+NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, ಅಭಿವ್ಯಕ್ತಿ_ty, Token *);
 SlashWithDefault *_PyPegen_slash_with_default(Parser *, asdl_arg_seq *, asdl_seq *);
-StarEtc *_PyPegen_star_etc(Parser *, arg_ty, asdl_seq *, arg_ty);
+ನಕ್ಷತ್ರ_Etc *Py_Pegen_ನಕ್ಷತ್ರ_etc(Parser *, arg_ty, asdl_seq *, arg_ty);
 arguments_ty _PyPegen_make_arguments(Parser *, asdl_arg_seq *, SlashWithDefault *,
-                                     asdl_arg_seq *, asdl_seq *, StarEtc *);
-arguments_ty _PyPegen_empty_arguments(Parser *);
-expr_ty _PyPegen_template_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_interpolation(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
-                                 int, int, int, int, PyArena *);
-expr_ty _PyPegen_formatted_value(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
-                                 int, int, int, int, PyArena *);
+                                     asdl_arg_seq *, asdl_seq *, ನಕ್ಷತ್ರ_Etc *);
+arguments_ty Py_Pegen_ಖಾಲಿಗಳು_arguments(Parser *);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_template_str(Parser *p, Token *a, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *raw_expressions, Token *b);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *raw_expressions, Token *b);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_interpolation(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, Token *, ಫಲಿತಾಂಶ_Token_With_Metadata *, ಫಲಿತಾಂಶ_Token_With_Metadata *, Token *,
+                                 ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_formatted_ಮೌಲ್ಯ(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty, Token *, ಫಲಿತಾಂಶ_Token_With_Metadata *, ಫಲಿತಾಂಶ_Token_With_Metadata *, Token *,
+                                 ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
 AugOperator *_PyPegen_augoperator(Parser*, operator_ty type);
-stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
-stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
-KeywordOrStarred *_PyPegen_keyword_or_starred(Parser *, void *, int);
-asdl_expr_seq *_PyPegen_seq_extract_starred_exprs(Parser *, asdl_seq *);
+stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, stmt_ty);
+stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, stmt_ty);
+KeywordOrStarred *_PyPegen_keyword_or_starred(Parser *, ಶೂನ್ಯ *, ಪೂರ್ಣಾಂಕ);
+asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *Py_Pegen_seq_ಹೊರತೆಗೆ_starred_exprs(Parser *, asdl_seq *);
 asdl_keyword_seq *_PyPegen_seq_delete_starred_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_collect_call_seqs(Parser *, asdl_expr_seq *, asdl_seq *,
-                     int lineno, int col_offset, int end_lineno,
-                     int end_col_offset, PyArena *arena);
-expr_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
-expr_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_concatenate_strings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_FetchRawForm(Parser *p, int, int, int, int);
-expr_ty _PyPegen_ensure_imaginary(Parser *p, expr_ty);
-expr_ty _PyPegen_ensure_real(Parser *p, expr_ty);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_collect_call_seqs(Parser *, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, asdl_seq *,
+                     ಪೂರ್ಣಾಂಕ lineno, ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno,
+                     ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, PyArena *arena);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_concatenate_ಅಕ್ಷರಸರಣಿಗಳು(Parser *p, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_FetchRawForm(Parser *p, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_ensure_imaginary(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty);
+ಅಭಿವ್ಯಕ್ತಿ_ty _PyPegen_ensure_real(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty);
 asdl_seq *_PyPegen_join_sequences(Parser *, asdl_seq *, asdl_seq *);
-int _PyPegen_check_barry_as_flufl(Parser *, Token *);
-int _PyPegen_check_legacy_stmt(Parser *p, expr_ty t);
-void *_PyPegen_raise_error_for_missing_comma(Parser *p, expr_ty a, expr_ty b);
-ResultTokenWithMetadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, expr_ty t);
-ResultTokenWithMetadata *_PyPegen_setup_full_format_spec(Parser *, Token *, asdl_expr_seq *, int, int,
-                                                         int, int, PyArena *);
+ಪೂರ್ಣಾಂಕ _PyPegen_check_barry_as_flufl(Parser *, Token *);
+ಪೂರ್ಣಾಂಕ _PyPegen_check_legacy_stmt(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty t);
+ಶೂನ್ಯ *_PyPegen_raise_error_for_missing_comma(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty a, ಅಭಿವ್ಯಕ್ತಿ_ty b);
+ಫಲಿತಾಂಶ_Token_With_Metadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, ಅಭಿವ್ಯಕ್ತಿ_ty t);
+ಫಲಿತಾಂಶ_Token_With_Metadata *Py_Pegen_ಸಿದ್ಧತೆ_ತುಂಬಿದ_format_spec(Parser *, Token *, asdl_ಅಭಿವ್ಯಕ್ತಿ_seq *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ,
+                                                         ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, PyArena *);
 mod_ty _PyPegen_make_module(Parser *, asdl_stmt_seq *);
-void *_PyPegen_arguments_parsing_error(Parser *, expr_ty);
-expr_ty _PyPegen_get_last_comprehension_item(comprehension_ty comprehension);
-void *_PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq *comprehensions);
-stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, expr_ty module_name,
-                                     asdl_alias_seq *names, expr_ty lazy_token, int lineno,
-                                     int col_offset, int end_lineno, int end_col_offset,
+ಶೂನ್ಯ *_PyPegen_arguments_parsing_error(Parser *, ಅಭಿವ್ಯಕ್ತಿ_ty);
+ಅಭಿವ್ಯಕ್ತಿ_ty Py_Pegen_get_ಕೊನೆಯ_comprehension_ಅಂಶ(comprehension_ty comprehension);
+ಶೂನ್ಯ *Py_Pegen_nonparen_genexp_ಒಳ_call(Parser *p, ಅಭಿವ್ಯಕ್ತಿ_ty ವಾದಗಳು, asdl_comprehension_seq *comprehensions);
+stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, ಅಭಿವ್ಯಕ್ತಿ_ty module_name,
+                                     asdl_alias_seq *ಹೆಸರುಗಳು, ಅಭಿವ್ಯಕ್ತಿ_ty lazy_token, ಪೂರ್ಣಾಂಕ lineno,
+                                     ಪೂರ್ಣಾಂಕ ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ, ಪೂರ್ಣಾಂಕ ಕೊನೆ_lineno, ಪೂರ್ಣಾಂಕ ಕೊನೆ_ಲಂಬಸಾಲು_ಸ್ಥಾನಾಂತರ,
                                      PyArena *arena);
-asdl_stmt_seq* _PyPegen_register_stmts(Parser *p, asdl_stmt_seq* stmts);
-stmt_ty _PyPegen_register_stmt(Parser *p, stmt_ty s);
+asdl_stmt_seq* Py_Pegen_ರಿಜಿಸ್ಟರ್_stmts(Parser *p, asdl_stmt_seq* stmts);
+stmt_ty Py_Pegen_ರಿಜಿಸ್ಟರ್_stmt(Parser *p, stmt_ty s);
 
 // Parser API
 
-Parser *_PyPegen_Parser_New(struct tok_state *, int, int, int, int *, const char*, PyArena *);
-void _PyPegen_Parser_Free(Parser *);
-mod_ty _PyPegen_run_parser_from_file_pointer(FILE *, int, PyObject *, const char *,
-                                    const char *, const char *, PyCompilerFlags *, int *, PyObject **,
+Parser *_PyPegen_Parser_New(ರಚನೆ tok_state *, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ, ಪೂರ್ಣಾಂಕ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ*, PyArena *);
+ಶೂನ್ಯ _PyPegen_Parser_Free(Parser *);
+mod_ty Py_Pegen_ಸತತ_parser_from_file_ಸೂಚಕ(FILE *, ಪೂರ್ಣಾಂಕ, PyObject *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *,
+                                    ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, PyCompilerFlags *, ಪೂರ್ಣಾಂಕ *, PyObject **,
                                     PyArena *);
-void *_PyPegen_run_parser(Parser *);
-mod_ty _PyPegen_run_parser_from_string(const char *, int, PyObject *, PyCompilerFlags *, PyArena *, PyObject *, PyObject **);
+ಶೂನ್ಯ *Py_Pegen_ಸತತ_parser(Parser *);
+mod_ty Py_Pegen_ಸತತ_parser_from_string(ಸ್ಥಿರಾಂಕ ಅಕ್ಷರ *, ಪೂರ್ಣಾಂಕ, PyObject *, PyCompilerFlags *, PyArena *, PyObject *, PyObject **);
 asdl_stmt_seq *_PyPegen_interactive_exit(Parser *);
 
 // Generated function in parse.c - function definition in python.gram
-void *_PyPegen_parse(Parser *);
+ಶೂನ್ಯ *_PyPegen_parse(Parser *);
 
-#endif
+#ಆದರೆ_ಅಂತ್ಯ
