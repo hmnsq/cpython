@@ -1,509 +1,509 @@
-#include "Python.h"
-#include "pycore_codecs.h"
-#include "pycore_global_strings.h"
-#include "pycore_runtime.h"
-#include "errcode.h"
+#ضمن "Python.h"
+#ضمن "pycore_codecs.h"
+#ضمن "pycore_global_strings.h"
+#ضمن "pycore_runtime.h"
+#ضمن "errcode.h"
 
-#include "reader_internal.h"
-#include "helpers.h"
-#include "../lexer/state.h"
+#ضمن "reader_internal.h"
+#ضمن "helpers.h"
+#ضمن "../lexer/state.h"
 
-#define UNICODE_BOM 0xFEFF
-#define UTF16_LE_BOM "\xff\xfe"
-#define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
-#define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#تعریف_کړه UNICODE_BOM 0xFEFF
+#تعریف_کړه UTF16_LE_BOM "\xff\xfe"
+#تعریف_کړه UTF16_BE_BOM "\xfe\xff"
+#تعریف_کړه UTF16_BOM_اوږدتیا ((Py_ssize_t)(حجم(UTF16_LE_BOM) - 1))
+#تعریف_کړه UTF8_BOM "\xef\xbb\xbf"
+#تعریف_کړه UTF8_BOM_اوږدتیا ((Py_ssize_t)(حجم(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+حرف *
+Py_Tok_Copy_بایټونه(ثابت حرف *معلومات, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    إذا (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_حافظه();
+        أرجع عدم;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    حرف *copy = PyMem_Malloc((اندازه_t)len + 1);
+    إذا (copy == عدم) {
+        Py_Err_No_حافظه();
+        أرجع عدم;
     }
-    memcpy(copy, data, (size_t)len);
+    حافظه_نقل(copy, معلومات, (اندازه_t)len);
     copy[len] = '\0';
-    return copy;
+    أرجع copy;
 }
 
-static void
-chunk_release_data(_PyTok_Chunk *chunk)
+ساكن فراغ
+chunk_release_معلومات(_PyTok_Chunk *chunk)
 {
-    switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
-            PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+    بدل (chunk->ownership) {
+        حالة _PYTOK_CHUNK_BORROWED:
+            اكسر;
+        حالة _PYTOK_CHUNK_PYMEM:
+            PyMem_Free(chunk->معلومات);
+            اكسر;
+        حالة _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            اكسر;
     }
 }
 
-void
+فراغ
 _PyTok_ChunkClear(_PyTok_Chunk *chunk)
 {
-    chunk_release_data(chunk);
+    chunk_release_معلومات(chunk);
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+ساكن صحيح
+chunk_سېټ_unicode(بنية tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, صحيح strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    ثابت حرف *utf8 = Py_Unicode_As_UTF8_And_اندازه(unicode, &utf8_len);
+    إذا (utf8 == عدم) {
         Py_DECREF(unicode);
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        أرجع -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    إذا (strip_bom && Py_Unicode_GET_اوږدتیا(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
-        utf8 += UTF8_BOM_LENGTH;
-        utf8_len -= UTF8_BOM_LENGTH;
+        utf8 += UTF8_BOM_اوږدتیا;
+        utf8_len -= UTF8_BOM_اوږدتیا;
     }
-    chunk_release_data(chunk);
+    chunk_release_معلومات(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->معلومات = (حرف *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    أرجع 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
-                         Py_ssize_t *out_len)
+حرف *
+_PyTok_NormalizeNewlines(ثابت حرف *معلومات, Py_ssize_t len,
+                         Py_ssize_t *بهر_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    إذا (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_حافظه();
+        أرجع عدم;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    حرف *پایله = PyMem_Malloc((اندازه_t)len + 1);
+    إذا (پایله == عدم) {
+        Py_Err_No_حافظه();
+        أرجع عدم;
     }
-    Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
-                read++;
+    Py_ssize_t اكتب = 0;
+    لكل (Py_ssize_t اقرأ = 0; اقرأ < len; اقرأ++) {
+        حرف c = معلومات[اقرأ];
+        إذا (c == '\r') {
+            إذا (اقرأ + 1 < len && معلومات[اقرأ + 1] == '\n') {
+                اقرأ++;
             }
             c = '\n';
         }
-        result[write++] = c;
+        پایله[اكتب++] = c;
     }
-    result[write] = '\0';
-    *out_len = write;
-    return result;
+    پایله[اكتب] = '\0';
+    *بهر_len = اكتب;
+    أرجع پایله;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+صحيح
+Py_Tok_سېټ_Encoding(بنية tok_state *tok, ثابت حرف *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    حرف *copy = Py_Tok_Copy_بایټونه(encoding, مزي_اوږدوالی(encoding));
+    إذا (copy == عدم) {
+        tok->بشپړ = E_NOMEM;
+        أرجع -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    أرجع 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+ساكن صحيح
+پیدا_کړه_cookie(ثابت حرف *کرښه, Py_ssize_t len, حرف **encoding, صحيح *لټون_بل)
 {
     Py_ssize_t i = 0;
-    *encoding = NULL;
-    *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    *encoding = عدم;
+    *لټون_بل = 1;
+    لكل (; i < len; i++) {
+        إذا (کرښه[i] == '#') {
+            اكسر;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        إذا (کرښه[i] == '\n' || کرښه[i] == '\r') {
+            أرجع 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
-            *scan_next = 0;
-            return 0;
+        إذا (کرښه[i] != ' ' && کرښه[i] != '\t' && کرښه[i] != '\f') {
+            *لټون_بل = 0;
+            أرجع 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
-            continue;
+    ثابت Py_ssize_t marker_len = حجم("coding") - 1;
+    لكل (; i < len - marker_len; i++) {
+        إذا (memcmp(کرښه + i, "coding", marker_len) != 0) {
+            استمر;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
-            continue;
+        ثابت حرف *cursor = کرښه + i + marker_len;
+        إذا (*cursor != ':' && *cursor != '=') {
+            استمر;
         }
-        do {
+        افعل {
             cursor++;
-        } while (cursor < line + len &&
+        } طالما (cursor < کرښه + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        ثابت حرف *پیل = cursor;
+        طالما (cursor < کرښه + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
-            continue;
+        إذا (cursor == پیل) {
+            استمر;
         }
-        Py_ssize_t encoding_len = cursor - start;
+        Py_ssize_t encoding_len = cursor - پیل;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
-        const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+        حرف normalized[حجم("iso-latin-1-")];
+        ثابت Py_ssize_t مختاړی_len = Py_MIN(
+            encoding_len, (Py_ssize_t)حجم(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
-            normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
+        لكل (n = 0; n < مختاړی_len; n++) {
+            normalized[n] = پیل[n] == '_' ? '-' : Py_TOLOWER(پیل[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        ثابت حرف *canonical = پیل;
+        إذا (strcmp(normalized, "utf-8") == 0 ||
+                مزي_پرتله(normalized, "utf-8-", حجم("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        وإلا إذا (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 مزي_پرتله(normalized, "latin-1-", حجم("latin-1-") - 1) == 0 ||
+                 مزي_پرتله(normalized, "iso-8859-1-", حجم("iso-8859-1-") - 1) == 0 ||
+                 مزي_پرتله(normalized, "iso-latin-1-", حجم("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
-            encoding_len = strlen(canonical);
+        إذا (canonical != پیل) {
+            encoding_len = مزي_اوږدوالی(canonical);
         }
-        *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        *encoding = Py_Tok_Copy_بایټونه(canonical, encoding_len);
+        إذا (*encoding == عدم) {
+            أرجع -1;
         }
-        *scan_next = 0;
-        return 0;
+        *لټون_بل = 0;
+        أرجع 0;
     }
-    return 0;
+    أرجع 0;
 }
 
-_PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+Py_Tok_Encoding_پایله
+_PyTok_DetectEncoding(بنية tok_state *tok, ثابت _PyTok_Chunk *لومړی,
+                      ثابت _PyTok_Chunk *دوهم, صحيح final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
-        memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
-    *bom_len = bom ? UTF8_BOM_LENGTH : 0;
+    صحيح bom = لومړی->len >= UTF8_BOM_اوږدتیا &&
+        memcmp(لومړی->معلومات, UTF8_BOM, UTF8_BOM_اوږدتیا) == 0;
+    *bom_len = bom ? UTF8_BOM_اوږدتیا : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
-    Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    حرف *cookie = عدم;
+    صحيح لټون_بل = 0;
+    صحيح cookie_کرښه = 1;
+    ثابت حرف *لومړی_معلومات = لومړی->معلومات + *bom_len;
+    Py_ssize_t لومړی_len = لومړی->len - *bom_len;
+    إذا (پیدا_کړه_cookie(لومړی_معلومات, لومړی_len, &cookie, &لټون_بل) < 0) {
+        أرجع _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    إذا (cookie == عدم && لټون_بل && دوهم != عدم) {
+        إذا (پیدا_کړه_cookie(دوهم->معلومات, دوهم->len, &cookie, &لټون_بل) < 0) {
+            أرجع _PYTOK_ENCODING_ERROR;
         }
-        cookie_line = 2;
+        cookie_کرښه = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    وإلا إذا (cookie == عدم && لټون_بل && !final) {
+        أرجع PYTOK_ENCODING_NEED_دوهم_کرښه;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    إذا (cookie == عدم) {
+        إذا (bom && Py_Tok_سېټ_Encoding(tok, "utf-8") < 0) {
+            أرجع _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        أرجع PYTOK_ENCODING_بشپړ;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
-        const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
-        Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
-                            line_data[end_col - 1] == '\r')) {
-            end_col--;
+    إذا (bom && strcmp(cookie, "utf-8") != 0) {
+        ثابت _PyTok_Chunk *کرښه = cookie_کرښه == 2 ? دوهم : لومړی;
+        ثابت حرف *کرښه_معلومات = کرښه->معلومات + (cookie_کرښه == 1 ? *bom_len : 0);
+        Py_ssize_t کرښه_len = کرښه->len - (cookie_کرښه == 1 ? *bom_len : 0);
+        صحيح پای_ټکی_ستون = (صحيح)Py_MIN(کرښه_len, لوی_عدد);
+        إذا (پای_ټکی_ستون > 0 && (کرښه_معلومات[پای_ټکی_ستون - 1] == '\n' ||
+                            کرښه_معلومات[پای_ټکی_ستون - 1] == '\r')) {
+            پای_ټکی_ستون--;
         }
         _PyTokenizer_syntaxerror_at(
-            tok, line_data, 0, cookie_line, 0, end_col,
+            tok, کرښه_معلومات, 0, cookie_کرښه, 0, پای_ټکی_ستون,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        أرجع _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    أرجع PYTOK_ENCODING_بشپړ;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+صحيح
+_PyTok_DecodeOnce(بنية tok_state *tok, _PyTok_Chunk *chunk,
+                  ثابت حرف *encoding, ثابت حرف *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
-        chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        chunk->معلومات, chunk->len, encoding, errors);
+    إذا (unicode == عدم) {
+        tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        أرجع -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    أرجع chunk_سېټ_unicode(tok, chunk, unicode, 0);
 }
 
-static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+ساكن Py_ssize_t
+raw_کرښه_اوږدتیا(ثابت حرف *معلومات, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    لكل (Py_ssize_t i = 0; i < len; i++) {
+        إذا (معلومات[i] == '\n') {
+            أرجع i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        إذا (معلومات[i] == '\r') {
+            أرجع i + 1 < len && معلومات[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    أرجع len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+ساكن صحيح
+store_prepared_سرچینه(بنية tok_state *tok, ثابت حرف *معلومات, Py_ssize_t len,
+                      صحيح preserve_crlf, صحيح جمع_کړه_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
-        Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
-            raw_line_len = newline == NULL
-                ? len - pos : newline - data - pos + 1;
+    طالما (pos < len) {
+        Py_ssize_t raw_کرښه_len;
+        إذا (preserve_crlf) {
+            ثابت حرف *newline = memchr(معلومات + pos, '\n', len - pos);
+            raw_کرښه_len = newline == عدم
+                ? len - pos : newline - معلومات - pos + 1;
         }
-        else {
-            raw_line_len = raw_line_length(data + pos, len - pos);
+        وإلا {
+            raw_کرښه_len = raw_کرښه_اوږدتیا(معلومات + pos, len - pos);
         }
-        int terminated = preserve_crlf
-            ? data[pos + raw_line_len - 1] == '\n'
-            : data[pos + raw_line_len - 1] == '\n' ||
-              data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
-            pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        صحيح terminated = preserve_crlf
+            ? معلومات[pos + raw_کرښه_len - 1] == '\n'
+            : معلومات[pos + raw_کرښه_len - 1] == '\n' ||
+              معلومات[pos + raw_کرښه_len - 1] == '\r';
+        صحيح جمع_کړه_newline = جمع_کړه_final_newline &&
+            pos + raw_کرښه_len == len && !terminated;
+        ثابت حرف *کرښه = معلومات + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        إذا (!preserve_crlf) {
+            إذا (کرښه[raw_کرښه_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            وإلا إذا (raw_کرښه_len > 1 && کرښه[raw_کرښه_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
-            appended = _PyTok_SourceAppendLineWithNewline(
-                &tok->source, line, raw_line_len - terminator_len);
+        إذا (terminator_len || جمع_کړه_newline) {
+            appended = Py_Tok_سرچینه_Append_کرښه_With_Newline(
+                &tok->سرچینه, کرښه, raw_کرښه_len - terminator_len);
         }
-        else {
-            appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
+        وإلا {
+            appended = Py_Tok_سرچینه_Append_کرښه(&tok->سرچینه, کرښه, raw_کرښه_len);
         }
-        if (appended < 0) {
-            tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        إذا (appended < 0) {
+            tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            أرجع -1;
         }
-        tok->reader->prepared_final_newline = add_newline;
-        pos += raw_line_len;
+        tok->reader->prepared_final_newline = جمع_کړه_newline;
+        pos += raw_کرښه_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    إذا (جمع_کړه_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
-        (len == 0 || data[len - 1] != '\r'))
+        (len == 0 || معلومات[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        إذا (Py_Tok_سرچینه_Append_کرښه(&tok->سرچینه, "\n", 1) < 0) {
+            أرجع -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    أرجع 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+صحيح
+_PyTok_PrepareString(بنية tok_state *tok, ثابت حرف *ننوت, صحيح utf8_only,
+                     صحيح exec_ننوت, صحيح preserve_crlf)
 {
-    Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    Py_ssize_t raw_len = مزي_اوږدوالی(ننوت);
+    حرف *raw = (حرف *)ننوت;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    إذا (utf8_only) {
+        إذا (Py_Tok_سېټ_Encoding(tok, "utf-8") < 0) {
+            أرجع -1;
         }
     }
-    else {
-        Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
-        _PyTok_Chunk first = {
-            .data = raw,
-            .len = first_original_len,
+    وإلا {
+        Py_ssize_t لومړی_original_len = raw_کرښه_اوږدتیا(raw, raw_len);
+        _PyTok_Chunk لومړی = {
+            .معلومات = raw,
+            .len = لومړی_original_len,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
-        _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
-            second.data = raw + first_original_len;
-            second.len = raw_line_length(second.data,
-                                         raw_len - first_original_len);
+        _PyTok_Chunk دوهم = {0};
+        صحيح have_دوهم = لومړی_original_len < raw_len;
+        إذا (have_دوهم) {
+            دوهم.معلومات = raw + لومړی_original_len;
+            دوهم.len = raw_کرښه_اوږدتیا(دوهم.معلومات,
+                                         raw_len - لومړی_original_len);
         }
         Py_ssize_t bom_len;
-        _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
-            tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        Py_Tok_Encoding_پایله detection = _PyTok_DetectEncoding(
+            tok, &لومړی, have_دوهم ? &دوهم : عدم, 1, &bom_len);
+        إذا (detection == _PYTOK_ENCODING_ERROR) {
+            أرجع -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
     }
 
     _PyTok_Chunk decoded = {
-        .data = raw,
+        .معلومات = raw,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
-                tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+    ثابت حرف *encoding = tok->reader->encoding;
+    إذا (encoding != عدم && strcmp(encoding, "utf-8") != 0) {
+        إذا (_PyTok_DecodeOnce(
+                tok, &decoded, encoding, عدم) < 0) {
+            أرجع -1;
         }
     }
 
-    int stored = store_prepared_source(
-        tok, decoded.data, decoded.len, preserve_crlf, exec_input);
+    صحيح stored = store_prepared_سرچینه(
+        tok, decoded.معلومات, decoded.len, preserve_crlf, exec_ننوت);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    إذا (stored < 0) {
+        أرجع -1;
     }
-    if (!utf8_only &&
-            (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
-            !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+    إذا (!utf8_only &&
+            (encoding == عدم || strcmp(encoding, "utf-8") == 0) &&
+            !_PyTokenizer_ensure_utf8(Py_Tok_سرچینه_معلومات(&tok->سرچینه), tok, 1)) {
+        أرجع -1;
     }
-    return 0;
+    أرجع 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+صحيح
+Py_Tok_پیل_Decoder(بنية tok_state *tok, ثابت حرف *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    إذا (reader->encoding == عدم || reader->decoder != عدم) {
+        أرجع 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    إذا (reader->ډول == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        أرجع 0;
     }
 
-    PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    PyObject *codec = Py_Codec_Lookup_متن_Encoding(reader->encoding, عدم);
+    إذا (codec != عدم) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    إذا (reader->decoder == عدم) {
+        tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        إذا (reader->ډول == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != عدم ? tok->filename : Py_None);
         }
-        return -1;
+        أرجع -1;
     }
-    return 0;
+    أرجع 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+صحيح
+_PyTok_DecodeChunk(بنية tok_state *tok, _PyTok_Chunk *chunk, صحيح final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    إذا (reader->decoder == عدم) {
+        أرجع 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
-        chunk->len >= UTF16_BOM_LENGTH &&
-        (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
-         memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
-    PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
-            PyBytes_Check(chunk->owner) &&
-            chunk->data == PyBytes_AS_STRING(chunk->owner)) {
-        input = Py_NewRef(chunk->owner);
+    صحيح strip_bom = reader->ډول == _PYTOK_READER_READLINE &&
+        chunk->len >= UTF16_BOM_اوږدتیا &&
+        (memcmp(chunk->معلومات, UTF16_LE_BOM, UTF16_BOM_اوږدتیا) == 0 ||
+         memcmp(chunk->معلومات, UTF16_BE_BOM, UTF16_BOM_اوږدتیا) == 0);
+    PyObject *ننوت;
+    إذا (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+            Py_بایټونه_Check(chunk->owner) &&
+            chunk->معلومات == Py_بایټونه_AS_STRING(chunk->owner)) {
+        ننوت = Py_NewRef(chunk->owner);
     }
-    else {
-        input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
+    وإلا {
+        ننوت = Py_بایټونه_From_String_And_اندازه(chunk->معلومات, chunk->len);
     }
-    if (input == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    إذا (ننوت == عدم) {
+        tok->بشپړ = E_NOMEM;
+        أرجع -1;
     }
-    PyObject *unicode = PyObject_CallMethodObjArgs(
-        reader->decoder, &_Py_ID(decode), input,
-        final ? Py_True : Py_False, NULL);
-    Py_DECREF(input);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    PyObject *unicode = Py_Object_Call_لاره_Obj_دلیلونه(
+        reader->decoder, &_Py_ID(decode), ننوت,
+        final ? Py_True : Py_False, عدم);
+    Py_DECREF(ننوت);
+    إذا (unicode == عدم) {
+        tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        إذا (reader->ډول == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != عدم ? tok->filename : Py_None);
         }
-        return -1;
+        أرجع -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    إذا (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
-        tok->done = E_DECODE;
-        return -1;
+        tok->بشپړ = E_DECODE;
+        أرجع -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    أرجع chunk_سېټ_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+صحيح
+Py_Tok_Decoder_Has_Buffered_ننوت(بنية tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    إذا (tok->reader->decoder == عدم) {
+        أرجع 0;
     }
-    PyObject *state = PyObject_CallMethodNoArgs(
+    PyObject *state = Py_Object_Call_لاره_No_دلیلونه(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    إذا (state == عدم) {
+        tok->بشپړ = PyErr_ExceptionMatches(Py_Exc_حافظه_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        أرجع -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
-            !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
-            !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
+    إذا (!PyTuple_Check(state) || Py_Tuple_GET_اندازه(state) != 2 ||
+            !Py_بایټونه_Check(Py_Tuple_GET_توکی(state, 0)) ||
+            !PyLong_Check(Py_Tuple_GET_توکی(state, 1))) {
         Py_DECREF(state);
-        PyErr_SetString(PyExc_TypeError,
+        Py_Err_سېټ_String(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
-        tok->done = E_DECODE;
-        return -1;
+        tok->بشپړ = E_DECODE;
+        أرجع -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    صحيح pending = Py_بایټونه_GET_اندازه(Py_Tuple_GET_توکی(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    أرجع pending;
 }
