@@ -1,99 +1,99 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "pycore_token.h"
+#అన్తర్భావ "errcode.h"
 
-#include "state.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#అన్తర్భావ "state.h"
+#అన్తర్భావ "../tokenizer/helpers.h"
+#అన్తర్భావ "../tokenizer/reader.h"
 
 ftstring_state *
-_PyLexer_PushFTString(struct tok_state *tok)
+Py_Lexer_నెట్టు_FTString(నిర్మాణం tok_state *tok)
 {
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    int next_depth = tok->ftstring_depth + 1;
-    if (next_depth >= MAXFTSTRINGLEVEL) {
+    ప్రతిజ్ఞా(tok->ftstring_లోతు >= 0 && tok->ftstring_లోతు <= tok->ftstring_సామర్థ్యం);
+    పూర్ణాంకం తదుపరి_లోతు = tok->ftstring_లోతు + 1;
+    ఒకవేళ (తదుపరి_లోతు >= MAXFTSTRINGLEVEL) {
         _PyTokenizer_syntaxerror(
             tok, "too many nested f-strings or t-strings");
-        return NULL;
+        తిరిగి ఖాళీ;
     }
-    if (tok->ftstring_depth == tok->ftstring_capacity) {
-        int capacity = Py_MIN(Py_MAX(tok->ftstring_capacity * 2, 4),
+    ఒకవేళ (tok->ftstring_లోతు == tok->ftstring_సామర్థ్యం) {
+        పూర్ణాంకం సామర్థ్యం = Py_MIN(Py_MAX(tok->ftstring_సామర్థ్యం * 2, 4),
                               MAXFTSTRINGLEVEL);
-        size_t size = (size_t)capacity * sizeof(*tok->ftstring_stack);
-        ftstring_state *stack;
-        if (tok->ftstring_stack == tok->ftstring_stack_inline) {
-            stack = PyMem_Malloc(size);
-            if (stack != NULL) {
-                memcpy(stack, tok->ftstring_stack,
-                       (size_t)tok->ftstring_depth * sizeof(*stack));
+        కొలత_t కొలత = (కొలత_t)సామర్థ్యం * పరిమాణం(*tok->ftstring_దొంతర);
+        ftstring_state *దొంతర;
+        ఒకవేళ (tok->ftstring_దొంతర == tok->ftstring_దొంతర_inline) {
+            దొంతర = PyMem_Malloc(కొలత);
+            ఒకవేళ (దొంతర != ఖాళీ) {
+                జ్ఞాపకం_నకలు(దొంతర, tok->ftstring_దొంతర,
+                       (కొలత_t)tok->ftstring_లోతు * పరిమాణం(*దొంతర));
             }
         }
-        else {
-            stack = PyMem_Realloc(tok->ftstring_stack, size);
+        లేకపోతే {
+            దొంతర = PyMem_Realloc(tok->ftstring_దొంతర, కొలత);
         }
-        if (stack == NULL) {
-            PyErr_NoMemory();
-            tok->done = E_NOMEM;
-            return NULL;
+        ఒకవేళ (దొంతర == ఖాళీ) {
+            Py_Err_No_జ్ఞాపకం();
+            tok->పూర్తి = E_NOMEM;
+            తిరిగి ఖాళీ;
         }
-        tok->ftstring_stack = stack;
-        tok->ftstring_capacity = capacity;
+        tok->ftstring_దొంతర = దొంతర;
+        tok->ftstring_సామర్థ్యం = సామర్థ్యం;
     }
-    ftstring_state *state = &tok->ftstring_stack[tok->ftstring_depth];
-    tok->ftstring_depth = next_depth;
+    ftstring_state *state = &tok->ftstring_దొంతర[tok->ftstring_లోతు];
+    tok->ftstring_లోతు = తదుపరి_లోతు;
     *state = (ftstring_state){0};
-    return state;
+    తిరిగి state;
 }
 
-void
-_PyLexer_PopFTString(struct tok_state *tok)
+శూన్య
+Py_Lexer_తీయి_FTString(నిర్మాణం tok_state *tok)
 {
     ftstring_state *state = _PyLexer_CurrentFTString(tok);
-    assert(state != NULL);
+    ప్రతిజ్ఞా(state != ఖాళీ);
     PyMem_Free(state->comments);
-    tok->ftstring_depth--;
+    tok->ftstring_లోతు--;
 }
 
 /* Free a tok_state structure */
-void
-_PyTokenizer_Free(struct tok_state *tok)
+శూన్య
+_PyTokenizer_Free(నిర్మాణం tok_state *tok)
 {
     Py_XDECREF(tok->filename);
     Py_XDECREF(tok->module);
     _PyTok_ReaderFree(tok);
-    _PyTok_SourceClear(&tok->source);
-    for (int i = 0; i < tok->ftstring_depth; i++) {
-        PyMem_Free(tok->ftstring_stack[i].comments);
+    Py_Tok_ఆధారం_Clear(&tok->ఆధారం);
+    కొరకు (పూర్ణాంకం i = 0; i < tok->ftstring_లోతు; i++) {
+        PyMem_Free(tok->ftstring_దొంతర[i].comments);
     }
-    if (tok->ftstring_stack != tok->ftstring_stack_inline) {
-        PyMem_Free(tok->ftstring_stack);
+    ఒకవేళ (tok->ftstring_దొంతర != tok->ftstring_దొంతర_inline) {
+        PyMem_Free(tok->ftstring_దొంతర);
     }
     PyMem_Free(tok);
 }
 
-void
-_PyToken_Init(struct token *token) {
-    *token = (struct token){
+శూన్య
+_PyToken_Init(నిర్మాణం token *token) {
+    *token = (నిర్మాణం token){
         .type = -1,
-        .span = {-1, -1},
-        .start_loc = {-1, -1},
-        .end_loc = {-1, -1},
+        .పరిధి = {-1, -1},
+        .ప్రారంభం_loc = {-1, -1},
+        .చివర_loc = {-1, -1},
     };
 }
 
-int
-_PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end)
+పూర్ణాంకం
+Py_Lexer_token_అమరిక(నిర్మాణం tok_state *tok, నిర్మాణం token *token, పూర్ణాంకం type, _PyTok_Off ప్రారంభం, _PyTok_Off చివర)
 {
     token->level = tok->level;
     token->is_raw = 0;
-    assert((start == -1 && end == -1) || (start >= 0 && end >= start));
-    token->span = (_PyTok_Span){start, end};
-    if (start >= 0) {
-        token->start_loc = tok->start_loc;
-        token->end_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
+    ప్రతిజ్ఞా((ప్రారంభం == -1 && చివర == -1) || (ప్రారంభం >= 0 && చివర >= ప్రారంభం));
+    token->పరిధి = (Py_Tok_పరిధి){ప్రారంభం, చివర};
+    ఒకవేళ (ప్రారంభం >= 0) {
+        token->ప్రారంభం_loc = tok->ప్రారంభం_loc;
+        token->చివర_loc = (_PyTok_Loc){tok->lineno, Py_Lexer_Byte_స్తంభం(tok)};
     }
-    else {
-        token->start_loc = token->end_loc = (_PyTok_Loc){tok->lineno, -1};
+    లేకపోతే {
+        token->ప్రారంభం_loc = token->చివర_loc = (_PyTok_Loc){tok->lineno, -1};
     }
-    return type;
+    తిరిగి type;
 }

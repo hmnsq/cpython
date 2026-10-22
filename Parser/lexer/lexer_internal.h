@@ -1,72 +1,72 @@
-#ifndef _PY_LEXER_INTERNAL_H_
-#define _PY_LEXER_INTERNAL_H_
+#నిర్వచితం_కాకపోతే PY_LEXER_అంతర్గత_H
+#నిర్వచించు PY_LEXER_అంతర్గత_H
 
-#include "errcode.h"
-#include "state.h"
+#అన్తర్భావ "errcode.h"
+#అన్తర్భావ "state.h"
 
-#define is_potential_identifier_start(c) (\
+#నిర్వచించు is_potential_identifier_ప్రారంభం(c) (\
               (c >= 'a' && c <= 'z')\
                || (c >= 'A' && c <= 'Z')\
                || c == '_'\
                || (c >= 128))
 
-#define is_potential_identifier_char(c) (\
+#నిర్వచించు is_potential_identifier_char(c) (\
               (c >= 'a' && c <= 'z')\
                || (c >= 'A' && c <= 'Z')\
                || (c >= '0' && c <= '9')\
                || c == '_'\
                || (c >= 128))
 
-#define FTSTRING_MIDDLE(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_MIDDLE : FSTRING_MIDDLE)
-#define FTSTRING_END(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
-#define tok_backup _PyLexer_backup
+#నిర్వచించు FTSTRING_మధ్య(state) \
+    (_PyLexer_IsTString((state)->రకం) ? TSTRING_మధ్య : FSTRING_మధ్య)
+#నిర్వచించు FTSTRING_చివర(state) \
+    (_PyLexer_IsTString((state)->రకం) ? TSTRING_చివర : FSTRING_చివర)
+#నిర్వచించు tok_backup _PyLexer_backup
 
-static inline int
-tok_failed(const struct tok_state *tok)
+స్థిర అంతఃవరుస పూర్ణాంకం
+tok_failed(స్థిరరాశి నిర్మాణం tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
-           tok->done != E_INTERACT_STOP;
+    తిరిగి tok->పూర్తి != E_OK && tok->పూర్తి != E_EOF &&
+           tok->పూర్తి != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+పూర్ణాంకం _PyLexer_refill(నిర్మాణం tok_state *);
 
-static inline int
-tok_nextc(struct tok_state *tok)
+స్థిర అంతఃవరుస పూర్ణాంకం
+tok_nextc(నిర్మాణం tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    అయితే (tok->cur == tok->inp) {
+        ఒకవేళ (!_PyLexer_refill(tok)) {
+            తిరిగి EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
-        tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+    ఒకవేళ (tok->cur - tok->పంక్తి_ప్రారంభం >= గరిష్ఠ_పూర్ణాంకం) {
+        tok->పూర్తి = E_COLUMNOVERFLOW;
+        తిరిగి EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    తిరిగి Py_Tok_ఆధారం_Byte(&tok->ఆధారం, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+పూర్ణాంకం Py_Lexer_Begin_పంక్తి(నిర్మాణం tok_state *);
+పూర్ణాంకం Py_Lexer_Continue_పంక్తి(నిర్మాణం tok_state *);
+పూర్ణాంకం _PyLexer_IndentationToken(నిర్మాణం tok_state *, నిర్మాణం token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
-    struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
-void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+పూర్ణాంకం _PyLexer_Newline(నిర్మాణం tok_state *, నిర్మాణం token *, పూర్ణాంకం);
+శూన్య _PyLexer_backup(నిర్మాణం tok_state *, పూర్ణాంకం);
+పూర్ణాంకం Py_Lexer_రికార్డు_ftstring_comment(
+    నిర్మాణం tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
+పూర్ణాంకం _PyLexer_ftstring_punctuation(
+    నిర్మాణం tok_state *, ftstring_state *, నిర్మాణం token *, పూర్ణాంకం);
+పూర్ణాంకం Py_Lexer_close_ftstring_సమాసం(
+    నిర్మాణం tok_state *, ftstring_state *, పూర్ణాంకం);
+శూన్య _PyLexer_mark_ftstring_debug(నిర్మాణం tok_state *, ftstring_state *);
+పూర్ణాంకం _PyLexer_check_string_prefixes(నిర్మాణం tok_state *, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం, పూర్ణాంకం);
+పూర్ణాంకం Py_Lexer_పరిశీలన_సంఖ్య(నిర్మాణం tok_state *, నిర్మాణం token *, పూర్ణాంకం, పూర్ణాంకం);
+పూర్ణాంకం Py_Lexer_పరిశీలన_fstring_ప్రారంభం(
+    నిర్మాణం tok_state *, నిర్మాణం token *, పూర్ణాంకం, ftstring_రకం);
+పూర్ణాంకం Py_Lexer_పరిశీలన_string(నిర్మాణం tok_state *, నిర్మాణం token *, పూర్ణాంకం);
+పూర్ణాంకం Py_Lexer_get_సాధారణ(నిర్మాణం tok_state *, ftstring_state *, నిర్మాణం token *);
+పూర్ణాంకం _PyLexer_get_ftstring(నిర్మాణం tok_state *, ftstring_state *, నిర్మాణం token *);
 
-#endif
+#అయితే_ముగింపు

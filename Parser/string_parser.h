@@ -1,11 +1,11 @@
-#ifndef STRINGS_H
-#define STRINGS_H
+#నిర్వచితం_కాకపోతే అక్షరశ్రేణులు_H
+#నిర్వచించు అక్షరశ్రేణులు_H
 
-#include <Python.h>
-#include <pycore_ast.h>
-#include "pegen.h"
+#అన్తర్భావ <Python.h>
+#అన్తర్భావ <pycore_ast.h>
+#అన్తర్భావ "pegen.h"
 
 PyObject *_PyPegen_parse_string(Parser *, Token *);
-PyObject *_PyPegen_decode_string(Parser *, int, const char *, size_t, Token *);
+PyObject *_PyPegen_decode_string(Parser *, పూర్ణాంకం, స్థిరరాశి అక్షరం *, కొలత_t, Token *);
 
-#endif
+#అయితే_ముగింపు

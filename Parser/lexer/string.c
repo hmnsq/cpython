@@ -1,589 +1,589 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "pycore_token.h"
+#అన్తర్భావ "errcode.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#అన్తర్భావ "lexer_internal.h"
+#అన్తర్భావ "../tokenizer/helpers.h"
 
-#define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
+#నిర్వచించు MAKE_TOKEN(token_type) Py_Lexer_token_అమరిక(tok, token, token_type, p_ప్రారంభం, p_చివర)
 
-static int
-string_error_token(struct tok_state *tok, struct token *token,
-                   _PyTok_Off start, _PyTok_Loc location)
+స్థిర పూర్ణాంకం
+string_error_token(నిర్మాణం tok_state *tok, నిర్మాణం token *token,
+                   _PyTok_Off ప్రారంభం, _PyTok_Loc location)
 {
     tok->diagnostic = (_PyTokenizer_Diagnostic){
-        .location = {location.lineno, location.byte_col + 1},
-        .text_span = {start - location.byte_col, tok->inp},
+        .location = {location.lineno, location.byte_నిలువు + 1},
+        .పాఠ్యం_పరిధి = {ప్రారంభం - location.byte_నిలువు, tok->inp},
     };
-    int type = _PyLexer_token_setup(tok, token, ERRORTOKEN, -1, -1);
-    token->start_loc = location;
-    token->end_loc = (_PyTok_Loc){location.lineno, -1};
-    return type;
+    పూర్ణాంకం type = Py_Lexer_token_అమరిక(tok, token, ERRORTOKEN, -1, -1);
+    token->ప్రారంభం_loc = location;
+    token->చివర_loc = (_PyTok_Loc){location.lineno, -1};
+    తిరిగి type;
 }
 
-static int
-incomplete_string_token(struct tok_state *tok, struct token *token,
-                        int type, _PyTok_Off start, _PyTok_Loc location)
+స్థిర పూర్ణాంకం
+incomplete_string_token(నిర్మాణం tok_state *tok, నిర్మాణం token *token,
+                        పూర్ణాంకం type, _PyTok_Off ప్రారంభం, _PyTok_Loc location)
 {
-    string_error_token(tok, token, start, location);
-    tok->done = E_INCOMPLETE;
-    return type;
+    string_error_token(tok, token, ప్రారంభం, location);
+    tok->పూర్తి = E_INCOMPLETE;
+    తిరిగి type;
 }
 
-int
-_PyLexer_record_ftstring_comment(struct tok_state *tok, ftstring_state *state,
-                                 _PyTok_Off start, _PyTok_Off end)
+పూర్ణాంకం
+Py_Lexer_రికార్డు_ftstring_comment(నిర్మాణం tok_state *tok, ftstring_state *state,
+                                 _PyTok_Off ప్రారంభం, _PyTok_Off చివర)
 {
-    assert(state == _PyLexer_CurrentFTString(tok) && state->mode == FTSTRING_MODE_EXPRESSION);
-    if (state->expr_span.end >= 0) {
-        return 0;
+    ప్రతిజ్ఞా(state == _PyLexer_CurrentFTString(tok) && state->బహుళకం == FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    ఒకవేళ (state->సమాసం_పరిధి.చివర >= 0) {
+        తిరిగి 0;
     }
-    assert(state->expr_span.start >= 0);
+    ప్రతిజ్ఞా(state->సమాసం_పరిధి.ప్రారంభం >= 0);
     tokenizer_comments *comments = state->comments;
-    if (comments == NULL || comments->count == comments->capacity) {
-        Py_ssize_t max_capacity = (PY_SSIZE_T_MAX -
-            (Py_ssize_t)sizeof(*comments)) /
-            (Py_ssize_t)sizeof(*comments->spans);
-        if (comments != NULL && comments->capacity > max_capacity / 2) {
-            PyErr_NoMemory();
-            return -1;
+    ఒకవేళ (comments == ఖాళీ || comments->లెక్క == comments->సామర్థ్యం) {
+        Py_ssize_t max_సామర్థ్యం = (PY_SSIZE_T_MAX -
+            (Py_ssize_t)పరిమాణం(*comments)) /
+            (Py_ssize_t)పరిమాణం(*comments->spans);
+        ఒకవేళ (comments != ఖాళీ && comments->సామర్థ్యం > max_సామర్థ్యం / 2) {
+            Py_Err_No_జ్ఞాపకం();
+            తిరిగి -1;
         }
-        Py_ssize_t capacity = comments == NULL ? 4 : comments->capacity * 2;
-        size_t size = sizeof(*comments) +
-            (size_t)capacity * sizeof(*comments->spans);
-        tokenizer_comments *resized = PyMem_Realloc(comments, size);
-        if (resized == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        Py_ssize_t సామర్థ్యం = comments == ఖాళీ ? 4 : comments->సామర్థ్యం * 2;
+        కొలత_t కొలత = పరిమాణం(*comments) +
+            (కొలత_t)సామర్థ్యం * పరిమాణం(*comments->spans);
+        tokenizer_comments *resized = PyMem_Realloc(comments, కొలత);
+        ఒకవేళ (resized == ఖాళీ) {
+            Py_Err_No_జ్ఞాపకం();
+            తిరిగి -1;
         }
         comments = resized;
-        if (state->comments == NULL) {
-            comments->count = 0;
+        ఒకవేళ (state->comments == ఖాళీ) {
+            comments->లెక్క = 0;
         }
-        comments->capacity = capacity;
+        comments->సామర్థ్యం = సామర్థ్యం;
         state->comments = comments;
     }
-    comments->spans[comments->count++] =
-        (_PyTok_Span){start, end};
-    return 0;
+    comments->spans[comments->లెక్క++] =
+        (Py_Tok_పరిధి){ప్రారంభం, చివర};
+    తిరిగి 0;
 }
 
-static int
-finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                     struct token *token)
+స్థిర పూర్ణాంకం
+ముగింపు_ftstring_సమాసం(నిర్మాణం tok_state *tok, ftstring_state *state,
+                     నిర్మాణం token *token)
 {
-    assert(token != NULL && state == _PyLexer_CurrentFTString(tok));
-    assert(state->mode == FTSTRING_MODE_EXPRESSION && tok->start >= 0);
+    ప్రతిజ్ఞా(token != ఖాళీ && state == _PyLexer_CurrentFTString(tok));
+    ప్రతిజ్ఞా(state->బహుళకం == FTSTRING_బహుళకం_వ్యక్తీకరణ && tok->ప్రారంభం >= 0);
 
-    if (state->expr_span.end >= 0) {
-        return 0;
+    ఒకవేళ (state->సమాసం_పరిధి.చివర >= 0) {
+        తిరిగి 0;
     }
-    assert(state->expr_span.start >= 0);
-    state->expr_span.end = tok->start;
-    int tstring_interpolation = _PyLexer_IsTString(state->kind) &&
-        state->replacement_depth == 1;
-    if (!(state->debug_expr || tstring_interpolation) || token->metadata) {
-        return 0;
+    ప్రతిజ్ఞా(state->సమాసం_పరిధి.ప్రారంభం >= 0);
+    state->సమాసం_పరిధి.చివర = tok->ప్రారంభం;
+    పూర్ణాంకం tstring_interpolation = _PyLexer_IsTString(state->రకం) &&
+        state->replacement_లోతు == 1;
+    ఒకవేళ (!(state->debug_సమాసం || tstring_interpolation) || token->metadata) {
+        తిరిగి 0;
     }
     tokenizer_comments *comments = state->comments;
     PyObject *res;
-    if (comments != NULL && comments->count > 0) {
-        Py_ssize_t stripped_size =
-            state->expr_span.end - state->expr_span.start;
-        Py_ssize_t comment_count = 0;
-        for (Py_ssize_t i = 0; i < comments->count; i++) {
-            _PyTok_Span comment = comments->spans[i];
-            assert(_PyTok_SpanIsValid(comment));
-            assert(comment.start >= (i == 0 ? state->expr_span.start
-                                           : comments->spans[i - 1].end));
-            if (comment.start >= state->expr_span.end) {
-                break;
+    ఒకవేళ (comments != ఖాళీ && comments->లెక్క > 0) {
+        Py_ssize_t stripped_కొలత =
+            state->సమాసం_పరిధి.చివర - state->సమాసం_పరిధి.ప్రారంభం;
+        Py_ssize_t comment_లెక్క = 0;
+        కొరకు (Py_ssize_t i = 0; i < comments->లెక్క; i++) {
+            Py_Tok_పరిధి comment = comments->spans[i];
+            ప్రతిజ్ఞా(Py_Tok_పరిధి_Is_Valid(comment));
+            ప్రతిజ్ఞా(comment.ప్రారంభం >= (i == 0 ? state->సమాసం_పరిధి.ప్రారంభం
+                                           : comments->spans[i - 1].చివర));
+            ఒకవేళ (comment.ప్రారంభం >= state->సమాసం_పరిధి.చివర) {
+                ఆపు;
             }
-            assert(comment.end <= state->expr_span.end);
-            stripped_size -= comment.end - comment.start;
-            comment_count++;
+            ప్రతిజ్ఞా(comment.చివర <= state->సమాసం_పరిధి.చివర);
+            stripped_కొలత -= comment.చివర - comment.ప్రారంభం;
+            comment_లెక్క++;
         }
-        char *stripped = PyMem_Malloc((size_t)stripped_size);
-        if (stripped == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        అక్షరం *stripped = PyMem_Malloc((కొలత_t)stripped_కొలత);
+        ఒకవేళ (stripped == ఖాళీ) {
+            Py_Err_No_జ్ఞాపకం();
+            తిరిగి -1;
         }
-        _PyTok_Span kept = {state->expr_span.start, state->expr_span.start};
+        Py_Tok_పరిధి kept = {state->సమాసం_పరిధి.ప్రారంభం, state->సమాసం_పరిధి.ప్రారంభం};
         Py_ssize_t stripped_len = 0;
-        for (Py_ssize_t i = 0; i < comment_count; i++) {
-            kept.end = comments->spans[i].start;
-            Py_ssize_t length;
-            const char *text = _PyTok_SourceSpanView(
-                &tok->source, kept, &length);
-            memcpy(stripped + stripped_len, text, (size_t)length);
-            stripped_len += length;
-            kept.start = comments->spans[i].end;
+        కొరకు (Py_ssize_t i = 0; i < comment_లెక్క; i++) {
+            kept.చివర = comments->spans[i].ప్రారంభం;
+            Py_ssize_t నిడివి;
+            స్థిరరాశి అక్షరం *పాఠ్యం = Py_Tok_ఆధారం_పరిధి_View(
+                &tok->ఆధారం, kept, &నిడివి);
+            జ్ఞాపకం_నకలు(stripped + stripped_len, పాఠ్యం, (కొలత_t)నిడివి);
+            stripped_len += నిడివి;
+            kept.ప్రారంభం = comments->spans[i].చివర;
         }
-        kept.end = state->expr_span.end;
-        Py_ssize_t length;
-        const char *text = _PyTok_SourceSpanView(&tok->source, kept, &length);
-        memcpy(stripped + stripped_len, text, (size_t)length);
-        res = PyUnicode_DecodeUTF8(stripped, stripped_size, NULL);
+        kept.చివర = state->సమాసం_పరిధి.చివర;
+        Py_ssize_t నిడివి;
+        స్థిరరాశి అక్షరం *పాఠ్యం = Py_Tok_ఆధారం_పరిధి_View(&tok->ఆధారం, kept, &నిడివి);
+        జ్ఞాపకం_నకలు(stripped + stripped_len, పాఠ్యం, (కొలత_t)నిడివి);
+        res = PyUnicode_DecodeUTF8(stripped, stripped_కొలత, ఖాళీ);
         PyMem_Free(stripped);
     }
-    else {
-        Py_ssize_t expr_len;
-        const char *expr = _PyTok_SourceSpanView(
-            &tok->source, state->expr_span, &expr_len);
-        res = PyUnicode_DecodeUTF8(expr, expr_len, NULL);
+    లేకపోతే {
+        Py_ssize_t సమాసం_len;
+        స్థిరరాశి అక్షరం *సమాసం = Py_Tok_ఆధారం_పరిధి_View(
+            &tok->ఆధారం, state->సమాసం_పరిధి, &సమాసం_len);
+        res = PyUnicode_DecodeUTF8(సమాసం, సమాసం_len, ఖాళీ);
     }
 
-    if (!res) {
-        return -1;
+    ఒకవేళ (!res) {
+        తిరిగి -1;
     }
     token->metadata = res;
-    return 0;
+    తిరిగి 0;
 }
 
-static int
-begin_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                    _PyTok_Off expr_start)
+స్థిర పూర్ణాంకం
+begin_ftstring_సమాసం(నిర్మాణం tok_state *tok, ftstring_state *state,
+                    _PyTok_Off సమాసం_ప్రారంభం)
 {
-    assert(state->mode != FTSTRING_MODE_EXPRESSION);
-    state->expr_span = (_PyTok_Span){expr_start, -1};
-    if (state->comments != NULL) {
-        state->comments->count = 0;
+    ప్రతిజ్ఞా(state->బహుళకం != FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    state->సమాసం_పరిధి = (Py_Tok_పరిధి){సమాసం_ప్రారంభం, -1};
+    ఒకవేళ (state->comments != ఖాళీ) {
+        state->comments->లెక్క = 0;
     }
-    if (state->replacement_depth >= MAX_EXPR_NESTING) {
+    ఒకవేళ (state->replacement_లోతు >= MAX_సమాసం_NESTING) {
         _PyTokenizer_syntaxerror(
             tok, "%c-string: expressions nested too deeply",
-            _PyLexer_StringPrefix(state->kind));
-        return -1;
+            Py_Lexer_String_ఉపసర్గ(state->రకం));
+        తిరిగి -1;
     }
-    state->replacement_depth++;
-    state->mode = FTSTRING_MODE_EXPRESSION;
-    state->debug_expr = 0;
-    return 0;
+    state->replacement_లోతు++;
+    state->బహుళకం = FTSTRING_బహుళకం_వ్యక్తీకరణ;
+    state->debug_సమాసం = 0;
+    తిరిగి 0;
 }
 
-int
-_PyLexer_ftstring_punctuation(struct tok_state *tok, ftstring_state *state,
-                              struct token *token, int c)
+పూర్ణాంకం
+_PyLexer_ftstring_punctuation(నిర్మాణం tok_state *tok, ftstring_state *state,
+                              నిర్మాణం token *token, పూర్ణాంకం c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ':' || c == '}' || c == '!');
-    if (_PyLexer_FTStringBracketDepth(tok, state) != state->replacement_depth) {
-        return 0;
+    ప్రతిజ్ఞా(state->బహుళకం == FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    ప్రతిజ్ఞా(c == ':' || c == '}' || c == '!');
+    ఒకవేళ (Py_Lexer_FTString_Bracket_లోతు(tok, state) != state->replacement_లోతు) {
+        తిరిగి 0;
     }
-    if (c == '!') {
-        int next = tok_nextc(tok);
-        tok_backup(tok, next);
-        if (next == '=') {
-            return 0;
+    ఒకవేళ (c == '!') {
+        పూర్ణాంకం తదుపరి = tok_nextc(tok);
+        tok_backup(tok, తదుపరి);
+        ఒకవేళ (తదుపరి == '=') {
+            తిరిగి 0;
         }
     }
-    if (finish_ftstring_expr(tok, state, token) < 0) {
-        return -1;
+    ఒకవేళ (ముగింపు_ftstring_సమాసం(tok, state, token) < 0) {
+        తిరిగి -1;
     }
-    if (c == ':') {
-        state->mode = FTSTRING_MODE_FORMAT_SPEC;
-        return COLON;
+    ఒకవేళ (c == ':') {
+        state->బహుళకం = FTSTRING_బహుళకం_FORMAT_SPEC;
+        తిరిగి COLON;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyLexer_close_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                             int c)
+పూర్ణాంకం
+Py_Lexer_close_ftstring_సమాసం(నిర్మాణం tok_state *tok, ftstring_state *state,
+                             పూర్ణాంకం c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ')' || c == ']' || c == '}');
-    int depth = _PyLexer_FTStringBracketDepth(tok, state);
-    if (depth < 0) {
+    ప్రతిజ్ఞా(state->బహుళకం == FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    ప్రతిజ్ఞా(c == ')' || c == ']' || c == '}');
+    పూర్ణాంకం లోతు = Py_Lexer_FTString_Bracket_లోతు(tok, state);
+    ఒకవేళ (లోతు < 0) {
         _PyTokenizer_syntaxerror(tok, "%c-string: unmatched '%c'",
-                                _PyLexer_StringPrefix(state->kind), c);
-        return -1;
+                                Py_Lexer_String_ఉపసర్గ(state->రకం), c);
+        తిరిగి -1;
     }
-    if (c == '}' && depth == state->replacement_depth - 1) {
-        state->replacement_depth--;
-        state->mode = FTSTRING_MODE_MIDDLE;
-        state->debug_expr = 0;
+    ఒకవేళ (c == '}' && లోతు == state->replacement_లోతు - 1) {
+        state->replacement_లోతు--;
+        state->బహుళకం = FTSTRING_బహుళకం_మధ్య;
+        state->debug_సమాసం = 0;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-void
-_PyLexer_mark_ftstring_debug(struct tok_state *tok, ftstring_state *state)
+శూన్య
+_PyLexer_mark_ftstring_debug(నిర్మాణం tok_state *tok, ftstring_state *state)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    if (_PyLexer_FTStringBracketDepth(tok, state) == state->replacement_depth) {
-        state->debug_expr = 1;
+    ప్రతిజ్ఞా(state->బహుళకం == FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    ఒకవేళ (Py_Lexer_FTString_Bracket_లోతు(tok, state) == state->replacement_లోతు) {
+        state->debug_సమాసం = 1;
     }
 }
 
-int
-_PyLexer_check_string_prefixes(struct tok_state *tok,
-                                             int saw_b, int saw_r, int saw_u,
-                                             int saw_f, int saw_t) {
+పూర్ణాంకం
+_PyLexer_check_string_prefixes(నిర్మాణం tok_state *tok,
+                                             పూర్ణాంకం saw_b, పూర్ణాంకం saw_r, పూర్ణాంకం saw_u,
+                                             పూర్ణాంకం saw_f, పూర్ణాంకం saw_t) {
     // Supported: rb, rf, rt (in any order)
     // Unsupported: ub, ur, uf, ut, bf, bt, ft (in any order)
 
-#define RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
-    do {                                                                  \
-        (void)_PyTokenizer_syntaxerror_known_range(                       \
-            tok, (int)(tok->start + 1 - tok->line_start),                 \
-            (int)(tok->cur - tok->line_start),                            \
+#నిర్వచించు RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
+    చేయి {                                                                  \
+        (శూన్య)Py_Tokenizer_syntaxerror_తెలిసిన_range(                       \
+            tok, (పూర్ణాంకం)(tok->ప్రారంభం + 1 - tok->పంక్తి_ప్రారంభం),                 \
+            (పూర్ణాంకం)(tok->cur - tok->పంక్తి_ప్రారంభం),                            \
             "'" PREFIX1 "' and '" PREFIX2 "' prefixes are incompatible"); \
-        return -1;                                                        \
-    } while (0)
+        తిరిగి -1;                                                        \
+    } అయితే (0)
 
-    if (saw_u && saw_b) {
+    ఒకవేళ (saw_u && saw_b) {
         RETURN_SYNTAX_ERROR("u", "b");
     }
-    if (saw_u && saw_r) {
+    ఒకవేళ (saw_u && saw_r) {
         RETURN_SYNTAX_ERROR("u", "r");
     }
-    if (saw_u && saw_f) {
+    ఒకవేళ (saw_u && saw_f) {
         RETURN_SYNTAX_ERROR("u", "f");
     }
-    if (saw_u && saw_t) {
+    ఒకవేళ (saw_u && saw_t) {
         RETURN_SYNTAX_ERROR("u", "t");
     }
 
-    if (saw_b && saw_f) {
+    ఒకవేళ (saw_b && saw_f) {
         RETURN_SYNTAX_ERROR("b", "f");
     }
-    if (saw_b && saw_t) {
+    ఒకవేళ (saw_b && saw_t) {
         RETURN_SYNTAX_ERROR("b", "t");
     }
 
-    if (saw_f && saw_t) {
+    ఒకవేళ (saw_f && saw_t) {
         RETURN_SYNTAX_ERROR("f", "t");
     }
 
-#undef RETURN_SYNTAX_ERROR
+#నిర్వచనం_రద్దు RETURN_SYNTAX_ERROR
 
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyLexer_scan_fstring_start(struct tok_state *tok, struct token *token,
-                            int c, ftstring_kind kind)
+పూర్ణాంకం
+Py_Lexer_పరిశీలన_fstring_ప్రారంభం(నిర్మాణం tok_state *tok, నిర్మాణం token *token,
+                            పూర్ణాంకం c, ftstring_రకం రకం)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_ప్రారంభం = -1;
+    _PyTok_Off p_చివర = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
+    పూర్ణాంకం quote = c;
+    పూర్ణాంకం quote_కొలత = 1;             /* 1 or 3 */
 
     /* Find the quote size and start of string */
-    int after_quote = tok_nextc(tok);
-    if (after_quote == quote) {
-        int after_after_quote = tok_nextc(tok);
-        if (after_after_quote == quote) {
-            quote_size = 3;
+    పూర్ణాంకం after_quote = tok_nextc(tok);
+    ఒకవేళ (after_quote == quote) {
+        పూర్ణాంకం after_after_quote = tok_nextc(tok);
+        ఒకవేళ (after_after_quote == quote) {
+            quote_కొలత = 3;
         }
-        else {
+        లేకపోతే {
             // TODO: Check this
             tok_backup(tok, after_after_quote);
             tok_backup(tok, after_quote);
         }
     }
-    if (after_quote != quote) {
+    ఒకవేళ (after_quote != quote) {
         tok_backup(tok, after_quote);
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    ftstring_state *state = _PyLexer_PushFTString(tok);
-    if (state == NULL) {
-        return MAKE_TOKEN(ERRORTOKEN);
+    p_ప్రారంభం = tok->ప్రారంభం;
+    p_చివర = tok->cur;
+    ftstring_state *state = Py_Lexer_నెట్టు_FTString(tok);
+    ఒకవేళ (state == ఖాళీ) {
+        తిరిగి MAKE_TOKEN(ERRORTOKEN);
     }
-    state->mode = FTSTRING_MODE_MIDDLE;
+    state->బహుళకం = FTSTRING_బహుళకం_మధ్య;
     state->quote = quote;
-    state->quote_size = quote_size;
+    state->quote_కొలత = quote_కొలత;
     state->paren_level = tok->level;
-    state->start = tok->start;
-    state->start_loc = tok->start_loc;
-    state->expr_span = (_PyTok_Span){-1, -1};
+    state->ప్రారంభం = tok->ప్రారంభం;
+    state->ప్రారంభం_loc = tok->ప్రారంభం_loc;
+    state->సమాసం_పరిధి = (Py_Tok_పరిధి){-1, -1};
 
-    state->kind = kind;
-    return _PyLexer_IsTString(kind)
-        ? MAKE_TOKEN(TSTRING_START) : MAKE_TOKEN(FSTRING_START);
+    state->రకం = రకం;
+    తిరిగి _PyLexer_IsTString(రకం)
+        ? MAKE_TOKEN(TSTRING_ప్రారంభం) : MAKE_TOKEN(FSTRING_ప్రారంభం);
 }
 
-int
-_PyLexer_scan_string(struct tok_state *tok, struct token *token, int c)
+పూర్ణాంకం
+Py_Lexer_పరిశీలన_string(నిర్మాణం tok_state *tok, నిర్మాణం token *token, పూర్ణాంకం c)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_ప్రారంభం = -1;
+    _PyTok_Off p_చివర = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
-    int end_quote_size = 0;
-    int has_escaped_quote = 0;
+    పూర్ణాంకం quote = c;
+    పూర్ణాంకం quote_కొలత = 1;             /* 1 or 3 */
+    పూర్ణాంకం చివర_quote_కొలత = 0;
+    పూర్ణాంకం has_escaped_quote = 0;
 
     /* Find the quote size and start of string */
     c = tok_nextc(tok);
-    if (c == quote) {
+    ఒకవేళ (c == quote) {
         c = tok_nextc(tok);
-        if (c == quote) {
-            quote_size = 3;
+        ఒకవేళ (c == quote) {
+            quote_కొలత = 3;
         }
-        else {
-            end_quote_size = 1;     /* empty string found */
+        లేకపోతే {
+            చివర_quote_కొలత = 1;     /* empty string found */
         }
     }
-    if (c != quote) {
+    ఒకవేళ (c != quote) {
         tok_backup(tok, c);
     }
 
     /* Get rest of string */
-    while (end_quote_size != quote_size) {
+    అయితే (చివర_quote_కొలత != quote_కొలత) {
         c = tok_nextc(tok);
-        if (tok->done == E_ERROR) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        ఒకవేళ (tok->పూర్తి == E_ERROR) {
+            తిరిగి MAKE_TOKEN(ERRORTOKEN);
         }
-        if (tok->done == E_DECODE) {
-            break;
+        ఒకవేళ (tok->పూర్తి == E_DECODE) {
+            ఆపు;
         }
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        ఒకవేళ (c == EOF || (quote_కొలత == 1 && c == '\n')) {
+            ఒకవేళ (tok_failed(tok)) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token, STRING,
-                                               tok->start, tok->start_loc);
+            ఒకవేళ (c == EOF && tok->allow_incomplete_ఆదానం) {
+                తిరిగి incomplete_string_token(tok, token, STRING,
+                                               tok->ప్రారంభం, tok->ప్రారంభం_loc);
             }
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = tok->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, tok->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            పూర్ణాంకం చివర_lineno = tok->lineno;
+            _PyTok_Loc location = tok->ప్రారంభం_loc;
+            స్థిరరాశి అక్షరం *పంక్తి = Py_Tok_ఆధారం_సూచిక(
+                &tok->ఆధారం, tok->ప్రారంభం - location.byte_నిలువు);
+            Py_ssize_t cursor_స్థానభ్రంశం = (Py_ssize_t)location.byte_నిలువు + 1;
 
-            const ftstring_state *state = _PyLexer_CurrentFTString(tok);
-            if (state != NULL) {
+            స్థిరరాశి ftstring_state *state = _PyLexer_CurrentFTString(tok);
+            ఒకవేళ (state != ఖాళీ) {
                 /* A matching quote may have been intended to close the
                  * surrounding formatted string instead of opening a string
                  * inside a replacement field. */
-                if (state->quote == quote && state->quote_size == quote_size) {
-                    int level = state->paren_level + state->replacement_depth - 1;
-                    assert(level >= 0 && level < tok->level);
-                    assert(tok->parenstack[level] == '{');
-                    int lineno = tok->parenlinenostack[level];
-                    if (lineno != location.lineno) {
+                ఒకవేళ (state->quote == quote && state->quote_కొలత == quote_కొలత) {
+                    పూర్ణాంకం level = state->paren_level + state->replacement_లోతు - 1;
+                    ప్రతిజ్ఞా(level >= 0 && level < tok->level);
+                    ప్రతిజ్ఞా(tok->parenstack[level] == '{');
+                    పూర్ణాంకం lineno = tok->parenlinenostack[level];
+                    ఒకవేళ (lineno != location.lineno) {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                             "%c-string: expecting '}' to close '{' on line %d",
-                            _PyLexer_StringPrefix(state->kind), lineno);
+                            Py_Lexer_String_ఉపసర్గ(state->రకం), lineno);
                     }
-                    else {
+                    లేకపోతే {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                             "%c-string: expecting '}'",
-                            _PyLexer_StringPrefix(state->kind));
+                            Py_Lexer_String_ఉపసర్గ(state->రకం));
                     }
-                    return string_error_token(tok, token, tok->start, location);
+                    తిరిగి string_error_token(tok, token, tok->ప్రారంభం, location);
                 }
             }
 
-            if (quote_size == 3) {
+            ఒకవేళ (quote_కొలత == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                     "unterminated triple-quoted string literal"
-                    " (detected at line %d)", end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    " (detected at line %d)", చివర_lineno);
+                ఒకవేళ (c != '\n') {
+                    tok->పూర్తి = E_EOFS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                తిరిగి string_error_token(tok, token, tok->ప్రారంభం, location);
             }
-            else {
-                if (has_escaped_quote) {
+            లేకపోతే {
+                ఒకవేళ (has_escaped_quote) {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
+                        tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                         "unterminated string literal (detected at line %d); "
                         "perhaps you escaped the end quote?",
-                        end_lineno
+                        చివర_lineno
                     );
-                } else {
+                } లేకపోతే {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
-                        "unterminated string literal (detected at line %d)", end_lineno
+                        tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
+                        "unterminated string literal (detected at line %d)", చివర_lineno
                     );
                 }
-                if (c != '\n') {
-                    tok->done = E_EOLS;
+                ఒకవేళ (c != '\n') {
+                    tok->పూర్తి = E_EOLS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                తిరిగి string_error_token(tok, token, tok->ప్రారంభం, location);
             }
         }
-        if (c == quote) {
-            end_quote_size += 1;
+        ఒకవేళ (c == quote) {
+            చివర_quote_కొలత += 1;
         }
-        else {
-            end_quote_size = 0;
-            if (c == '\\') {
+        లేకపోతే {
+            చివర_quote_కొలత = 0;
+            ఒకవేళ (c == '\\') {
                 c = tok_nextc(tok);  /* skip escaped char */
-                if (c == quote) {  /* but record whether the escaped char was a quote */
+                ఒకవేళ (c == quote) {  /* but record whether the escaped char was a quote */
                     has_escaped_quote = 1;
                 }
-                if (c == '\r') {
+                ఒకవేళ (c == '\r') {
                     c = tok_nextc(tok);
                 }
             }
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    return MAKE_TOKEN(STRING);
+    p_ప్రారంభం = tok->ప్రారంభం;
+    p_చివర = tok->cur;
+    తిరిగి MAKE_TOKEN(STRING);
 }
 
-int
-_PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct token *token)
+పూర్ణాంకం
+_PyLexer_get_ftstring(నిర్మాణం tok_state *tok, ftstring_state *current, నిర్మాణం token *token)
 {
-    assert(current == _PyLexer_CurrentFTString(tok) && current->mode != FTSTRING_MODE_EXPRESSION);
-    assert((current->quote_size == 1 || current->quote_size == 3) &&
-           current->replacement_depth <= MAX_EXPR_NESTING);
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
-    int token_type;
-    int end_quote_size = 0;
-    int unicode_escape = 0;
-    int quote = current->quote;
-    int quote_size = current->quote_size;
-    int in_format_spec = current->mode == FTSTRING_MODE_FORMAT_SPEC;
-    int raw = _PyLexer_IsRawString(current->kind);
+    ప్రతిజ్ఞా(current == _PyLexer_CurrentFTString(tok) && current->బహుళకం != FTSTRING_బహుళకం_వ్యక్తీకరణ);
+    ప్రతిజ్ఞా((current->quote_కొలత == 1 || current->quote_కొలత == 3) &&
+           current->replacement_లోతు <= MAX_సమాసం_NESTING);
+    _PyTok_Off p_ప్రారంభం = -1;
+    _PyTok_Off p_చివర = -1;
+    పూర్ణాంకం token_type;
+    పూర్ణాంకం చివర_quote_కొలత = 0;
+    పూర్ణాంకం unicode_escape = 0;
+    పూర్ణాంకం quote = current->quote;
+    పూర్ణాంకం quote_కొలత = current->quote_కొలత;
+    పూర్ణాంకం లోపల_format_spec = current->బహుళకం == FTSTRING_బహుళకం_FORMAT_SPEC;
+    పూర్ణాంకం raw = _PyLexer_IsRawString(current->రకం);
 
-    tok->start = tok->cur;
-    tok->start_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
+    tok->ప్రారంభం = tok->cur;
+    tok->ప్రారంభం_loc = (_PyTok_Loc){tok->lineno, Py_Lexer_Byte_స్తంభం(tok)};
 
-    while (end_quote_size != quote_size) {
-        int c = tok_nextc(tok);
-        if (tok->done == E_ERROR || tok->done == E_DECODE) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    అయితే (చివర_quote_కొలత != quote_కొలత) {
+        పూర్ణాంకం c = tok_nextc(tok);
+        ఒకవేళ (tok->పూర్తి == E_ERROR || tok->పూర్తి == E_DECODE) {
+            తిరిగి MAKE_TOKEN(ERRORTOKEN);
         }
 
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        ఒకవేళ (c == EOF || (quote_కొలత == 1 && c == '\n')) {
+            ఒకవేళ (tok_failed(tok)) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token,
-                    FTSTRING_MIDDLE(current), current->start, current->start_loc);
+            ఒకవేళ (c == EOF && tok->allow_incomplete_ఆదానం) {
+                తిరిగి incomplete_string_token(tok, token,
+                    FTSTRING_మధ్య(current), current->ప్రారంభం, current->ప్రారంభం_loc);
             }
 
-            if (in_format_spec && c == '\n') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            ఒకవేళ (లోపల_format_spec && c == '\n') {
+                తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(
                     tok,
                     "%c-string: newlines are not allowed in format specifiers for single quoted %c-strings",
-                    _PyLexer_StringPrefix(current->kind),
-                    _PyLexer_StringPrefix(current->kind)));
+                    Py_Lexer_String_ఉపసర్గ(current->రకం),
+                    Py_Lexer_String_ఉపసర్గ(current->రకం)));
             }
 
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = current->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, current->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            పూర్ణాంకం చివర_lineno = tok->lineno;
+            _PyTok_Loc location = current->ప్రారంభం_loc;
+            స్థిరరాశి అక్షరం *పంక్తి = Py_Tok_ఆధారం_సూచిక(
+                &tok->ఆధారం, current->ప్రారంభం - location.byte_నిలువు);
+            Py_ssize_t cursor_స్థానభ్రంశం = (Py_ssize_t)location.byte_నిలువు + 1;
 
-            if (quote_size == 3) {
+            ఒకవేళ (quote_కొలత == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                     "unterminated triple-quoted %c-string literal"
                     " (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    Py_Lexer_String_ఉపసర్గ(current->రకం), చివర_lineno);
+                ఒకవేళ (c != '\n') {
+                    tok->పూర్తి = E_EOFS;
                 }
-                return string_error_token(tok, token,
-                    current->start, location);
+                తిరిగి string_error_token(tok, token,
+                    current->ప్రారంభం, location);
             }
-            else {
+            లేకపోతే {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, పంక్తి, cursor_స్థానభ్రంశం, location.lineno, -1, -1,
                     "unterminated %c-string literal (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                return string_error_token(tok, token,
-                    current->start, location);
+                    Py_Lexer_String_ఉపసర్గ(current->రకం), చివర_lineno);
+                తిరిగి string_error_token(tok, token,
+                    current->ప్రారంభం, location);
             }
         }
 
-        if (c == quote) {
-            end_quote_size += 1;
-            continue;
-        } else {
-            end_quote_size = 0;
+        ఒకవేళ (c == quote) {
+            చివర_quote_కొలత += 1;
+            కొనసాగు;
+        } లేకపోతే {
+            చివర_quote_కొలత = 0;
         }
 
-        if (c == '{') {
-            int peek = tok_nextc(tok);
-            if (peek != '{' || in_format_spec) {
+        ఒకవేళ (c == '{') {
+            పూర్ణాంకం peek = tok_nextc(tok);
+            ఒకవేళ (peek != '{' || లోపల_format_spec) {
                 tok_backup(tok, peek);
-                _PyTok_Off expr_start = tok->cur;
+                _PyTok_Off సమాసం_ప్రారంభం = tok->cur;
                 tok_backup(tok, c);
-                if (begin_ftstring_expr(tok, current, expr_start) < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                ఒకవేళ (begin_ftstring_సమాసం(tok, current, సమాసం_ప్రారంభం) < 0) {
+                    తిరిగి MAKE_TOKEN(ERRORTOKEN);
                 }
-                p_start = tok->start;
-                p_end = tok->cur;
-                if (p_start == p_end) {
-                    return _PyLexer_get_normal(tok, current, token);
+                p_ప్రారంభం = tok->ప్రారంభం;
+                p_చివర = tok->cur;
+                ఒకవేళ (p_ప్రారంభం == p_చివర) {
+                    తిరిగి Py_Lexer_get_సాధారణ(tok, current, token);
                 }
-            } else {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            } లేకపోతే {
+                p_ప్రారంభం = tok->ప్రారంభం;
+                p_చివర = tok->cur - 1;
             }
-            goto emit_middle;
-        } else if (c == '}') {
-            if (unicode_escape) {
-                p_start = tok->start;
-                p_end = tok->cur;
-                goto emit_middle;
+            వెళ్ళు emit_మధ్య;
+        } లేకపోతే ఒకవేళ (c == '}') {
+            ఒకవేళ (unicode_escape) {
+                p_ప్రారంభం = tok->ప్రారంభం;
+                p_చివర = tok->cur;
+                వెళ్ళు emit_మధ్య;
             }
-            int peek = tok_nextc(tok);
+            పూర్ణాంకం peek = tok_nextc(tok);
 
-            int bracket_depth = _PyLexer_FTStringBracketDepth(tok, current);
-            if (peek == '}' && !in_format_spec && bracket_depth == 0) {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            పూర్ణాంకం bracket_లోతు = Py_Lexer_FTString_Bracket_లోతు(tok, current);
+            ఒకవేళ (peek == '}' && !లోపల_format_spec && bracket_లోతు == 0) {
+                p_ప్రారంభం = tok->ప్రారంభం;
+                p_చివర = tok->cur - 1;
             }
-            else {
+            లేకపోతే {
                 tok_backup(tok, peek);
-                if (!in_format_spec && bracket_depth == 0) {
-                    if (tok->start == tok->cur - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+                ఒకవేళ (!లోపల_format_spec && bracket_లోతు == 0) {
+                    ఒకవేళ (tok->ప్రారంభం == tok->cur - 1) {
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(
                             tok, "%c-string: single '}' is not allowed",
-                            _PyLexer_StringPrefix(current->kind)));
+                            Py_Lexer_String_ఉపసర్గ(current->రకం)));
                     }
                     tok_backup(tok, c);
-                    p_start = tok->start;
-                    p_end = tok->cur;
-                    goto emit_middle;
+                    p_ప్రారంభం = tok->ప్రారంభం;
+                    p_చివర = tok->cur;
+                    వెళ్ళు emit_మధ్య;
                 }
                 tok_backup(tok, c);
-                current->mode = FTSTRING_MODE_EXPRESSION;
-                p_start = tok->start;
-                p_end = tok->cur;
+                current->బహుళకం = FTSTRING_బహుళకం_వ్యక్తీకరణ;
+                p_ప్రారంభం = tok->ప్రారంభం;
+                p_చివర = tok->cur;
             }
-            goto emit_middle;
-        } else if (c == '\\') {
-            int peek = tok_nextc(tok);
-            if (peek == '\r') {
+            వెళ్ళు emit_మధ్య;
+        } లేకపోతే ఒకవేళ (c == '\\') {
+            పూర్ణాంకం peek = tok_nextc(tok);
+            ఒకవేళ (peek == '\r') {
                 peek = tok_nextc(tok);
             }
-            if (peek == '{' || peek == '}') {
-                if (!raw) {
-                    if (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+            ఒకవేళ (peek == '{' || peek == '}') {
+                ఒకవేళ (!raw) {
+                    ఒకవేళ (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
+                        తిరిగి MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
                 tok_backup(tok, peek);
-                continue;
+                కొనసాగు;
             }
 
-            if (!raw) {
-                if (peek == 'N') {
+            ఒకవేళ (!raw) {
+                ఒకవేళ (peek == 'N') {
                     /* Handle named unicode escapes (\N{BULLET}) */
                     peek = tok_nextc(tok);
-                    if (peek == '{') {
+                    ఒకవేళ (peek == '{') {
                         unicode_escape = 1;
-                    } else {
+                    } లేకపోతే {
                         tok_backup(tok, peek);
                     }
                 }
@@ -591,19 +591,19 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    if (p_end - quote_size == p_start) {
-        int end_token = FTSTRING_END(current);
-        _PyLexer_PopFTString(tok);
-        return MAKE_TOKEN(end_token);
+    p_ప్రారంభం = tok->ప్రారంభం;
+    p_చివర = tok->cur;
+    ఒకవేళ (p_చివర - quote_కొలత == p_ప్రారంభం) {
+        పూర్ణాంకం చివర_token = FTSTRING_చివర(current);
+        Py_Lexer_తీయి_FTString(tok);
+        తిరిగి MAKE_TOKEN(చివర_token);
     }
-    for (int i = 0; i < quote_size; i++) {
+    కొరకు (పూర్ణాంకం i = 0; i < quote_కొలత; i++) {
         tok_backup(tok, quote);
     }
-    p_end = tok->cur;
-emit_middle:
-    token_type = MAKE_TOKEN(FTSTRING_MIDDLE(current));
+    p_చివర = tok->cur;
+emit_మధ్య:
+    token_type = MAKE_TOKEN(FTSTRING_మధ్య(current));
     token->is_raw = raw;
-    return token_type;
+    తిరిగి token_type;
 }

@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#అన్తర్భావ "source.h"
 
-#define SOURCE_BUFFER_GROWTH_FACTOR 2
+#నిర్వచించు ఆధారం_బఫరు_GROWTH_గుణకం 2
 
-void
-_PyTok_SourceInit(_PyTok_SourceText *source)
+శూన్య
+Py_Tok_ఆధారం_Init(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం)
 {
-    *source = (_PyTok_SourceText){0};
+    *ఆధారం = (Py_Tok_ఆధారం_పాఠ్యం){0};
 }
 
-void
-_PyTok_SourceClear(_PyTok_SourceText *source)
+శూన్య
+Py_Tok_ఆధారం_Clear(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం)
 {
-    PyMem_Free(source->bytes);
-    _PyTok_SourceInit(source);
+    PyMem_Free(ఆధారం->బైట్లు);
+    Py_Tok_ఆధారం_Init(ఆధారం);
 }
 
-void
-_PyTok_SourceDiscard(_PyTok_SourceText *source)
+శూన్య
+Py_Tok_ఆధారం_Discard(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
-    source->base_offset += source->len;
-    source->len = 0;
-    if (source->bytes != NULL) {
-        source->bytes[0] = '\0';
+    ప్రతిజ్ఞా(ఆధారం->పునాది_స్థానభ్రంశం <= PY_SSIZE_T_MAX - ఆధారం->len);
+    ఆధారం->పునాది_స్థానభ్రంశం += ఆధారం->len;
+    ఆధారం->len = 0;
+    ఒకవేళ (ఆధారం->బైట్లు != ఖాళీ) {
+        ఆధారం->బైట్లు[0] = '\0';
     }
-    source->nlines = 0;
+    ఆధారం->nlines = 0;
 }
 
-static int
-reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
+స్థిర పూర్ణాంకం
+reserve_బైట్లు(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    ఒకవేళ (needed <= ఆధారం->cap) {
+        తిరిగి 0;
     }
-    Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    Py_ssize_t cap = ఆధారం->cap > 0 ? ఆధారం->cap : BUFSIZ;
+    అయితే (cap < needed) {
+        ఒకవేళ (cap > PY_SSIZE_T_MAX / ఆధారం_బఫరు_GROWTH_గుణకం) {
             cap = needed;
-            break;
+            ఆపు;
         }
-        cap *= SOURCE_BUFFER_GROWTH_FACTOR;
+        cap *= ఆధారం_బఫరు_GROWTH_గుణకం;
     }
-    char *bytes;
-#ifdef Py_DEBUG
+    అక్షరం *బైట్లు;
+#నిర్వచితమైతే Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
-    bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
-        memcpy(bytes, source->bytes, source->len);
+    బైట్లు = PyMem_Malloc(cap);
+    ఒకవేళ (బైట్లు != ఖాళీ && ఆధారం->len > 0) {
+        జ్ఞాపకం_నకలు(బైట్లు, ఆధారం->బైట్లు, ఆధారం->len);
     }
-#else
-    bytes = PyMem_Realloc(source->bytes, cap);
-#endif
-    if (bytes == NULL) {
-        PyErr_NoMemory();
-        return -1;
+#లేకపోతే
+    బైట్లు = PyMem_Realloc(ఆధారం->బైట్లు, cap);
+#అయితే_ముగింపు
+    ఒకవేళ (బైట్లు == ఖాళీ) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి -1;
     }
-#ifdef Py_DEBUG
-    if (source->bytes != NULL) {
-        memset(source->bytes, PYMEM_DEADBYTE, source->cap);
-        PyMem_Free(source->bytes);
+#నిర్వచితమైతే Py_DEBUG
+    ఒకవేళ (ఆధారం->బైట్లు != ఖాళీ) {
+        memset(ఆధారం->బైట్లు, PYMEM_DEADBYTE, ఆధారం->cap);
+        PyMem_Free(ఆధారం->బైట్లు);
     }
-#endif
-    source->bytes = bytes;
-    source->cap = cap;
-    return 0;
+#అయితే_ముగింపు
+    ఆధారం->బైట్లు = బైట్లు;
+    ఆధారం->cap = cap;
+    తిరిగి 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+స్థిర పూర్ణాంకం
+validate_పంక్తి(స్థిరరాశి Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, స్థిరరాశి అక్షరం *బైట్లు,
+              Py_ssize_t len, పూర్ణాంకం append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
-            (source->nlines > 0 &&
-             (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ఒకవేళ (len < 0 || (len == 0 && !append_newline) || బైట్లు == ఖాళీ ||
+            (ఆధారం->nlines > 0 &&
+             (ఆధారం->len == 0 || ఆధారం->బైట్లు[ఆధారం->len - 1] != '\n'))) {
+        Py_Err_సమితి_String(PyExc_SystemError, "invalid tokenizer source line");
+        తిరిగి -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    స్థిరరాశి అక్షరం *newline = memchr(బైట్లు, '\n', len);
+    ఒకవేళ (newline != ఖాళీ && (append_newline || newline != బైట్లు + len - 1)) {
+        Py_Err_సమితి_String(PyExc_SystemError, "invalid tokenizer source line");
+        తిరిగి -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
-        PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+    ఒకవేళ (ఆధారం->nlines == గరిష్ఠ_పూర్ణాంకం ||
+            (ఆధారం->nlines == గరిష్ఠ_పూర్ణాంకం - 1 && (newline != ఖాళీ || append_newline))) {
+        Py_Err_సమితి_String(Py_Exc_అధికప్రవాహం_Error, "too many tokenizer source lines");
+        తిరిగి -1;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+స్థిర _PyTok_Off
+append_పంక్తి(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, స్థిరరాశి అక్షరం *బైట్లు,
+            Py_ssize_t len, పూర్ణాంకం append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    ఒకవేళ (validate_పంక్తి(ఆధారం, బైట్లు, len, append_newline) < 0) {
+        తిరిగి -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
-            source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
-        PyErr_NoMemory();
-        return -1;
+    ఒకవేళ (ఆధారం->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+            ఆధారం->పునాది_స్థానభ్రంశం > PY_SSIZE_T_MAX - ఆధారం->len - len - append_newline) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    ఒకవేళ (reserve_బైట్లు(ఆధారం, ఆధారం->len + len + append_newline + 1) < 0) {
+        తిరిగి -1;
     }
 
-    _PyTok_Off start = source->len;
-    memcpy(source->bytes + start, bytes, len);
-    source->len += len;
-    if (append_newline) {
-        source->bytes[source->len++] = '\n';
+    _PyTok_Off ప్రారంభం = ఆధారం->len;
+    జ్ఞాపకం_నకలు(ఆధారం->బైట్లు + ప్రారంభం, బైట్లు, len);
+    ఆధారం->len += len;
+    ఒకవేళ (append_newline) {
+        ఆధారం->బైట్లు[ఆధారం->len++] = '\n';
     }
-    source->bytes[source->len] = '\0';
-    source->nlines++;
-    return source->base_offset + start;
+    ఆధారం->బైట్లు[ఆధారం->len] = '\0';
+    ఆధారం->nlines++;
+    తిరిగి ఆధారం->పునాది_స్థానభ్రంశం + ప్రారంభం;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ఆధారం_Append_పంక్తి(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, స్థిరరాశి అక్షరం *బైట్లు,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    తిరిగి append_పంక్తి(ఆధారం, బైట్లు, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ఆధారం_Append_పంక్తి_With_Newline(Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, స్థిరరాశి అక్షరం *బైట్లు,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    తిరిగి append_పంక్తి(ఆధారం, బైట్లు, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+స్థిరరాశి అక్షరం *
+Py_Tok_ఆధారం_పంక్తి_View(స్థిరరాశి Py_Tok_ఆధారం_పాఠ్యం *ఆధారం, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    ప్రతిజ్ఞా(len != ఖాళీ);
+    స్థిరరాశి అక్షరం *పంక్తి = Py_Tok_ఆధారం_దత్తాంశం(ఆధారం);
+    స్థిరరాశి అక్షరం *చివర = పంక్తి + ఆధారం->len;
+    అయితే (lineno > 1) {
+        స్థిరరాశి అక్షరం *newline = memchr(పంక్తి, '\n', చివర - పంక్తి);
+        ఒకవేళ (newline == ఖాళీ) {
+            ఆపు;
         }
-        line = newline + 1;
+        పంక్తి = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    స్థిరరాశి అక్షరం *newline = memchr(పంక్తి, '\n', చివర - పంక్తి);
+    *len = (newline != ఖాళీ ? newline : చివర) - పంక్తి;
+    తిరిగి పంక్తి;
 }

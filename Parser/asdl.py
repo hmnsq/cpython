@@ -19,9 +19,9 @@
 # [1] "The Zephyr Abstract Syntax Description Language" by Wang, et. al. See
 #     http://asdl.sourceforge.net/
 #-------------------------------------------------------------------------------
-from collections import namedtuple
-import enum
-import re
+తః collections దిగుమతి namedtuple
+దిగుమతి enum
+దిగుమతి re
 
 __all__ = [
     'builtin_types', 'parse', 'AST', 'Module', 'Type', 'Constructor',
@@ -36,98 +36,98 @@ __all__ = [
 
 builtin_types = {'identifier', 'string', 'int', 'constant'}
 
-class AST:
-    def __repr__(self):
-        raise NotImplementedError
+తరగతి AST:
+    నిర్వచనం __repr__(self):
+        లేపు NotImplementedError
 
-class Module(AST):
-    def __init__(self, name, dfns):
+తరగతి Module(AST):
+    నిర్వచనం __init__(self, name, dfns):
         self.name = name
         self.dfns = dfns
-        self.types = {type.name: type.value for type in dfns}
+        self.types = {type.name: type.విలువ కొరకు type లో dfns}
 
-    def __repr__(self):
-        return 'Module({0.name}, {0.dfns})'.format(self)
+    నిర్వచనం __repr__(self):
+        తిరిగి 'Module({0.name}, {0.dfns})'.format(self)
 
-class Type(AST):
-    def __init__(self, name, value):
+తరగతి Type(AST):
+    నిర్వచనం __init__(self, name, విలువ):
         self.name = name
-        self.value = value
+        self.విలువ = విలువ
 
-    def __repr__(self):
-        return 'Type({0.name}, {0.value})'.format(self)
+    నిర్వచనం __repr__(self):
+        తిరిగి 'Type({0.name}, {0.value})'.format(self)
 
-class Constructor(AST):
-    def __init__(self, name, fields=None):
+తరగతి Constructor(AST):
+    నిర్వచనం __init__(self, name, fields=ఏమీలేదు):
         self.name = name
-        self.fields = fields or []
+        self.fields = fields లేదా []
 
-    def __repr__(self):
-        return 'Constructor({0.name}, {0.fields})'.format(self)
+    నిర్వచనం __repr__(self):
+        తిరిగి 'Constructor({0.name}, {0.fields})'.format(self)
 
-class Quantifier(enum.Enum):
+తరగతి Quantifier(enum.Enum):
     OPTIONAL = enum.auto()
     SEQUENCE = enum.auto()
 
-class Field(AST):
-    def __init__(self, type, name=None, quantifiers=None):
+తరగతి క్షేత్రం(AST):
+    నిర్వచనం __init__(self, type, name=ఏమీలేదు, quantifiers=ఏమీలేదు):
         self.type = type
         self.name = name
-        self.seq = False
-        self.opt = False
-        self.quantifiers = quantifiers or []
-        if len(self.quantifiers) > 0:
-            self.seq = self.quantifiers[-1] is Quantifier.SEQUENCE
-            self.opt = self.quantifiers[-1] is Quantifier.OPTIONAL
+        self.seq = అబద్ధం
+        self.opt = అబద్ధం
+        self.quantifiers = quantifiers లేదా []
+        ఒకవేళ పొడవు(self.quantifiers) > 0:
+            self.seq = self.quantifiers[-1] అయిన Quantifier.SEQUENCE
+            self.opt = self.quantifiers[-1] అయిన Quantifier.OPTIONAL
 
-    def __str__(self):
+    నిర్వచనం __str__(self):
         extra = ""
-        for mod in self.quantifiers:
-            if mod is Quantifier.SEQUENCE:
+        కొరకు mod లో self.quantifiers:
+            ఒకవేళ mod అయిన Quantifier.SEQUENCE:
                 extra += "*"
-            elif mod is Quantifier.OPTIONAL:
+            లేదావేళ mod అయిన Quantifier.OPTIONAL:
                 extra += "?"
 
-        return "{}{} {}".format(self.type, extra, self.name)
+        తిరిగి "{}{} {}".format(self.type, extra, self.name)
 
-    def __repr__(self):
-        if self.quantifiers:
+    నిర్వచనం __repr__(self):
+        ఒకవేళ self.quantifiers:
             texts = []
-            for mod in self.quantifiers:
-                if mod is Quantifier.SEQUENCE:
+            కొరకు mod లో self.quantifiers:
+                ఒకవేళ mod అయిన Quantifier.SEQUENCE:
                     texts.append("SEQUENCE")
-                elif mod is Quantifier.OPTIONAL:
+                లేదావేళ mod అయిన Quantifier.OPTIONAL:
                     texts.append("OPTIONAL")
             extra = ", quantifiers=[{}]".format(", ".join(texts))
-        else:
+        లేకపోతే:
             extra = ""
 
-        if self.name is None:
-            return 'Field({0.type}{1})'.format(self, extra)
-        else:
-            return 'Field({0.type}, {0.name}{1})'.format(self, extra)
+        ఒకవేళ self.name అయిన ఏమీలేదు:
+            తిరిగి 'Field({0.type}{1})'.format(self, extra)
+        లేకపోతే:
+            తిరిగి 'Field({0.type}, {0.name}{1})'.format(self, extra)
 
-class Sum(AST):
-    def __init__(self, types, attributes=None):
+తరగతి కూడిక(AST):
+    నిర్వచనం __init__(self, types, లక్షణాలు=ఏమీలేదు):
         self.types = types
-        self.attributes = attributes or []
+        self.లక్షణాలు = లక్షణాలు లేదా []
 
-    def __repr__(self):
-        if self.attributes:
-            return 'Sum({0.types}, {0.attributes})'.format(self)
-        else:
-            return 'Sum({0.types})'.format(self)
+    నిర్వచనం __repr__(self):
+        ఒకవేళ self.లక్షణాలు:
+            తిరిగి 'Sum({0.types}, {0.attributes})'.format(self)
+        లేకపోతే:
+            తిరిగి 'Sum({0.types})'.format(self)
 
-class Product(AST):
-    def __init__(self, fields, attributes=None):
+తరగతి లబ్ధం(AST):
+    నిర్వచనం __init__(self, fields, లక్షణాలు=ఏమీలేదు):
         self.fields = fields
-        self.attributes = attributes or []
+        self.లక్షణాలు = లక్షణాలు లేదా []
 
-    def __repr__(self):
-        if self.attributes:
-            return 'Product({0.fields}, {0.attributes})'.format(self)
-        else:
-            return 'Product({0.fields})'.format(self)
+    నిర్వచనం __repr__(self):
+        ఒకవేళ self.లక్షణాలు:
+            తిరిగి 'Product({0.fields}, {0.attributes})'.format(self)
+        లేకపోతే:
+            తిరిగి 'Product({0.fields})'.format(self)
 
 # A generic visitor for the meta-AST that describes ASDL. This can be used by
 # emitters. Note that this visitor does not provide a generic visit method, so a
@@ -135,247 +135,247 @@ class Product(AST):
 # interesting node.
 # We also define a Check visitor that makes sure the parsed ASDL is well-formed.
 
-class VisitorBase(object):
+తరగతి Visitor_పునాది(object):
     """Generic tree visitor for ASTs."""
-    def __init__(self):
+    నిర్వచనం __init__(self):
         self.cache = {}
 
-    def visit(self, obj, *args):
+    నిర్వచనం సందర్శించు(self, obj, *వాదనలు):
         klass = obj.__class__
         meth = self.cache.get(klass)
-        if meth is None:
+        ఒకవేళ meth అయిన ఏమీలేదు:
             methname = "visit" + klass.__name__
-            meth = getattr(self, methname, None)
+            meth = getattr(self, methname, ఏమీలేదు)
             self.cache[klass] = meth
-        if meth:
-            try:
-                meth(obj, *args)
-            except Exception as e:
-                print("Error visiting %r: %s" % (obj, e))
-                raise
+        ఒకవేళ meth:
+            ప్రయత్నించు:
+                meth(obj, *వాదనలు)
+            మినహాయింపు Exception ఇవ e:
+                ముద్రించు("Error visiting %r: %s" % (obj, e))
+                లేపు
 
-class Check(VisitorBase):
+తరగతి Check(Visitor_పునాది):
     """A visitor that checks a parsed ASDL tree for correctness.
 
     Errors are printed and accumulated.
     """
-    def __init__(self):
-        super(Check, self).__init__()
+    నిర్వచనం __init__(self):
+        పర(Check, self).__init__()
         self.cons = {}
         self.errors = 0
         self.types = {}
 
-    def visitModule(self, mod):
-        for dfn in mod.dfns:
-            self.visit(dfn)
+    నిర్వచనం సందర్శించు_Module(self, mod):
+        కొరకు dfn లో mod.dfns:
+            self.సందర్శించు(dfn)
 
-    def visitType(self, type):
-        self.visit(type.value, str(type.name))
+    నిర్వచనం సందర్శించు_Type(self, type):
+        self.సందర్శించు(type.విలువ, str(type.name))
 
-    def visitSum(self, sum, name):
-        for t in sum.types:
-            self.visit(t, name)
+    నిర్వచనం సందర్శించు_కూడిక(self, కూడిక_2, name):
+        కొరకు t లో కూడిక_2.types:
+            self.సందర్శించు(t, name)
 
-    def visitConstructor(self, cons, name):
-        key = str(cons.name)
-        conflict = self.cons.get(key)
-        if conflict is None:
-            self.cons[key] = name
-        else:
-            print('Redefinition of constructor {}'.format(key))
-            print('Defined in {} and {}'.format(conflict, name))
+    నిర్వచనం సందర్శించు_Constructor(self, cons, name):
+        కీలకం = str(cons.name)
+        conflict = self.cons.get(కీలకం)
+        ఒకవేళ conflict అయిన ఏమీలేదు:
+            self.cons[కీలకం] = name
+        లేకపోతే:
+            ముద్రించు('Redefinition of constructor {}'.format(కీలకం))
+            ముద్రించు('Defined in {} and {}'.format(conflict, name))
             self.errors += 1
-        for f in cons.fields:
-            self.visit(f, key)
+        కొరకు f లో cons.fields:
+            self.సందర్శించు(f, కీలకం)
 
-    def visitField(self, field, name):
-        key = str(field.type)
-        l = self.types.setdefault(key, [])
+    నిర్వచనం సందర్శించు_క్షేత్రం(self, క్షేత్రం_2, name):
+        కీలకం = str(క్షేత్రం_2.type)
+        l = self.types.setdefault(కీలకం, [])
         l.append(name)
 
-    def visitProduct(self, prod, name):
-        for f in prod.fields:
-            self.visit(f, name)
+    నిర్వచనం సందర్శించు_లబ్ధం(self, prod, name):
+        కొరకు f లో prod.fields:
+            self.సందర్శించు(f, name)
 
-def check(mod):
+నిర్వచనం check(mod):
     """Check the parsed ASDL tree for correctness.
 
     Return True if success. For failure, the errors are printed out and False
     is returned.
     """
     v = Check()
-    v.visit(mod)
+    v.సందర్శించు(mod)
 
-    for t in v.types:
-        if t not in mod.types and not t in builtin_types:
+    కొరకు t లో v.types:
+        ఒకవేళ t కాదు లో mod.types మరియు కాదు t లో builtin_types:
             v.errors += 1
-            uses = ", ".join(v.types[t])
-            print('Undefined type {}, used in {}'.format(t, uses))
-    return not v.errors
+            ఉపయోగిస్తుంది = ", ".join(v.types[t])
+            ముద్రించు('Undefined type {}, used in {}'.format(t, ఉపయోగిస్తుంది))
+    తిరిగి కాదు v.errors
 
 # The ASDL parser itself comes next. The only interesting external interface
 # here is the top-level parse function.
 
-def parse(filename):
+నిర్వచనం parse(filename):
     """Parse ASDL from the given file and return a Module node describing it."""
-    with open(filename, encoding="utf-8") as f:
+    తోడుగా open(filename, encoding="utf-8") ఇవ f:
         parser = ASDLParser()
-        return parser.parse(f.read())
+        తిరిగి parser.parse(f.పఠ())
 
 # Types for describing tokens in an ASDL specification.
-class TokenKind:
+తరగతి Token_రకం:
     """TokenKind is provides a scope for enumerated token kinds."""
     (ConstructorId, TypeId, Equals, Comma, Question, Pipe, Asterisk,
-     LParen, RParen, LBrace, RBrace) = range(11)
+     LParen, RParen, LBrace, RBrace) = శ్రేణి(11)
 
-    operator_table = {
+    operator_పట్టిక = {
         '=': Equals, ',': Comma,    '?': Question, '|': Pipe,    '(': LParen,
         ')': RParen, '*': Asterisk, '{': LBrace,   '}': RBrace}
 
 Token = namedtuple('Token', 'kind value lineno')
 
-class ASDLSyntaxError(Exception):
-    def __init__(self, msg, lineno=None):
-        self.msg = msg
-        self.lineno = lineno or '<unknown>'
+తరగతి ASDLSyntaxError(Exception):
+    నిర్వచనం __init__(self, సందేశం, lineno=ఏమీలేదు):
+        self.సందేశం = సందేశం
+        self.lineno = lineno లేదా '<unknown>'
 
-    def __str__(self):
-        return 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
+    నిర్వచనం __str__(self):
+        తిరిగి 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
 
-def tokenize_asdl(buf):
+నిర్వచనం tokenize_asdl(buf):
     """Tokenize the given buffer. Yield Token objects."""
-    for lineno, line in enumerate(buf.splitlines(), 1):
-        for m in re.finditer(r'\s*(\w+|--.*|.)', line.strip()):
-            c = m.group(1)
-            if c[0].isalpha():
+    కొరకు lineno, పంక్తి లో enumerate(buf.splitlines(), 1):
+        కొరకు m లో re.finditer(r'\s*(\w+|--.*|.)', పంక్తి.strip()):
+            c = m.సమూహం(1)
+            ఒకవేళ c[0].isalpha():
                 # Some kind of identifier
-                if c[0].isupper():
-                    yield Token(TokenKind.ConstructorId, c, lineno)
-                else:
-                    yield Token(TokenKind.TypeId, c, lineno)
-            elif c[:2] == '--':
+                ఒకవేళ c[0].isupper():
+                    ఇవ్వు Token(Token_రకం.ConstructorId, c, lineno)
+                లేకపోతే:
+                    ఇవ్వు Token(Token_రకం.TypeId, c, lineno)
+            లేదావేళ c[:2] == '--':
                 # Comment
-                break
-            else:
+                ఆపు
+            లేకపోతే:
                 # Operators
-                try:
-                    op_kind = TokenKind.operator_table[c]
-                except KeyError:
-                    raise ASDLSyntaxError('Invalid operator %s' % c, lineno)
-                yield Token(op_kind, c, lineno)
+                ప్రయత్నించు:
+                    op_రకం = Token_రకం.operator_పట్టిక[c]
+                మినహాయింపు కీలకం_Error:
+                    లేపు ASDLSyntaxError('Invalid operator %s' % c, lineno)
+                ఇవ్వు Token(op_రకం, c, lineno)
 
-class ASDLParser:
+తరగతి ASDLParser:
     """Parser for ASDL files.
 
     Create, then call the parse method on a buffer containing ASDL.
     This is a simple recursive descent parser that uses tokenize_asdl for the
     lexing.
     """
-    def __init__(self):
-        self._tokenizer = None
-        self.cur_token = None
+    నిర్వచనం __init__(self):
+        self._tokenizer = ఏమీలేదు
+        self.cur_token = ఏమీలేదు
 
-    def parse(self, buf):
+    నిర్వచనం parse(self, buf):
         """Parse the ASDL in the buffer and return an AST with a Module root.
         """
         self._tokenizer = tokenize_asdl(buf)
         self._advance()
-        return self._parse_module()
+        తిరిగి self._parse_module()
 
-    def _parse_module(self):
-        if self._at_keyword('module'):
+    నిర్వచనం _parse_module(self):
+        ఒకవేళ self._at_keyword('module'):
             self._advance()
-        else:
-            raise ASDLSyntaxError(
-                'Expected "module" (found {})'.format(self.cur_token.value),
+        లేకపోతే:
+            లేపు ASDLSyntaxError(
+                'Expected "module" (found {})'.format(self.cur_token.విలువ),
                 self.cur_token.lineno)
-        name = self._match(self._id_kinds)
-        self._match(TokenKind.LBrace)
+        name = self.సరిపోలిక(self._id_kinds)
+        self.సరిపోలిక(Token_రకం.LBrace)
         defs = self._parse_definitions()
-        self._match(TokenKind.RBrace)
-        return Module(name, defs)
+        self.సరిపోలిక(Token_రకం.RBrace)
+        తిరిగి Module(name, defs)
 
-    def _parse_definitions(self):
+    నిర్వచనం _parse_definitions(self):
         defs = []
-        while self.cur_token.kind == TokenKind.TypeId:
+        అయితే self.cur_token.రకం == Token_రకం.TypeId:
             typename = self._advance()
-            self._match(TokenKind.Equals)
+            self.సరిపోలిక(Token_రకం.Equals)
             type = self._parse_type()
             defs.append(Type(typename, type))
-        return defs
+        తిరిగి defs
 
-    def _parse_type(self):
-        if self.cur_token.kind == TokenKind.LParen:
+    నిర్వచనం _parse_type(self):
+        ఒకవేళ self.cur_token.రకం == Token_రకం.LParen:
             # If we see a (, it's a product
-            return self._parse_product()
-        else:
+            తిరిగి self.parse_లబ్ధం()
+        లేకపోతే:
             # Otherwise it's a sum. Look for ConstructorId
-            sumlist = [Constructor(self._match(TokenKind.ConstructorId),
+            sumlist = [Constructor(self.సరిపోలిక(Token_రకం.ConstructorId),
                                    self._parse_optional_fields())]
-            while self.cur_token.kind  == TokenKind.Pipe:
+            అయితే self.cur_token.రకం  == Token_రకం.Pipe:
                 # More constructors
                 self._advance()
                 sumlist.append(Constructor(
-                                self._match(TokenKind.ConstructorId),
+                                self.సరిపోలిక(Token_రకం.ConstructorId),
                                 self._parse_optional_fields()))
-            return Sum(sumlist, self._parse_optional_attributes())
+            తిరిగి కూడిక(sumlist, self.parse_optional_లక్షణాలు())
 
-    def _parse_product(self):
-        return Product(self._parse_fields(), self._parse_optional_attributes())
+    నిర్వచనం parse_లబ్ధం(self):
+        తిరిగి లబ్ధం(self._parse_fields(), self.parse_optional_లక్షణాలు())
 
-    def _parse_fields(self):
+    నిర్వచనం _parse_fields(self):
         fields = []
-        self._match(TokenKind.LParen)
-        while self.cur_token.kind == TokenKind.TypeId:
+        self.సరిపోలిక(Token_రకం.LParen)
+        అయితే self.cur_token.రకం == Token_రకం.TypeId:
             typename = self._advance()
-            quantifiers = self._parse_optional_field_quantifier()
-            id = (self._advance() if self.cur_token.kind in self._id_kinds
-                                  else None)
-            fields.append(Field(typename, id, quantifiers=quantifiers))
-            if self.cur_token.kind == TokenKind.RParen:
-                break
-            elif self.cur_token.kind == TokenKind.Comma:
+            quantifiers = self.parse_optional_క్షేత్రం_quantifier()
+            id = (self._advance() ఒకవేళ self.cur_token.రకం లో self._id_kinds
+                                  లేకపోతే ఏమీలేదు)
+            fields.append(క్షేత్రం(typename, id, quantifiers=quantifiers))
+            ఒకవేళ self.cur_token.రకం == Token_రకం.RParen:
+                ఆపు
+            లేదావేళ self.cur_token.రకం == Token_రకం.Comma:
                 self._advance()
-        self._match(TokenKind.RParen)
-        return fields
+        self.సరిపోలిక(Token_రకం.RParen)
+        తిరిగి fields
 
-    def _parse_optional_fields(self):
-        if self.cur_token.kind == TokenKind.LParen:
-            return self._parse_fields()
-        else:
-            return None
+    నిర్వచనం _parse_optional_fields(self):
+        ఒకవేళ self.cur_token.రకం == Token_రకం.LParen:
+            తిరిగి self._parse_fields()
+        లేకపోతే:
+            తిరిగి ఏమీలేదు
 
-    def _parse_optional_attributes(self):
-        if self._at_keyword('attributes'):
+    నిర్వచనం parse_optional_లక్షణాలు(self):
+        ఒకవేళ self._at_keyword('attributes'):
             self._advance()
-            return self._parse_fields()
-        else:
-            return None
+            తిరిగి self._parse_fields()
+        లేకపోతే:
+            తిరిగి ఏమీలేదు
 
-    def _parse_optional_field_quantifier(self):
+    నిర్వచనం parse_optional_క్షేత్రం_quantifier(self):
         quantifiers = []
-        while self.cur_token.kind in (TokenKind.Asterisk, TokenKind.Question):
-            if self.cur_token.kind == TokenKind.Asterisk:
+        అయితే self.cur_token.రకం లో (Token_రకం.Asterisk, Token_రకం.Question):
+            ఒకవేళ self.cur_token.రకం == Token_రకం.Asterisk:
                 quantifiers.append(Quantifier.SEQUENCE)
-            elif self.cur_token.kind == TokenKind.Question:
+            లేదావేళ self.cur_token.రకం == Token_రకం.Question:
                 quantifiers.append(Quantifier.OPTIONAL)
             self._advance()
-        return quantifiers
+        తిరిగి quantifiers
 
-    def _advance(self):
+    నిర్వచనం _advance(self):
         """ Return the value of the current token and read the next one into
             self.cur_token.
         """
-        cur_val = None if self.cur_token is None else self.cur_token.value
-        try:
-            self.cur_token = next(self._tokenizer)
-        except StopIteration:
-            self.cur_token = None
-        return cur_val
+        cur_val = ఏమీలేదు ఒకవేళ self.cur_token అయిన ఏమీలేదు లేకపోతే self.cur_token.విలువ
+        ప్రయత్నించు:
+            self.cur_token = తదుపరి(self._tokenizer)
+        మినహాయింపు StopIteration:
+            self.cur_token = ఏమీలేదు
+        తిరిగి cur_val
 
-    _id_kinds = (TokenKind.ConstructorId, TokenKind.TypeId)
+    _id_kinds = (Token_రకం.ConstructorId, Token_రకం.TypeId)
 
-    def _match(self, kind):
+    నిర్వచనం సరిపోలిక(self, రకం):
         """The 'match' primitive of RD parsers.
 
         * Verifies that the current token is of the given kind (kind can
@@ -383,17 +383,17 @@ class ASDLParser:
         * Returns the value of the current token
         * Reads in the next token
         """
-        if (isinstance(kind, tuple) and self.cur_token.kind in kind or
-            self.cur_token.kind == kind
+        ఒకవేళ (isinstance(రకం, tuple) మరియు self.cur_token.రకం లో రకం లేదా
+            self.cur_token.రకం == రకం
             ):
-            value = self.cur_token.value
+            విలువ = self.cur_token.విలువ
             self._advance()
-            return value
-        else:
-            raise ASDLSyntaxError(
-                'Unmatched {} (found {})'.format(kind, self.cur_token.kind),
+            తిరిగి విలువ
+        లేకపోతే:
+            లేపు ASDLSyntaxError(
+                'Unmatched {} (found {})'.format(రకం, self.cur_token.రకం),
                 self.cur_token.lineno)
 
-    def _at_keyword(self, keyword):
-        return (self.cur_token.kind == TokenKind.TypeId and
-                self.cur_token.value == keyword)
+    నిర్వచనం _at_keyword(self, keyword):
+        తిరిగి (self.cur_token.రకం == Token_రకం.TypeId మరియు
+                self.cur_token.విలువ == keyword)

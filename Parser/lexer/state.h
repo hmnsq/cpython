@@ -1,155 +1,155 @@
-#ifndef _PY_LEXER_H_
-#define _PY_LEXER_H_
+#నిర్వచితం_కాకపోతే _PY_LEXER_H_
+#నిర్వచించు _PY_LEXER_H_
 
-#include "object.h"
-#include "../tokenizer/source.h"
-#include "../tokenizer/tokenizer.h"
+#అన్తర్భావ "object.h"
+#అన్తర్భావ "../tokenizer/source.h"
+#అన్తర్భావ "../tokenizer/tokenizer.h"
 
-#define MAXINDENT 100       /* Max indentation level */
-#define MAXLEVEL 200        /* Max parentheses level */
-#define MAXFTSTRINGLEVEL 150
-#define FTSTRING_STACK_INLINE_CAPACITY 1
+#నిర్వచించు MAXINDENT 100       /* Max indentation level */
+#నిర్వచించు MAXLEVEL 200        /* Max parentheses level */
+#నిర్వచించు MAXFTSTRINGLEVEL 150
+#నిర్వచించు FTSTRING_దొంతర_INLINE_సామర్థ్యం 1
 
-typedef enum {
-    FTSTRING_MODE_MIDDLE,
-    FTSTRING_MODE_EXPRESSION,
-    FTSTRING_MODE_FORMAT_SPEC,
-} ftstring_mode;
+రకనిర్వచనం గణన {
+    FTSTRING_బహుళకం_మధ్య,
+    FTSTRING_బహుళకం_వ్యక్తీకరణ,
+    FTSTRING_బహుళకం_FORMAT_SPEC,
+} ftstring_బహుళకం;
 
-typedef enum {
+రకనిర్వచనం గణన {
     FSTRING,
     RAW_FSTRING,
     TSTRING,
     RAW_TSTRING,
-} ftstring_kind;
+} ftstring_రకం;
 
-#define MAX_EXPR_NESTING 3
+#నిర్వచించు MAX_సమాసం_NESTING 3
 
-typedef struct _tokenizer_comments {
-    Py_ssize_t count;
-    Py_ssize_t capacity;
-    _PyTok_Span spans[];
+రకనిర్వచనం నిర్మాణం _tokenizer_comments {
+    Py_ssize_t లెక్క;
+    Py_ssize_t సామర్థ్యం;
+    Py_Tok_పరిధి spans[];
 } tokenizer_comments;
 
-typedef struct _ftstring_state {
-    ftstring_mode mode;
-    ftstring_kind kind;
-    char quote;
-    unsigned char quote_size;
-    unsigned char debug_expr;
-    unsigned char replacement_depth;
-    int paren_level;
-    _PyTok_Off start;
-    _PyTok_Loc start_loc;
-    _PyTok_Span expr_span;
+రకనిర్వచనం నిర్మాణం _ftstring_state {
+    ftstring_బహుళకం బహుళకం;
+    ftstring_రకం రకం;
+    అక్షరం quote;
+    గుర్తులేని అక్షరం quote_కొలత;
+    గుర్తులేని అక్షరం debug_సమాసం;
+    గుర్తులేని అక్షరం replacement_లోతు;
+    పూర్ణాంకం paren_level;
+    _PyTok_Off ప్రారంభం;
+    _PyTok_Loc ప్రారంభం_loc;
+    Py_Tok_పరిధి సమాసం_పరిధి;
     tokenizer_comments *comments;
 } ftstring_state;
 
-static inline int
-_PyLexer_IsTString(ftstring_kind kind)
+స్థిర అంతఃవరుస పూర్ణాంకం
+_PyLexer_IsTString(ftstring_రకం రకం)
 {
-    return kind == TSTRING || kind == RAW_TSTRING;
+    తిరిగి రకం == TSTRING || రకం == RAW_TSTRING;
 }
 
-static inline int
-_PyLexer_IsRawString(ftstring_kind kind)
+స్థిర అంతఃవరుస పూర్ణాంకం
+_PyLexer_IsRawString(ftstring_రకం రకం)
 {
-    return kind == RAW_FSTRING || kind == RAW_TSTRING;
+    తిరిగి రకం == RAW_FSTRING || రకం == RAW_TSTRING;
 }
 
-typedef struct {
-    int column;
-    int alternate_column;
+రకనిర్వచనం నిర్మాణం {
+    పూర్ణాంకం స్తంభం;
+    పూర్ణాంకం alternate_స్తంభం;
 } indentation_level;
 
-typedef struct {
-    int depth;
-    int pending;
-    int at_bol;
-    int comment_newline;
-    indentation_level stack[MAXINDENT];
+రకనిర్వచనం నిర్మాణం {
+    పూర్ణాంకం లోతు;
+    పూర్ణాంకం pending;
+    పూర్ణాంకం at_bol;
+    పూర్ణాంకం comment_newline;
+    indentation_level దొంతర[MAXINDENT];
 } lexer_layout_state;
 
 /* Tokenizer state */
-struct tok_state {
-    _PyTok_Off buf_offset;
+నిర్మాణం tok_state {
+    _PyTok_Off buf_స్థానభ్రంశం;
     _PyTok_Off cur;
     _PyTok_Off inp;
-    _PyTok_Off start;
-    _PyTok_Off line_start;
-    _PyTok_SourceText source;
-    int done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
+    _PyTok_Off ప్రారంభం;
+    _PyTok_Off పంక్తి_ప్రారంభం;
+    Py_Tok_ఆధారం_పాఠ్యం ఆధారం;
+    పూర్ణాంకం పూర్తి;           /* E_OK normally, E_EOF at EOF, otherwise error code */
     /* NB If done != E_OK, cur must be == inp!!! */
     lexer_layout_state layout;
-    int lineno;         /* Current line number */
-    _PyTok_Loc start_loc;
+    పూర్ణాంకం lineno;         /* Current line number */
+    _PyTok_Loc ప్రారంభం_loc;
     _PyTokenizer_Diagnostic diagnostic;
-    int level;          /* () [] {} Parentheses nesting level */
+    పూర్ణాంకం level;          /* () [] {} Parentheses nesting level */
             /* Used to allow free continuations inside them */
-    char parenstack[MAXLEVEL];
-    int parenlinenostack[MAXLEVEL];
-    int parencolstack[MAXLEVEL];
+    అక్షరం parenstack[MAXLEVEL];
+    పూర్ణాంకం parenlinenostack[MAXLEVEL];
+    పూర్ణాంకం parencolstack[MAXLEVEL];
     PyObject *filename;
     PyObject *module;
-    struct _PyTok_Reader *reader;
+    నిర్మాణం _PyTok_Reader *reader;
 
-    int type_comments;      /* Whether to look for type comments */
+    పూర్ణాంకం type_comments;      /* Whether to look for type comments */
 
-    ftstring_state *ftstring_stack;
-    ftstring_state ftstring_stack_inline[FTSTRING_STACK_INLINE_CAPACITY];
-    int ftstring_depth;
-    int ftstring_capacity;
-    int tok_extra_tokens;
-    int implicit_newline;
-#ifdef Py_DEBUG
-    int debug;
-#endif
-    int barry_as_bdfl;
-    unsigned char allow_incomplete_input;
-    unsigned char needs_newline;
+    ftstring_state *ftstring_దొంతర;
+    ftstring_state ftstring_దొంతర_inline[FTSTRING_దొంతర_INLINE_సామర్థ్యం];
+    పూర్ణాంకం ftstring_లోతు;
+    పూర్ణాంకం ftstring_సామర్థ్యం;
+    పూర్ణాంకం tok_extra_టోకెన్లు;
+    పూర్ణాంకం implicit_newline;
+#నిర్వచితమైతే Py_DEBUG
+    పూర్ణాంకం debug;
+#అయితే_ముగింపు
+    పూర్ణాంకం barry_as_bdfl;
+    గుర్తులేని అక్షరం allow_incomplete_ఆదానం;
+    గుర్తులేని అక్షరం needs_newline;
 };
 
-static inline ftstring_state *
-_PyLexer_CurrentFTString(struct tok_state *tok)
+స్థిర అంతఃవరుస ftstring_state *
+_PyLexer_CurrentFTString(నిర్మాణం tok_state *tok)
 {
-    assert(tok->ftstring_stack != NULL);
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    if (tok->ftstring_depth == 0) {
-        return NULL;
+    ప్రతిజ్ఞా(tok->ftstring_దొంతర != ఖాళీ);
+    ప్రతిజ్ఞా(tok->ftstring_లోతు >= 0 && tok->ftstring_లోతు <= tok->ftstring_సామర్థ్యం);
+    ఒకవేళ (tok->ftstring_లోతు == 0) {
+        తిరిగి ఖాళీ;
     }
-    return &tok->ftstring_stack[tok->ftstring_depth - 1];
+    తిరిగి &tok->ftstring_దొంతర[tok->ftstring_లోతు - 1];
 }
 
-static inline char
-_PyLexer_StringPrefix(ftstring_kind kind)
+స్థిర అంతఃవరుస అక్షరం
+Py_Lexer_String_ఉపసర్గ(ftstring_రకం రకం)
 {
-    return _PyLexer_IsTString(kind) ? 't' : 'f';
+    తిరిగి _PyLexer_IsTString(రకం) ? 't' : 'f';
 }
 
-static inline int
-_PyLexer_FTStringBracketDepth(const struct tok_state *tok,
-                              const ftstring_state *state)
+స్థిర అంతఃవరుస పూర్ణాంకం
+Py_Lexer_FTString_Bracket_లోతు(స్థిరరాశి నిర్మాణం tok_state *tok,
+                              స్థిరరాశి ftstring_state *state)
 {
-    return tok->level - state->paren_level;
+    తిరిగి tok->level - state->paren_level;
 }
 
-static inline int
-_PyLexer_ByteColumn(const struct tok_state *tok)
+స్థిర అంతఃవరుస పూర్ణాంకం
+Py_Lexer_Byte_స్తంభం(స్థిరరాశి నిర్మాణం tok_state *tok)
 {
-    assert(tok->line_start >= 0);
-    assert(tok->cur >= tok->line_start);
-    Py_ssize_t column = tok->cur - tok->line_start;
-    assert(column <= INT_MAX);
-    return (int)column;
+    ప్రతిజ్ఞా(tok->పంక్తి_ప్రారంభం >= 0);
+    ప్రతిజ్ఞా(tok->cur >= tok->పంక్తి_ప్రారంభం);
+    Py_ssize_t స్తంభం = tok->cur - tok->పంక్తి_ప్రారంభం;
+    ప్రతిజ్ఞా(స్తంభం <= గరిష్ఠ_పూర్ణాంకం);
+    తిరిగి (పూర్ణాంకం)స్తంభం;
 }
 
-int _PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end);
+పూర్ణాంకం Py_Lexer_token_అమరిక(నిర్మాణం tok_state *tok, నిర్మాణం token *token, పూర్ణాంకం type, _PyTok_Off ప్రారంభం, _PyTok_Off చివర);
 
-void _PyLexer_ImplyDedents(struct tok_state *);
+శూన్య _PyLexer_ImplyDedents(నిర్మాణం tok_state *);
 
-void _PyTokenizer_Free(struct tok_state *);
-ftstring_state *_PyLexer_PushFTString(struct tok_state *);
-void _PyLexer_PopFTString(struct tok_state *);
+శూన్య _PyTokenizer_Free(నిర్మాణం tok_state *);
+ftstring_state *Py_Lexer_నెట్టు_FTString(నిర్మాణం tok_state *);
+శూన్య Py_Lexer_తీయి_FTString(నిర్మాణం tok_state *);
 
 
-#endif
+#అయితే_ముగింపు

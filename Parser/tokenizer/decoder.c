@@ -1,509 +1,509 @@
-#include "Python.h"
-#include "pycore_codecs.h"
-#include "pycore_global_strings.h"
-#include "pycore_runtime.h"
-#include "errcode.h"
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "pycore_codecs.h"
+#అన్తర్భావ "pycore_global_strings.h"
+#అన్తర్భావ "pycore_runtime.h"
+#అన్తర్భావ "errcode.h"
 
-#include "reader_internal.h"
-#include "helpers.h"
-#include "../lexer/state.h"
+#అన్తర్భావ "reader_internal.h"
+#అన్తర్భావ "helpers.h"
+#అన్తర్భావ "../lexer/state.h"
 
-#define UNICODE_BOM 0xFEFF
-#define UTF16_LE_BOM "\xff\xfe"
-#define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
-#define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#నిర్వచించు UNICODE_BOM 0xFEFF
+#నిర్వచించు UTF16_LE_BOM "\xff\xfe"
+#నిర్వచించు UTF16_BE_BOM "\xfe\xff"
+#నిర్వచించు UTF16_BOM_నిడివి ((Py_ssize_t)(పరిమాణం(UTF16_LE_BOM) - 1))
+#నిర్వచించు UTF8_BOM "\xef\xbb\xbf"
+#నిర్వచించు UTF8_BOM_నిడివి ((Py_ssize_t)(పరిమాణం(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+అక్షరం *
+Py_Tok_Copy_బైట్లు(స్థిరరాశి అక్షరం *దత్తాంశం, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    ఒకవేళ (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి ఖాళీ;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    అక్షరం *copy = PyMem_Malloc((కొలత_t)len + 1);
+    ఒకవేళ (copy == ఖాళీ) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి ఖాళీ;
     }
-    memcpy(copy, data, (size_t)len);
+    జ్ఞాపకం_నకలు(copy, దత్తాంశం, (కొలత_t)len);
     copy[len] = '\0';
-    return copy;
+    తిరిగి copy;
 }
 
-static void
-chunk_release_data(_PyTok_Chunk *chunk)
+స్థిర శూన్య
+chunk_release_దత్తాంశం(_PyTok_Chunk *chunk)
 {
-    switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
-            PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+    ఎంపిక (chunk->ownership) {
+        స్థితి _PYTOK_CHUNK_BORROWED:
+            ఆపు;
+        స్థితి _PYTOK_CHUNK_PYMEM:
+            PyMem_Free(chunk->దత్తాంశం);
+            ఆపు;
+        స్థితి _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            ఆపు;
     }
 }
 
-void
+శూన్య
 _PyTok_ChunkClear(_PyTok_Chunk *chunk)
 {
-    chunk_release_data(chunk);
+    chunk_release_దత్తాంశం(chunk);
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+స్థిర పూర్ణాంకం
+chunk_సమితి_unicode(నిర్మాణం tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, పూర్ణాంకం strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    స్థిరరాశి అక్షరం *utf8 = Py_Unicode_As_UTF8_And_కొలత(unicode, &utf8_len);
+    ఒకవేళ (utf8 == ఖాళీ) {
         Py_DECREF(unicode);
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        తిరిగి -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    ఒకవేళ (strip_bom && Py_Unicode_GET_నిడివి(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
-        utf8 += UTF8_BOM_LENGTH;
-        utf8_len -= UTF8_BOM_LENGTH;
+        utf8 += UTF8_BOM_నిడివి;
+        utf8_len -= UTF8_BOM_నిడివి;
     }
-    chunk_release_data(chunk);
+    chunk_release_దత్తాంశం(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->దత్తాంశం = (అక్షరం *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    తిరిగి 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
-                         Py_ssize_t *out_len)
+అక్షరం *
+_PyTok_NormalizeNewlines(స్థిరరాశి అక్షరం *దత్తాంశం, Py_ssize_t len,
+                         Py_ssize_t *బహిర్గతం_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
-        PyErr_NoMemory();
-        return NULL;
+    ఒకవేళ (len < 0 || len == PY_SSIZE_T_MAX) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి ఖాళీ;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
-        PyErr_NoMemory();
-        return NULL;
+    అక్షరం *ఫలితం = PyMem_Malloc((కొలత_t)len + 1);
+    ఒకవేళ (ఫలితం == ఖాళీ) {
+        Py_Err_No_జ్ఞాపకం();
+        తిరిగి ఖాళీ;
     }
-    Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
-                read++;
+    Py_ssize_t లిఖ = 0;
+    కొరకు (Py_ssize_t పఠ = 0; పఠ < len; పఠ++) {
+        అక్షరం c = దత్తాంశం[పఠ];
+        ఒకవేళ (c == '\r') {
+            ఒకవేళ (పఠ + 1 < len && దత్తాంశం[పఠ + 1] == '\n') {
+                పఠ++;
             }
             c = '\n';
         }
-        result[write++] = c;
+        ఫలితం[లిఖ++] = c;
     }
-    result[write] = '\0';
-    *out_len = write;
-    return result;
+    ఫలితం[లిఖ] = '\0';
+    *బహిర్గతం_len = లిఖ;
+    తిరిగి ఫలితం;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+పూర్ణాంకం
+Py_Tok_సమితి_Encoding(నిర్మాణం tok_state *tok, స్థిరరాశి అక్షరం *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    అక్షరం *copy = Py_Tok_Copy_బైట్లు(encoding, అక్షరశ్రేణి_పొడవు(encoding));
+    ఒకవేళ (copy == ఖాళీ) {
+        tok->పూర్తి = E_NOMEM;
+        తిరిగి -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    తిరిగి 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+స్థిర పూర్ణాంకం
+కనుగొను_cookie(స్థిరరాశి అక్షరం *పంక్తి, Py_ssize_t len, అక్షరం **encoding, పూర్ణాంకం *పరిశీలన_తదుపరి)
 {
     Py_ssize_t i = 0;
-    *encoding = NULL;
-    *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    *encoding = ఖాళీ;
+    *పరిశీలన_తదుపరి = 1;
+    కొరకు (; i < len; i++) {
+        ఒకవేళ (పంక్తి[i] == '#') {
+            ఆపు;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        ఒకవేళ (పంక్తి[i] == '\n' || పంక్తి[i] == '\r') {
+            తిరిగి 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
-            *scan_next = 0;
-            return 0;
+        ఒకవేళ (పంక్తి[i] != ' ' && పంక్తి[i] != '\t' && పంక్తి[i] != '\f') {
+            *పరిశీలన_తదుపరి = 0;
+            తిరిగి 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
-            continue;
+    స్థిరరాశి Py_ssize_t marker_len = పరిమాణం("coding") - 1;
+    కొరకు (; i < len - marker_len; i++) {
+        ఒకవేళ (memcmp(పంక్తి + i, "coding", marker_len) != 0) {
+            కొనసాగు;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
-            continue;
+        స్థిరరాశి అక్షరం *cursor = పంక్తి + i + marker_len;
+        ఒకవేళ (*cursor != ':' && *cursor != '=') {
+            కొనసాగు;
         }
-        do {
+        చేయి {
             cursor++;
-        } while (cursor < line + len &&
+        } అయితే (cursor < పంక్తి + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        స్థిరరాశి అక్షరం *ప్రారంభం = cursor;
+        అయితే (cursor < పంక్తి + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
-            continue;
+        ఒకవేళ (cursor == ప్రారంభం) {
+            కొనసాగు;
         }
-        Py_ssize_t encoding_len = cursor - start;
+        Py_ssize_t encoding_len = cursor - ప్రారంభం;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
-        const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+        అక్షరం normalized[పరిమాణం("iso-latin-1-")];
+        స్థిరరాశి Py_ssize_t ఉపసర్గ_len = Py_MIN(
+            encoding_len, (Py_ssize_t)పరిమాణం(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
-            normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
+        కొరకు (n = 0; n < ఉపసర్గ_len; n++) {
+            normalized[n] = ప్రారంభం[n] == '_' ? '-' : Py_TOLOWER(ప్రారంభం[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        స్థిరరాశి అక్షరం *canonical = ప్రారంభం;
+        ఒకవేళ (strcmp(normalized, "utf-8") == 0 ||
+                అక్షరశ్రేణి_పోలిక(normalized, "utf-8-", పరిమాణం("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        లేకపోతే ఒకవేళ (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 అక్షరశ్రేణి_పోలిక(normalized, "latin-1-", పరిమాణం("latin-1-") - 1) == 0 ||
+                 అక్షరశ్రేణి_పోలిక(normalized, "iso-8859-1-", పరిమాణం("iso-8859-1-") - 1) == 0 ||
+                 అక్షరశ్రేణి_పోలిక(normalized, "iso-latin-1-", పరిమాణం("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
-            encoding_len = strlen(canonical);
+        ఒకవేళ (canonical != ప్రారంభం) {
+            encoding_len = అక్షరశ్రేణి_పొడవు(canonical);
         }
-        *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        *encoding = Py_Tok_Copy_బైట్లు(canonical, encoding_len);
+        ఒకవేళ (*encoding == ఖాళీ) {
+            తిరిగి -1;
         }
-        *scan_next = 0;
-        return 0;
+        *పరిశీలన_తదుపరి = 0;
+        తిరిగి 0;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-_PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+Py_Tok_Encoding_ఫలితం
+_PyTok_DetectEncoding(నిర్మాణం tok_state *tok, స్థిరరాశి _PyTok_Chunk *మొదటి,
+                      స్థిరరాశి _PyTok_Chunk *రెండవ, పూర్ణాంకం final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
-        memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
-    *bom_len = bom ? UTF8_BOM_LENGTH : 0;
+    పూర్ణాంకం bom = మొదటి->len >= UTF8_BOM_నిడివి &&
+        memcmp(మొదటి->దత్తాంశం, UTF8_BOM, UTF8_BOM_నిడివి) == 0;
+    *bom_len = bom ? UTF8_BOM_నిడివి : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
-    Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    అక్షరం *cookie = ఖాళీ;
+    పూర్ణాంకం పరిశీలన_తదుపరి = 0;
+    పూర్ణాంకం cookie_పంక్తి = 1;
+    స్థిరరాశి అక్షరం *మొదటి_దత్తాంశం = మొదటి->దత్తాంశం + *bom_len;
+    Py_ssize_t మొదటి_len = మొదటి->len - *bom_len;
+    ఒకవేళ (కనుగొను_cookie(మొదటి_దత్తాంశం, మొదటి_len, &cookie, &పరిశీలన_తదుపరి) < 0) {
+        తిరిగి _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ఒకవేళ (cookie == ఖాళీ && పరిశీలన_తదుపరి && రెండవ != ఖాళీ) {
+        ఒకవేళ (కనుగొను_cookie(రెండవ->దత్తాంశం, రెండవ->len, &cookie, &పరిశీలన_తదుపరి) < 0) {
+            తిరిగి _PYTOK_ENCODING_ERROR;
         }
-        cookie_line = 2;
+        cookie_పంక్తి = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    లేకపోతే ఒకవేళ (cookie == ఖాళీ && పరిశీలన_తదుపరి && !final) {
+        తిరిగి PYTOK_ENCODING_NEED_రెండవ_పంక్తి;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ఒకవేళ (cookie == ఖాళీ) {
+        ఒకవేళ (bom && Py_Tok_సమితి_Encoding(tok, "utf-8") < 0) {
+            తిరిగి _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        తిరిగి PYTOK_ENCODING_పూర్తి;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
-        const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
-        Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
-                            line_data[end_col - 1] == '\r')) {
-            end_col--;
+    ఒకవేళ (bom && strcmp(cookie, "utf-8") != 0) {
+        స్థిరరాశి _PyTok_Chunk *పంక్తి = cookie_పంక్తి == 2 ? రెండవ : మొదటి;
+        స్థిరరాశి అక్షరం *పంక్తి_దత్తాంశం = పంక్తి->దత్తాంశం + (cookie_పంక్తి == 1 ? *bom_len : 0);
+        Py_ssize_t పంక్తి_len = పంక్తి->len - (cookie_పంక్తి == 1 ? *bom_len : 0);
+        పూర్ణాంకం చివర_నిలువు = (పూర్ణాంకం)Py_MIN(పంక్తి_len, గరిష్ఠ_పూర్ణాంకం);
+        ఒకవేళ (చివర_నిలువు > 0 && (పంక్తి_దత్తాంశం[చివర_నిలువు - 1] == '\n' ||
+                            పంక్తి_దత్తాంశం[చివర_నిలువు - 1] == '\r')) {
+            చివర_నిలువు--;
         }
         _PyTokenizer_syntaxerror_at(
-            tok, line_data, 0, cookie_line, 0, end_col,
+            tok, పంక్తి_దత్తాంశం, 0, cookie_పంక్తి, 0, చివర_నిలువు,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        తిరిగి _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    తిరిగి PYTOK_ENCODING_పూర్తి;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+పూర్ణాంకం
+_PyTok_DecodeOnce(నిర్మాణం tok_state *tok, _PyTok_Chunk *chunk,
+                  స్థిరరాశి అక్షరం *encoding, స్థిరరాశి అక్షరం *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
-        chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        chunk->దత్తాంశం, chunk->len, encoding, errors);
+    ఒకవేళ (unicode == ఖాళీ) {
+        tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        తిరిగి -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    తిరిగి chunk_సమితి_unicode(tok, chunk, unicode, 0);
 }
 
-static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+స్థిర Py_ssize_t
+raw_పంక్తి_నిడివి(స్థిరరాశి అక్షరం *దత్తాంశం, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    కొరకు (Py_ssize_t i = 0; i < len; i++) {
+        ఒకవేళ (దత్తాంశం[i] == '\n') {
+            తిరిగి i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        ఒకవేళ (దత్తాంశం[i] == '\r') {
+            తిరిగి i + 1 < len && దత్తాంశం[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    తిరిగి len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+స్థిర పూర్ణాంకం
+store_prepared_ఆధారం(నిర్మాణం tok_state *tok, స్థిరరాశి అక్షరం *దత్తాంశం, Py_ssize_t len,
+                      పూర్ణాంకం preserve_crlf, పూర్ణాంకం కూడు_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
-        Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
-            raw_line_len = newline == NULL
-                ? len - pos : newline - data - pos + 1;
+    అయితే (pos < len) {
+        Py_ssize_t raw_పంక్తి_len;
+        ఒకవేళ (preserve_crlf) {
+            స్థిరరాశి అక్షరం *newline = memchr(దత్తాంశం + pos, '\n', len - pos);
+            raw_పంక్తి_len = newline == ఖాళీ
+                ? len - pos : newline - దత్తాంశం - pos + 1;
         }
-        else {
-            raw_line_len = raw_line_length(data + pos, len - pos);
+        లేకపోతే {
+            raw_పంక్తి_len = raw_పంక్తి_నిడివి(దత్తాంశం + pos, len - pos);
         }
-        int terminated = preserve_crlf
-            ? data[pos + raw_line_len - 1] == '\n'
-            : data[pos + raw_line_len - 1] == '\n' ||
-              data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
-            pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        పూర్ణాంకం terminated = preserve_crlf
+            ? దత్తాంశం[pos + raw_పంక్తి_len - 1] == '\n'
+            : దత్తాంశం[pos + raw_పంక్తి_len - 1] == '\n' ||
+              దత్తాంశం[pos + raw_పంక్తి_len - 1] == '\r';
+        పూర్ణాంకం కూడు_newline = కూడు_final_newline &&
+            pos + raw_పంక్తి_len == len && !terminated;
+        స్థిరరాశి అక్షరం *పంక్తి = దత్తాంశం + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        ఒకవేళ (!preserve_crlf) {
+            ఒకవేళ (పంక్తి[raw_పంక్తి_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            లేకపోతే ఒకవేళ (raw_పంక్తి_len > 1 && పంక్తి[raw_పంక్తి_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
-            appended = _PyTok_SourceAppendLineWithNewline(
-                &tok->source, line, raw_line_len - terminator_len);
+        ఒకవేళ (terminator_len || కూడు_newline) {
+            appended = Py_Tok_ఆధారం_Append_పంక్తి_With_Newline(
+                &tok->ఆధారం, పంక్తి, raw_పంక్తి_len - terminator_len);
         }
-        else {
-            appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
+        లేకపోతే {
+            appended = Py_Tok_ఆధారం_Append_పంక్తి(&tok->ఆధారం, పంక్తి, raw_పంక్తి_len);
         }
-        if (appended < 0) {
-            tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+        ఒకవేళ (appended < 0) {
+            tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            తిరిగి -1;
         }
-        tok->reader->prepared_final_newline = add_newline;
-        pos += raw_line_len;
+        tok->reader->prepared_final_newline = కూడు_newline;
+        pos += raw_పంక్తి_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    ఒకవేళ (కూడు_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
-        (len == 0 || data[len - 1] != '\r'))
+        (len == 0 || దత్తాంశం[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        ఒకవేళ (Py_Tok_ఆధారం_Append_పంక్తి(&tok->ఆధారం, "\n", 1) < 0) {
+            తిరిగి -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+పూర్ణాంకం
+_PyTok_PrepareString(నిర్మాణం tok_state *tok, స్థిరరాశి అక్షరం *ఆదానం, పూర్ణాంకం utf8_only,
+                     పూర్ణాంకం exec_ఆదానం, పూర్ణాంకం preserve_crlf)
 {
-    Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    Py_ssize_t raw_len = అక్షరశ్రేణి_పొడవు(ఆదానం);
+    అక్షరం *raw = (అక్షరం *)ఆదానం;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    ఒకవేళ (utf8_only) {
+        ఒకవేళ (Py_Tok_సమితి_Encoding(tok, "utf-8") < 0) {
+            తిరిగి -1;
         }
     }
-    else {
-        Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
-        _PyTok_Chunk first = {
-            .data = raw,
-            .len = first_original_len,
+    లేకపోతే {
+        Py_ssize_t మొదటి_original_len = raw_పంక్తి_నిడివి(raw, raw_len);
+        _PyTok_Chunk మొదటి = {
+            .దత్తాంశం = raw,
+            .len = మొదటి_original_len,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
-        _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
-            second.data = raw + first_original_len;
-            second.len = raw_line_length(second.data,
-                                         raw_len - first_original_len);
+        _PyTok_Chunk రెండవ = {0};
+        పూర్ణాంకం have_రెండవ = మొదటి_original_len < raw_len;
+        ఒకవేళ (have_రెండవ) {
+            రెండవ.దత్తాంశం = raw + మొదటి_original_len;
+            రెండవ.len = raw_పంక్తి_నిడివి(రెండవ.దత్తాంశం,
+                                         raw_len - మొదటి_original_len);
         }
         Py_ssize_t bom_len;
-        _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
-            tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        Py_Tok_Encoding_ఫలితం detection = _PyTok_DetectEncoding(
+            tok, &మొదటి, have_రెండవ ? &రెండవ : ఖాళీ, 1, &bom_len);
+        ఒకవేళ (detection == _PYTOK_ENCODING_ERROR) {
+            తిరిగి -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
     }
 
     _PyTok_Chunk decoded = {
-        .data = raw,
+        .దత్తాంశం = raw,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
-                tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+    స్థిరరాశి అక్షరం *encoding = tok->reader->encoding;
+    ఒకవేళ (encoding != ఖాళీ && strcmp(encoding, "utf-8") != 0) {
+        ఒకవేళ (_PyTok_DecodeOnce(
+                tok, &decoded, encoding, ఖాళీ) < 0) {
+            తిరిగి -1;
         }
     }
 
-    int stored = store_prepared_source(
-        tok, decoded.data, decoded.len, preserve_crlf, exec_input);
+    పూర్ణాంకం stored = store_prepared_ఆధారం(
+        tok, decoded.దత్తాంశం, decoded.len, preserve_crlf, exec_ఆదానం);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    ఒకవేళ (stored < 0) {
+        తిరిగి -1;
     }
-    if (!utf8_only &&
-            (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
-            !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+    ఒకవేళ (!utf8_only &&
+            (encoding == ఖాళీ || strcmp(encoding, "utf-8") == 0) &&
+            !_PyTokenizer_ensure_utf8(Py_Tok_ఆధారం_దత్తాంశం(&tok->ఆధారం), tok, 1)) {
+        తిరిగి -1;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+పూర్ణాంకం
+Py_Tok_ప్రారంభం_Decoder(నిర్మాణం tok_state *tok, స్థిరరాశి అక్షరం *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    ఒకవేళ (reader->encoding == ఖాళీ || reader->decoder != ఖాళీ) {
+        తిరిగి 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    ఒకవేళ (reader->రకం == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        తిరిగి 0;
     }
 
-    PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    PyObject *codec = Py_Codec_Lookup_పాఠ్యం_Encoding(reader->encoding, ఖాళీ);
+    ఒకవేళ (codec != ఖాళీ) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    ఒకవేళ (reader->decoder == ఖాళీ) {
+        tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ఒకవేళ (reader->రకం == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != ఖాళీ ? tok->filename : Py_None);
         }
-        return -1;
+        తిరిగి -1;
     }
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+పూర్ణాంకం
+_PyTok_DecodeChunk(నిర్మాణం tok_state *tok, _PyTok_Chunk *chunk, పూర్ణాంకం final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    ఒకవేళ (reader->decoder == ఖాళీ) {
+        తిరిగి 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
-        chunk->len >= UTF16_BOM_LENGTH &&
-        (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
-         memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
-    PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
-            PyBytes_Check(chunk->owner) &&
-            chunk->data == PyBytes_AS_STRING(chunk->owner)) {
-        input = Py_NewRef(chunk->owner);
+    పూర్ణాంకం strip_bom = reader->రకం == _PYTOK_READER_READLINE &&
+        chunk->len >= UTF16_BOM_నిడివి &&
+        (memcmp(chunk->దత్తాంశం, UTF16_LE_BOM, UTF16_BOM_నిడివి) == 0 ||
+         memcmp(chunk->దత్తాంశం, UTF16_BE_BOM, UTF16_BOM_నిడివి) == 0);
+    PyObject *ఆదానం;
+    ఒకవేళ (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+            Py_బైట్లు_Check(chunk->owner) &&
+            chunk->దత్తాంశం == Py_బైట్లు_AS_STRING(chunk->owner)) {
+        ఆదానం = Py_NewRef(chunk->owner);
     }
-    else {
-        input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
+    లేకపోతే {
+        ఆదానం = Py_బైట్లు_From_String_And_కొలత(chunk->దత్తాంశం, chunk->len);
     }
-    if (input == NULL) {
-        tok->done = E_NOMEM;
-        return -1;
+    ఒకవేళ (ఆదానం == ఖాళీ) {
+        tok->పూర్తి = E_NOMEM;
+        తిరిగి -1;
     }
-    PyObject *unicode = PyObject_CallMethodObjArgs(
-        reader->decoder, &_Py_ID(decode), input,
-        final ? Py_True : Py_False, NULL);
-    Py_DECREF(input);
-    if (unicode == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    PyObject *unicode = Py_Object_Call_పద్ధతి_Obj_వాదనలు(
+        reader->decoder, &_Py_ID(decode), ఆదానం,
+        final ? Py_True : Py_False, ఖాళీ);
+    Py_DECREF(ఆదానం);
+    ఒకవేళ (unicode == ఖాళీ) {
+        tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ఒకవేళ (reader->రకం == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != ఖాళీ ? tok->filename : Py_None);
         }
-        return -1;
+        తిరిగి -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    ఒకవేళ (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
-        tok->done = E_DECODE;
-        return -1;
+        tok->పూర్తి = E_DECODE;
+        తిరిగి -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    తిరిగి chunk_సమితి_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+పూర్ణాంకం
+Py_Tok_Decoder_Has_Buffered_ఆదానం(నిర్మాణం tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    ఒకవేళ (tok->reader->decoder == ఖాళీ) {
+        తిరిగి 0;
     }
-    PyObject *state = PyObject_CallMethodNoArgs(
+    PyObject *state = Py_Object_Call_పద్ధతి_No_వాదనలు(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
-        tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
+    ఒకవేళ (state == ఖాళీ) {
+        tok->పూర్తి = PyErr_ExceptionMatches(Py_Exc_జ్ఞాపకం_Error)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        తిరిగి -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
-            !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
-            !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
+    ఒకవేళ (!PyTuple_Check(state) || Py_Tuple_GET_కొలత(state) != 2 ||
+            !Py_బైట్లు_Check(Py_Tuple_GET_అంశం(state, 0)) ||
+            !PyLong_Check(Py_Tuple_GET_అంశం(state, 1))) {
         Py_DECREF(state);
-        PyErr_SetString(PyExc_TypeError,
+        Py_Err_సమితి_String(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
-        tok->done = E_DECODE;
-        return -1;
+        tok->పూర్తి = E_DECODE;
+        తిరిగి -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    పూర్ణాంకం pending = Py_బైట్లు_GET_కొలత(Py_Tuple_GET_అంశం(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    తిరిగి pending;
 }

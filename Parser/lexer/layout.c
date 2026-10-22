@@ -1,207 +1,207 @@
-#include "Python.h"
-#include "errcode.h"
-#include "pycore_token.h"
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "errcode.h"
+#అన్తర్భావ "pycore_token.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#అన్తర్భావ "lexer_internal.h"
+#అన్తర్భావ "../tokenizer/helpers.h"
+#అన్తర్భావ "../tokenizer/reader.h"
 
-#define TABSIZE 8
-#define ALTTABSIZE 1
+#నిర్వచించు TABSIZE 8
+#నిర్వచించు ALTTABSIZE 1
 
-int
-_PyLexer_ContinueLine(struct tok_state *tok)
+పూర్ణాంకం
+Py_Lexer_Continue_పంక్తి(నిర్మాణం tok_state *tok)
 {
-    int c = tok_nextc(tok);
-    if (c == '\r') {
+    పూర్ణాంకం c = tok_nextc(tok);
+    ఒకవేళ (c == '\r') {
         c = tok_nextc(tok);
     }
-    if (c != '\n') {
-        tok->done = E_LINECONT;
-        return -1;
+    ఒకవేళ (c != '\n') {
+        tok->పూర్తి = E_LINECONT;
+        తిరిగి -1;
     }
     c = tok_nextc(tok);
-    if (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
+    ఒకవేళ (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
         tok->needs_newline |= _PyTokenizer_NEWLINE_CONTINUATION;
     }
-    if (c == EOF) {
-        tok->done = E_EOF;
+    ఒకవేళ (c == EOF) {
+        tok->పూర్తి = E_EOF;
         tok->cur = tok->inp;
-        return -1;
-    } else {
+        తిరిగి -1;
+    } లేకపోతే {
         tok_backup(tok, c);
     }
-    return c;
+    తిరిగి c;
 }
 
 
-static int
-update_indentation(struct tok_state *tok, int col, int altcol)
+స్థిర పూర్ణాంకం
+update_indentation(నిర్మాణం tok_state *tok, పూర్ణాంకం నిలువు, పూర్ణాంకం altcol)
 {
     lexer_layout_state *layout = &tok->layout;
-    if (col == layout->stack[layout->depth].column) {
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+    ఒకవేళ (నిలువు == layout->దొంతర[layout->లోతు].స్తంభం) {
+        ఒకవేళ (altcol != layout->దొంతర[layout->లోతు].alternate_స్తంభం) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            తిరిగి -1;
         }
     }
-    else if (col > layout->stack[layout->depth].column) {
-        if (layout->depth + 1 >= MAXINDENT) {
-            tok->done = E_TOODEEP;
+    లేకపోతే ఒకవేళ (నిలువు > layout->దొంతర[layout->లోతు].స్తంభం) {
+        ఒకవేళ (layout->లోతు + 1 >= MAXINDENT) {
+            tok->పూర్తి = E_TOODEEP;
             tok->cur = tok->inp;
-            return -1;
+            తిరిగి -1;
         }
-        if (altcol <= layout->stack[layout->depth].alternate_column) {
+        ఒకవేళ (altcol <= layout->దొంతర[layout->లోతు].alternate_స్తంభం) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            తిరిగి -1;
         }
         layout->pending++;
-        layout->stack[++layout->depth] = (indentation_level){col, altcol};
+        layout->దొంతర[++layout->లోతు] = (indentation_level){నిలువు, altcol};
     }
-    else {
-        while (layout->depth > 0 &&
-            col < layout->stack[layout->depth].column) {
+    లేకపోతే {
+        అయితే (layout->లోతు > 0 &&
+            నిలువు < layout->దొంతర[layout->లోతు].స్తంభం) {
             layout->pending--;
-            layout->depth--;
+            layout->లోతు--;
         }
-        if (col != layout->stack[layout->depth].column) {
-            tok->done = E_DEDENT;
+        ఒకవేళ (నిలువు != layout->దొంతర[layout->లోతు].స్తంభం) {
+            tok->పూర్తి = E_DEDENT;
             tok->cur = tok->inp;
-            return -1;
+            తిరిగి -1;
         }
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+        ఒకవేళ (altcol != layout->దొంతర[layout->లోతు].alternate_స్తంభం) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            తిరిగి -1;
         }
     }
-    return 0;
+    తిరిగి 0;
 }
 
-int
-_PyLexer_BeginLine(struct tok_state *tok)
+పూర్ణాంకం
+Py_Lexer_Begin_పంక్తి(నిర్మాణం tok_state *tok)
 {
-    assert(tok->layout.at_bol);
-    int c;
-    int blankline = 0;
-    int col = 0;
-    int altcol = 0;
+    ప్రతిజ్ఞా(tok->layout.at_bol);
+    పూర్ణాంకం c;
+    పూర్ణాంకం blankline = 0;
+    పూర్ణాంకం నిలువు = 0;
+    పూర్ణాంకం altcol = 0;
     tok->layout.at_bol = 0;
-    int cont_line_col = 0;
-    for (;;) {
+    పూర్ణాంకం cont_పంక్తి_నిలువు = 0;
+    కొరకు (;;) {
         c = tok_nextc(tok);
-        if (c == ' ') {
-            col++, altcol++;
+        ఒకవేళ (c == ' ') {
+            నిలువు++, altcol++;
         }
-        else if (c == '\t') {
-            col = (col / TABSIZE + 1) * TABSIZE;
+        లేకపోతే ఒకవేళ (c == '\t') {
+            నిలువు = (నిలువు / TABSIZE + 1) * TABSIZE;
             altcol = (altcol / ALTTABSIZE + 1) * ALTTABSIZE;
         }
-        else if (c == '\014')  {/* Control-L (formfeed) */
-            col = altcol = 0; /* For Emacs users */
+        లేకపోతే ఒకవేళ (c == '\014')  {/* Control-L (formfeed) */
+            నిలువు = altcol = 0; /* For Emacs users */
         }
-        else if (c == '\\') {
+        లేకపోతే ఒకవేళ (c == '\\') {
             // Indentation cannot be split over multiple physical lines
             // using backslashes. This means that if we found a backslash
             // preceded by whitespace, **the first one we find** determines
             // the level of indentation of whatever comes next.
-            cont_line_col = cont_line_col ? cont_line_col : col;
-            if ((c = _PyLexer_ContinueLine(tok)) == -1) {
-                return -1;
+            cont_పంక్తి_నిలువు = cont_పంక్తి_నిలువు ? cont_పంక్తి_నిలువు : నిలువు;
+            ఒకవేళ ((c = Py_Lexer_Continue_పంక్తి(tok)) == -1) {
+                తిరిగి -1;
             }
         }
-        else if (c == EOF && PyErr_Occurred()) {
-            return -1;
+        లేకపోతే ఒకవేళ (c == EOF && PyErr_Occurred()) {
+            తిరిగి -1;
         }
-        else {
-            break;
+        లేకపోతే {
+            ఆపు;
         }
     }
     tok_backup(tok, c);
-    if (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-        tok->level == 0 && (cont_line_col || col)) {
+    ఒకవేళ (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
+        tok->level == 0 && (cont_పంక్తి_నిలువు || నిలువు)) {
         // Without the newline, a whitespace-only line affects indentation.
         tok->needs_newline |= _PyTokenizer_NEWLINE_INDENT;
     }
-    if (c == '#' || c == '\n' || c == '\r') {
-        int interactive = _PyTok_ReaderIsInteractive(tok);
+    ఒకవేళ (c == '#' || c == '\n' || c == '\r') {
+        పూర్ణాంకం interactive = _PyTok_ReaderIsInteractive(tok);
         /* Lines with only whitespace and/or comments
            shouldn't affect the indentation and are
            not passed to the parser as NEWLINE tokens,
            except *totally* empty lines in interactive
            mode, which signal the end of a command group. */
-        if (col == 0 && c == '\n' && interactive) {
+        ఒకవేళ (నిలువు == 0 && c == '\n' && interactive) {
             blankline = 0; /* Let it through */
         }
-        else if (interactive && tok->lineno == 1) {
+        లేకపోతే ఒకవేళ (interactive && tok->lineno == 1) {
             /* In interactive mode, if the first line contains
                only spaces and/or a comment, let it through. */
             blankline = 0;
-            col = altcol = 0;
+            నిలువు = altcol = 0;
         }
-        else {
+        లేకపోతే {
             blankline = 1; /* Ignore completely */
         }
     }
-    if (!blankline && tok->level == 0) {
-        col = cont_line_col ? cont_line_col : col;
-        altcol = cont_line_col ? cont_line_col : altcol;
-        if (update_indentation(tok, col, altcol) < 0) {
-            return -1;
+    ఒకవేళ (!blankline && tok->level == 0) {
+        నిలువు = cont_పంక్తి_నిలువు ? cont_పంక్తి_నిలువు : నిలువు;
+        altcol = cont_పంక్తి_నిలువు ? cont_పంక్తి_నిలువు : altcol;
+        ఒకవేళ (update_indentation(tok, నిలువు, altcol) < 0) {
+            తిరిగి -1;
         }
     }
-    return blankline;
+    తిరిగి blankline;
 }
 
-int
-_PyLexer_IndentationToken(struct tok_state *tok, struct token *token)
+పూర్ణాంకం
+_PyLexer_IndentationToken(నిర్మాణం tok_state *tok, నిర్మాణం token *token)
 {
-    assert(tok->layout.pending != 0);
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
-    if (tok->layout.pending < 0) {
-        if (tok->tok_extra_tokens) {
-            p_start = tok->cur;
-            p_end = tok->cur;
+    ప్రతిజ్ఞా(tok->layout.pending != 0);
+    _PyTok_Off p_ప్రారంభం = -1;
+    _PyTok_Off p_చివర = -1;
+    ఒకవేళ (tok->layout.pending < 0) {
+        ఒకవేళ (tok->tok_extra_టోకెన్లు) {
+            p_ప్రారంభం = tok->cur;
+            p_చివర = tok->cur;
         }
         tok->layout.pending++;
-        return _PyLexer_token_setup(tok, token, DEDENT, p_start, p_end);
+        తిరిగి Py_Lexer_token_అమరిక(tok, token, DEDENT, p_ప్రారంభం, p_చివర);
     }
-    else {
-        if (tok->tok_extra_tokens) {
-            p_start = tok->buf_offset;
-            p_end = tok->cur;
+    లేకపోతే {
+        ఒకవేళ (tok->tok_extra_టోకెన్లు) {
+            p_ప్రారంభం = tok->buf_స్థానభ్రంశం;
+            p_చివర = tok->cur;
         }
         tok->layout.pending--;
-        return _PyLexer_token_setup(tok, token, INDENT, p_start, p_end);
+        తిరిగి Py_Lexer_token_అమరిక(tok, token, INDENT, p_ప్రారంభం, p_చివర);
     }
 }
 
-int
-_PyLexer_Newline(struct tok_state *tok, struct token *token, int blankline)
+పూర్ణాంకం
+_PyLexer_Newline(నిర్మాణం tok_state *tok, నిర్మాణం token *token, పూర్ణాంకం blankline)
 {
-    if (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
+    ఒకవేళ (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
         // The statement's terminating newline was not in the input.
         tok->needs_newline |= _PyTokenizer_NEWLINE_STATEMENT;
     }
     tok->layout.at_bol = 1;
-    if (blankline || tok->level > 0) {
-        if (!tok->tok_extra_tokens) {
-            return 0;
+    ఒకవేళ (blankline || tok->level > 0) {
+        ఒకవేళ (!tok->tok_extra_టోకెన్లు) {
+            తిరిగి 0;
         }
     }
-    else if (!tok->layout.comment_newline || !tok->tok_extra_tokens) {
-        return _PyLexer_token_setup(tok, token, NEWLINE,
-                                    tok->start, tok->cur - 1);
+    లేకపోతే ఒకవేళ (!tok->layout.comment_newline || !tok->tok_extra_టోకెన్లు) {
+        తిరిగి Py_Lexer_token_అమరిక(tok, token, NEWLINE,
+                                    tok->ప్రారంభం, tok->cur - 1);
     }
     tok->layout.comment_newline = 0;
-    return _PyLexer_token_setup(tok, token, NL, tok->start, tok->cur);
+    తిరిగి Py_Lexer_token_అమరిక(tok, token, NL, tok->ప్రారంభం, tok->cur);
 }
 
-void
-_PyLexer_ImplyDedents(struct tok_state *tok)
+శూన్య
+_PyLexer_ImplyDedents(నిర్మాణం tok_state *tok)
 {
-    if (tok->layout.depth != 0) {
-        tok->layout.pending = -tok->layout.depth;
-        tok->layout.depth = 0;
+    ఒకవేళ (tok->layout.లోతు != 0) {
+        tok->layout.pending = -tok->layout.లోతు;
+        tok->layout.లోతు = 0;
     }
 }

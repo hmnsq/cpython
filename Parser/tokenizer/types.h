@@ -1,27 +1,27 @@
-#ifndef Py_TOKENIZER_TYPES_H
-#define Py_TOKENIZER_TYPES_H
+#నిర్వచితం_కాకపోతే Py_TOKENIZER_TYPES_H
+#నిర్వచించు Py_TOKENIZER_TYPES_H
 
-#include "Python.h"
+#అన్తర్భావ "Python.h"
 
-typedef Py_ssize_t _PyTok_Off;
+రకనిర్వచనం Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
-    _PyTok_Off start;
-    _PyTok_Off end;
-} _PyTok_Span;
+రకనిర్వచనం నిర్మాణం {
+    _PyTok_Off ప్రారంభం;
+    _PyTok_Off చివర;
+} Py_Tok_పరిధి;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+రకనిర్వచనం నిర్మాణం {
+    పూర్ణాంకం lineno;
+    పూర్ణాంకం byte_నిలువు;
 } _PyTok_Loc;
 
-static inline int
-_PyTok_SpanIsValid(_PyTok_Span span)
+స్థిర అంతఃవరుస పూర్ణాంకం
+Py_Tok_పరిధి_Is_Valid(Py_Tok_పరిధి పరిధి)
 {
-    return span.start >= 0 && span.end >= span.start;
+    తిరిగి పరిధి.ప్రారంభం >= 0 && పరిధి.చివర >= పరిధి.ప్రారంభం;
 }
 
-#endif
+#అయితే_ముగింపు

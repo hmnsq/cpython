@@ -1,40 +1,40 @@
-#include "Python.h"
-#include "pycore_token.h"
+#అన్తర్భావ "Python.h"
+#అన్తర్భావ "pycore_token.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#అన్తర్భావ "lexer_internal.h"
+#అన్తర్భావ "../tokenizer/helpers.h"
 
-#define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
+#నిర్వచించు MAKE_TOKEN(token_type) Py_Lexer_token_అమరిక(tok, token, token_type, p_ప్రారంభం, p_చివర)
 
-static int
-lookahead(struct tok_state *tok, const char *test)
+స్థిర పూర్ణాంకం
+lookahead(నిర్మాణం tok_state *tok, స్థిరరాశి అక్షరం *test)
 {
-    const char *s = test;
-    int res = 0;
-    while (1) {
-        int c = tok_nextc(tok);
-        if (*s == 0) {
+    స్థిరరాశి అక్షరం *s = test;
+    పూర్ణాంకం res = 0;
+    అయితే (1) {
+        పూర్ణాంకం c = tok_nextc(tok);
+        ఒకవేళ (*s == 0) {
             res = !is_potential_identifier_char(c);
         }
-        else if (c == *s) {
+        లేకపోతే ఒకవేళ (c == *s) {
             s++;
-            continue;
+            కొనసాగు;
         }
 
         tok_backup(tok, c);
-        while (s != test) {
+        అయితే (s != test) {
             tok_backup(tok, *--s);
         }
-        return res;
+        తిరిగి res;
     }
 }
 
-static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
-    if (tok->tok_extra_tokens) {
+స్థిర పూర్ణాంకం
+verify_చివర_యొక్క_సంఖ్య(నిర్మాణం tok_state *tok, పూర్ణాంకం c, స్థిరరాశి అక్షరం *రకం) {
+    ఒకవేళ (tok->tok_extra_టోకెన్లు) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
-        return 1;
+        తిరిగి 1;
     }
     /* Emit a deprecation warning only if the numeric literal is immediately
      * followed by one of keywords which can occur after a numeric literal
@@ -46,268 +46,268 @@ verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
      * "invalid syntax" if the numeric literal is immediately followed by
      * other keyword or identifier.
      */
-    int r = 0;
-    if (c == 'a') {
+    పూర్ణాంకం r = 0;
+    ఒకవేళ (c == 'a') {
         r = lookahead(tok, "nd");
     }
-    else if (c == 'e') {
+    లేకపోతే ఒకవేళ (c == 'e') {
         r = lookahead(tok, "lse");
     }
-    else if (c == 'f') {
+    లేకపోతే ఒకవేళ (c == 'f') {
         r = lookahead(tok, "or");
     }
-    else if (c == 'i') {
-        int c2 = tok_nextc(tok);
-        if (c2 == 'f' || c2 == 'n' || c2 == 's') {
+    లేకపోతే ఒకవేళ (c == 'i') {
+        పూర్ణాంకం c2 = tok_nextc(tok);
+        ఒకవేళ (c2 == 'f' || c2 == 'n' || c2 == 's') {
             r = 1;
         }
         tok_backup(tok, c2);
     }
-    else if (c == 'o') {
+    లేకపోతే ఒకవేళ (c == 'o') {
         r = lookahead(tok, "r");
     }
-    else if (c == 'n') {
+    లేకపోతే ఒకవేళ (c == 'n') {
         r = lookahead(tok, "ot");
     }
-    if (r) {
+    ఒకవేళ (r) {
         tok_backup(tok, c);
-        if (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
-                "invalid %s literal", kind))
+        ఒకవేళ (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
+                "invalid %s literal", రకం))
         {
-            return 0;
+            తిరిగి 0;
         }
         tok_nextc(tok);
     }
-    else /* In future releases, only error will remain. */
-    if (c < 128 && is_potential_identifier_char(c)) {
+    లేకపోతే /* In future releases, only error will remain. */
+    ఒకవేళ (c < 128 && is_potential_identifier_char(c)) {
         tok_backup(tok, c);
-        _PyTokenizer_syntaxerror(tok, "invalid %s literal", kind);
-        return 0;
+        _PyTokenizer_syntaxerror(tok, "invalid %s literal", రకం);
+        తిరిగి 0;
     }
-    return 1;
+    తిరిగి 1;
 }
 
-static int
-tok_decimal_tail(struct tok_state *tok)
+స్థిర పూర్ణాంకం
+tok_decimal_తోక(నిర్మాణం tok_state *tok)
 {
-    int c;
+    పూర్ణాంకం c;
 
-    while (1) {
-        do {
+    అయితే (1) {
+        చేయి {
             c = tok_nextc(tok);
-        } while (Py_ISDIGIT(c));
-        if (c != '_') {
-            break;
+        } అయితే (Py_ISDIGIT(c));
+        ఒకవేళ (c != '_') {
+            ఆపు;
         }
         c = tok_nextc(tok);
-        if (!Py_ISDIGIT(c)) {
+        ఒకవేళ (!Py_ISDIGIT(c)) {
             tok_backup(tok, c);
             _PyTokenizer_syntaxerror(tok, "invalid decimal literal");
-            return 0;
+            తిరిగి 0;
         }
     }
-    return c;
+    తిరిగి c;
 }
 
-int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
-                     int leading_dot)
+పూర్ణాంకం
+Py_Lexer_పరిశీలన_సంఖ్య(నిర్మాణం tok_state *tok, నిర్మాణం token *token, పూర్ణాంకం c,
+                     పూర్ణాంకం leading_dot)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_ప్రారంభం = -1;
+    _PyTok_Off p_చివర = -1;
 
-    if (leading_dot) {
-        goto fraction;
+    ఒకవేళ (leading_dot) {
+        వెళ్ళు fraction;
     }
-    if (c == '0') {
+    ఒకవేళ (c == '0') {
         /* Hex, octal or binary -- maybe. */
         c = tok_nextc(tok);
-        if (c == 'x' || c == 'X') {
+        ఒకవేళ (c == 'x' || c == 'X') {
             /* Hex */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            చేయి {
+                ఒకవేళ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (!Py_ISXDIGIT(c)) {
+                ఒకవేళ (!Py_ISXDIGIT(c)) {
                     tok_backup(tok, c);
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
+                    తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
                 }
-                do {
+                చేయి {
                     c = tok_nextc(tok);
-                } while (Py_ISXDIGIT(c));
-            } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+                } అయితే (Py_ISXDIGIT(c));
+            } అయితే (c == '_');
+            ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "hexadecimal")) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'o' || c == 'O') {
+        లేకపోతే ఒకవేళ (c == 'o' || c == 'O') {
             /* Octal */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            చేయి {
+                ఒకవేళ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c < '0' || c >= '8') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                ఒకవేళ (c < '0' || c >= '8') {
+                    ఒకవేళ (Py_ISDIGIT(c)) {
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                                 "invalid digit '%c' in octal literal", c));
                     }
-                    else {
+                    లేకపోతే {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
                     }
                 }
-                do {
+                చేయి {
                     c = tok_nextc(tok);
-                } while ('0' <= c && c < '8');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                } అయితే ('0' <= c && c < '8');
+            } అయితే (c == '_');
+            ఒకవేళ (Py_ISDIGIT(c)) {
+                తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "octal")) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'b' || c == 'B') {
-            /* Binary */
+        లేకపోతే ఒకవేళ (c == 'b' || c == 'B') {
+            /*ద్విమాన*/
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            చేయి {
+                ఒకవేళ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c != '0' && c != '1') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                ఒకవేళ (c != '0' && c != '1') {
+                    ఒకవేళ (Py_ISDIGIT(c)) {
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
                     }
-                    else {
+                    లేకపోతే {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
                     }
                 }
-                do {
+                చేయి {
                     c = tok_nextc(tok);
-                } while (c == '0' || c == '1');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                } అయితే (c == '0' || c == '1');
+            } అయితే (c == '_');
+            ఒకవేళ (Py_ISDIGIT(c)) {
+                తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "binary")) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else {
-            int nonzero = 0;
+        లేకపోతే {
+            పూర్ణాంకం nonzero = 0;
             /* maybe old-style octal; c is first char of it */
             /* in any case, allow '0' as a literal */
-            while (1) {
-                if (c == '_') {
+            అయితే (1) {
+                ఒకవేళ (c == '_') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    ఒకవేళ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
                 }
-                if (c != '0') {
-                    break;
+                ఒకవేళ (c != '0') {
+                    ఆపు;
                 }
                 c = tok_nextc(tok);
             }
-            _PyTok_Off zeros_end = tok->cur;
-            if (Py_ISDIGIT(c)) {
+            _PyTok_Off zeros_చివర = tok->cur;
+            ఒకవేళ (Py_ISDIGIT(c)) {
                 nonzero = 1;
-                c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                c = tok_decimal_తోక(tok);
+                ఒకవేళ (c == 0) {
+                    తిరిగి MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == '.') {
+            ఒకవేళ (c == '.') {
                 c = tok_nextc(tok);
-                goto fraction;
+                వెళ్ళు fraction;
             }
-            else if (c == 'e' || c == 'E') {
-                goto exponent;
+            లేకపోతే ఒకవేళ (c == 'e' || c == 'E') {
+                వెళ్ళు exponent;
             }
-            else if (c == 'j' || c == 'J') {
-                goto imaginary;
+            లేకపోతే ఒకవేళ (c == 'j' || c == 'J') {
+                వెళ్ళు imaginary;
             }
-            else if (nonzero && !tok->tok_extra_tokens) {
+            లేకపోతే ఒకవేళ (nonzero && !tok->tok_extra_టోకెన్లు) {
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                తిరిగి MAKE_TOKEN(Py_Tokenizer_syntaxerror_తెలిసిన_range(
+                        tok, (పూర్ణాంకం)(tok->ప్రారంభం + 1 - tok->పంక్తి_ప్రారంభం),
+                        (పూర్ణాంకం)(zeros_చివర - tok->పంక్తి_ప్రారంభం),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "decimal")) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
-    else {
+    లేకపోతే {
         /* Decimal */
-        c = tok_decimal_tail(tok);
-        if (c == 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        c = tok_decimal_తోక(tok);
+        ఒకవేళ (c == 0) {
+            తిరిగి MAKE_TOKEN(ERRORTOKEN);
         }
         {
             /* Accept floating-point numbers. */
-            if (c == '.') {
+            ఒకవేళ (c == '.') {
                 c = tok_nextc(tok);
     fraction:
                 /* Fraction */
-                if (Py_ISDIGIT(c)) {
-                    c = tok_decimal_tail(tok);
-                    if (c == 0) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                ఒకవేళ (Py_ISDIGIT(c)) {
+                    c = tok_decimal_తోక(tok);
+                    ఒకవేళ (c == 0) {
+                        తిరిగి MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
             }
-            if (c == 'e' || c == 'E') {
-                int e;
+            ఒకవేళ (c == 'e' || c == 'E') {
+                పూర్ణాంకం e;
               exponent:
                 e = c;
                 /* Exponent part */
                 c = tok_nextc(tok);
-                if (c == '+' || c == '-') {
+                ఒకవేళ (c == '+' || c == '-') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    ఒకవేళ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        తిరిగి MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
-                } else if (!Py_ISDIGIT(c)) {
+                } లేకపోతే ఒకవేళ (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, e, "decimal")) {
+                        తిరిగి MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
-                    p_start = tok->start;
-                    p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    p_ప్రారంభం = tok->ప్రారంభం;
+                    p_చివర = tok->cur;
+                    తిరిగి MAKE_TOKEN(సంఖ్య);
                 }
-                c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                c = tok_decimal_తోక(tok);
+                ఒకవేళ (c == 0) {
+                    తిరిగి MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == 'j' || c == 'J') {
+            ఒకవేళ (c == 'j' || c == 'J') {
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "imaginary")) {
+                    తిరిగి MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            లేకపోతే ఒకవేళ (!verify_చివర_యొక్క_సంఖ్య(tok, c, "decimal")) {
+                తిరిగి MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
     tok_backup(tok, c);
-    p_start = tok->start;
-    p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    p_ప్రారంభం = tok->ప్రారంభం;
+    p_చివర = tok->cur;
+    తిరిగి MAKE_TOKEN(సంఖ్య);
 }
