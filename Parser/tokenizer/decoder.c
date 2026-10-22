@@ -18,18 +18,18 @@
 char *
 _PyTok_CopyBytes(const char *data, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    ако (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        врати NULL;
     }
     char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
+    ако (copy == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        врати NULL;
     }
     memcpy(copy, data, (size_t)len);
     copy[len] = '\0';
-    return copy;
+    врати copy;
 }
 
 static void
@@ -54,19 +54,19 @@ _PyTok_ChunkClear(_PyTok_Chunk *chunk)
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
+static цео
 chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+                  PyObject *unicode, цео strip_bom)
 {
     Py_ssize_t utf8_len;
     const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    ако (utf8 == NULL) {
         Py_DECREF(unicode);
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        врати -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    ако (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
         utf8 += UTF8_BOM_LENGTH;
         utf8_len -= UTF8_BOM_LENGTH;
@@ -76,27 +76,27 @@ chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
     chunk->data = (char *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    врати 0;
 }
 
 char *
 _PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
                          Py_ssize_t *out_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    ако (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        врати NULL;
     }
     char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
+    ако (result == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        врати NULL;
     }
     Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
+    за (Py_ssize_t read = 0; read < len; read++) {
         char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
+        ако (c == '\r') {
+            ако (read + 1 < len && data[read + 1] == '\n') {
                 read++;
             }
             c = '\n';
@@ -105,60 +105,60 @@ _PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
     }
     result[write] = '\0';
     *out_len = write;
-    return result;
+    врати result;
 }
 
-int
+цео
 _PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
 {
     char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
+    ако (copy == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        врати -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    врати 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+static цео
+find_cookie(const char *line, Py_ssize_t len, char **encoding, цео *scan_next)
 {
     Py_ssize_t i = 0;
     *encoding = NULL;
     *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
+    за (; i < len; i++) {
+        ако (line[i] == '#') {
             break;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        ако (line[i] == '\n' || line[i] == '\r') {
+            врати 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
+        ако (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
             *scan_next = 0;
-            return 0;
+            врати 0;
         }
     }
     const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
+    за (; i < len - marker_len; i++) {
+        ако (memcmp(line + i, "coding", marker_len) != 0) {
             continue;
         }
         const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
+        ако (*cursor != ':' && *cursor != '=') {
             continue;
         }
         do {
             cursor++;
-        } while (cursor < line + len &&
+        } док (cursor < line + len &&
                  (*cursor == ' ' || *cursor == '\t'));
         const char *start = cursor;
-        while (cursor < line + len &&
+        док (cursor < line + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
+        ако (cursor == start) {
             continue;
         }
         Py_ssize_t encoding_len = cursor - start;
@@ -167,16 +167,16 @@ find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
         const Py_ssize_t prefix_len = Py_MIN(
             encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
+        за (n = 0; n < prefix_len; n++) {
             normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
         }
         normalized[n] = '\0';
         const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
+        ако (strcmp(normalized, "utf-8") == 0 ||
                 strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        инако ако (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
                  strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
@@ -184,58 +184,58 @@ find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
                  strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
+        ако (canonical != start) {
             encoding_len = strlen(canonical);
         }
         *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        ако (*encoding == NULL) {
+            врати -1;
         }
         *scan_next = 0;
-        return 0;
+        врати 0;
     }
-    return 0;
+    врати 0;
 }
 
 _PyTok_EncodingResult
 _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+                      const _PyTok_Chunk *second, цео final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
+    цео bom = first->len >= UTF8_BOM_LENGTH &&
         memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
     *bom_len = bom ? UTF8_BOM_LENGTH : 0;
 
     char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
+    цео scan_next = 0;
+    цео cookie_line = 1;
     const char *first_data = first->data + *bom_len;
     Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    ако (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
+        врати _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ако (cookie == NULL && scan_next && second != NULL) {
+        ако (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
+            врати _PYTOK_ENCODING_ERROR;
         }
         cookie_line = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    инако ако (cookie == NULL && scan_next && !final) {
+        врати _PYTOK_ENCODING_NEED_SECOND_LINE;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    ако (cookie == NULL) {
+        ако (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
+            врати _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        врати _PYTOK_ENCODING_DONE;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
+    ако (bom && strcmp(cookie, "utf-8") != 0) {
         const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
         const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
         Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
+        цео end_col = (цео)Py_MIN(line_len, INT_MAX);
+        ако (end_col > 0 && (line_data[end_col - 1] == '\n' ||
                             line_data[end_col - 1] == '\r')) {
             end_col--;
         }
@@ -243,117 +243,117 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
             tok, line_data, 0, cookie_line, 0, end_col,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        врати _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    врати _PYTOK_ENCODING_DONE;
 }
 
-int
+цео
 _PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
                   const char *encoding, const char *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
         chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
+    ако (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        врати -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    врати chunk_set_unicode(tok, chunk, unicode, 0);
 }
 
 static Py_ssize_t
 raw_line_length(const char *data, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    за (Py_ssize_t i = 0; i < len; i++) {
+        ако (data[i] == '\n') {
+            врати i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        ако (data[i] == '\r') {
+            врати i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    врати len;
 }
 
-static int
+static цео
 store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+                      цео preserve_crlf, цео add_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
+    док (pos < len) {
         Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
+        ако (preserve_crlf) {
             const char *newline = memchr(data + pos, '\n', len - pos);
             raw_line_len = newline == NULL
                 ? len - pos : newline - data - pos + 1;
         }
-        else {
+        инако {
             raw_line_len = raw_line_length(data + pos, len - pos);
         }
-        int terminated = preserve_crlf
+        цео terminated = preserve_crlf
             ? data[pos + raw_line_len - 1] == '\n'
             : data[pos + raw_line_len - 1] == '\n' ||
               data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
+        цео add_newline = add_final_newline &&
             pos + raw_line_len == len && !terminated;
         const char *line = data + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        ако (!preserve_crlf) {
+            ако (line[raw_line_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            инако ако (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
+        ако (terminator_len || add_newline) {
             appended = _PyTok_SourceAppendLineWithNewline(
                 &tok->source, line, raw_line_len - terminator_len);
         }
-        else {
+        инако {
             appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
         }
-        if (appended < 0) {
+        ако (appended < 0) {
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            врати -1;
         }
         tok->reader->prepared_final_newline = add_newline;
         pos += raw_line_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    ако (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
         (len == 0 || data[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        ако (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
+            врати -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    врати 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+цео
+_PyTok_PrepareString(struct tok_state *tok, const char *input, цео utf8_only,
+                     цео exec_input, цео preserve_crlf)
 {
     Py_ssize_t raw_len = strlen(input);
     char *raw = (char *)input;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    ако (utf8_only) {
+        ако (_PyTok_SetEncoding(tok, "utf-8") < 0) {
+            врати -1;
         }
     }
-    else {
+    инако {
         Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
         _PyTok_Chunk first = {
             .data = raw,
@@ -361,8 +361,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
         _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
+        цео have_second = first_original_len < raw_len;
+        ако (have_second) {
             second.data = raw + first_original_len;
             second.len = raw_line_length(second.data,
                                          raw_len - first_original_len);
@@ -370,8 +370,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         Py_ssize_t bom_len;
         _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
             tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        ако (detection == _PYTOK_ENCODING_ERROR) {
+            врати -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
@@ -383,127 +383,127 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
     const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
+    ако (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
+        ако (_PyTok_DecodeOnce(
                 tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+            врати -1;
         }
     }
 
-    int stored = store_prepared_source(
+    цео stored = store_prepared_source(
         tok, decoded.data, decoded.len, preserve_crlf, exec_input);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    ако (stored < 0) {
+        врати -1;
     }
-    if (!utf8_only &&
+    ако (!utf8_only &&
             (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+        врати -1;
     }
-    return 0;
+    врати 0;
 }
 
-int
+цео
 _PyTok_StartDecoder(struct tok_state *tok, const char *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    ако (reader->encoding == NULL || reader->decoder != NULL) {
+        врати 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    ако (reader->kind == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        врати 0;
     }
 
     PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    ако (codec != NULL) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
+    ако (reader->decoder == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ако (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        врати -1;
     }
-    return 0;
+    врати 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+цео
+_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, цео final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    ако (reader->decoder == NULL) {
+        врати 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
+    цео strip_bom = reader->kind == _PYTOK_READER_READLINE &&
         chunk->len >= UTF16_BOM_LENGTH &&
         (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
          memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
     PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+    ако (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
             PyBytes_Check(chunk->owner) &&
             chunk->data == PyBytes_AS_STRING(chunk->owner)) {
         input = Py_NewRef(chunk->owner);
     }
-    else {
+    инако {
         input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
     }
-    if (input == NULL) {
+    ако (input == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        врати -1;
     }
     PyObject *unicode = PyObject_CallMethodObjArgs(
         reader->decoder, &_Py_ID(decode), input,
         final ? Py_True : Py_False, NULL);
     Py_DECREF(input);
-    if (unicode == NULL) {
+    ако (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        ако (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        врати -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    ако (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
         tok->done = E_DECODE;
-        return -1;
+        врати -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    врати chunk_set_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
+цео
 _PyTok_DecoderHasBufferedInput(struct tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    ако (tok->reader->decoder == NULL) {
+        врати 0;
     }
     PyObject *state = PyObject_CallMethodNoArgs(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
+    ако (state == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        врати -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
+    ако (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
             !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
             !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
         Py_DECREF(state);
         PyErr_SetString(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
         tok->done = E_DECODE;
-        return -1;
+        врати -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    цео pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    врати pending;
 }

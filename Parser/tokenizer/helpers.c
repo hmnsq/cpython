@@ -11,62 +11,62 @@
 
 /* Convert a 1-based column in bytes into a 1-based column in characters.
    The line is UTF-8 encoded, so it is enough to skip continuation bytes. */
-static int
-byte_col_to_char_col(const char *line, int byte_col)
+static цео
+byte_col_to_char_col(const char *line, цео byte_col)
 {
-    int char_col = 1;
-    for (int i = 0; i < byte_col - 1; i++) {
-        if ((line[i] & 0xC0) != 0x80) {
+    цео char_col = 1;
+    за (цео i = 0; i < byte_col - 1; i++) {
+        ако ((line[i] & 0xC0) != 0x80) {
             char_col++;
         }
     }
-    return char_col;
+    врати char_col;
 }
 
-static int
+static цео
 _syntaxerror_range(struct tok_state *tok, const char *line,
-                   Py_ssize_t cursor, int lineno, const char *format,
-                   int col_offset, int end_col_offset,
+                   Py_ssize_t cursor, цео lineno, const char *format,
+                   цео col_offset, цео end_col_offset,
                    va_list vargs)
 {
     // In release builds, we don't want to overwrite a previous error, but in debug builds we
     // want to fail if we are not doing it so we can fix it.
     assert(tok->done != E_ERROR);
-    if (tok->done == E_ERROR) {
-        return ERRORTOKEN;
+    ако (tok->done == E_ERROR) {
+        врати ERRORTOKEN;
     }
     PyObject *errmsg, *errtext, *args;
     errmsg = PyUnicode_FromFormatV(format, vargs);
-    if (!errmsg) {
+    ако (!errmsg) {
         goto error;
     }
 
     errtext = PyUnicode_DecodeUTF8(line, cursor,
                                    "replace");
-    if (!errtext) {
+    ако (!errtext) {
         goto error;
     }
 
-    if (col_offset == -1) {
-        col_offset = (int)PyUnicode_GET_LENGTH(errtext);
+    ако (col_offset == -1) {
+        col_offset = (цео)PyUnicode_GET_LENGTH(errtext);
     }
-    else if (col_offset > 0) {
+    инако ако (col_offset > 0) {
         col_offset = byte_col_to_char_col(line, col_offset);
     }
-    if (end_col_offset == -1) {
+    ако (end_col_offset == -1) {
         end_col_offset = col_offset;
     }
-    else if (end_col_offset > 0) {
+    инако ако (end_col_offset > 0) {
         end_col_offset = byte_col_to_char_col(line, end_col_offset);
     }
 
     Py_ssize_t line_len = strcspn(line, "\n");
-    if (line_len != cursor) {
+    ако (line_len != cursor) {
         Py_DECREF(errtext);
         errtext = PyUnicode_DecodeUTF8(line, line_len,
                                        "replace");
     }
-    if (!errtext) {
+    ако (!errtext) {
         goto error;
     }
 
@@ -74,7 +74,7 @@ _syntaxerror_range(struct tok_state *tok, const char *line,
                          tok->filename ? tok->filename : Py_None,
                          lineno, col_offset, errtext,
                          lineno, end_col_offset);
-    if (args) {
+    ако (args) {
         PyErr_SetObject(PyExc_SyntaxError, args);
         Py_DECREF(args);
     }
@@ -82,61 +82,61 @@ _syntaxerror_range(struct tok_state *tok, const char *line,
 error:
     Py_XDECREF(errmsg);
     tok->done = E_ERROR;
-    return ERRORTOKEN;
+    врати ERRORTOKEN;
 }
 
-int
+цео
 _PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...)
 {
     // These errors are cleaned on startup. Todo: Fix it.
     va_list vargs;
     va_start(vargs, format);
-    int ret = _syntaxerror_range(
+    цео ret = _syntaxerror_range(
         tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
         tok->cur - tok->line_start, tok->lineno, format, -1, -1, vargs);
     va_end(vargs);
-    return ret;
+    врати ret;
 }
 
-int
+цео
 _PyTokenizer_syntaxerror_known_range(struct tok_state *tok,
-                        int col_offset, int end_col_offset,
+                        цео col_offset, цео end_col_offset,
                         const char *format, ...)
 {
     va_list vargs;
     va_start(vargs, format);
-    int ret = _syntaxerror_range(
+    цео ret = _syntaxerror_range(
         tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
         tok->cur - tok->line_start, tok->lineno,
         format, col_offset, end_col_offset, vargs);
     va_end(vargs);
-    return ret;
+    врати ret;
 }
 
-int
+цео
 _PyTokenizer_syntaxerror_at(struct tok_state *tok, const char *line,
-                             Py_ssize_t cursor, int lineno,
-                             int col_offset, int end_col_offset,
+                             Py_ssize_t cursor, цео lineno,
+                             цео col_offset, цео end_col_offset,
                              const char *format, ...)
 {
     va_list vargs;
     va_start(vargs, format);
-    int ret = _syntaxerror_range(tok, line, cursor, lineno, format,
+    цео ret = _syntaxerror_range(tok, line, cursor, lineno, format,
                                 col_offset, end_col_offset, vargs);
     va_end(vargs);
-    return ret;
+    врати ret;
 }
 
-int
+цео
 _PyTokenizer_indenterror(struct tok_state *tok)
 {
     tok->done = E_TABSPACE;
     tok->cur = tok->inp;
-    return ERRORTOKEN;
+    врати ERRORTOKEN;
 }
 
-int
-_PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char)
+цео
+_PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, цео first_invalid_escape_char)
 {
     PyObject *msg = PyUnicode_FromFormat(
         "\"\\%c\" is an invalid escape sequence. "
@@ -146,41 +146,41 @@ _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_inval
         (char) first_invalid_escape_char
     );
 
-    if (msg == NULL) {
-        return -1;
+    ако (msg == NULL) {
+        врати -1;
     }
 
-    if (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, msg, tok->filename,
+    ако (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, msg, tok->filename,
                                  tok->lineno, tok->module, NULL) < 0) {
         Py_DECREF(msg);
 
-        if (PyErr_ExceptionMatches(PyExc_SyntaxWarning)) {
+        ако (PyErr_ExceptionMatches(PyExc_SyntaxWarning)) {
             /* Replace the SyntaxWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
 
-            return _PyTokenizer_syntaxerror(tok,
+            врати _PyTokenizer_syntaxerror(tok,
                 "\"\\%c\" is an invalid escape sequence. "
                 "Did you mean \"\\\\%c\"? A raw string is also an option.",
                 (char) first_invalid_escape_char,
                 (char) first_invalid_escape_char);
         }
 
-        return -1;
+        врати -1;
     }
 
     Py_DECREF(msg);
-    return 0;
+    врати 0;
 }
 
 void
 _PyTokenizer_raise_init_error(PyObject *filename)
 {
-    if (!(PyErr_ExceptionMatches(PyExc_LookupError)
+    ако (!(PyErr_ExceptionMatches(PyExc_LookupError)
           || PyErr_ExceptionMatches(PyExc_SyntaxError)
           || PyErr_ExceptionMatches(PyExc_ValueError)
           || PyErr_ExceptionMatches(PyExc_UnicodeDecodeError))) {
-        return;
+        врати;
     }
     PyObject *errstr = NULL;
     PyObject *tuple = NULL;
@@ -188,26 +188,26 @@ _PyTokenizer_raise_init_error(PyObject *filename)
     PyObject *value;
     PyObject *tback;
     PyErr_Fetch(&type, &value, &tback);
-    if (PyErr_GivenExceptionMatches(value, PyExc_SyntaxError)) {
-        if (PyObject_SetAttr(value, &_Py_ID(filename), filename)) {
+    ако (PyErr_GivenExceptionMatches(value, PyExc_SyntaxError)) {
+        ако (PyObject_SetAttr(value, &_Py_ID(filename), filename)) {
             goto error;
         }
         PyErr_Restore(type, value, tback);
-        return;
+        врати;
     }
     errstr = PyObject_Str(value);
-    if (!errstr) {
+    ако (!errstr) {
         goto error;
     }
 
     PyObject *tmp = Py_BuildValue("(OiiO)", filename, 0, -1, Py_None);
-    if (!tmp) {
+    ако (!tmp) {
         goto error;
     }
 
     tuple = _PyTuple_FromPair(errstr, tmp);
     Py_DECREF(tmp);
-    if (!tuple) {
+    ако (!tuple) {
         goto error;
     }
     PyErr_SetObject(PyExc_SyntaxError, tuple);
@@ -220,7 +220,7 @@ error:
     Py_XDECREF(tuple);
 }
 
-int
+цео
 _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *format, ...)
 {
     PyObject *errmsg;
@@ -228,13 +228,13 @@ _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *
     va_start(vargs, format);
     errmsg = PyUnicode_FromFormatV(format, vargs);
     va_end(vargs);
-    if (!errmsg) {
+    ако (!errmsg) {
         goto error;
     }
 
-    if (PyErr_WarnExplicitObject(category, errmsg, tok->filename,
+    ако (PyErr_WarnExplicitObject(category, errmsg, tok->filename,
                                  tok->lineno, tok->module, NULL) < 0) {
-        if (PyErr_ExceptionMatches(category)) {
+        ако (PyErr_ExceptionMatches(category)) {
             /* Replace the DeprecationWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
@@ -243,12 +243,12 @@ _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *
         goto error;
     }
     Py_DECREF(errmsg);
-    return 0;
+    врати 0;
 
 error:
     Py_XDECREF(errmsg);
     tok->done = E_ERROR;
-    return -1;
+    врати -1;
 }
 
 
@@ -257,83 +257,83 @@ error:
    the sequence if yes, 0 if not.  The special cases match
    those in stringlib/codecs.h:utf8_decode.
 */
-static int
+static цео
 valid_utf8(const unsigned char* s)
 {
-    int expected = 0;
-    int length;
-    if (*s < 0x80) {
+    цео expected = 0;
+    цео length;
+    ако (*s < 0x80) {
         /* single-byte code */
-        return 1;
+        врати 1;
     }
-    else if (*s < 0xE0) {
+    инако ако (*s < 0xE0) {
         /* \xC2\x80-\xDF\xBF -- 0080-07FF */
-        if (*s < 0xC2) {
+        ако (*s < 0xC2) {
             /* invalid sequence
                \x80-\xBF -- continuation byte
                \xC0-\xC1 -- fake 0000-007F */
-            return 0;
+            врати 0;
         }
         expected = 1;
     }
-    else if (*s < 0xF0) {
+    инако ако (*s < 0xF0) {
         /* \xE0\xA0\x80-\xEF\xBF\xBF -- 0800-FFFF */
-        if (*s == 0xE0 && *(s + 1) < 0xA0) {
+        ако (*s == 0xE0 && *(s + 1) < 0xA0) {
             /* invalid sequence
                \xE0\x80\x80-\xE0\x9F\xBF -- fake 0000-0800 */
-            return 0;
+            врати 0;
         }
-        else if (*s == 0xED && *(s + 1) >= 0xA0) {
+        инако ако (*s == 0xED && *(s + 1) >= 0xA0) {
             /* Decoding UTF-8 sequences in range \xED\xA0\x80-\xED\xBF\xBF
                will result in surrogates in range D800-DFFF. Surrogates are
                not valid UTF-8 so they are rejected.
                See https://www.unicode.org/versions/Unicode5.2.0/ch03.pdf
                (table 3-7) and http://www.rfc-editor.org/rfc/rfc3629.txt */
-            return 0;
+            врати 0;
         }
         expected = 2;
     }
-    else if (*s < 0xF5) {
+    инако ако (*s < 0xF5) {
         /* \xF0\x90\x80\x80-\xF4\x8F\xBF\xBF -- 10000-10FFFF */
-        if (*(s + 1) < 0x90 ? *s == 0xF0 : *s == 0xF4) {
+        ако (*(s + 1) < 0x90 ? *s == 0xF0 : *s == 0xF4) {
             /* invalid sequence -- one of:
                \xF0\x80\x80\x80-\xF0\x8F\xBF\xBF -- fake 0000-FFFF
                \xF4\x90\x80\x80- -- 110000- overflow */
-            return 0;
+            врати 0;
         }
         expected = 3;
     }
-    else {
+    инако {
         /* invalid start byte */
-        return 0;
+        врати 0;
     }
     length = expected + 1;
-    for (int i = 1; i <= expected; i++) {
-        if (s[i] < 0x80 || s[i] >= 0xC0) {
-            return 0;
+    за (цео i = 1; i <= expected; i++) {
+        ако (s[i] < 0x80 || s[i] >= 0xC0) {
+            врати 0;
         }
     }
-    return length;
+    врати length;
 }
 
-int
-_PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
+цео
+_PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, цео lineno)
 {
     const char *badchar = NULL;
     const char *c;
-    int length;
+    цео length;
     const char *line_start = line;
-    for (c = line; *c; c += length) {
-        if (!(length = valid_utf8((const unsigned char *)c))) {
+    за (c = line; *c; c += length) {
+        ако (!(length = valid_utf8((const unsigned char *)c))) {
             badchar = c;
             break;
         }
-        if (*c == '\n') {
+        ако (*c == '\n') {
             lineno++;
             line_start = c + 1;
         }
     }
-    if (badchar) {
+    ако (badchar) {
         _PyTokenizer_syntaxerror_at(
                 tok, line_start, badchar - line_start + 1, lineno,
                 -1, -1,
@@ -344,9 +344,9 @@ _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
                 (unsigned char)*badchar,
                 tok->filename ? " in file " : "", tok->filename, "",
                 lineno);
-        return 0;
+        врати 0;
     }
-    return 1;
+    врати 1;
 }
 
 
@@ -356,12 +356,12 @@ _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
 void
 _PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size)
 {
-    if (s == NULL) {
+    ако (s == NULL) {
         fputs("NULL", f);
-        return;
+        врати;
     }
     putc('"', f);
-    while (size-- > 0) {
+    док (size-- > 0) {
         unsigned char c = *s++;
         switch (c) {
             case '\n': fputs("\\n", f); break;
@@ -371,9 +371,9 @@ _PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size)
             case '\'': fputs("\\'", f); break;
             case '"': fputs("\\\"", f); break;
             default:
-                if (0x20 <= c && c <= 0x7f)
+                ако (0x20 <= c && c <= 0x7f)
                     putc(c, f);
-                else
+                инако
                     fprintf(f, "\\x%02x", c);
         }
     }
