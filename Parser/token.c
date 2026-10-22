@@ -5,7 +5,7 @@
 
 /* Token names */
 
-const char * const _PyParser_TokenNames[] = {
+const var_na * const _PyParser_TokenNames[] = {
     "ENDMARKER",
     "NAME",
     "NUMBER",
@@ -80,171 +80,171 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+puur_naa_nka
+_PyToken_OneChar(puur_naa_nka c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    pak_sa '!': ပွၵ်ႈ EXCLAMATION;
+    pak_sa '%': ပွၵ်ႈ PERCENT;
+    pak_sa '&': ပွၵ်ႈ AMPER;
+    pak_sa '(': ပွၵ်ႈ LPAR;
+    pak_sa ')': ပွၵ်ႈ RPAR;
+    pak_sa '*': ပွၵ်ႈ STAR;
+    pak_sa '+': ပွၵ်ႈ PLUS;
+    pak_sa ',': ပွၵ်ႈ COMMA;
+    pak_sa '-': ပွၵ်ႈ MINUS;
+    pak_sa '.': ပွၵ်ႈ DOT;
+    pak_sa '/': ပွၵ်ႈ SLASH;
+    pak_sa ':': ပွၵ်ႈ COLON;
+    pak_sa ';': ပွၵ်ႈ SEMI;
+    pak_sa '<': ပွၵ်ႈ LESS;
+    pak_sa '=': ပွၵ်ႈ EQUAL;
+    pak_sa '>': ပွၵ်ႈ GREATER;
+    pak_sa '@': ပွၵ်ႈ AT;
+    pak_sa '[': ပွၵ်ႈ LSQB;
+    pak_sa ']': ပွၵ်ႈ RSQB;
+    pak_sa '^': ပွၵ်ႈ CIRCUMFLEX;
+    pak_sa '{': ပွၵ်ႈ LBRACE;
+    pak_sa '|': ပွၵ်ႈ VBAR;
+    pak_sa '}': ပွၵ်ႈ RBRACE;
+    pak_sa '~': ပွၵ်ႈ TILDE;
     }
-    return OP;
+    ပွၵ်ႈ OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+puur_naa_nka
+_PyToken_TwoChars(puur_naa_nka c1, puur_naa_nka c2, puur_naa_nka BARRY_AS_BDFL)
 {
     switch (c1) {
-    case '!':
+    pak_sa '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        pak_sa '=': ပွၵ်ႈ NOTEQUAL;
         }
-        break;
-    case '%':
+        bha_nga;
+    pak_sa '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        pak_sa '=': ပွၵ်ႈ PERCENTEQUAL;
         }
-        break;
-    case '&':
+        bha_nga;
+    pak_sa '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        pak_sa '=': ပွၵ်ႈ AMPEREQUAL;
         }
-        break;
-    case '*':
+        bha_nga;
+    pak_sa '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        pak_sa '*': ပွၵ်ႈ DOUBLESTAR;
+        pak_sa '=': ပွၵ်ႈ STAREQUAL;
         }
-        break;
-    case '+':
+        bha_nga;
+    pak_sa '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        pak_sa '=': ပွၵ်ႈ PLUSEQUAL;
         }
-        break;
-    case '-':
+        bha_nga;
+    pak_sa '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        pak_sa '=': ပွၵ်ႈ MINEQUAL;
+        pak_sa '>': ပွၵ်ႈ RARROW;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        pak_sa '/': ပွၵ်ႈ DOUBLESLASH;
+        pak_sa '=': ပွၵ်ႈ SLASHEQUAL;
         }
-        break;
-    case ':':
+        bha_nga;
+    pak_sa ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        pak_sa '=': ပွၵ်ႈ COLONEQUAL;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        pak_sa '<': ပွၵ်ႈ LEFTSHIFT;
+        pak_sa '=': ပွၵ်ႈ LESSEQUAL;
+        pak_sa '>': ပွၵ်ႈ BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
-        break;
-    case '=':
+        bha_nga;
+    pak_sa '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        pak_sa '=': ပွၵ်ႈ EQEQUAL;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        pak_sa '=': ပွၵ်ႈ GREATEREQUAL;
+        pak_sa '>': ပွၵ်ႈ RIGHTSHIFT;
         }
-        break;
-    case '@':
+        bha_nga;
+    pak_sa '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        pak_sa '=': ပွၵ်ႈ ATEQUAL;
         }
-        break;
-    case '^':
+        bha_nga;
+    pak_sa '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        pak_sa '=': ပွၵ်ႈ CIRCUMFLEXEQUAL;
         }
-        break;
-    case '|':
+        bha_nga;
+    pak_sa '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        pak_sa '=': ပွၵ်ႈ VBAREQUAL;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ပွၵ်ႈ OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+puur_naa_nka
+_PyToken_ThreeChars(puur_naa_nka c1, puur_naa_nka c2, puur_naa_nka c3)
 {
     switch (c1) {
-    case '*':
+    pak_sa '*':
         switch (c2) {
-        case '*':
+        pak_sa '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            pak_sa '=': ပွၵ်ႈ DOUBLESTAREQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '.':
+        bha_nga;
+    pak_sa '.':
         switch (c2) {
-        case '.':
+        pak_sa '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            pak_sa '.': ပွၵ်ႈ ELLIPSIS;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/':
+        pak_sa '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            pak_sa '=': ပွၵ်ႈ DOUBLESLASHEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<':
+        pak_sa '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            pak_sa '=': ပွၵ်ႈ LEFTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '>':
+        pak_sa '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            pak_sa '=': ပွၵ်ႈ RIGHTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ပွၵ်ႈ OP;
 }
