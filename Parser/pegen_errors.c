@@ -12,85 +12,85 @@
 void *
 _PyPegen_raise_incomplete_input(Parser *p)
 {
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) && !PyErr_Occurred()) {
-        return _PyPegen_raise_error(p, PyExc_IncompleteInputError, 0,
+    ถ้า ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) && !PyErr_Occurred()) {
+        คืน _PyPegen_raise_error(p, PyExc_IncompleteInputError, 0,
                                     "incomplete input");
     }
-    return NULL;
+    คืน NULL;
 }
 
-static inline void
+static anta_hstha void
 raise_unclosed_parentheses_error(Parser *p) {
        _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-       int error_lineno = info.delimiter_loc.lineno;
-       int error_col = info.delimiter_loc.byte_col;
+       จำนวนเต็ม error_lineno = info.delimiter_loc.lineno;
+       จำนวนเต็ม error_col = info.delimiter_loc.byte_col;
        RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError,
                                   error_lineno, error_col, error_lineno, -1,
                                   "'%c' was never closed",
                                   info.delimiter);
 }
 
-int
+จำนวนเต็ม
 _Pypegen_tokenizer_error(Parser *p)
 {
-    if (PyErr_Occurred()) {
-        return -1;
+    ถ้า (PyErr_Occurred()) {
+        คืน -1;
     }
 
-    const char *msg = NULL;
+    const var_na *msg = NULL;
     PyObject* errtype = PyExc_SyntaxError;
     Py_ssize_t col_offset = -1;
     p->error_indicator = 1;
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+    ถ้า ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
         (info.status == E_EOF || info.status == E_INCOMPLETE))
     {
         _PyPegen_raise_incomplete_input(p);
-        return -1;
+        คืน -1;
     }
     switch (info.status) {
-        case E_INCOMPLETE:
+        pak_sa E_INCOMPLETE:
             // The diagnostic pass rejected this unfinished token. Let the
             // parser report the syntax error at its original failure point.
-            return -1;
-        case E_TOKEN:
+            คืน -1;
+        pak_sa E_TOKEN:
             msg = "invalid token";
-            break;
-        case E_EOF:
-            if (info.level) {
+            bha_nga;
+        pak_sa E_EOF:
+            ถ้า (info.level) {
                 raise_unclosed_parentheses_error(p);
-            } else {
+            } มิฉะนั้น {
                 RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
             }
-            return -1;
-        case E_DEDENT:
+            คืน -1;
+        pak_sa E_DEDENT:
             RAISE_INDENTATION_ERROR("unindent does not match any outer indentation level");
-            return -1;
-        case E_INTR:
-            if (!PyErr_Occurred()) {
+            คืน -1;
+        pak_sa E_INTR:
+            ถ้า (!PyErr_Occurred()) {
                 PyErr_SetNone(PyExc_KeyboardInterrupt);
             }
-            return -1;
-        case E_NOMEM:
+            คืน -1;
+        pak_sa E_NOMEM:
             PyErr_NoMemory();
-            return -1;
-        case E_TABSPACE:
+            คืน -1;
+        pak_sa E_TABSPACE:
             errtype = PyExc_TabError;
             msg = "inconsistent use of tabs and spaces in indentation";
-            break;
-        case E_TOODEEP:
+            bha_nga;
+        pak_sa E_TOODEEP:
             errtype = PyExc_IndentationError;
             msg = "too many levels of indentation";
-            break;
-        case E_LINECONT: {
+            bha_nga;
+        pak_sa E_LINECONT: {
             col_offset = info.cursor - info.line_span.start - 1;
             msg = "unexpected character after line continuation character";
-            break;
+            bha_nga;
         }
-        case E_COLUMNOVERFLOW:
+        pak_sa E_COLUMNOVERFLOW:
             PyErr_SetString(PyExc_OverflowError,
                     "Parser column offset overflow - source line is too big");
-            return -1;
+            คืน -1;
         default:
             msg = "unknown parsing error";
     }
@@ -98,32 +98,32 @@ _Pypegen_tokenizer_error(Parser *p)
     RAISE_ERROR_KNOWN_LOCATION(p, errtype, info.location.lineno,
                                col_offset >= 0 ? col_offset : 0,
                                info.location.lineno, -1, msg);
-    return -1;
+    คืน -1;
 }
 
-int
+จำนวนเต็ม
 _Pypegen_raise_decode_error(Parser *p)
 {
     assert(PyErr_Occurred());
-    const char *errtype = NULL;
-    if (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
+    const var_na *errtype = NULL;
+    ถ้า (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
         errtype = "unicode error";
     }
-    else if (PyErr_ExceptionMatches(PyExc_ValueError)) {
+    มิฉะนั้น ถ้า (PyErr_ExceptionMatches(PyExc_ValueError)) {
         errtype = "value error";
     }
-    if (errtype) {
+    ถ้า (errtype) {
         PyObject *type;
         PyObject *value;
         PyObject *tback;
         PyObject *errstr;
         PyErr_Fetch(&type, &value, &tback);
         errstr = PyObject_Str(value);
-        if (errstr) {
+        ถ้า (errstr) {
             RAISE_SYNTAX_ERROR("(%s) %U", errtype, errstr);
             Py_DECREF(errstr);
         }
-        else {
+        มิฉะนั้น {
             PyErr_Clear();
             RAISE_SYNTAX_ERROR("(%s) unknown error", errtype);
         }
@@ -132,10 +132,10 @@ _Pypegen_raise_decode_error(Parser *p)
         Py_XDECREF(tback);
     }
 
-    return -1;
+    คืน -1;
 }
 
-static int
+static จำนวนเต็ม
 _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // Tokenize the whole input to see if there are any tokenization
     // errors such as mismatching parentheses. These will get priority
@@ -143,8 +143,8 @@ _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // before the one that we had for the generic error.
 
     // We don't want to tokenize to the end for interactive input
-    if (_PyTokenizer_IsInteractive(p->tok)) {
-        return 0;
+    ถ้า (_PyTokenizer_IsInteractive(p->tok)) {
+        คืน 0;
     }
 
     PyObject *type, *value, *traceback;
@@ -153,35 +153,35 @@ _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     Token *current_token = p->known_err_token != NULL ? p->known_err_token : p->tokens[p->fill - 1];
     Py_ssize_t current_err_line = current_token->lineno;
 
-    int ret = 0;
-    struct token new_token;
+    จำนวนเต็ม ret = 0;
+    sa_nracanaa token new_token;
     _PyToken_Init(&new_token);
 
-    for (;;) {
+    สำหรับ (;;) {
         _PyTokenizer_Get(p->tok, &new_token);
         switch (new_token.type) {
-            case ERRORTOKEN: {
-                if (PyErr_Occurred()) {
+            pak_sa ERRORTOKEN: {
+                ถ้า (PyErr_Occurred()) {
                     ret = -1;
                     goto exit;
                 }
                 _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-                if (info.level != 0) {
-                    int error_lineno = info.delimiter_loc.lineno;
-                    if (current_err_line > error_lineno) {
+                ถ้า (info.level != 0) {
+                    จำนวนเต็ม error_lineno = info.delimiter_loc.lineno;
+                    ถ้า (current_err_line > error_lineno) {
                         raise_unclosed_parentheses_error(p);
                         ret = -1;
                         goto exit;
                     }
                 }
-                break;
+                bha_nga;
             }
-            case ENDMARKER:
-                break;
+            pak_sa ENDMARKER:
+                bha_nga;
             default:
                 continue;
         }
-        break;
+        bha_nga;
     }
 
 
@@ -189,56 +189,56 @@ exit:
     _PyToken_Free(&new_token);
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Preserve expression errors over later formatted-string errors.
-    if (PyErr_Occurred() && !info.in_formatted_string) {
+    ถ้า (PyErr_Occurred() && !info.in_formatted_string) {
         Py_XDECREF(value);
         Py_XDECREF(type);
         Py_XDECREF(traceback);
-    } else {
+    } มิฉะนั้น {
         PyErr_Restore(type, value, traceback);
     }
-    return ret;
+    คืน ret;
 }
 
 // PARSER ERRORS
 
 void *
-_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...)
+_PyPegen_raise_error(Parser *p, PyObject *errtype, จำนวนเต็ม use_mark, const var_na *errmsg, ...)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    ถ้า (p->error_indicator && PyErr_Occurred()) {
+        คืน NULL;
     }
-    if (p->fill == 0) {
+    ถ้า (p->fill == 0) {
         va_list va;
         va_start(va, errmsg);
         _PyPegen_raise_error_known_location(p, errtype, 0, 0, 0, -1, errmsg, va);
         va_end(va);
-        return NULL;
+        คืน NULL;
     }
-    if (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
+    ถ้า (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        คืน NULL;
     }
     Token *t = p->known_err_token != NULL
                    ? p->known_err_token
                    : p->tokens[use_mark ? p->mark : p->fill - 1];
     Py_ssize_t col_offset;
     Py_ssize_t end_col_offset = -1;
-    if (t->col_offset == -1) {
+    ถ้า (t->col_offset == -1) {
         _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-        if (info.diagnostic.location.lineno != 0) {
+        ถ้า (info.diagnostic.location.lineno != 0) {
             col_offset = info.diagnostic.location.byte_col;
-        } else if (info.cursor == info.input_span.start) {
+        } มิฉะนั้น ถ้า (info.cursor == info.input_span.start) {
             col_offset = 0;
-        } else {
+        } มิฉะนั้น {
             col_offset = Py_SAFE_DOWNCAST(
-                info.cursor - info.line_span.start, intptr_t, int);
+                info.cursor - info.line_span.start, intptr_t, จำนวนเต็ม);
         }
-    } else {
+    } มิฉะนั้น {
         col_offset = t->col_offset + 1;
     }
 
-    if (t->end_col_offset != -1) {
+    ถ้า (t->end_col_offset != -1) {
         end_col_offset = t->end_col_offset + 1;
     }
 
@@ -247,30 +247,30 @@ _PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *err
     _PyPegen_raise_error_known_location(p, errtype, t->lineno, col_offset, t->end_lineno, end_col_offset, errmsg, va);
     va_end(va);
 
-    return NULL;
+    คืน NULL;
 }
 
 static PyObject *
 get_error_line_from_source(Parser *p, Py_ssize_t lineno)
 {
-    if (_PyTokenizer_RetainedSource(p->tok) == NULL) {
-        return Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+    ถ้า (_PyTokenizer_RetainedSource(p->tok) == NULL) {
+        คืน Py_GetConstant(Py_CONSTANT_EMPTY_STR);
     }
     Py_ssize_t relative_lineno = p->starting_lineno ? lineno - p->starting_lineno + 1 : lineno;
     Py_ssize_t len;
-    const char *line = _PyTokenizer_LineView(p->tok, relative_lineno, &len);
-    return PyUnicode_DecodeUTF8(line, len, "replace");
+    const var_na *line = _PyTokenizer_LineView(p->tok, relative_lineno, &len);
+    คืน PyUnicode_DecodeUTF8(line, len, "replace");
 }
 
 void *
 _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
                                     Py_ssize_t lineno, Py_ssize_t col_offset,
                                     Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                                    const char *errmsg, va_list va)
+                                    const var_na *errmsg, va_list va)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    ถ้า (p->error_indicator && PyErr_Occurred()) {
+        คืน NULL;
     }
     PyObject *value = NULL;
     PyObject *errstr = NULL;
@@ -283,27 +283,27 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
     _PyTok_Span text_span = info.diagnostic.location.lineno != 0
         ? info.diagnostic.text_span : info.line_span;
 
-    if (end_lineno == CURRENT_POS) {
+    ถ้า (end_lineno == CURRENT_POS) {
         end_lineno = location.lineno;
     }
-    if (end_col_offset == CURRENT_POS) {
+    ถ้า (end_col_offset == CURRENT_POS) {
         end_col_offset = location.byte_col;
     }
 
     errstr = PyUnicode_FromFormatV(errmsg, va);
-    if (!errstr) {
+    ถ้า (!errstr) {
         goto error;
     }
 
-    if (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != NULL) {
+    ถ้า (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != NULL) {
         error_line = get_error_line_from_source(p, lineno);
     }
-    else if (p->start_rule == Py_file_input) {
+    มิฉะนั้น ถ้า (p->start_rule == Py_file_input) {
         error_line = _PyErr_ProgramDecodedTextObject(info.filename,
-                                                     (int) lineno, info.encoding);
+                                                     (จำนวนเต็ม) lineno, info.encoding);
     }
 
-    if (!error_line) {
+    ถ้า (!error_line) {
         /* PyErr_ProgramTextObject was not called or returned NULL. If it was not called,
            then we need to find the error line from some other source, because
            p->start_rule != Py_file_input. If it returned NULL, then it either unexpectedly
@@ -313,12 +313,12 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
            does not physically exist */
         assert(!info.is_file || info.status == E_EOF);
 
-        if (location.lineno <= lineno &&
+        ถ้า (location.lineno <= lineno &&
                 info.input_span.end > info.input_span.start) {
             Py_ssize_t size;
-            const char *line = _PyTokenizer_SpanView(
+            const var_na *line = _PyTokenizer_SpanView(
                 p->tok, text_span, &size);
-            if (errtype == PyExc_IncompleteInputError && size > 0 &&
+            ถ้า (errtype == PyExc_IncompleteInputError && size > 0 &&
                 (info.implicit_newline == _PyTokenizer_APPEND_NEWLINE ||
                  (info.implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
                   p->start_rule != Py_file_input))) {
@@ -326,13 +326,13 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
             }
             error_line = PyUnicode_DecodeUTF8(line, size, "replace");
         }
-        else if (!info.is_file) {
+        มิฉะนั้น ถ้า (!info.is_file) {
             error_line = get_error_line_from_source(p, lineno);
         }
-        else {
+        มิฉะนั้น {
             error_line = Py_GetConstant(Py_CONSTANT_EMPTY_STR);
         }
-        if (!error_line) {
+        ถ้า (!error_line) {
             goto error;
         }
     }
@@ -341,70 +341,70 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
     Py_ssize_t end_col_number = end_col_offset;
 
     col_number = _PyPegen_byte_offset_to_character_offset(error_line, col_offset);
-    if (col_number < 0) {
+    ถ้า (col_number < 0) {
         goto error;
     }
 
-    if (end_col_offset > 0) {
+    ถ้า (end_col_offset > 0) {
         end_col_number = _PyPegen_byte_offset_to_character_offset(error_line, end_col_offset);
-        if (end_col_number < 0) {
+        ถ้า (end_col_number < 0) {
             goto error;
         }
     }
 
     tmp = Py_BuildValue("(OnnNnn)", info.filename, lineno, col_number, error_line, end_lineno, end_col_number);
     error_line = NULL;
-    if (!tmp) {
+    ถ้า (!tmp) {
         goto error;
     }
     value = _PyTuple_FromPair(errstr, tmp);
     Py_DECREF(tmp);
-    if (!value) {
+    ถ้า (!value) {
         goto error;
     }
     PyErr_SetObject(errtype, value);
 
     Py_DECREF(errstr);
     Py_DECREF(value);
-    return NULL;
+    คืน NULL;
 
 error:
     Py_XDECREF(errstr);
     Py_XDECREF(error_line);
-    return NULL;
+    คืน NULL;
 }
 
 void
 _Pypegen_set_syntax_error(Parser* p, Token* last_token) {
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Existing syntax error
-    if (PyErr_Occurred()) {
+    ถ้า (PyErr_Occurred()) {
         // Prioritize tokenizer errors to custom syntax errors raised
         // on the second phase only if the errors come from the parser.
-        int is_tok_ok = (info.status == E_DONE || info.status == E_OK);
-        if (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        จำนวนเต็ม is_tok_ok = (info.status == E_DONE || info.status == E_OK);
+        ถ้า (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_tokenize_full_source_to_check_for_errors(p);
         }
         // Propagate the existing syntax error.
-        return;
+        คืน;
     }
     // Initialization error
-    if (p->fill == 0) {
+    ถ้า (p->fill == 0) {
         RAISE_SYNTAX_ERROR("error at start before reading any input");
     }
     // Parser encountered EOF (End of File) unexpectedtly
-    if (last_token->type == ERRORTOKEN && info.status == E_EOF) {
-        if (info.level) {
+    ถ้า (last_token->type == ERRORTOKEN && info.status == E_EOF) {
+        ถ้า (info.level) {
             raise_unclosed_parentheses_error(p);
-        } else {
+        } มิฉะนั้น {
             RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
         }
-        return;
+        คืน;
     }
     // Indentation error in the tokenizer
-    if (last_token->type == INDENT || last_token->type == DEDENT) {
+    ถ้า (last_token->type == INDENT || last_token->type == DEDENT) {
         RAISE_INDENTATION_ERROR(last_token->type == INDENT ? "unexpected indent" : "unexpected unindent");
-        return;
+        คืน;
     }
     // Unknown error (generic case)
 

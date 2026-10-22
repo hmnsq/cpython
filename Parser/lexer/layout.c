@@ -9,198 +9,198 @@
 #define TABSIZE 8
 #define ALTTABSIZE 1
 
-int
-_PyLexer_ContinueLine(struct tok_state *tok)
+จำนวนเต็ม
+_PyLexer_ContinueLine(sa_nracanaa tok_state *tok)
 {
-    int c = tok_nextc(tok);
-    if (c == '\r') {
+    จำนวนเต็ม c = tok_nextc(tok);
+    ถ้า (c == '\r') {
         c = tok_nextc(tok);
     }
-    if (c != '\n') {
+    ถ้า (c != '\n') {
         tok->done = E_LINECONT;
-        return -1;
+        คืน -1;
     }
     c = tok_nextc(tok);
-    if (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
+    ถ้า (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
         tok->needs_newline |= _PyTokenizer_NEWLINE_CONTINUATION;
     }
-    if (c == EOF) {
+    ถ้า (c == EOF) {
         tok->done = E_EOF;
         tok->cur = tok->inp;
-        return -1;
-    } else {
+        คืน -1;
+    } มิฉะนั้น {
         tok_backup(tok, c);
     }
-    return c;
+    คืน c;
 }
 
 
-static int
-update_indentation(struct tok_state *tok, int col, int altcol)
+static จำนวนเต็ม
+update_indentation(sa_nracanaa tok_state *tok, จำนวนเต็ม col, จำนวนเต็ม altcol)
 {
     lexer_layout_state *layout = &tok->layout;
-    if (col == layout->stack[layout->depth].column) {
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+    ถ้า (col == layout->stack[layout->depth].column) {
+        ถ้า (altcol != layout->stack[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            คืน -1;
         }
     }
-    else if (col > layout->stack[layout->depth].column) {
-        if (layout->depth + 1 >= MAXINDENT) {
+    มิฉะนั้น ถ้า (col > layout->stack[layout->depth].column) {
+        ถ้า (layout->depth + 1 >= MAXINDENT) {
             tok->done = E_TOODEEP;
             tok->cur = tok->inp;
-            return -1;
+            คืน -1;
         }
-        if (altcol <= layout->stack[layout->depth].alternate_column) {
+        ถ้า (altcol <= layout->stack[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            คืน -1;
         }
         layout->pending++;
         layout->stack[++layout->depth] = (indentation_level){col, altcol};
     }
-    else {
-        while (layout->depth > 0 &&
+    มิฉะนั้น {
+        ขณะ (layout->depth > 0 &&
             col < layout->stack[layout->depth].column) {
             layout->pending--;
             layout->depth--;
         }
-        if (col != layout->stack[layout->depth].column) {
+        ถ้า (col != layout->stack[layout->depth].column) {
             tok->done = E_DEDENT;
             tok->cur = tok->inp;
-            return -1;
+            คืน -1;
         }
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+        ถ้า (altcol != layout->stack[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            คืน -1;
         }
     }
-    return 0;
+    คืน 0;
 }
 
-int
-_PyLexer_BeginLine(struct tok_state *tok)
+จำนวนเต็ม
+_PyLexer_BeginLine(sa_nracanaa tok_state *tok)
 {
     assert(tok->layout.at_bol);
-    int c;
-    int blankline = 0;
-    int col = 0;
-    int altcol = 0;
+    จำนวนเต็ม c;
+    จำนวนเต็ม blankline = 0;
+    จำนวนเต็ม col = 0;
+    จำนวนเต็ม altcol = 0;
     tok->layout.at_bol = 0;
-    int cont_line_col = 0;
-    for (;;) {
+    จำนวนเต็ม cont_line_col = 0;
+    สำหรับ (;;) {
         c = tok_nextc(tok);
-        if (c == ' ') {
+        ถ้า (c == ' ') {
             col++, altcol++;
         }
-        else if (c == '\t') {
+        มิฉะนั้น ถ้า (c == '\t') {
             col = (col / TABSIZE + 1) * TABSIZE;
             altcol = (altcol / ALTTABSIZE + 1) * ALTTABSIZE;
         }
-        else if (c == '\014')  {/* Control-L (formfeed) */
+        มิฉะนั้น ถ้า (c == '\014')  {/* Control-L (formfeed) */
             col = altcol = 0; /* For Emacs users */
         }
-        else if (c == '\\') {
+        มิฉะนั้น ถ้า (c == '\\') {
             // Indentation cannot be split over multiple physical lines
             // using backslashes. This means that if we found a backslash
             // preceded by whitespace, **the first one we find** determines
             // the level of indentation of whatever comes next.
             cont_line_col = cont_line_col ? cont_line_col : col;
-            if ((c = _PyLexer_ContinueLine(tok)) == -1) {
-                return -1;
+            ถ้า ((c = _PyLexer_ContinueLine(tok)) == -1) {
+                คืน -1;
             }
         }
-        else if (c == EOF && PyErr_Occurred()) {
-            return -1;
+        มิฉะนั้น ถ้า (c == EOF && PyErr_Occurred()) {
+            คืน -1;
         }
-        else {
-            break;
+        มิฉะนั้น {
+            bha_nga;
         }
     }
     tok_backup(tok, c);
-    if (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
+    ถ้า (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
         tok->level == 0 && (cont_line_col || col)) {
         // Without the newline, a whitespace-only line affects indentation.
         tok->needs_newline |= _PyTokenizer_NEWLINE_INDENT;
     }
-    if (c == '#' || c == '\n' || c == '\r') {
-        int interactive = _PyTok_ReaderIsInteractive(tok);
+    ถ้า (c == '#' || c == '\n' || c == '\r') {
+        จำนวนเต็ม interactive = _PyTok_ReaderIsInteractive(tok);
         /* Lines with only whitespace and/or comments
            shouldn't affect the indentation and are
            not passed to the parser as NEWLINE tokens,
            except *totally* empty lines in interactive
            mode, which signal the end of a command group. */
-        if (col == 0 && c == '\n' && interactive) {
+        ถ้า (col == 0 && c == '\n' && interactive) {
             blankline = 0; /* Let it through */
         }
-        else if (interactive && tok->lineno == 1) {
+        มิฉะนั้น ถ้า (interactive && tok->lineno == 1) {
             /* In interactive mode, if the first line contains
                only spaces and/or a comment, let it through. */
             blankline = 0;
             col = altcol = 0;
         }
-        else {
+        มิฉะนั้น {
             blankline = 1; /* Ignore completely */
         }
     }
-    if (!blankline && tok->level == 0) {
+    ถ้า (!blankline && tok->level == 0) {
         col = cont_line_col ? cont_line_col : col;
         altcol = cont_line_col ? cont_line_col : altcol;
-        if (update_indentation(tok, col, altcol) < 0) {
-            return -1;
+        ถ้า (update_indentation(tok, col, altcol) < 0) {
+            คืน -1;
         }
     }
-    return blankline;
+    คืน blankline;
 }
 
-int
-_PyLexer_IndentationToken(struct tok_state *tok, struct token *token)
+จำนวนเต็ม
+_PyLexer_IndentationToken(sa_nracanaa tok_state *tok, sa_nracanaa token *token)
 {
     assert(tok->layout.pending != 0);
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
-    if (tok->layout.pending < 0) {
-        if (tok->tok_extra_tokens) {
+    ถ้า (tok->layout.pending < 0) {
+        ถ้า (tok->tok_extra_tokens) {
             p_start = tok->cur;
             p_end = tok->cur;
         }
         tok->layout.pending++;
-        return _PyLexer_token_setup(tok, token, DEDENT, p_start, p_end);
+        คืน _PyLexer_token_setup(tok, token, DEDENT, p_start, p_end);
     }
-    else {
-        if (tok->tok_extra_tokens) {
+    มิฉะนั้น {
+        ถ้า (tok->tok_extra_tokens) {
             p_start = tok->buf_offset;
             p_end = tok->cur;
         }
         tok->layout.pending--;
-        return _PyLexer_token_setup(tok, token, INDENT, p_start, p_end);
+        คืน _PyLexer_token_setup(tok, token, INDENT, p_start, p_end);
     }
 }
 
-int
-_PyLexer_Newline(struct tok_state *tok, struct token *token, int blankline)
+จำนวนเต็ม
+_PyLexer_Newline(sa_nracanaa tok_state *tok, sa_nracanaa token *token, จำนวนเต็ม blankline)
 {
-    if (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
+    ถ้า (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
         // The statement's terminating newline was not in the input.
         tok->needs_newline |= _PyTokenizer_NEWLINE_STATEMENT;
     }
     tok->layout.at_bol = 1;
-    if (blankline || tok->level > 0) {
-        if (!tok->tok_extra_tokens) {
-            return 0;
+    ถ้า (blankline || tok->level > 0) {
+        ถ้า (!tok->tok_extra_tokens) {
+            คืน 0;
         }
     }
-    else if (!tok->layout.comment_newline || !tok->tok_extra_tokens) {
-        return _PyLexer_token_setup(tok, token, NEWLINE,
+    มิฉะนั้น ถ้า (!tok->layout.comment_newline || !tok->tok_extra_tokens) {
+        คืน _PyLexer_token_setup(tok, token, NEWLINE,
                                     tok->start, tok->cur - 1);
     }
     tok->layout.comment_newline = 0;
-    return _PyLexer_token_setup(tok, token, NL, tok->start, tok->cur);
+    คืน _PyLexer_token_setup(tok, token, NL, tok->start, tok->cur);
 }
 
 void
-_PyLexer_ImplyDedents(struct tok_state *tok)
+_PyLexer_ImplyDedents(sa_nracanaa tok_state *tok)
 {
-    if (tok->layout.depth != 0) {
+    ถ้า (tok->layout.depth != 0) {
         tok->layout.pending = -tok->layout.depth;
         tok->layout.depth = 0;
     }
