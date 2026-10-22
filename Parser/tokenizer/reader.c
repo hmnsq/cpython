@@ -1,13 +1,13 @@
-#include "Python.h"
-#include "pycore_fileutils.h"
-#include "pycore_pystate.h"
-#include "pycore_runtime.h"
+#ಅನ್ತರ್ಭಾವ "Python.h"
+#ಅನ್ತರ್ಭಾವ "pycore_fileutils.h"
+#ಅನ್ತರ್ಭಾವ "pycore_pystate.h"
+#ಅನ್ತರ್ಭಾವ "pycore_runtime.h"
 
-#include "errcode.h"
-#include "helpers.h"
-#include "reader.h"
-#include "reader_internal.h"
-#include "../lexer/state.h"
+#ಅನ್ತರ್ಭಾವ "errcode.h"
+#ಅನ್ತರ್ಭಾವ "helpers.h"
+#ಅನ್ತರ್ಭಾವ "reader.h"
+#ಅನ್ತರ್ಭಾವ "reader_internal.h"
+#ಅನ್ತರ್ಭಾವ "../lexer/state.h"
 
 #define READER_BUFFER_GROWTH_FACTOR 2
 
@@ -15,84 +15,84 @@
 #  include <unistd.h>
 #endif
 
-static inline int
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಪೂರ್ಣಾಙ್ಕ
 reader_is_streaming(_PyTok_ReaderKind kind)
 {
-    return kind == _PYTOK_READER_FILE || kind == _PYTOK_READER_READLINE;
+    ಪ್ರತ್ಯಾಗಮ kind == _PYTOK_READER_FILE || kind == _PYTOK_READER_READLINE;
 }
 
-void
-_PyTok_ReaderFree(struct tok_state *tok)
+ಶೂನ್ಯ
+_PyTok_ReaderFree(ಸಂರಚನಾ tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader == NULL) {
-        return;
+    ಯದಿ (reader == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ;
     }
     Py_XDECREF(reader->readline);
     Py_XDECREF(reader->decoder);
-    for (int i = 0;
-         i < (int)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
-        _PyTok_ChunkClear(&reader->prefetched_lines[i]);
+    ಪ್ರತಿ (ಪೂರ್ಣಾಙ್ಕ i = 0;
+         i < (ಪೂರ್ಣಾಙ್ಕ)Py_ARRAY_LENGTH(reader->prefetched_ಸಾಲುಗಳು); i++) {
+        _PyTok_ChunkClear(&reader->prefetched_ಸಾಲುಗಳು[i]);
     }
     PyMem_Free(reader->encoding);
     PyMem_Free(reader->file_buffer);
     PyMem_Free(reader->decoded);
     PyMem_Free(reader);
-    tok->reader = NULL;
+    tok->reader = ರಿಕ್ತ;
 }
 
-int
-_PyTokenizer_Traverse(struct tok_state *tok, visitproc visit, void *arg)
+ಪೂರ್ಣಾಙ್ಕ
+_PyTokenizer_Traverse(ಸಂರಚನಾ tok_state *tok, visitproc visit, ಶೂನ್ಯ *arg)
 {
     Py_VISIT(tok->filename);
     Py_VISIT(tok->module);
     _PyTok_Reader *reader = tok->reader;
     Py_VISIT(reader->readline);
     Py_VISIT(reader->decoder);
-    for (int i = 0;
-         i < (int)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
-        _PyTok_Chunk *chunk = &reader->prefetched_lines[i];
-        if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT) {
+    ಪ್ರತಿ (ಪೂರ್ಣಾಙ್ಕ i = 0;
+         i < (ಪೂರ್ಣಾಙ್ಕ)Py_ARRAY_LENGTH(reader->prefetched_ಸಾಲುಗಳು); i++) {
+        _PyTok_Chunk *chunk = &reader->prefetched_ಸಾಲುಗಳು[i];
+        ಯದಿ (chunk->ownership == _PYTOK_CHUNK_PYOBJECT) {
             Py_VISIT(chunk->owner);
         }
     }
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-int
-_PyTok_ReserveBuffer(char **buffer, Py_ssize_t *capacity, Py_ssize_t needed,
+ಪೂರ್ಣಾಙ್ಕ
+_PyTok_ReserveBuffer(ವರ್ಣ **buffer, Py_ssize_t *capacity, Py_ssize_t needed,
                      Py_ssize_t initial_capacity)
 {
-    assert(initial_capacity > 0);
-    if (needed <= *capacity) {
-        return 0;
+    ಪ್ರತಿಜ್ಞಾ(initial_capacity > 0);
+    ಯದಿ (needed <= *capacity) {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
     // Grow geometrically to avoid reallocating for every longer line.
     Py_ssize_t cap = *capacity > 0 ? *capacity : initial_capacity;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / READER_BUFFER_GROWTH_FACTOR) {
+    ಯಾವತ್ (cap < needed) {
+        ಯದಿ (cap > PY_SSIZE_T_MAX / READER_BUFFER_GROWTH_FACTOR) {
             cap = needed;
-            break;
+            ಭಙ್ಗ;
         }
         cap *= READER_BUFFER_GROWTH_FACTOR;
     }
-    char *resized = PyMem_Realloc(*buffer, cap);
-    if (resized == NULL) {
+    ವರ್ಣ *resized = PyMem_Realloc(*buffer, cap);
+    ಯದಿ (resized == ರಿಕ್ತ) {
         PyErr_NoMemory();
-        return -1;
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
     *buffer = resized;
     *capacity = cap;
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-append_decoded(_PyTok_Reader *reader, const char *data, Py_ssize_t len)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+append_decoded(_PyTok_Reader *reader, ಧ್ರುವ ವರ್ಣ *data, Py_ssize_t len)
 {
-    if (len == 0) {
-        return 0;
+    ಯದಿ (len == 0) {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    if (reader->decoded_pos > 0) {
+    ಯದಿ (reader->decoded_pos > 0) {
         Py_ssize_t remaining = reader->decoded_len - reader->decoded_pos;
         memmove(reader->decoded, reader->decoded + reader->decoded_pos,
                 (size_t)remaining);
@@ -100,48 +100,48 @@ append_decoded(_PyTok_Reader *reader, const char *data, Py_ssize_t len)
         reader->decoded_pos = 0;
         reader->decoded_len = remaining;
     }
-    if (len < 0 || reader->decoded_len > PY_SSIZE_T_MAX - len - 1 ||
+    ಯದಿ (len < 0 || reader->decoded_len > PY_SSIZE_T_MAX - len - 1 ||
             _PyTok_ReserveBuffer(&reader->decoded, &reader->decoded_cap,
                                 reader->decoded_len + len + 1, BUFSIZ) < 0) {
         PyErr_NoMemory();
-        return -1;
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
     memcpy(reader->decoded + reader->decoded_len, data, (size_t)len);
     reader->decoded_len += len;
     reader->decoded[reader->decoded_len] = '\0';
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 append_implicit_newline(_PyTok_Reader *reader)
 {
-    if (reader->decoded_pos == reader->decoded_len ||
+    ಯದಿ (reader->decoded_pos == reader->decoded_len ||
             reader->decoded[reader->decoded_len - 1] == '\n') {
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    if (append_decoded(reader, "\n", 1) < 0) {
-        return -1;
+    ಯದಿ (append_decoded(reader, "\n", 1) < 0) {
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
     reader->decoded_tail_is_implicit = 1;
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-pop_decoded_line(_PyTok_Reader *reader, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+ತೆಗೆ_decoded_ಸಾಲು(_PyTok_Reader *reader, _PyTok_Chunk *chunk)
 {
-    assert(reader->decoded_pos >= 0 && reader->decoded_pos <= reader->decoded_len);
-    assert(reader->decoded_scan >= reader->decoded_pos &&
+    ಪ್ರತಿಜ್ಞಾ(reader->decoded_pos >= 0 && reader->decoded_pos <= reader->decoded_len);
+    ಪ್ರತಿಜ್ಞಾ(reader->decoded_scan >= reader->decoded_pos &&
            reader->decoded_scan <= reader->decoded_len);
-    if (reader->decoded_pos == reader->decoded_len) {
-        return 0;
+    ಯದಿ (reader->decoded_pos == reader->decoded_len) {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    char *start = reader->decoded + reader->decoded_pos;
+    ವರ್ಣ *start = reader->decoded + reader->decoded_pos;
     // Previously scanned bytes cannot contain a newline.
-    char *newline = memchr(reader->decoded + reader->decoded_scan, '\n',
+    ವರ್ಣ *newline = memchr(reader->decoded + reader->decoded_scan, '\n',
                            reader->decoded_len - reader->decoded_scan);
-    if (newline == NULL) {
+    ಯದಿ (newline == ರಿಕ್ತ) {
         reader->decoded_scan = reader->decoded_len;
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
     Py_ssize_t len = newline - start + 1;
     chunk->data = start;
@@ -151,521 +151,521 @@ pop_decoded_line(_PyTok_Reader *reader, _PyTok_Chunk *chunk)
     reader->decoded_scan = reader->decoded_pos;
     chunk->implicit_newline = reader->decoded_pos == reader->decoded_len &&
         reader->decoded_tail_is_implicit;
-    if (reader->decoded_pos == reader->decoded_len) {
+    ಯದಿ (reader->decoded_pos == reader->decoded_len) {
         reader->decoded_pos = reader->decoded_len = 0;
         reader->decoded_scan = 0;
         reader->decoded_tail_is_implicit = 0;
     }
-    return 1;
+    ಪ್ರತ್ಯಾಗಮ 1;
 }
 
-static int
-chunk_is_line(const _PyTok_Chunk *chunk)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+chunk_is_ಸಾಲು(ಧ್ರುವ _PyTok_Chunk *chunk)
 {
-    if (chunk->len == 0 || chunk->data[chunk->len - 1] != '\n') {
-        return 0;
+    ಯದಿ (chunk->len == 0 || chunk->data[chunk->len - 1] != '\n') {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    return memchr(chunk->data, '\n', chunk->len - 1) == NULL;
+    ಪ್ರತ್ಯಾಗಮ memchr(chunk->data, '\n', chunk->len - 1) == ರಿಕ್ತ;
 }
 
-static _PyTok_ReadResult
-next_prepared(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+next_prepared(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
-    if (tok->lineno >= tok->source.nlines) {
-        return _PYTOK_READ_EOF;
+    ಯದಿ (tok->lineno >= tok->source.nlines) {
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_EOF;
     }
     _PyTok_Span tail = {tok->inp, tok->source.base_offset + tok->source.len};
     _PyTok_Off newline = _PyTok_SourceFindByte(&tok->source, tail, '\n');
-    _PyTok_Span line = {tail.start, newline >= 0 ? newline + 1 : tail.end};
-    chunk->data = (char *)_PyTok_SourceSpanView(
-        &tok->source, line, &chunk->len);
+    _PyTok_Span ಸಾಲು = {tail.start, newline >= 0 ? newline + 1 : tail.end};
+    chunk->data = (ವರ್ಣ *)_PyTok_SourceSpanView(
+        &tok->source, ಸಾಲು, &chunk->len);
     chunk->ownership = _PYTOK_CHUNK_BORROWED;
-    chunk->implicit_newline = line.end == tail.end
+    chunk->implicit_newline = ಸಾಲು.end == tail.end
         ? tok->reader->prepared_final_newline : 0;
-    return _PYTOK_READ_LINE;
+    ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
 }
 
-static _PyTok_ReadResult
-read_file_line(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+read_file_ಸಾಲು(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
     Py_ssize_t len = 0;
-    for (;;) {
-        if (len > PY_SSIZE_T_MAX - BUFSIZ) {
+    ಪ್ರತಿ (;;) {
+        ಯದಿ (len > PY_SSIZE_T_MAX - BUFSIZ) {
             PyErr_NoMemory();
-            return _PYTOK_READ_ERROR;
+            ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
         }
-        if (_PyTok_ReserveBuffer(&reader->file_buffer, &reader->file_buffer_cap,
+        ಯದಿ (_PyTok_ReserveBuffer(&reader->file_buffer, &reader->file_buffer_cap,
                                 len + BUFSIZ, BUFSIZ) < 0) {
-            return _PYTOK_READ_ERROR;
+            ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
         }
-        int available = (int)Py_MIN(reader->file_buffer_cap - len, INT_MAX);
-        size_t read = 0;
-        char *result = _Py_UniversalNewlineFgetsWithSize(
-            reader->file_buffer + len, available, reader->fp, NULL, &read);
-        if (result == NULL) {
-            if (len == 0) {
-                return _PYTOK_READ_EOF;
+        ಪೂರ್ಣಾಙ್ಕ available = (ಪೂರ್ಣಾಙ್ಕ)Py_MIN(reader->file_buffer_cap - len, INT_MAX);
+        size_t ಪಠ = 0;
+        ವರ್ಣ *result = _Py_UniversalNewlineFgetsWithSize(
+            reader->file_buffer + len, available, reader->fp, ರಿಕ್ತ, &ಪಠ);
+        ಯದಿ (result == ರಿಕ್ತ) {
+            ಯದಿ (len == 0) {
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_EOF;
             }
-            break;
+            ಭಙ್ಗ;
         }
-        len += (Py_ssize_t)read;
-        if (len > 0 && reader->file_buffer[len - 1] == '\n') {
-            break;
+        len += (Py_ssize_t)ಪಠ;
+        ಯದಿ (len > 0 && reader->file_buffer[len - 1] == '\n') {
+            ಭಙ್ಗ;
         }
     }
-    int implicit = reader->file_buffer[len - 1] != '\n';
+    ಪೂರ್ಣಾಙ್ಕ implicit = reader->file_buffer[len - 1] != '\n';
     chunk->data = reader->file_buffer;
     chunk->len = len;
     chunk->implicit_newline = implicit;
     chunk->ownership = _PYTOK_CHUNK_BORROWED;
-    return _PYTOK_READ_LINE;
+    ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
 }
 
-static int
-initialize_file(struct tok_state *tok)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+initialize_file(ಸಂರಚನಾ tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
     reader->file_initialized = 1;
-    if (reader->encoding != NULL) {
-        return _PyTok_StartDecoder(tok, "strict");
+    ಯದಿ (reader->encoding != ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ _PyTok_StartDecoder(tok, "strict");
     }
 
-    _PyTok_ReadResult result = read_file_line(
-        tok, &reader->prefetched_lines[0]);
-    if (result == _PYTOK_READ_EOF) {
+    _PyTok_ReadResult result = read_file_ಸಾಲು(
+        tok, &reader->prefetched_ಸಾಲುಗಳು[0]);
+    ಯದಿ (result == _PYTOK_READ_EOF) {
         reader->file_eof = 1;
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    if (result != _PYTOK_READ_LINE) {
-        return -1;
+    ಯದಿ (result != PYTOK_READ_ಸಾಲು) {
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
     Py_ssize_t bom_len;
     _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
-        tok, &reader->prefetched_lines[0], NULL, 0, &bom_len);
-    if (detection == _PYTOK_ENCODING_ERROR) {
-        return -1;
+        tok, &reader->prefetched_ಸಾಲುಗಳು[0], ರಿಕ್ತ, 0, &bom_len);
+    ಯದಿ (detection == _PYTOK_ENCODING_ERROR) {
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
-    if (detection == _PYTOK_ENCODING_NEED_SECOND_LINE) {
-        char *first = _PyTok_CopyBytes(
-            reader->prefetched_lines[0].data,
-            reader->prefetched_lines[0].len);
-        if (first == NULL) {
+    ಯದಿ (detection == PYTOK_ENCODING_NEED_SECOND_ಸಾಲು) {
+        ವರ್ಣ *first = _PyTok_CopyBytes(
+            reader->prefetched_ಸಾಲುಗಳು[0].data,
+            reader->prefetched_ಸಾಲುಗಳು[0].len);
+        ಯದಿ (first == ರಿಕ್ತ) {
             tok->done = E_NOMEM;
-            return -1;
+            ಪ್ರತ್ಯಾಗಮ -1;
         }
-        reader->prefetched_lines[0].data = first;
-        reader->prefetched_lines[0].ownership = _PYTOK_CHUNK_PYMEM;
-        result = read_file_line(tok, &reader->prefetched_lines[1]);
-        if (result == _PYTOK_READ_EOF) {
+        reader->prefetched_ಸಾಲುಗಳು[0].data = first;
+        reader->prefetched_ಸಾಲುಗಳು[0].ownership = _PYTOK_CHUNK_PYMEM;
+        result = read_file_ಸಾಲು(tok, &reader->prefetched_ಸಾಲುಗಳು[1]);
+        ಯದಿ (result == _PYTOK_READ_EOF) {
             reader->file_eof = 1;
         }
-        else if (result != _PYTOK_READ_LINE) {
-            return -1;
+        ಅನ್ಯಥಾ ಯದಿ (result != PYTOK_READ_ಸಾಲು) {
+            ಪ್ರತ್ಯಾಗಮ -1;
         }
-        _PyTok_Chunk *second = reader->prefetched_lines[1].data != NULL
-            ? &reader->prefetched_lines[1] : NULL;
+        _PyTok_Chunk *second = reader->prefetched_ಸಾಲುಗಳು[1].data != ರಿಕ್ತ
+            ? &reader->prefetched_ಸಾಲುಗಳು[1] : ರಿಕ್ತ;
         detection = _PyTok_DetectEncoding(
-            tok, &reader->prefetched_lines[0], second, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+            tok, &reader->prefetched_ಸಾಲುಗಳು[0], second, 1, &bom_len);
+        ಯದಿ (detection == _PYTOK_ENCODING_ERROR) {
+            ಪ್ರತ್ಯಾಗಮ -1;
         }
     }
-    if (bom_len != 0) {
-        _PyTok_Chunk *first = &reader->prefetched_lines[0];
-        if (first->ownership == _PYTOK_CHUNK_PYMEM) {
+    ಯದಿ (bom_len != 0) {
+        _PyTok_Chunk *first = &reader->prefetched_ಸಾಲುಗಳು[0];
+        ಯದಿ (first->ownership == _PYTOK_CHUNK_PYMEM) {
             memmove(first->data, first->data + bom_len,
                     (size_t)(first->len - bom_len));
             first->data[first->len - bom_len] = '\0';
         }
-        else {
+        ಅನ್ಯಥಾ {
             first->data += bom_len;
         }
         first->len -= bom_len;
     }
-    if (_PyTok_StartDecoder(tok, "strict") < 0) {
-        return -1;
+    ಯದಿ (_PyTok_StartDecoder(tok, "strict") < 0) {
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static int
-finalize_decoding(struct tok_state *tok)
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
+finalize_decoding(ಸಂರಚನಾ tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder_finalized) {
-        return 0;
+    ಯದಿ (reader->decoder_finalized) {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
     reader->decoder_finalized = 1;
-    if (reader->decoder != NULL) {
-        _PyTok_Chunk input = {
+    ಯದಿ (reader->decoder != ರಿಕ್ತ) {
+        _PyTok_Chunk ಒಳಹರಿವು = {
             .data = "",
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
-        int decoded = _PyTok_DecodeChunk(tok, &input, 1);
-        if (decoded == 0 &&
-                append_decoded(reader, input.data, input.len) < 0) {
+        ಪೂರ್ಣಾಙ್ಕ decoded = _PyTok_DecodeChunk(tok, &ಒಳಹರಿವು, 1);
+        ಯದಿ (decoded == 0 &&
+                append_decoded(reader, ಒಳಹರಿವು.data, ಒಳಹರಿವು.len) < 0) {
             tok->done = E_NOMEM;
             decoded = -1;
         }
-        _PyTok_ChunkClear(&input);
-        if (decoded < 0) {
-            return -1;
+        _PyTok_ChunkClear(&ಒಳಹರಿವು);
+        ಯದಿ (decoded < 0) {
+            ಪ್ರತ್ಯಾಗಮ -1;
         }
     }
-    if (append_implicit_newline(reader) < 0) {
+    ಯದಿ (append_implicit_newline(reader) < 0) {
         tok->done = E_NOMEM;
-        return -1;
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
-    return 0;
+    ಪ್ರತ್ಯಾಗಮ 0;
 }
 
-static _PyTok_ReadResult
-next_file(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+next_file(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (!reader->file_initialized && initialize_file(tok) < 0) {
-        return _PYTOK_READ_ERROR;
+    ಯದಿ (!reader->file_initialized && initialize_file(tok) < 0) {
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
     }
-    for (;;) {
-        if (pop_decoded_line(reader, chunk)) {
-            return _PYTOK_READ_LINE;
+    ಪ್ರತಿ (;;) {
+        ಯದಿ (ತೆಗೆ_decoded_ಸಾಲು(reader, chunk)) {
+            ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
         }
-        _PyTok_Chunk input = {0};
-        if (reader->prefetched_lines[0].data != NULL) {
-            input = reader->prefetched_lines[0];
-            reader->prefetched_lines[0] = (_PyTok_Chunk){0};
+        _PyTok_Chunk ಒಳಹರಿವು = {0};
+        ಯದಿ (reader->prefetched_ಸಾಲುಗಳು[0].data != ರಿಕ್ತ) {
+            ಒಳಹರಿವು = reader->prefetched_ಸಾಲುಗಳು[0];
+            reader->prefetched_ಸಾಲುಗಳು[0] = (_PyTok_Chunk){0};
         }
-        else if (reader->prefetched_lines[1].data != NULL) {
-            input = reader->prefetched_lines[1];
-            reader->prefetched_lines[1] = (_PyTok_Chunk){0};
+        ಅನ್ಯಥಾ ಯದಿ (reader->prefetched_ಸಾಲುಗಳು[1].data != ರಿಕ್ತ) {
+            ಒಳಹರಿವು = reader->prefetched_ಸಾಲುಗಳು[1];
+            reader->prefetched_ಸಾಲುಗಳು[1] = (_PyTok_Chunk){0};
         }
-        else if (!reader->file_eof) {
-            _PyTok_ReadResult result = read_file_line(tok, &input);
-            if (result == _PYTOK_READ_ERROR) {
-                return result;
+        ಅನ್ಯಥಾ ಯದಿ (!reader->file_eof) {
+            _PyTok_ReadResult result = read_file_ಸಾಲು(tok, &ಒಳಹರಿವು);
+            ಯದಿ (result == _PYTOK_READ_ERROR) {
+                ಪ್ರತ್ಯಾಗಮ result;
             }
-            if (result == _PYTOK_READ_EOF) {
+            ಯದಿ (result == _PYTOK_READ_EOF) {
                 reader->file_eof = 1;
             }
         }
-        if (input.data != NULL) {
-            int implicit = input.implicit_newline;
-            if (reader->decoder == NULL && !implicit) {
-                *chunk = input;
-                return _PYTOK_READ_LINE;
+        ಯದಿ (ಒಳಹರಿವು.data != ರಿಕ್ತ) {
+            ಪೂರ್ಣಾಙ್ಕ implicit = ಒಳಹರಿವು.implicit_newline;
+            ಯದಿ (reader->decoder == ರಿಕ್ತ && !implicit) {
+                *chunk = ಒಳಹರಿವು;
+                ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
             }
-            int decoded = _PyTok_DecodeChunk(tok, &input, 0);
-            if (decoded == 0 && reader->decoded_pos == reader->decoded_len &&
-                    chunk_is_line(&input)) {
-                *chunk = input;
-                return _PYTOK_READ_LINE;
+            ಪೂರ್ಣಾಙ್ಕ decoded = _PyTok_DecodeChunk(tok, &ಒಳಹರಿವು, 0);
+            ಯದಿ (decoded == 0 && reader->decoded_pos == reader->decoded_len &&
+                    chunk_is_ಸಾಲು(&ಒಳಹರಿವು)) {
+                *chunk = ಒಳಹರಿವು;
+                ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
             }
-            if (decoded == 0 &&
-                    append_decoded(reader, input.data, input.len) < 0) {
+            ಯದಿ (decoded == 0 &&
+                    append_decoded(reader, ಒಳಹರಿವು.data, ಒಳಹರಿವು.len) < 0) {
                 tok->done = E_NOMEM;
                 decoded = -1;
             }
-            if (decoded == 0 && implicit) {
+            ಯದಿ (decoded == 0 && implicit) {
                 reader->decoded_tail_is_implicit = 1;
             }
-            _PyTok_ChunkClear(&input);
-            if (decoded < 0) {
-                return _PYTOK_READ_ERROR;
+            _PyTok_ChunkClear(&ಒಳಹರಿವು);
+            ಯದಿ (decoded < 0) {
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
-            continue;
+            ಅನುವರ್ತ;
         }
-        if (!reader->decoder_finalized) {
-            if (finalize_decoding(tok) < 0) {
-                return _PYTOK_READ_ERROR;
+        ಯದಿ (!reader->decoder_finalized) {
+            ಯದಿ (finalize_decoding(tok) < 0) {
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
-            continue;
+            ಅನುವರ್ತ;
         }
-        return _PYTOK_READ_EOF;
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_EOF;
     }
 }
 
-static _PyTok_ReadResult
-next_readline(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+next_readline(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    for (;;) {
-        if (pop_decoded_line(reader, chunk)) {
-            return _PYTOK_READ_LINE;
+    ಪ್ರತಿ (;;) {
+        ಯದಿ (ತೆಗೆ_decoded_ಸಾಲು(reader, chunk)) {
+            ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
         }
-        if (reader->decoder_finalized) {
-            return _PYTOK_READ_EOF;
+        ಯದಿ (reader->decoder_finalized) {
+            ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_EOF;
         }
 
         PyObject *raw = PyObject_CallNoArgs(reader->readline);
-        if (raw == NULL) {
-            if (PyErr_ExceptionMatches(PyExc_StopIteration)) {
+        ಯದಿ (raw == ರಿಕ್ತ) {
+            ಯದಿ (PyErr_ExceptionMatches(PyExc_StopIteration)) {
                 PyErr_Clear();
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+                ಯದಿ (finalize_decoding(tok) < 0) {
+                    ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
                 }
-                continue;
+                ಅನುವರ್ತ;
             }
-            return _PYTOK_READ_ERROR;
+            ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
         }
 
-        _PyTok_Chunk input = {0};
-        if (reader->encoding != NULL) {
-            if (!PyBytes_Check(raw)) {
+        _PyTok_Chunk ಒಳಹರಿವು = {0};
+        ಯದಿ (reader->encoding != ರಿಕ್ತ) {
+            ಯದಿ (!PyBytes_Check(raw)) {
                 PyErr_SetString(PyExc_TypeError,
                                 "readline() returned a non-bytes object");
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
-            if (PyBytes_GET_SIZE(raw) == 0) {
+            ಯದಿ (PyBytes_GET_SIZE(raw) == 0) {
                 Py_DECREF(raw);
-                if (_PyTok_StartDecoder(tok, "replace") < 0) {
-                    return _PYTOK_READ_ERROR;
+                ಯದಿ (_PyTok_StartDecoder(tok, "replace") < 0) {
+                    ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
                 }
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+                ಯದಿ (finalize_decoding(tok) < 0) {
+                    ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
                 }
-                continue;
+                ಅನುವರ್ತ;
             }
-            input.owner = raw;
-            input.data = PyBytes_AS_STRING(raw);
-            input.len = PyBytes_GET_SIZE(raw);
-            input.ownership = _PYTOK_CHUNK_PYOBJECT;
-            int decoded;
-            if (reader->decoder == NULL &&
+            ಒಳಹರಿವು.owner = raw;
+            ಒಳಹರಿವು.data = PyBytes_AS_STRING(raw);
+            ಒಳಹರಿವು.len = PyBytes_GET_SIZE(raw);
+            ಒಳಹರಿವು.ownership = _PYTOK_CHUNK_PYOBJECT;
+            ಪೂರ್ಣಾಙ್ಕ decoded;
+            ಯದಿ (reader->decoder == ರಿಕ್ತ &&
                     strcmp(reader->encoding, "utf-8") == 0 &&
-                    chunk_is_line(&input)) {
+                    chunk_is_ಸಾಲು(&ಒಳಹರಿವು)) {
                 decoded = _PyTok_DecodeOnce(
-                    tok, &input, "utf-8", "replace");
+                    tok, &ಒಳಹರಿವು, "utf-8", "replace");
             }
-            else {
+            ಅನ್ಯಥಾ {
                 decoded = _PyTok_StartDecoder(tok, "replace");
-                if (decoded == 0) {
-                    decoded = _PyTok_DecodeChunk(tok, &input, 0);
+                ಯದಿ (decoded == 0) {
+                    decoded = _PyTok_DecodeChunk(tok, &ಒಳಹರಿವು, 0);
                 }
             }
-            if (decoded < 0) {
-                _PyTok_ChunkClear(&input);
-                return _PYTOK_READ_ERROR;
+            ಯದಿ (decoded < 0) {
+                _PyTok_ChunkClear(&ಒಳಹರಿವು);
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
         }
-        else {
-            if (!PyUnicode_Check(raw)) {
+        ಅನ್ಯಥಾ {
+            ಯದಿ (!PyUnicode_Check(raw)) {
                 PyErr_SetString(PyExc_TypeError,
                                 "readline() returned a non-string object");
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
             Py_ssize_t utf8_len;
-            const char *utf8 = PyUnicode_AsUTF8AndSize(raw, &utf8_len);
-            if (utf8 == NULL) {
+            ಧ್ರುವ ವರ್ಣ *utf8 = PyUnicode_AsUTF8AndSize(raw, &utf8_len);
+            ಯದಿ (utf8 == ರಿಕ್ತ) {
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
-            input.owner = raw;
-            input.data = (char *)utf8;
-            input.len = utf8_len;
-            input.ownership = _PYTOK_CHUNK_PYOBJECT;
-            if (input.len == 0) {
-                _PyTok_ChunkClear(&input);
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+            ಒಳಹರಿವು.owner = raw;
+            ಒಳಹರಿವು.data = (ವರ್ಣ *)utf8;
+            ಒಳಹರಿವು.len = utf8_len;
+            ಒಳಹರಿವು.ownership = _PYTOK_CHUNK_PYOBJECT;
+            ಯದಿ (ಒಳಹರಿವು.len == 0) {
+                _PyTok_ChunkClear(&ಒಳಹರಿವು);
+                ಯದಿ (finalize_decoding(tok) < 0) {
+                    ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
                 }
-                continue;
+                ಅನುವರ್ತ;
             }
         }
 
-        if (reader->decoded_pos == reader->decoded_len &&
-                chunk_is_line(&input)) {
-            *chunk = input;
-            return _PYTOK_READ_LINE;
+        ಯದಿ (reader->decoded_pos == reader->decoded_len &&
+                chunk_is_ಸಾಲು(&ಒಳಹರಿವು)) {
+            *chunk = ಒಳಹರಿವು;
+            ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
         }
 
-        if (append_decoded(reader, input.data, input.len) < 0) {
-            _PyTok_ChunkClear(&input);
+        ಯದಿ (append_decoded(reader, ಒಳಹರಿವು.data, ಒಳಹರಿವು.len) < 0) {
+            _PyTok_ChunkClear(&ಒಳಹರಿವು);
             tok->done = E_NOMEM;
-            return _PYTOK_READ_ERROR;
+            ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
         }
-        _PyTok_ChunkClear(&input);
-        if (reader->decoded_pos < reader->decoded_len &&
+        _PyTok_ChunkClear(&ಒಳಹರಿವು);
+        ಯದಿ (reader->decoded_pos < reader->decoded_len &&
                 reader->decoded[reader->decoded_len - 1] != '\n') {
-            int pending = _PyTok_DecoderHasBufferedInput(tok);
-            if (pending < 0) {
-                return _PYTOK_READ_ERROR;
+            ಪೂರ್ಣಾಙ್ಕ pending = Py_Tok_Decoder_Has_Buffered_ಒಳಹರಿವು(tok);
+            ಯದಿ (pending < 0) {
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
-            if (!pending && append_implicit_newline(reader) < 0) {
+            ಯದಿ (!pending && append_implicit_newline(reader) < 0) {
                 tok->done = E_NOMEM;
-                return _PYTOK_READ_ERROR;
+                ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
             }
         }
     }
 }
 
-static _PyTok_ReadResult
-next_interactive(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+next_interactive(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->stop_interactive) {
-        return _PYTOK_READ_STOPPED;
+    ಯದಿ (reader->stop_interactive) {
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_STOPPED;
     }
-    char *input = PyOS_Readline(
-        reader->fp != NULL ? reader->fp : stdin, stdout, reader->prompt);
-    if (reader->nextprompt != NULL) {
+    ವರ್ಣ *ಒಳಹರಿವು = PyOS_Readline(
+        reader->fp != ರಿಕ್ತ ? reader->fp : stdin, stdout, reader->prompt);
+    ಯದಿ (reader->nextprompt != ರಿಕ್ತ) {
         reader->prompt = reader->nextprompt;
     }
-    if (input == NULL) {
-        return _PYTOK_READ_INTERRUPT;
+    ಯದಿ (ಒಳಹರಿವು == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_INTERRUPT;
     }
-    Py_ssize_t len = strlen(input);
-    if (len == 0) {
-        PyMem_Free(input);
-        return _PYTOK_READ_EOF;
+    Py_ssize_t len = strlen(ಒಳಹರಿವು);
+    ಯದಿ (len == 0) {
+        PyMem_Free(ಒಳಹರಿವು);
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_EOF;
     }
     _PyTok_Chunk decoded = {
-        .data = input,
+        .data = ಒಳಹರಿವು,
         .len = len,
         .ownership = _PYTOK_CHUNK_PYMEM,
     };
-    if (reader->encoding != NULL &&
+    ಯದಿ (reader->encoding != ರಿಕ್ತ &&
             _PyTok_DecodeOnce(
-                tok, &decoded, reader->encoding, NULL) < 0) {
+                tok, &decoded, reader->encoding, ರಿಕ್ತ) < 0) {
         _PyTok_ChunkClear(&decoded);
-        return _PYTOK_READ_ERROR;
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
     }
-    if (memchr(decoded.data, '\r', decoded.len) == NULL) {
+    ಯದಿ (memchr(decoded.data, '\r', decoded.len) == ರಿಕ್ತ) {
         *chunk = decoded;
-        return _PYTOK_READ_LINE;
+        ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
     }
     chunk->data = _PyTok_NormalizeNewlines(
         decoded.data, decoded.len, &chunk->len);
     _PyTok_ChunkClear(&decoded);
-    if (chunk->data == NULL) {
+    ಯದಿ (chunk->data == ರಿಕ್ತ) {
         tok->done = E_NOMEM;
-        return _PYTOK_READ_ERROR;
+        ಪ್ರತ್ಯಾಗಮ _PYTOK_READ_ERROR;
     }
     chunk->ownership = _PYTOK_CHUNK_PYMEM;
-    return _PYTOK_READ_LINE;
+    ಪ್ರತ್ಯಾಗಮ PYTOK_READ_ಸಾಲು;
 }
 
-int
-_PyTok_ReaderIsInteractive(const struct tok_state *tok)
+ಪೂರ್ಣಾಙ್ಕ
+_PyTok_ReaderIsInteractive(ಧ್ರುವ ಸಂರಚನಾ tok_state *tok)
 {
-    return tok->reader->kind == _PYTOK_READER_INTERACTIVE;
+    ಪ್ರತ್ಯಾಗಮ tok->reader->kind == _PYTOK_READER_INTERACTIVE;
 }
 
-const char *
-_PyTokenizer_RetainedSource(const struct tok_state *tok)
+ಧ್ರುವ ವರ್ಣ *
+_PyTokenizer_RetainedSource(ಧ್ರುವ ಸಂರಚನಾ tok_state *tok)
 {
-    if (tok->reader->kind == _PYTOK_READER_PREPARED) {
-        return _PyTok_SourceData(&tok->source);
+    ಯದಿ (tok->reader->kind == _PYTOK_READER_PREPARED) {
+        ಪ್ರತ್ಯಾಗಮ _PyTok_SourceData(&tok->source);
     }
-    if (tok->reader->kind == _PYTOK_READER_INTERACTIVE) {
-        return tok->source.bytes;
+    ಯದಿ (tok->reader->kind == _PYTOK_READER_INTERACTIVE) {
+        ಪ್ರತ್ಯಾಗಮ tok->source.bytes;
     }
-    return NULL;
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-void
-_PyTok_ReaderStopInteractive(struct tok_state *tok)
+ಶೂನ್ಯ
+_PyTok_ReaderStopInteractive(ಸಂರಚನಾ tok_state *tok)
 {
-    if (_PyTok_ReaderIsInteractive(tok)) {
+    ಯದಿ (_PyTok_ReaderIsInteractive(tok)) {
         tok->reader->stop_interactive = 1;
     }
 }
 
-static _PyTok_ReadResult
-reader_next(struct tok_state *tok, _PyTok_Chunk *chunk)
+ಸ್ಥಿರ _PyTok_ReadResult
+reader_next(ಸಂರಚನಾ tok_state *tok, _PyTok_Chunk *chunk)
 {
     *chunk = (_PyTok_Chunk){0};
-    switch (tok->reader->kind) {
-        case _PYTOK_READER_PREPARED:
-            return next_prepared(tok, chunk);
-        case _PYTOK_READER_FILE:
-            return next_file(tok, chunk);
-        case _PYTOK_READER_READLINE:
-            return next_readline(tok, chunk);
-        case _PYTOK_READER_INTERACTIVE:
-            return next_interactive(tok, chunk);
+    ವಿಕಲ್ಪ (tok->reader->kind) {
+        ಪಕ್ಷ _PYTOK_READER_PREPARED:
+            ಪ್ರತ್ಯಾಗಮ next_prepared(tok, chunk);
+        ಪಕ್ಷ _PYTOK_READER_FILE:
+            ಪ್ರತ್ಯಾಗಮ next_file(tok, chunk);
+        ಪಕ್ಷ _PYTOK_READER_READLINE:
+            ಪ್ರತ್ಯಾಗಮ next_readline(tok, chunk);
+        ಪಕ್ಷ _PYTOK_READER_INTERACTIVE:
+            ಪ್ರತ್ಯಾಗಮ next_interactive(tok, chunk);
     }
     Py_UNREACHABLE();
 }
 
-static void
-reset_streaming_buffer(struct tok_state *tok)
+ಸ್ಥಿರ ಶೂನ್ಯ
+reset_streaming_buffer(ಸಂರಚನಾ tok_state *tok)
 {
-    assert(tok->cur >= tok->buf_offset && tok->cur <= tok->inp);
+    ಪ್ರತಿಜ್ಞಾ(tok->cur >= tok->buf_offset && tok->cur <= tok->inp);
     _PyTok_SourceDiscard(&tok->source);
     tok->buf_offset = tok->source.base_offset;
     tok->cur = tok->inp = tok->source.base_offset;
-    tok->line_start = tok->buf_offset;
+    tok->ಸಾಲು_start = tok->buf_offset;
 }
 
-int
-_PyTok_ReaderUnderflow(struct tok_state *tok)
+ಪೂರ್ಣಾಙ್ಕ
+_PyTok_ReaderUnderflow(ಸಂರಚನಾ tok_state *tok)
 {
-    assert(tok->cur >= tok->buf_offset && tok->cur <= tok->inp);
+    ಪ್ರತಿಜ್ಞಾ(tok->cur >= tok->buf_offset && tok->cur <= tok->inp);
     _PyTok_Reader *reader = tok->reader;
     _PyTok_ReaderKind kind = reader->kind;
-    int prepared = kind == _PYTOK_READER_PREPARED;
-    int streaming = reader_is_streaming(kind);
-    int reset_buffer = tok->start < 0 &&
-        _PyLexer_CurrentFTString(tok) == NULL;
+    ಪೂರ್ಣಾಙ್ಕ prepared = kind == _PYTOK_READER_PREPARED;
+    ಪೂರ್ಣಾಙ್ಕ streaming = reader_is_streaming(kind);
+    ಪೂರ್ಣಾಙ್ಕ reset_buffer = tok->start < 0 &&
+        _PyLexer_CurrentFTString(tok) == ರಿಕ್ತ;
 
     _PyTok_Chunk chunk;
     _PyTok_ReadResult result = reader_next(tok, &chunk);
-    if (result != _PYTOK_READ_LINE) {
-        if (reset_buffer && streaming) {
+    ಯದಿ (result != PYTOK_READ_ಸಾಲು) {
+        ಯದಿ (reset_buffer && streaming) {
             reset_streaming_buffer(tok);
         }
-        if (result == _PYTOK_READ_EOF) {
+        ಯದಿ (result == _PYTOK_READ_EOF) {
             tok->done = E_EOF;
         }
-        else if (result == _PYTOK_READ_STOPPED) {
+        ಅನ್ಯಥಾ ಯದಿ (result == _PYTOK_READ_STOPPED) {
             tok->done = E_INTERACT_STOP;
         }
-        else if (result == _PYTOK_READ_INTERRUPT) {
+        ಅನ್ಯಥಾ ಯದಿ (result == _PYTOK_READ_INTERRUPT) {
             tok->done = E_INTR;
         }
-        else {
-            if (tok->done == E_OK) {
+        ಅನ್ಯಥಾ {
+            ಯದಿ (tok->done == E_OK) {
                 tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                     ? E_NOMEM : E_ERROR;
             }
         }
-        if (kind == _PYTOK_READER_INTERACTIVE &&
+        ಯದಿ (kind == _PYTOK_READER_INTERACTIVE &&
                 result != _PYTOK_READ_STOPPED) {
             PySys_WriteStderr("\n");
         }
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
-    if (tok->lineno == INT_MAX) {
+    ಯದಿ (tok->lineno == INT_MAX) {
         PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
         tok->done = E_ERROR;
         _PyTok_ChunkClear(&chunk);
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
 
-    if (!prepared) {
-        if (streaming && reset_buffer) {
+    ಯದಿ (!prepared) {
+        ಯದಿ (streaming && reset_buffer) {
             reset_streaming_buffer(tok);
         }
-        _PyTok_Off source_start = _PyTok_SourceAppendLine(
+        _PyTok_Off source_start = Py_Tok_Source_Append_ಸಾಲು(
             &tok->source, chunk.data, chunk.len);
-        if (source_start < 0) {
+        ಯದಿ (source_start < 0) {
             _PyTok_ChunkClear(&chunk);
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return 0;
+            ಪ್ರತ್ಯಾಗಮ 0;
         }
-        if (reset_buffer) {
+        ಯದಿ (reset_buffer) {
             tok->cur = source_start;
             tok->buf_offset = source_start;
-            tok->line_start = tok->buf_offset;
+            tok->ಸಾಲು_start = tok->buf_offset;
         }
         tok->inp = source_start + chunk.len;
     }
-    else {
-        if (reset_buffer) {
+    ಅನ್ಯಥಾ {
+        ಯದಿ (reset_buffer) {
             tok->buf_offset = tok->inp;
         }
         tok->inp += chunk.len;
@@ -673,178 +673,178 @@ _PyTok_ReaderUnderflow(struct tok_state *tok)
     tok->implicit_newline = chunk.implicit_newline;
 
     tok->lineno++;
-    if (kind == _PYTOK_READER_FILE &&
-            (reader->encoding == NULL ||
+    ಯದಿ (kind == _PYTOK_READER_FILE &&
+            (reader->encoding == ರಿಕ್ತ ||
              strcmp(reader->encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(
                 _PyTok_SourcePointer(&tok->source, tok->cur),
                 tok, tok->lineno)) {
         _PyTok_ChunkClear(&chunk);
-        return 0;
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
     _PyTok_ChunkClear(&chunk);
-    return 1;
+    ಪ್ರತ್ಯಾಗಮ 1;
 }
 
-static struct tok_state *
+ಸ್ಥಿರ ಸಂರಚನಾ tok_state *
 tokenizer_new_with_reader(_PyTok_ReaderKind kind)
 {
-    struct tok_state *tok = PyMem_Calloc(1, sizeof(*tok));
-    if (tok == NULL) {
+    ಸಂರಚನಾ tok_state *tok = PyMem_Calloc(1, ಪರಿಮಾಣ(*tok));
+    ಯದಿ (tok == ರಿಕ್ತ) {
         PyErr_NoMemory();
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    tok->start = tok->line_start = -1;
+    tok->start = tok->ಸಾಲು_start = -1;
     _PyTok_SourceInit(&tok->source);
     tok->done = E_OK;
     tok->layout.at_bol = 1;
     tok->start_loc = (_PyTok_Loc){-1, -1};
-    tok->ftstring_stack = tok->ftstring_stack_inline;
-    tok->ftstring_capacity = FTSTRING_STACK_INLINE_CAPACITY;
+    tok->ftstring_ರಾಶಿ = tok->ftstring_ರಾಶಿ_inline;
+    tok->ftstring_capacity = FTSTRING_ರಾಶಿ_INLINE_CAPACITY;
 #ifdef Py_DEBUG
     tok->debug = _Py_GetConfig()->parser_debug;
 #endif
-    tok->reader = PyMem_Calloc(1, sizeof(*tok->reader));
-    if (tok->reader == NULL) {
+    tok->reader = PyMem_Calloc(1, ಪರಿಮಾಣ(*tok->reader));
+    ಯದಿ (tok->reader == ರಿಕ್ತ) {
         PyErr_NoMemory();
         _PyTokenizer_Free(tok);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     tok->reader->kind = kind;
-    if (kind == _PYTOK_READER_PREPARED) {
-        return tok;
+    ಯದಿ (kind == _PYTOK_READER_PREPARED) {
+        ಪ್ರತ್ಯಾಗಮ tok;
     }
-    if (reader_is_streaming(kind)) {
+    ಯದಿ (reader_is_streaming(kind)) {
         tok->cur = tok->inp = tok->source.base_offset;
-        tok->line_start = tok->buf_offset;
+        tok->ಸಾಲು_start = tok->buf_offset;
     }
-    return tok;
+    ಪ್ರತ್ಯಾಗಮ tok;
 }
 
-static struct tok_state *
-tokenizer_from_string(const char *input, int utf8_only, int exec_input,
-                      int preserve_crlf)
+ಸ್ಥಿರ ಸಂರಚನಾ tok_state *
+tokenizer_from_string(ಧ್ರುವ ವರ್ಣ *ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ utf8_only, ಪೂರ್ಣಾಙ್ಕ exec_ಒಳಹರಿವು,
+                      ಪೂರ್ಣಾಙ್ಕ preserve_crlf)
 {
-    struct tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_PREPARED);
-    if (tok == NULL) {
-        return NULL;
+    ಸಂರಚನಾ tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_PREPARED);
+    ಯದಿ (tok == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    if (_PyTok_PrepareString(
-            tok, input, utf8_only, exec_input, preserve_crlf) < 0) {
+    ಯದಿ (_PyTok_PrepareString(
+            tok, ಒಳಹರಿವು, utf8_only, exec_ಒಳಹರಿವು, preserve_crlf) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     tok->cur = tok->inp = tok->source.base_offset;
-    tok->line_start = tok->source.base_offset;
-    return tok;
+    tok->ಸಾಲು_start = tok->source.base_offset;
+    ಪ್ರತ್ಯಾಗಮ tok;
 }
 
-struct tok_state *
-_PyTokenizer_FromString(const char *input, int exec_input, int preserve_crlf)
+ಸಂರಚನಾ tok_state *
+_PyTokenizer_FromString(ಧ್ರುವ ವರ್ಣ *ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ exec_ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ preserve_crlf)
 {
-    return tokenizer_from_string(input, 0, exec_input, preserve_crlf);
+    ಪ್ರತ್ಯಾಗಮ tokenizer_from_string(ಒಳಹರಿವು, 0, exec_ಒಳಹರಿವು, preserve_crlf);
 }
 
-struct tok_state *
-_PyTokenizer_FromUTF8(const char *input, int exec_input, int preserve_crlf)
+ಸಂರಚನಾ tok_state *
+_PyTokenizer_FromUTF8(ಧ್ರುವ ವರ್ಣ *ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ exec_ಒಳಹರಿವು, ಪೂರ್ಣಾಙ್ಕ preserve_crlf)
 {
-    return tokenizer_from_string(input, 1, exec_input, preserve_crlf);
+    ಪ್ರತ್ಯಾಗಮ tokenizer_from_string(ಒಳಹರಿವು, 1, exec_ಒಳಹರಿವು, preserve_crlf);
 }
 
-struct tok_state *
-_PyTokenizer_FromReadline(PyObject *readline, const char *encoding)
+ಸಂರಚನಾ tok_state *
+_PyTokenizer_FromReadline(PyObject *readline, ಧ್ರುವ ವರ್ಣ *encoding)
 {
-    struct tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_READLINE);
-    if (tok == NULL) {
-        return NULL;
+    ಸಂರಚನಾ tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_READLINE);
+    ಯದಿ (tok == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    if (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
+    ಯದಿ (encoding != ರಿಕ್ತ && _PyTok_SetEncoding(tok, encoding) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     tok->reader->readline = Py_NewRef(readline);
-    return tok;
+    ಪ್ರತ್ಯಾಗಮ tok;
 }
 
-struct tok_state *
-_PyTokenizer_FromFile(FILE *fp, const char *encoding,
-                      const char *ps1, const char *ps2)
+ಸಂರಚನಾ tok_state *
+_PyTokenizer_FromFile(FILE *fp, ಧ್ರುವ ವರ್ಣ *encoding,
+                      ಧ್ರುವ ವರ್ಣ *ps1, ಧ್ರುವ ವರ್ಣ *ps2)
 {
-    _PyTok_ReaderKind kind = ps1 != NULL || ps2 != NULL
+    _PyTok_ReaderKind kind = ps1 != ರಿಕ್ತ || ps2 != ರಿಕ್ತ
         ? _PYTOK_READER_INTERACTIVE : _PYTOK_READER_FILE;
-    struct tok_state *tok = tokenizer_new_with_reader(kind);
-    if (tok == NULL) {
-        return NULL;
+    ಸಂರಚನಾ tok_state *tok = tokenizer_new_with_reader(kind);
+    ಯದಿ (tok == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    if (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
+    ಯದಿ (encoding != ರಿಕ್ತ && _PyTok_SetEncoding(tok, encoding) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     tok->reader->fp = fp;
     tok->reader->prompt = ps1;
     tok->reader->nextprompt = ps2;
-    return tok;
+    ಪ್ರತ್ಯಾಗಮ tok;
 }
 
-#if defined(__wasi__) || (defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3))
+#ಯದಿ defined(__wasi__) || (defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3))
 /* WASI has no dup(), and Emscripten's emulation is slow. */
-typedef union {
-    void *cookie;
-    int fd;
+ಪ್ರಕಾರನಿರ್ದೇಶ ಸಙ್ಘ {
+    ಶೂನ್ಯ *cookie;
+    ಪೂರ್ಣಾಙ್ಕ fd;
 } borrowed_fd;
 
-static ssize_t
-borrow_read(void *cookie, char *buffer, size_t size)
+ಸ್ಥಿರ ssize_t
+borrow_read(ಶೂನ್ಯ *cookie, ವರ್ಣ *buffer, size_t size)
 {
     borrowed_fd borrowed = {.cookie = cookie};
-    return read(borrowed.fd, buffer, size);
+    ಪ್ರತ್ಯಾಗಮ ಪಠ(borrowed.fd, buffer, size);
 }
 
-static FILE *
-fdopen_borrow(int fd)
+ಸ್ಥಿರ FILE *
+fdopen_borrow(ಪೂರ್ಣಾಙ್ಕ fd)
 {
-    cookie_io_functions_t callbacks = {borrow_read, NULL, NULL, NULL};
+    cookie_io_functions_t callbacks = {borrow_read, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ};
     borrowed_fd borrowed = {.fd = fd};
-    return fopencookie(borrowed.cookie, "r", callbacks);
+    ಪ್ರತ್ಯಾಗಮ fopencookie(borrowed.cookie, "r", callbacks);
 }
-#else
-static FILE *
-fdopen_borrow(int fd)
+#ಅನ್ಯಥಾ
+ಸ್ಥಿರ FILE *
+fdopen_borrow(ಪೂರ್ಣಾಙ್ಕ fd)
 {
-    int copy = _Py_dup(fd);
-    if (copy < 0) {
-        return NULL;
+    ಪೂರ್ಣಾಙ್ಕ copy = _Py_dup(fd);
+    ಯದಿ (copy < 0) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     FILE *fp = fdopen(copy, "r");
-    if (fp == NULL) {
-        int saved_errno = errno;
+    ಯದಿ (fp == ರಿಕ್ತ) {
+        ಪೂರ್ಣಾಙ್ಕ saved_errno = errno;
         close(copy);
         errno = saved_errno;
     }
-    return fp;
+    ಪ್ರತ್ಯಾಗಮ fp;
 }
 #endif
 
-char *
-_PyTokenizer_FindEncodingFilename(int fd, PyObject *filename)
+ವರ್ಣ *
+_PyTokenizer_FindEncodingFilename(ಪೂರ್ಣಾಙ್ಕ fd, PyObject *filename)
 {
     FILE *fp = fdopen_borrow(fd);
-    if (fp == NULL) {
-        return NULL;
+    ಯದಿ (fp == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    struct tok_state *tok = _PyTokenizer_FromFile(fp, NULL, NULL, NULL);
-    if (tok == NULL) {
+    ಸಂರಚನಾ tok_state *tok = _PyTokenizer_FromFile(fp, ರಿಕ್ತ, ರಿಕ್ತ, ರಿಕ್ತ);
+    ಯದಿ (tok == ರಿಕ್ತ) {
         fclose(fp);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
     _Py_DECLARE_STR(anon_string, "<string>");
-    tok->filename = Py_NewRef(filename != NULL ? filename : &_Py_STR(anon_string));
-    char *encoding = NULL;
-    if (initialize_file(tok) == 0) {
+    tok->filename = Py_NewRef(filename != ರಿಕ್ತ ? filename : &_Py_STR(anon_string));
+    ವರ್ಣ *encoding = ರಿಕ್ತ;
+    ಯದಿ (initialize_file(tok) == 0) {
         encoding = tok->reader->encoding;
-        tok->reader->encoding = NULL;
+        tok->reader->encoding = ರಿಕ್ತ;
     }
     fclose(fp);
     _PyTokenizer_Free(tok);
-    return encoding;
+    ಪ್ರತ್ಯಾಗಮ encoding;
 }

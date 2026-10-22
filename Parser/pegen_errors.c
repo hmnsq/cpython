@@ -1,141 +1,141 @@
-#include <Python.h>
-#include <errcode.h>
+#ಅನ್ತರ್ಭಾವ <Python.h>
+#ಅನ್ತರ್ಭಾವ <errcode.h>
 
-#include "pycore_pyerrors.h"      // _PyErr_ProgramDecodedTextObject()
-#include "pycore_runtime.h"       // _Py_ID()
-#include "pycore_tuple.h"         // _PyTuple_FromPair
-#include "pegen.h"
-#include "tokenizer/tokenizer.h"
+#ಅನ್ತರ್ಭಾವ "pycore_pyerrors.h"      // _PyErr_ProgramDecodedTextObject()
+#ಅನ್ತರ್ಭಾವ "pycore_runtime.h"       // _Py_ID()
+#ಅನ್ತರ್ಭಾವ "pycore_tuple.h"         // _PyTuple_FromPair
+#ಅನ್ತರ್ಭಾವ "pegen.h"
+#ಅನ್ತರ್ಭಾವ "tokenizer/tokenizer.h"
 
 // TOKENIZER ERRORS
 
-void *
-_PyPegen_raise_incomplete_input(Parser *p)
+ಶೂನ್ಯ *
+Py_Pegen_raise_incomplete_ಒಳಹರಿವು(Parser *p)
 {
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) && !PyErr_Occurred()) {
-        return _PyPegen_raise_error(p, PyExc_IncompleteInputError, 0,
+    ಯದಿ ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_ಒಳಹರಿವು) && !PyErr_Occurred()) {
+        ಪ್ರತ್ಯಾಗಮ _PyPegen_raise_error(p, Py_Exc_Incomplete_ಒಳಹರಿವು_Error, 0,
                                     "incomplete input");
     }
-    return NULL;
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-static inline void
+ಸ್ಥಿರ ಅನ್ತಃಸ್ಥ ಶೂನ್ಯ
 raise_unclosed_parentheses_error(Parser *p) {
        _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-       int error_lineno = info.delimiter_loc.lineno;
-       int error_col = info.delimiter_loc.byte_col;
+       ಪೂರ್ಣಾಙ್ಕ error_lineno = info.delimiter_loc.lineno;
+       ಪೂರ್ಣಾಙ್ಕ error_col = info.delimiter_loc.byte_col;
        RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError,
                                   error_lineno, error_col, error_lineno, -1,
                                   "'%c' was never closed",
                                   info.delimiter);
 }
 
-int
+ಪೂರ್ಣಾಙ್ಕ
 _Pypegen_tokenizer_error(Parser *p)
 {
-    if (PyErr_Occurred()) {
-        return -1;
+    ಯದಿ (PyErr_Occurred()) {
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
 
-    const char *msg = NULL;
+    ಧ್ರುವ ವರ್ಣ *ಸಂದೇಶ = ರಿಕ್ತ;
     PyObject* errtype = PyExc_SyntaxError;
     Py_ssize_t col_offset = -1;
     p->error_indicator = 1;
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+    ಯದಿ ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_ಒಳಹರಿವು) &&
         (info.status == E_EOF || info.status == E_INCOMPLETE))
     {
-        _PyPegen_raise_incomplete_input(p);
-        return -1;
+        Py_Pegen_raise_incomplete_ಒಳಹರಿವು(p);
+        ಪ್ರತ್ಯಾಗಮ -1;
     }
-    switch (info.status) {
-        case E_INCOMPLETE:
+    ವಿಕಲ್ಪ (info.status) {
+        ಪಕ್ಷ E_INCOMPLETE:
             // The diagnostic pass rejected this unfinished token. Let the
             // parser report the syntax error at its original failure point.
-            return -1;
-        case E_TOKEN:
-            msg = "invalid token";
-            break;
-        case E_EOF:
-            if (info.level) {
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಪಕ್ಷ E_TOKEN:
+            ಸಂದೇಶ = "invalid token";
+            ಭಙ್ಗ;
+        ಪಕ್ಷ E_EOF:
+            ಯದಿ (info.level) {
                 raise_unclosed_parentheses_error(p);
-            } else {
+            } ಅನ್ಯಥಾ {
                 RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
             }
-            return -1;
-        case E_DEDENT:
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಪಕ್ಷ E_DEDENT:
             RAISE_INDENTATION_ERROR("unindent does not match any outer indentation level");
-            return -1;
-        case E_INTR:
-            if (!PyErr_Occurred()) {
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಪಕ್ಷ E_INTR:
+            ಯದಿ (!PyErr_Occurred()) {
                 PyErr_SetNone(PyExc_KeyboardInterrupt);
             }
-            return -1;
-        case E_NOMEM:
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಪಕ್ಷ E_NOMEM:
             PyErr_NoMemory();
-            return -1;
-        case E_TABSPACE:
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಪಕ್ಷ E_TABSPACE:
             errtype = PyExc_TabError;
-            msg = "inconsistent use of tabs and spaces in indentation";
-            break;
-        case E_TOODEEP:
+            ಸಂದೇಶ = "inconsistent use of tabs and spaces in indentation";
+            ಭಙ್ಗ;
+        ಪಕ್ಷ E_TOODEEP:
             errtype = PyExc_IndentationError;
-            msg = "too many levels of indentation";
-            break;
-        case E_LINECONT: {
-            col_offset = info.cursor - info.line_span.start - 1;
-            msg = "unexpected character after line continuation character";
-            break;
+            ಸಂದೇಶ = "too many levels of indentation";
+            ಭಙ್ಗ;
+        ಪಕ್ಷ E_LINECONT: {
+            col_offset = info.cursor - info.ಸಾಲು_span.start - 1;
+            ಸಂದೇಶ = "unexpected character after line continuation character";
+            ಭಙ್ಗ;
         }
-        case E_COLUMNOVERFLOW:
+        ಪಕ್ಷ E_COLUMNOVERFLOW:
             PyErr_SetString(PyExc_OverflowError,
                     "Parser column offset overflow - source line is too big");
-            return -1;
-        default:
-            msg = "unknown parsing error";
+            ಪ್ರತ್ಯಾಗಮ -1;
+        ಸ್ವಭಾವ:
+            ಸಂದೇಶ = "unknown parsing error";
     }
 
     RAISE_ERROR_KNOWN_LOCATION(p, errtype, info.location.lineno,
                                col_offset >= 0 ? col_offset : 0,
-                               info.location.lineno, -1, msg);
-    return -1;
+                               info.location.lineno, -1, ಸಂದೇಶ);
+    ಪ್ರತ್ಯಾಗಮ -1;
 }
 
-int
+ಪೂರ್ಣಾಙ್ಕ
 _Pypegen_raise_decode_error(Parser *p)
 {
-    assert(PyErr_Occurred());
-    const char *errtype = NULL;
-    if (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
+    ಪ್ರತಿಜ್ಞಾ(PyErr_Occurred());
+    ಧ್ರುವ ವರ್ಣ *errtype = ರಿಕ್ತ;
+    ಯದಿ (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
         errtype = "unicode error";
     }
-    else if (PyErr_ExceptionMatches(PyExc_ValueError)) {
+    ಅನ್ಯಥಾ ಯದಿ (PyErr_ExceptionMatches(Py_Exc_ಮೌಲ್ಯ_Error)) {
         errtype = "value error";
     }
-    if (errtype) {
+    ಯದಿ (errtype) {
         PyObject *type;
-        PyObject *value;
+        PyObject *ಮೌಲ್ಯ;
         PyObject *tback;
         PyObject *errstr;
-        PyErr_Fetch(&type, &value, &tback);
-        errstr = PyObject_Str(value);
-        if (errstr) {
+        PyErr_Fetch(&type, &ಮೌಲ್ಯ, &tback);
+        errstr = PyObject_Str(ಮೌಲ್ಯ);
+        ಯದಿ (errstr) {
             RAISE_SYNTAX_ERROR("(%s) %U", errtype, errstr);
             Py_DECREF(errstr);
         }
-        else {
+        ಅನ್ಯಥಾ {
             PyErr_Clear();
             RAISE_SYNTAX_ERROR("(%s) unknown error", errtype);
         }
         Py_XDECREF(type);
-        Py_XDECREF(value);
+        Py_XDECREF(ಮೌಲ್ಯ);
         Py_XDECREF(tback);
     }
 
-    return -1;
+    ಪ್ರತ್ಯಾಗಮ -1;
 }
 
-static int
+ಸ್ಥಿರ ಪೂರ್ಣಾಙ್ಕ
 _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // Tokenize the whole input to see if there are any tokenization
     // errors such as mismatching parentheses. These will get priority
@@ -143,45 +143,45 @@ _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // before the one that we had for the generic error.
 
     // We don't want to tokenize to the end for interactive input
-    if (_PyTokenizer_IsInteractive(p->tok)) {
-        return 0;
+    ಯದಿ (_PyTokenizer_IsInteractive(p->tok)) {
+        ಪ್ರತ್ಯಾಗಮ 0;
     }
 
-    PyObject *type, *value, *traceback;
-    PyErr_Fetch(&type, &value, &traceback);
+    PyObject *type, *ಮೌಲ್ಯ, *traceback;
+    PyErr_Fetch(&type, &ಮೌಲ್ಯ, &traceback);
 
-    Token *current_token = p->known_err_token != NULL ? p->known_err_token : p->tokens[p->fill - 1];
-    Py_ssize_t current_err_line = current_token->lineno;
+    Token *current_token = p->known_err_token != ರಿಕ್ತ ? p->known_err_token : p->tokens[p->fill - 1];
+    Py_ssize_t current_err_ಸಾಲು = current_token->lineno;
 
-    int ret = 0;
-    struct token new_token;
+    ಪೂರ್ಣಾಙ್ಕ ret = 0;
+    ಸಂರಚನಾ token new_token;
     _PyToken_Init(&new_token);
 
-    for (;;) {
+    ಪ್ರತಿ (;;) {
         _PyTokenizer_Get(p->tok, &new_token);
-        switch (new_token.type) {
-            case ERRORTOKEN: {
-                if (PyErr_Occurred()) {
+        ವಿಕಲ್ಪ (new_token.type) {
+            ಪಕ್ಷ ERRORTOKEN: {
+                ಯದಿ (PyErr_Occurred()) {
                     ret = -1;
-                    goto exit;
+                    ಗಚ್ಛ exit;
                 }
                 _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-                if (info.level != 0) {
-                    int error_lineno = info.delimiter_loc.lineno;
-                    if (current_err_line > error_lineno) {
+                ಯದಿ (info.level != 0) {
+                    ಪೂರ್ಣಾಙ್ಕ error_lineno = info.delimiter_loc.lineno;
+                    ಯದಿ (current_err_ಸಾಲು > error_lineno) {
                         raise_unclosed_parentheses_error(p);
                         ret = -1;
-                        goto exit;
+                        ಗಚ್ಛ exit;
                     }
                 }
-                break;
+                ಭಙ್ಗ;
             }
-            case ENDMARKER:
-                break;
-            default:
-                continue;
+            ಪಕ್ಷ ENDMARKER:
+                ಭಙ್ಗ;
+            ಸ್ವಭಾವ:
+                ಅನುವರ್ತ;
         }
-        break;
+        ಭಙ್ಗ;
     }
 
 
@@ -189,56 +189,56 @@ exit:
     _PyToken_Free(&new_token);
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Preserve expression errors over later formatted-string errors.
-    if (PyErr_Occurred() && !info.in_formatted_string) {
-        Py_XDECREF(value);
+    ಯದಿ (PyErr_Occurred() && !info.in_formatted_string) {
+        Py_XDECREF(ಮೌಲ್ಯ);
         Py_XDECREF(type);
         Py_XDECREF(traceback);
-    } else {
-        PyErr_Restore(type, value, traceback);
+    } ಅನ್ಯಥಾ {
+        PyErr_Restore(type, ಮೌಲ್ಯ, traceback);
     }
-    return ret;
+    ಪ್ರತ್ಯಾಗಮ ret;
 }
 
 // PARSER ERRORS
 
-void *
-_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...)
+ಶೂನ್ಯ *
+_PyPegen_raise_error(Parser *p, PyObject *errtype, ಪೂರ್ಣಾಙ್ಕ use_mark, ಧ್ರುವ ವರ್ಣ *errmsg, ...)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    ಯದಿ (p->error_indicator && PyErr_Occurred()) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    if (p->fill == 0) {
+    ಯದಿ (p->fill == 0) {
         va_list va;
         va_start(va, errmsg);
         _PyPegen_raise_error_known_location(p, errtype, 0, 0, 0, -1, errmsg, va);
         va_end(va);
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    if (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
+    ಯದಿ (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    Token *t = p->known_err_token != NULL
+    Token *t = p->known_err_token != ರಿಕ್ತ
                    ? p->known_err_token
                    : p->tokens[use_mark ? p->mark : p->fill - 1];
     Py_ssize_t col_offset;
     Py_ssize_t end_col_offset = -1;
-    if (t->col_offset == -1) {
+    ಯದಿ (t->col_offset == -1) {
         _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-        if (info.diagnostic.location.lineno != 0) {
+        ಯದಿ (info.diagnostic.location.lineno != 0) {
             col_offset = info.diagnostic.location.byte_col;
-        } else if (info.cursor == info.input_span.start) {
+        } ಅನ್ಯಥಾ ಯದಿ (info.cursor == info.ಒಳಹರಿವು_span.start) {
             col_offset = 0;
-        } else {
+        } ಅನ್ಯಥಾ {
             col_offset = Py_SAFE_DOWNCAST(
-                info.cursor - info.line_span.start, intptr_t, int);
+                info.cursor - info.ಸಾಲು_span.start, intptr_t, ಪೂರ್ಣಾಙ್ಕ);
         }
-    } else {
+    } ಅನ್ಯಥಾ {
         col_offset = t->col_offset + 1;
     }
 
-    if (t->end_col_offset != -1) {
+    ಯದಿ (t->end_col_offset != -1) {
         end_col_offset = t->end_col_offset + 1;
     }
 
@@ -247,63 +247,63 @@ _PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *err
     _PyPegen_raise_error_known_location(p, errtype, t->lineno, col_offset, t->end_lineno, end_col_offset, errmsg, va);
     va_end(va);
 
-    return NULL;
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-static PyObject *
-get_error_line_from_source(Parser *p, Py_ssize_t lineno)
+ಸ್ಥಿರ PyObject *
+get_error_ಸಾಲು_from_source(Parser *p, Py_ssize_t lineno)
 {
-    if (_PyTokenizer_RetainedSource(p->tok) == NULL) {
-        return Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+    ಯದಿ (_PyTokenizer_RetainedSource(p->tok) == ರಿಕ್ತ) {
+        ಪ್ರತ್ಯಾಗಮ Py_GetConstant(Py_CONSTANT_EMPTY_STR);
     }
     Py_ssize_t relative_lineno = p->starting_lineno ? lineno - p->starting_lineno + 1 : lineno;
     Py_ssize_t len;
-    const char *line = _PyTokenizer_LineView(p->tok, relative_lineno, &len);
-    return PyUnicode_DecodeUTF8(line, len, "replace");
+    ಧ್ರುವ ವರ್ಣ *ಸಾಲು = Py_Tokenizer_ಸಾಲು_View(p->tok, relative_lineno, &len);
+    ಪ್ರತ್ಯಾಗಮ PyUnicode_DecodeUTF8(ಸಾಲು, len, "replace");
 }
 
-void *
+ಶೂನ್ಯ *
 _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
                                     Py_ssize_t lineno, Py_ssize_t col_offset,
                                     Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                                    const char *errmsg, va_list va)
+                                    ಧ್ರುವ ವರ್ಣ *errmsg, va_list va)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    ಯದಿ (p->error_indicator && PyErr_Occurred()) {
+        ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
     }
-    PyObject *value = NULL;
-    PyObject *errstr = NULL;
-    PyObject *error_line = NULL;
-    PyObject *tmp = NULL;
+    PyObject *ಮೌಲ್ಯ = ರಿಕ್ತ;
+    PyObject *errstr = ರಿಕ್ತ;
+    PyObject *error_ಸಾಲು = ರಿಕ್ತ;
+    PyObject *tmp = ರಿಕ್ತ;
     p->error_indicator = 1;
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     _PyTok_Loc location = info.diagnostic.location.lineno != 0
         ? info.diagnostic.location : info.location;
     _PyTok_Span text_span = info.diagnostic.location.lineno != 0
-        ? info.diagnostic.text_span : info.line_span;
+        ? info.diagnostic.text_span : info.ಸಾಲು_span;
 
-    if (end_lineno == CURRENT_POS) {
+    ಯದಿ (end_lineno == CURRENT_POS) {
         end_lineno = location.lineno;
     }
-    if (end_col_offset == CURRENT_POS) {
+    ಯದಿ (end_col_offset == CURRENT_POS) {
         end_col_offset = location.byte_col;
     }
 
     errstr = PyUnicode_FromFormatV(errmsg, va);
-    if (!errstr) {
-        goto error;
+    ಯದಿ (!errstr) {
+        ಗಚ್ಛ error;
     }
 
-    if (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != NULL) {
-        error_line = get_error_line_from_source(p, lineno);
+    ಯದಿ (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != ರಿಕ್ತ) {
+        error_ಸಾಲು = get_error_ಸಾಲು_from_source(p, lineno);
     }
-    else if (p->start_rule == Py_file_input) {
-        error_line = _PyErr_ProgramDecodedTextObject(info.filename,
-                                                     (int) lineno, info.encoding);
+    ಅನ್ಯಥಾ ಯದಿ (p->start_rule == Py_file_ಒಳಹರಿವು) {
+        error_ಸಾಲು = _PyErr_ProgramDecodedTextObject(info.filename,
+                                                     (ಪೂರ್ಣಾಙ್ಕ) lineno, info.encoding);
     }
 
-    if (!error_line) {
+    ಯದಿ (!error_ಸಾಲು) {
         /* PyErr_ProgramTextObject was not called or returned NULL. If it was not called,
            then we need to find the error line from some other source, because
            p->start_rule != Py_file_input. If it returned NULL, then it either unexpectedly
@@ -311,100 +311,100 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
            we're actually parsing from a file, which has an E_EOF SyntaxError and in that case
            `PyErr_ProgramTextObject` fails because lineno points to last_file_line + 1, which
            does not physically exist */
-        assert(!info.is_file || info.status == E_EOF);
+        ಪ್ರತಿಜ್ಞಾ(!info.is_file || info.status == E_EOF);
 
-        if (location.lineno <= lineno &&
-                info.input_span.end > info.input_span.start) {
+        ಯದಿ (location.lineno <= lineno &&
+                info.ಒಳಹರಿವು_span.end > info.ಒಳಹರಿವು_span.start) {
             Py_ssize_t size;
-            const char *line = _PyTokenizer_SpanView(
+            ಧ್ರುವ ವರ್ಣ *ಸಾಲು = _PyTokenizer_SpanView(
                 p->tok, text_span, &size);
-            if (errtype == PyExc_IncompleteInputError && size > 0 &&
+            ಯದಿ (errtype == Py_Exc_Incomplete_ಒಳಹರಿವು_Error && size > 0 &&
                 (info.implicit_newline == _PyTokenizer_APPEND_NEWLINE ||
                  (info.implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-                  p->start_rule != Py_file_input))) {
+                  p->start_rule != Py_file_ಒಳಹರಿವು))) {
                 size--;
             }
-            error_line = PyUnicode_DecodeUTF8(line, size, "replace");
+            error_ಸಾಲು = PyUnicode_DecodeUTF8(ಸಾಲು, size, "replace");
         }
-        else if (!info.is_file) {
-            error_line = get_error_line_from_source(p, lineno);
+        ಅನ್ಯಥಾ ಯದಿ (!info.is_file) {
+            error_ಸಾಲು = get_error_ಸಾಲು_from_source(p, lineno);
         }
-        else {
-            error_line = Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+        ಅನ್ಯಥಾ {
+            error_ಸಾಲು = Py_GetConstant(Py_CONSTANT_EMPTY_STR);
         }
-        if (!error_line) {
-            goto error;
-        }
-    }
-
-    Py_ssize_t col_number = col_offset;
-    Py_ssize_t end_col_number = end_col_offset;
-
-    col_number = _PyPegen_byte_offset_to_character_offset(error_line, col_offset);
-    if (col_number < 0) {
-        goto error;
-    }
-
-    if (end_col_offset > 0) {
-        end_col_number = _PyPegen_byte_offset_to_character_offset(error_line, end_col_offset);
-        if (end_col_number < 0) {
-            goto error;
+        ಯದಿ (!error_ಸಾಲು) {
+            ಗಚ್ಛ error;
         }
     }
 
-    tmp = Py_BuildValue("(OnnNnn)", info.filename, lineno, col_number, error_line, end_lineno, end_col_number);
-    error_line = NULL;
-    if (!tmp) {
-        goto error;
+    Py_ssize_t col_ಸಂಖ್ಯೆ = col_offset;
+    Py_ssize_t end_col_ಸಂಖ್ಯೆ = end_col_offset;
+
+    col_ಸಂಖ್ಯೆ = _PyPegen_byte_offset_to_character_offset(error_ಸಾಲು, col_offset);
+    ಯದಿ (col_ಸಂಖ್ಯೆ < 0) {
+        ಗಚ್ಛ error;
     }
-    value = _PyTuple_FromPair(errstr, tmp);
+
+    ಯದಿ (end_col_offset > 0) {
+        end_col_ಸಂಖ್ಯೆ = _PyPegen_byte_offset_to_character_offset(error_ಸಾಲು, end_col_offset);
+        ಯದಿ (end_col_ಸಂಖ್ಯೆ < 0) {
+            ಗಚ್ಛ error;
+        }
+    }
+
+    tmp = Py_Build_ಮೌಲ್ಯ("(OnnNnn)", info.filename, lineno, col_ಸಂಖ್ಯೆ, error_ಸಾಲು, end_lineno, end_col_ಸಂಖ್ಯೆ);
+    error_ಸಾಲು = ರಿಕ್ತ;
+    ಯದಿ (!tmp) {
+        ಗಚ್ಛ error;
+    }
+    ಮೌಲ್ಯ = _PyTuple_FromPair(errstr, tmp);
     Py_DECREF(tmp);
-    if (!value) {
-        goto error;
+    ಯದಿ (!ಮೌಲ್ಯ) {
+        ಗಚ್ಛ error;
     }
-    PyErr_SetObject(errtype, value);
+    PyErr_SetObject(errtype, ಮೌಲ್ಯ);
 
     Py_DECREF(errstr);
-    Py_DECREF(value);
-    return NULL;
+    Py_DECREF(ಮೌಲ್ಯ);
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 
 error:
     Py_XDECREF(errstr);
-    Py_XDECREF(error_line);
-    return NULL;
+    Py_XDECREF(error_ಸಾಲು);
+    ಪ್ರತ್ಯಾಗಮ ರಿಕ್ತ;
 }
 
-void
+ಶೂನ್ಯ
 _Pypegen_set_syntax_error(Parser* p, Token* last_token) {
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Existing syntax error
-    if (PyErr_Occurred()) {
+    ಯದಿ (PyErr_Occurred()) {
         // Prioritize tokenizer errors to custom syntax errors raised
         // on the second phase only if the errors come from the parser.
-        int is_tok_ok = (info.status == E_DONE || info.status == E_OK);
-        if (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        ಪೂರ್ಣಾಙ್ಕ is_tok_ok = (info.status == E_DONE || info.status == E_OK);
+        ಯದಿ (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_tokenize_full_source_to_check_for_errors(p);
         }
         // Propagate the existing syntax error.
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
     // Initialization error
-    if (p->fill == 0) {
+    ಯದಿ (p->fill == 0) {
         RAISE_SYNTAX_ERROR("error at start before reading any input");
     }
     // Parser encountered EOF (End of File) unexpectedtly
-    if (last_token->type == ERRORTOKEN && info.status == E_EOF) {
-        if (info.level) {
+    ಯದಿ (last_token->type == ERRORTOKEN && info.status == E_EOF) {
+        ಯದಿ (info.level) {
             raise_unclosed_parentheses_error(p);
-        } else {
+        } ಅನ್ಯಥಾ {
             RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
         }
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
     // Indentation error in the tokenizer
-    if (last_token->type == INDENT || last_token->type == DEDENT) {
+    ಯದಿ (last_token->type == INDENT || last_token->type == DEDENT) {
         RAISE_INDENTATION_ERROR(last_token->type == INDENT ? "unexpected indent" : "unexpected unindent");
-        return;
+        ಪ್ರತ್ಯಾಗಮ;
     }
     // Unknown error (generic case)
 
@@ -418,8 +418,8 @@ _Pypegen_set_syntax_error(Parser* p, Token* last_token) {
     _PyPegen_tokenize_full_source_to_check_for_errors(p);
 }
 
-void
-_Pypegen_stack_overflow(Parser *p)
+ಶೂನ್ಯ
+Pypegen_ರಾಶಿ_overflow(Parser *p)
 {
     p->error_indicator = 1;
     PyErr_SetString(PyExc_MemoryError,
