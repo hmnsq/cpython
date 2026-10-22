@@ -1,40 +1,40 @@
-#include "Python.h"
-#include "pycore_token.h"
+#অন্তর্ভাব "Python.h"
+#অন্তর্ভাব "pycore_token.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#অন্তর্ভাব "lexer_internal.h"
+#অন্তর্ভাব "../tokenizer/helpers.h"
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
-static int
-lookahead(struct tok_state *tok, const char *test)
+স্থির পূর্ণাঙ্ক
+lookahead(সংরচনা tok_state *tok, ধ্রুব বর্ণ *test)
 {
-    const char *s = test;
-    int res = 0;
-    while (1) {
-        int c = tok_nextc(tok);
-        if (*s == 0) {
+    ধ্রুব বর্ণ *s = test;
+    পূর্ণাঙ্ক res = 0;
+    যাবত্ (1) {
+        পূর্ণাঙ্ক c = tok_nextc(tok);
+        যদি (*s == 0) {
             res = !is_potential_identifier_char(c);
         }
-        else if (c == *s) {
+        অন্যথা যদি (c == *s) {
             s++;
-            continue;
+            অনুবর্ত;
         }
 
         tok_backup(tok, c);
-        while (s != test) {
+        যাবত্ (s != test) {
             tok_backup(tok, *--s);
         }
-        return res;
+        প্রত্যাগম res;
     }
 }
 
-static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
-    if (tok->tok_extra_tokens) {
+স্থির পূর্ণাঙ্ক
+verify_end_of_সংখ্যা(সংরচনা tok_state *tok, পূর্ণাঙ্ক c, ধ্রুব বর্ণ *kind) {
+    যদি (tok->tok_extra_tokens) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
-        return 1;
+        প্রত্যাগম 1;
     }
     /* Emit a deprecation warning only if the numeric literal is immediately
      * followed by one of keywords which can occur after a numeric literal
@@ -46,268 +46,268 @@ verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
      * "invalid syntax" if the numeric literal is immediately followed by
      * other keyword or identifier.
      */
-    int r = 0;
-    if (c == 'a') {
+    পূর্ণাঙ্ক r = 0;
+    যদি (c == 'a') {
         r = lookahead(tok, "nd");
     }
-    else if (c == 'e') {
+    অন্যথা যদি (c == 'e') {
         r = lookahead(tok, "lse");
     }
-    else if (c == 'f') {
+    অন্যথা যদি (c == 'f') {
         r = lookahead(tok, "or");
     }
-    else if (c == 'i') {
-        int c2 = tok_nextc(tok);
-        if (c2 == 'f' || c2 == 'n' || c2 == 's') {
+    অন্যথা যদি (c == 'i') {
+        পূর্ণাঙ্ক c2 = tok_nextc(tok);
+        যদি (c2 == 'f' || c2 == 'n' || c2 == 's') {
             r = 1;
         }
         tok_backup(tok, c2);
     }
-    else if (c == 'o') {
+    অন্যথা যদি (c == 'o') {
         r = lookahead(tok, "r");
     }
-    else if (c == 'n') {
+    অন্যথা যদি (c == 'n') {
         r = lookahead(tok, "ot");
     }
-    if (r) {
+    যদি (r) {
         tok_backup(tok, c);
-        if (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
+        যদি (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
                 "invalid %s literal", kind))
         {
-            return 0;
+            প্রত্যাগম 0;
         }
         tok_nextc(tok);
     }
-    else /* In future releases, only error will remain. */
-    if (c < 128 && is_potential_identifier_char(c)) {
+    অন্যথা /* In future releases, only error will remain. */
+    যদি (c < 128 && is_potential_identifier_char(c)) {
         tok_backup(tok, c);
         _PyTokenizer_syntaxerror(tok, "invalid %s literal", kind);
-        return 0;
+        প্রত্যাগম 0;
     }
-    return 1;
+    প্রত্যাগম 1;
 }
 
-static int
-tok_decimal_tail(struct tok_state *tok)
+স্থির পূর্ণাঙ্ক
+tok_decimal_tail(সংরচনা tok_state *tok)
 {
-    int c;
+    পূর্ণাঙ্ক c;
 
-    while (1) {
-        do {
+    যাবত্ (1) {
+        কুরু {
             c = tok_nextc(tok);
-        } while (Py_ISDIGIT(c));
-        if (c != '_') {
-            break;
+        } যাবত্ (Py_ISDIGIT(c));
+        যদি (c != '_') {
+            ভঙ্গ;
         }
         c = tok_nextc(tok);
-        if (!Py_ISDIGIT(c)) {
+        যদি (!Py_ISDIGIT(c)) {
             tok_backup(tok, c);
             _PyTokenizer_syntaxerror(tok, "invalid decimal literal");
-            return 0;
+            প্রত্যাগম 0;
         }
     }
-    return c;
+    প্রত্যাগম c;
 }
 
-int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
-                     int leading_dot)
+পূর্ণাঙ্ক
+Py_Lexer_scan_সংখ্যা(সংরচনা tok_state *tok, সংরচনা token *token, পূর্ণাঙ্ক c,
+                     পূর্ণাঙ্ক leading_dot)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    if (leading_dot) {
-        goto fraction;
+    যদি (leading_dot) {
+        গচ্ছ fraction;
     }
-    if (c == '0') {
+    যদি (c == '0') {
         /* Hex, octal or binary -- maybe. */
         c = tok_nextc(tok);
-        if (c == 'x' || c == 'X') {
+        যদি (c == 'x' || c == 'X') {
             /* Hex */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            কুরু {
+                যদি (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (!Py_ISXDIGIT(c)) {
+                যদি (!Py_ISXDIGIT(c)) {
                     tok_backup(tok, c);
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
+                    প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
                 }
-                do {
+                কুরু {
                     c = tok_nextc(tok);
-                } while (Py_ISXDIGIT(c));
-            } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+                } যাবত্ (Py_ISXDIGIT(c));
+            } যাবত্ (c == '_');
+            যদি (!verify_end_of_সংখ্যা(tok, c, "hexadecimal")) {
+                প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'o' || c == 'O') {
+        অন্যথা যদি (c == 'o' || c == 'O') {
             /* Octal */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            কুরু {
+                যদি (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c < '0' || c >= '8') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                যদি (c < '0' || c >= '8') {
+                    যদি (Py_ISDIGIT(c)) {
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                                 "invalid digit '%c' in octal literal", c));
                     }
-                    else {
+                    অন্যথা {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
                     }
                 }
-                do {
+                কুরু {
                     c = tok_nextc(tok);
-                } while ('0' <= c && c < '8');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                } যাবত্ ('0' <= c && c < '8');
+            } যাবত্ (c == '_');
+            যদি (Py_ISDIGIT(c)) {
+                প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            যদি (!verify_end_of_সংখ্যা(tok, c, "octal")) {
+                প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'b' || c == 'B') {
-            /* Binary */
+        অন্যথা যদি (c == 'b' || c == 'B') {
+            /*দ্বিমিক*/
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            কুরু {
+                যদি (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c != '0' && c != '1') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                যদি (c != '0' && c != '1') {
+                    যদি (Py_ISDIGIT(c)) {
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
                     }
-                    else {
+                    অন্যথা {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
                     }
                 }
-                do {
+                কুরু {
                     c = tok_nextc(tok);
-                } while (c == '0' || c == '1');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                } যাবত্ (c == '0' || c == '1');
+            } যাবত্ (c == '_');
+            যদি (Py_ISDIGIT(c)) {
+                প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            যদি (!verify_end_of_সংখ্যা(tok, c, "binary")) {
+                প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else {
-            int nonzero = 0;
+        অন্যথা {
+            পূর্ণাঙ্ক nonzero = 0;
             /* maybe old-style octal; c is first char of it */
             /* in any case, allow '0' as a literal */
-            while (1) {
-                if (c == '_') {
+            যাবত্ (1) {
+                যদি (c == '_') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    যদি (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
                 }
-                if (c != '0') {
-                    break;
+                যদি (c != '0') {
+                    ভঙ্গ;
                 }
                 c = tok_nextc(tok);
             }
             _PyTok_Off zeros_end = tok->cur;
-            if (Py_ISDIGIT(c)) {
+            যদি (Py_ISDIGIT(c)) {
                 nonzero = 1;
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                যদি (c == 0) {
+                    প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == '.') {
+            যদি (c == '.') {
                 c = tok_nextc(tok);
-                goto fraction;
+                গচ্ছ fraction;
             }
-            else if (c == 'e' || c == 'E') {
-                goto exponent;
+            অন্যথা যদি (c == 'e' || c == 'E') {
+                গচ্ছ exponent;
             }
-            else if (c == 'j' || c == 'J') {
-                goto imaginary;
+            অন্যথা যদি (c == 'j' || c == 'J') {
+                গচ্ছ imaginary;
             }
-            else if (nonzero && !tok->tok_extra_tokens) {
+            অন্যথা যদি (nonzero && !tok->tok_extra_tokens) {
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
+                        tok, (পূর্ণাঙ্ক)(tok->start + 1 - tok->সারি_start),
+                        (পূর্ণাঙ্ক)(zeros_end - tok->সারি_start),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            যদি (!verify_end_of_সংখ্যা(tok, c, "decimal")) {
+                প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
-    else {
+    অন্যথা {
         /* Decimal */
         c = tok_decimal_tail(tok);
-        if (c == 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        যদি (c == 0) {
+            প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
         }
         {
             /* Accept floating-point numbers. */
-            if (c == '.') {
+            যদি (c == '.') {
                 c = tok_nextc(tok);
     fraction:
                 /* Fraction */
-                if (Py_ISDIGIT(c)) {
+                যদি (Py_ISDIGIT(c)) {
                     c = tok_decimal_tail(tok);
-                    if (c == 0) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    যদি (c == 0) {
+                        প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
             }
-            if (c == 'e' || c == 'E') {
-                int e;
+            যদি (c == 'e' || c == 'E') {
+                পূর্ণাঙ্ক e;
               exponent:
                 e = c;
                 /* Exponent part */
                 c = tok_nextc(tok);
-                if (c == '+' || c == '-') {
+                যদি (c == '+' || c == '-') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    যদি (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        প্রত্যাগম MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
-                } else if (!Py_ISDIGIT(c)) {
+                } অন্যথা যদি (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    যদি (!verify_end_of_সংখ্যা(tok, e, "decimal")) {
+                        প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
                     p_start = tok->start;
                     p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    প্রত্যাগম MAKE_TOKEN(সংখ্যা);
                 }
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                যদি (c == 0) {
+                    প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == 'j' || c == 'J') {
+            যদি (c == 'j' || c == 'J') {
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                যদি (!verify_end_of_সংখ্যা(tok, c, "imaginary")) {
+                    প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            অন্যথা যদি (!verify_end_of_সংখ্যা(tok, c, "decimal")) {
+                প্রত্যাগম MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
     tok_backup(tok, c);
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    প্রত্যাগম MAKE_TOKEN(সংখ্যা);
 }

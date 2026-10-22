@@ -1,377 +1,377 @@
-#include "Python.h"
-#include "pycore_codecs.h"
-#include "pycore_global_strings.h"
-#include "pycore_runtime.h"
-#include "errcode.h"
+#অন্তর্ভাব "Python.h"
+#অন্তর্ভাব "pycore_codecs.h"
+#অন্তর্ভাব "pycore_global_strings.h"
+#অন্তর্ভাব "pycore_runtime.h"
+#অন্তর্ভাব "errcode.h"
 
-#include "reader_internal.h"
-#include "helpers.h"
-#include "../lexer/state.h"
+#অন্তর্ভাব "reader_internal.h"
+#অন্তর্ভাব "helpers.h"
+#অন্তর্ভাব "../lexer/state.h"
 
 #define UNICODE_BOM 0xFEFF
 #define UTF16_LE_BOM "\xff\xfe"
 #define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
+#define UTF16_BOM_LENGTH ((Py_ssize_t)(পরিমাণ(UTF16_LE_BOM) - 1))
 #define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#define UTF8_BOM_LENGTH ((Py_ssize_t)(পরিমাণ(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+বর্ণ *
+_PyTok_CopyBytes(ধ্রুব বর্ণ *data, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    যদি (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        প্রত্যাগম রিক্ত;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
+    বর্ণ *copy = PyMem_Malloc((size_t)len + 1);
+    যদি (copy == রিক্ত) {
         PyErr_NoMemory();
-        return NULL;
+        প্রত্যাগম রিক্ত;
     }
     memcpy(copy, data, (size_t)len);
     copy[len] = '\0';
-    return copy;
+    প্রত্যাগম copy;
 }
 
-static void
+স্থির শূন্য
 chunk_release_data(_PyTok_Chunk *chunk)
 {
-    switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
+    বিকল্প (chunk->ownership) {
+        পক্ষ _PYTOK_CHUNK_BORROWED:
+            ভঙ্গ;
+        পক্ষ _PYTOK_CHUNK_PYMEM:
             PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+            ভঙ্গ;
+        পক্ষ _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            ভঙ্গ;
     }
 }
 
-void
+শূন্য
 _PyTok_ChunkClear(_PyTok_Chunk *chunk)
 {
     chunk_release_data(chunk);
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+স্থির পূর্ণাঙ্ক
+chunk_set_unicode(সংরচনা tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, পূর্ণাঙ্ক strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    ধ্রুব বর্ণ *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
+    যদি (utf8 == রিক্ত) {
         Py_DECREF(unicode);
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        প্রত্যাগম -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    যদি (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
         utf8 += UTF8_BOM_LENGTH;
         utf8_len -= UTF8_BOM_LENGTH;
     }
     chunk_release_data(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->data = (বর্ণ *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    প্রত্যাগম 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
+বর্ণ *
+_PyTok_NormalizeNewlines(ধ্রুব বর্ণ *data, Py_ssize_t len,
                          Py_ssize_t *out_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    যদি (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        প্রত্যাগম রিক্ত;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
+    বর্ণ *result = PyMem_Malloc((size_t)len + 1);
+    যদি (result == রিক্ত) {
         PyErr_NoMemory();
-        return NULL;
+        প্রত্যাগম রিক্ত;
     }
-    Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
-                read++;
+    Py_ssize_t লিখ = 0;
+    প্রতি (Py_ssize_t পঠ = 0; পঠ < len; পঠ++) {
+        বর্ণ c = data[পঠ];
+        যদি (c == '\r') {
+            যদি (পঠ + 1 < len && data[পঠ + 1] == '\n') {
+                পঠ++;
             }
             c = '\n';
         }
-        result[write++] = c;
+        result[লিখ++] = c;
     }
-    result[write] = '\0';
-    *out_len = write;
-    return result;
+    result[লিখ] = '\0';
+    *out_len = লিখ;
+    প্রত্যাগম result;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+পূর্ণাঙ্ক
+_PyTok_SetEncoding(সংরচনা tok_state *tok, ধ্রুব বর্ণ *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
+    বর্ণ *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
+    যদি (copy == রিক্ত) {
         tok->done = E_NOMEM;
-        return -1;
+        প্রত্যাগম -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    প্রত্যাগম 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+স্থির পূর্ণাঙ্ক
+find_cookie(ধ্রুব বর্ণ *সারি, Py_ssize_t len, বর্ণ **encoding, পূর্ণাঙ্ক *scan_next)
 {
     Py_ssize_t i = 0;
-    *encoding = NULL;
+    *encoding = রিক্ত;
     *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    প্রতি (; i < len; i++) {
+        যদি (সারি[i] == '#') {
+            ভঙ্গ;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        যদি (সারি[i] == '\n' || সারি[i] == '\r') {
+            প্রত্যাগম 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
+        যদি (সারি[i] != ' ' && সারি[i] != '\t' && সারি[i] != '\f') {
             *scan_next = 0;
-            return 0;
+            প্রত্যাগম 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
-            continue;
+    ধ্রুব Py_ssize_t marker_len = পরিমাণ("coding") - 1;
+    প্রতি (; i < len - marker_len; i++) {
+        যদি (memcmp(সারি + i, "coding", marker_len) != 0) {
+            অনুবর্ত;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
-            continue;
+        ধ্রুব বর্ণ *cursor = সারি + i + marker_len;
+        যদি (*cursor != ':' && *cursor != '=') {
+            অনুবর্ত;
         }
-        do {
+        কুরু {
             cursor++;
-        } while (cursor < line + len &&
+        } যাবত্ (cursor < সারি + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        ধ্রুব বর্ণ *start = cursor;
+        যাবত্ (cursor < সারি + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
-            continue;
+        যদি (cursor == start) {
+            অনুবর্ত;
         }
         Py_ssize_t encoding_len = cursor - start;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
-        const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+        বর্ণ normalized[পরিমাণ("iso-latin-1-")];
+        ধ্রুব Py_ssize_t prefix_len = Py_MIN(
+            encoding_len, (Py_ssize_t)পরিমাণ(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
+        প্রতি (n = 0; n < prefix_len; n++) {
             normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        ধ্রুব বর্ণ *canonical = start;
+        যদি (strcmp(normalized, "utf-8") == 0 ||
+                strncmp(normalized, "utf-8-", পরিমাণ("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        অন্যথা যদি (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 strncmp(normalized, "latin-1-", পরিমাণ("latin-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-8859-1-", পরিমাণ("iso-8859-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-latin-1-", পরিমাণ("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
+        যদি (canonical != start) {
             encoding_len = strlen(canonical);
         }
         *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        যদি (*encoding == রিক্ত) {
+            প্রত্যাগম -1;
         }
         *scan_next = 0;
-        return 0;
+        প্রত্যাগম 0;
     }
-    return 0;
+    প্রত্যাগম 0;
 }
 
 _PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+_PyTok_DetectEncoding(সংরচনা tok_state *tok, ধ্রুব _PyTok_Chunk *first,
+                      ধ্রুব _PyTok_Chunk *second, পূর্ণাঙ্ক final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
+    পূর্ণাঙ্ক bom = first->len >= UTF8_BOM_LENGTH &&
         memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
     *bom_len = bom ? UTF8_BOM_LENGTH : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
+    বর্ণ *cookie = রিক্ত;
+    পূর্ণাঙ্ক scan_next = 0;
+    পূর্ণাঙ্ক cookie_সারি = 1;
+    ধ্রুব বর্ণ *first_data = first->data + *bom_len;
     Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    যদি (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
+        প্রত্যাগম _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    যদি (cookie == রিক্ত && scan_next && second != রিক্ত) {
+        যদি (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
+            প্রত্যাগম _PYTOK_ENCODING_ERROR;
         }
-        cookie_line = 2;
+        cookie_সারি = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    অন্যথা যদি (cookie == রিক্ত && scan_next && !final) {
+        প্রত্যাগম PYTOK_ENCODING_NEED_SECOND_সারি;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    যদি (cookie == রিক্ত) {
+        যদি (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
+            প্রত্যাগম _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        প্রত্যাগম _PYTOK_ENCODING_DONE;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
-        const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
-        Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
-                            line_data[end_col - 1] == '\r')) {
+    যদি (bom && strcmp(cookie, "utf-8") != 0) {
+        ধ্রুব _PyTok_Chunk *সারি = cookie_সারি == 2 ? second : first;
+        ধ্রুব বর্ণ *সারি_data = সারি->data + (cookie_সারি == 1 ? *bom_len : 0);
+        Py_ssize_t সারি_len = সারি->len - (cookie_সারি == 1 ? *bom_len : 0);
+        পূর্ণাঙ্ক end_col = (পূর্ণাঙ্ক)Py_MIN(সারি_len, INT_MAX);
+        যদি (end_col > 0 && (সারি_data[end_col - 1] == '\n' ||
+                            সারি_data[end_col - 1] == '\r')) {
             end_col--;
         }
         _PyTokenizer_syntaxerror_at(
-            tok, line_data, 0, cookie_line, 0, end_col,
+            tok, সারি_data, 0, cookie_সারি, 0, end_col,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        প্রত্যাগম _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    প্রত্যাগম _PYTOK_ENCODING_DONE;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+পূর্ণাঙ্ক
+_PyTok_DecodeOnce(সংরচনা tok_state *tok, _PyTok_Chunk *chunk,
+                  ধ্রুব বর্ণ *encoding, ধ্রুব বর্ণ *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
         chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
+    যদি (unicode == রিক্ত) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        প্রত্যাগম -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    প্রত্যাগম chunk_set_unicode(tok, chunk, unicode, 0);
 }
 
-static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+স্থির Py_ssize_t
+raw_সারি_length(ধ্রুব বর্ণ *data, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    প্রতি (Py_ssize_t i = 0; i < len; i++) {
+        যদি (data[i] == '\n') {
+            প্রত্যাগম i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        যদি (data[i] == '\r') {
+            প্রত্যাগম i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    প্রত্যাগম len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+স্থির পূর্ণাঙ্ক
+store_prepared_source(সংরচনা tok_state *tok, ধ্রুব বর্ণ *data, Py_ssize_t len,
+                      পূর্ণাঙ্ক preserve_crlf, পূর্ণাঙ্ক add_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
-        Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
-            raw_line_len = newline == NULL
+    যাবত্ (pos < len) {
+        Py_ssize_t raw_সারি_len;
+        যদি (preserve_crlf) {
+            ধ্রুব বর্ণ *newline = memchr(data + pos, '\n', len - pos);
+            raw_সারি_len = newline == রিক্ত
                 ? len - pos : newline - data - pos + 1;
         }
-        else {
-            raw_line_len = raw_line_length(data + pos, len - pos);
+        অন্যথা {
+            raw_সারি_len = raw_সারি_length(data + pos, len - pos);
         }
-        int terminated = preserve_crlf
-            ? data[pos + raw_line_len - 1] == '\n'
-            : data[pos + raw_line_len - 1] == '\n' ||
-              data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
-            pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        পূর্ণাঙ্ক terminated = preserve_crlf
+            ? data[pos + raw_সারি_len - 1] == '\n'
+            : data[pos + raw_সারি_len - 1] == '\n' ||
+              data[pos + raw_সারি_len - 1] == '\r';
+        পূর্ণাঙ্ক add_newline = add_final_newline &&
+            pos + raw_সারি_len == len && !terminated;
+        ধ্রুব বর্ণ *সারি = data + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        যদি (!preserve_crlf) {
+            যদি (সারি[raw_সারি_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            অন্যথা যদি (raw_সারি_len > 1 && সারি[raw_সারি_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
-            appended = _PyTok_SourceAppendLineWithNewline(
-                &tok->source, line, raw_line_len - terminator_len);
+        যদি (terminator_len || add_newline) {
+            appended = Py_Tok_Source_Append_সারি_With_Newline(
+                &tok->source, সারি, raw_সারি_len - terminator_len);
         }
-        else {
-            appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
+        অন্যথা {
+            appended = Py_Tok_Source_Append_সারি(&tok->source, সারি, raw_সারি_len);
         }
-        if (appended < 0) {
+        যদি (appended < 0) {
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            প্রত্যাগম -1;
         }
         tok->reader->prepared_final_newline = add_newline;
-        pos += raw_line_len;
+        pos += raw_সারি_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    যদি (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
         (len == 0 || data[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        যদি (Py_Tok_Source_Append_সারি(&tok->source, "\n", 1) < 0) {
+            প্রত্যাগম -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    প্রত্যাগম 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+পূর্ণাঙ্ক
+_PyTok_PrepareString(সংরচনা tok_state *tok, ধ্রুব বর্ণ *প্রবেশ, পূর্ণাঙ্ক utf8_only,
+                     পূর্ণাঙ্ক exec_প্রবেশ, পূর্ণাঙ্ক preserve_crlf)
 {
-    Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    Py_ssize_t raw_len = strlen(প্রবেশ);
+    বর্ণ *raw = (বর্ণ *)প্রবেশ;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    যদি (utf8_only) {
+        যদি (_PyTok_SetEncoding(tok, "utf-8") < 0) {
+            প্রত্যাগম -1;
         }
     }
-    else {
-        Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
+    অন্যথা {
+        Py_ssize_t first_original_len = raw_সারি_length(raw, raw_len);
         _PyTok_Chunk first = {
             .data = raw,
             .len = first_original_len,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
         _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
+        পূর্ণাঙ্ক have_second = first_original_len < raw_len;
+        যদি (have_second) {
             second.data = raw + first_original_len;
-            second.len = raw_line_length(second.data,
+            second.len = raw_সারি_length(second.data,
                                          raw_len - first_original_len);
         }
         Py_ssize_t bom_len;
         _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
-            tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+            tok, &first, have_second ? &second : রিক্ত, 1, &bom_len);
+        যদি (detection == _PYTOK_ENCODING_ERROR) {
+            প্রত্যাগম -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
@@ -382,128 +382,128 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
-                tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+    ধ্রুব বর্ণ *encoding = tok->reader->encoding;
+    যদি (encoding != রিক্ত && strcmp(encoding, "utf-8") != 0) {
+        যদি (_PyTok_DecodeOnce(
+                tok, &decoded, encoding, রিক্ত) < 0) {
+            প্রত্যাগম -1;
         }
     }
 
-    int stored = store_prepared_source(
-        tok, decoded.data, decoded.len, preserve_crlf, exec_input);
+    পূর্ণাঙ্ক stored = store_prepared_source(
+        tok, decoded.data, decoded.len, preserve_crlf, exec_প্রবেশ);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    যদি (stored < 0) {
+        প্রত্যাগম -1;
     }
-    if (!utf8_only &&
-            (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
+    যদি (!utf8_only &&
+            (encoding == রিক্ত || strcmp(encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+        প্রত্যাগম -1;
     }
-    return 0;
+    প্রত্যাগম 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+পূর্ণাঙ্ক
+_PyTok_StartDecoder(সংরচনা tok_state *tok, ধ্রুব বর্ণ *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    যদি (reader->encoding == রিক্ত || reader->decoder != রিক্ত) {
+        প্রত্যাগম 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    যদি (reader->kind == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        প্রত্যাগম 0;
     }
 
-    PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, রিক্ত);
+    যদি (codec != রিক্ত) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
+    যদি (reader->decoder == রিক্ত) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        যদি (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != রিক্ত ? tok->filename : Py_None);
         }
-        return -1;
+        প্রত্যাগম -1;
     }
-    return 0;
+    প্রত্যাগম 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+পূর্ণাঙ্ক
+_PyTok_DecodeChunk(সংরচনা tok_state *tok, _PyTok_Chunk *chunk, পূর্ণাঙ্ক final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    যদি (reader->decoder == রিক্ত) {
+        প্রত্যাগম 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
+    পূর্ণাঙ্ক strip_bom = reader->kind == _PYTOK_READER_READLINE &&
         chunk->len >= UTF16_BOM_LENGTH &&
         (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
          memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
-    PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+    PyObject *প্রবেশ;
+    যদি (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
             PyBytes_Check(chunk->owner) &&
             chunk->data == PyBytes_AS_STRING(chunk->owner)) {
-        input = Py_NewRef(chunk->owner);
+        প্রবেশ = Py_NewRef(chunk->owner);
     }
-    else {
-        input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
+    অন্যথা {
+        প্রবেশ = PyBytes_FromStringAndSize(chunk->data, chunk->len);
     }
-    if (input == NULL) {
+    যদি (প্রবেশ == রিক্ত) {
         tok->done = E_NOMEM;
-        return -1;
+        প্রত্যাগম -1;
     }
     PyObject *unicode = PyObject_CallMethodObjArgs(
-        reader->decoder, &_Py_ID(decode), input,
-        final ? Py_True : Py_False, NULL);
-    Py_DECREF(input);
-    if (unicode == NULL) {
+        reader->decoder, &_Py_ID(decode), প্রবেশ,
+        final ? Py_True : Py_False, রিক্ত);
+    Py_DECREF(প্রবেশ);
+    যদি (unicode == রিক্ত) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        যদি (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
-                tok->filename != NULL ? tok->filename : Py_None);
+                tok->filename != রিক্ত ? tok->filename : Py_None);
         }
-        return -1;
+        প্রত্যাগম -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    যদি (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
         tok->done = E_DECODE;
-        return -1;
+        প্রত্যাগম -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    প্রত্যাগম chunk_set_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+পূর্ণাঙ্ক
+Py_Tok_Decoder_Has_Buffered_প্রবেশ(সংরচনা tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    যদি (tok->reader->decoder == রিক্ত) {
+        প্রত্যাগম 0;
     }
     PyObject *state = PyObject_CallMethodNoArgs(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
+    যদি (state == রিক্ত) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        প্রত্যাগম -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
+    যদি (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
             !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
             !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
         Py_DECREF(state);
         PyErr_SetString(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
         tok->done = E_DECODE;
-        return -1;
+        প্রত্যাগম -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    পূর্ণাঙ্ক pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    প্রত্যাগম pending;
 }
