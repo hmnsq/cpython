@@ -1,11 +1,11 @@
-#ifndef Py_TOKENIZER_READER_H
-#define Py_TOKENIZER_READER_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ Py_TOKENIZER_READER_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ Py_TOKENIZER_READER_H
 
-struct tok_state;
+ਬਣਤਰ tok_state;
 
-void _PyTok_ReaderFree(struct tok_state *);
-int _PyTok_ReaderUnderflow(struct tok_state *);
-int _PyTok_ReaderIsInteractive(const struct tok_state *);
-void _PyTok_ReaderStopInteractive(struct tok_state *);
+ਖਾਲੀ _PyTok_ReaderFree(ਬਣਤਰ tok_state *);
+ਪੂਰਨ _PyTok_ReaderUnderflow(ਬਣਤਰ tok_state *);
+ਪੂਰਨ _PyTok_ReaderIsInteractive(ਅਚਲ ਬਣਤਰ tok_state *);
+ਖਾਲੀ _PyTok_ReaderStopInteractive(ਬਣਤਰ tok_state *);
 
-#endif
+#ਜੇ_ਅੰਤ

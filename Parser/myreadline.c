@@ -9,66 +9,66 @@
    - a malloc'ed string ending in \n normally
 */
 
-#include "Python.h"
-#include "pycore_fileutils.h"     // _Py_BEGIN_SUPPRESS_IPH
-#include "pycore_interp.h"        // _PyInterpreterState_GetConfig()
-#include "pycore_pystate.h"       // _PyThreadState_GET()
-#include "pycore_signal.h"        // _PyOS_SigintEvent()
-#ifdef MS_WINDOWS
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
+#ਅਨ੍ਤਰ੍ਭਾਵ "Python.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_fileutils.h"     // _Py_BEGIN_SUPPRESS_IPH
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_interp.h"        // _PyInterpreterState_GetConfig()
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_pystate.h"       // _PyThreadState_GET()
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_signal.h"        // _PyOS_SigintEvent()
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ MS_WINDOWS
+#  ifndef WIN32_LEAN_AND_ਔਸਤ
+#    define WIN32_LEAN_AND_ਔਸਤ
 #  endif
 #  include "windows.h"
-#endif /* MS_WINDOWS */
+#ਜੇ_ਅੰਤ /* MS_WINDOWS */
 
-#ifdef HAVE_UNISTD_H
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_UNISTD_H
 #  include <unistd.h>             // isatty()
-#endif
+#ਜੇ_ਅੰਤ
 
 
 // Export the symbol since it's used by the readline shared extension
-PyAPI_DATA(PyThreadState*) _PyOS_ReadlineTState;
-PyThreadState *_PyOS_ReadlineTState = NULL;
+Py_API_ਅੰਕੜੇ(PyThreadState*) _PyOS_ReadlineTState;
+PyThreadState *_PyOS_ReadlineTState = ਨਿਰਾ;
 
-static PyMutex _PyOS_ReadlineLock;
+ਸਥਿਰ PyMutex Py_OS_Readline_ਤਾਲਾ;
 
-int (*PyOS_InputHook)(void) = NULL;
+ਪੂਰਨ (*Py_OS_ਨਿਵੇਸ਼_Hook)(ਖਾਲੀ) = ਨਿਰਾ;
 
 /* This function restarts a fgets() after an EINTR error occurred
    except if _PyOS_InterruptOccurred() returns true. */
 
-static int
-my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
+ਸਥਿਰ ਪੂਰਨ
+my_fgets(PyThreadState* tstate, ਅੱਖਰ *buf, ਪੂਰਨ len, FILE *fp)
 {
-#ifdef MS_WINDOWS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ MS_WINDOWS
     HANDLE handle;
     _Py_BEGIN_SUPPRESS_IPH
     handle = (HANDLE)_get_osfhandle(fileno(fp));
-    _Py_END_SUPPRESS_IPH
+    Py_ਸਿਰਾ_SUPPRESS_IPH
 
     /* bpo-40826: fgets(fp) does crash if fileno(fp) is closed */
-    if (handle == INVALID_HANDLE_VALUE) {
-        return -1; /* EOF */
+    ਜੇ (handle == INVALID_HANDLE_ਮੁੱਲ) {
+        ਵਾਪਸ -1; /* EOF */
     }
-#endif
+#ਜੇ_ਅੰਤ
 
-    while (1) {
-        if (PyOS_InputHook != NULL &&
+    ਜਦੋਂ (1) {
+        ਜੇ (Py_OS_ਨਿਵੇਸ਼_Hook != ਨਿਰਾ &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (ਖਾਲੀ)(Py_OS_ਨਿਵੇਸ਼_Hook)();
         }
 
         errno = 0;
         clearerr(fp);
-        char *p = fgets(buf, len, fp);
-        if (p != NULL) {
-            return 0; /* No error */
+        ਅੱਖਰ *p = fgets(buf, len, fp);
+        ਜੇ (p != ਨਿਰਾ) {
+            ਵਾਪਸ 0; /* No error */
         }
-        int err = errno;
+        ਪੂਰਨ err = errno;
 
-#ifdef MS_WINDOWS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ MS_WINDOWS
         /* Ctrl-C anywhere on the line or Ctrl-Z if the only character
            on a line will set ERROR_OPERATION_ABORTED. Under normal
            circumstances Ctrl-C will also have caused the SIGINT handler
@@ -82,285 +82,285 @@ my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
            isn't set assume that this is a Ctrl-Z on its own and drop
            through to check for EOF.
         */
-        if (GetLastError()==ERROR_OPERATION_ABORTED) {
-            HANDLE hInterruptEvent = _PyOS_SigintEvent();
-            switch (WaitForSingleObjectEx(hInterruptEvent, 10, FALSE)) {
-            case WAIT_OBJECT_0:
-                ResetEvent(hInterruptEvent);
-                return 1; /* Interrupt */
-            case WAIT_FAILED:
-                return -2; /* Error */
+        ਜੇ (Get_ਆਖਰੀ_Error()==ERROR_OPERATION_ABORTED) {
+            HANDLE h_ਰੁਕਾਵਟ_Event = _PyOS_SigintEvent();
+            ਚੋਣ (WaitForSingleObjectEx(h_ਰੁਕਾਵਟ_Event, 10, FALSE)) {
+            ਹਾਲਤ WAIT_OBJECT_0:
+                ResetEvent(h_ਰੁਕਾਵਟ_Event);
+                ਵਾਪਸ 1; /*ਰੁਕਾਵਟ*/
+            ਹਾਲਤ WAIT_FAILED:
+                ਵਾਪਸ -2; /* Error */
             }
         }
-#endif /* MS_WINDOWS */
+#ਜੇ_ਅੰਤ /* MS_WINDOWS */
 
-        if (feof(fp)) {
+        ਜੇ (feof(fp)) {
             clearerr(fp);
-            return -1; /* EOF */
+            ਵਾਪਸ -1; /* EOF */
         }
 
-#ifdef EINTR
-        if (err == EINTR) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ EINTR
+        ਜੇ (err == EINTR) {
             PyEval_RestoreThread(tstate);
-            int s = PyErr_CheckSignals();
+            ਪੂਰਨ s = Py_Err_Check_ਸੰਕੇਤ();
             PyEval_SaveThread();
 
-            if (s < 0) {
-                return 1;
+            ਜੇ (s < 0) {
+                ਵਾਪਸ 1;
             }
             /* try again */
-            continue;
+            ਜਾਰੀ;
         }
-#endif
+#ਜੇ_ਅੰਤ
 
-        if (_PyOS_InterruptOccurred(tstate)) {
-            return 1; /* Interrupt */
+        ਜੇ (Py_OS_ਰੁਕਾਵਟ_Occurred(tstate)) {
+            ਵਾਪਸ 1; /*ਰੁਕਾਵਟ*/
         }
-        return -2; /* Error */
+        ਵਾਪਸ -2; /* Error */
     }
     /* NOTREACHED */
 }
 
-#ifdef HAVE_WINDOWS_CONSOLE_IO
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_WINDOWS_CONSOLE_IO
 /* Readline implementation using ReadConsoleW */
 
-extern char _get_console_type(HANDLE handle);
+ਬਾਹਰੀ ਅੱਖਰ _get_console_type(HANDLE handle);
 
-char *
-_PyOS_WindowsConsoleReadline(PyThreadState *tstate, HANDLE hStdIn)
+ਅੱਖਰ *
+_PyOS_WindowsConsoleReadline(PyThreadState *tstate, HANDLE h_Std_ਵਿੱਚ)
 {
-    static wchar_t wbuf_local[1024 * 16];
-    const DWORD chunk_size = 1024;
+    ਸਥਿਰ wchar_t wbuf_local[1024 * 16];
+    ਅਚਲ DWORD chunk_ਮਾਪ = 1024;
 
-    DWORD n_read, total_read, wbuflen, u8len;
+    DWORD n_read, ਕੁੱਲ_read, wbuflen, u8len;
     wchar_t *wbuf;
-    char *buf = NULL;
-    int err = 0;
+    ਅੱਖਰ *buf = ਨਿਰਾ;
+    ਪੂਰਨ err = 0;
 
     n_read = (DWORD)-1;
-    total_read = 0;
+    ਕੁੱਲ_read = 0;
     wbuf = wbuf_local;
-    wbuflen = sizeof(wbuf_local) / sizeof(wbuf_local[0]) - 1;
-    while (1) {
-        if (PyOS_InputHook != NULL &&
+    wbuflen = ਆਕਾਰ(wbuf_local) / ਆਕਾਰ(wbuf_local[0]) - 1;
+    ਜਦੋਂ (1) {
+        ਜੇ (Py_OS_ਨਿਵੇਸ਼_Hook != ਨਿਰਾ &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (ਖਾਲੀ)(Py_OS_ਨਿਵੇਸ਼_Hook)();
         }
-        if (!ReadConsoleW(hStdIn, &wbuf[total_read], wbuflen - total_read, &n_read, NULL)) {
-            err = GetLastError();
-            goto exit;
+        ਜੇ (!ReadConsoleW(h_Std_ਵਿੱਚ, &wbuf[ਕੁੱਲ_read], wbuflen - ਕੁੱਲ_read, &n_read, ਨਿਰਾ)) {
+            err = Get_ਆਖਰੀ_Error();
+            ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
         }
-        if (n_read == (DWORD)-1 && (err = GetLastError()) == ERROR_OPERATION_ABORTED) {
-            break;
+        ਜੇ (n_read == (DWORD)-1 && (err = Get_ਆਖਰੀ_Error()) == ERROR_OPERATION_ABORTED) {
+            ਰੋਕੋ;
         }
-        if (n_read == 0) {
-            int s;
-            err = GetLastError();
-            if (err != ERROR_OPERATION_ABORTED)
-                goto exit;
+        ਜੇ (n_read == 0) {
+            ਪੂਰਨ s;
+            err = Get_ਆਖਰੀ_Error();
+            ਜੇ (err != ERROR_OPERATION_ABORTED)
+                ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
             err = 0;
-            HANDLE hInterruptEvent = _PyOS_SigintEvent();
-            DWORD state = WaitForSingleObjectEx(hInterruptEvent, 100, FALSE);
-            if (state == WAIT_OBJECT_0) {
-                ResetEvent(hInterruptEvent);
+            HANDLE h_ਰੁਕਾਵਟ_Event = _PyOS_SigintEvent();
+            DWORD state = WaitForSingleObjectEx(h_ਰੁਕਾਵਟ_Event, 100, FALSE);
+            ਜੇ (state == WAIT_OBJECT_0) {
+                ResetEvent(h_ਰੁਕਾਵਟ_Event);
                 PyEval_RestoreThread(tstate);
-                s = PyErr_CheckSignals();
+                s = Py_Err_Check_ਸੰਕੇਤ();
                 PyEval_SaveThread();
-                if (s < 0) {
-                    goto exit;
+                ਜੇ (s < 0) {
+                    ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
                 }
             }
-            else if (state != WAIT_TIMEOUT) {
-                err = GetLastError();
-                goto exit;
+            ਨਹੀਂਤਾਂ ਜੇ (state != WAIT_TIMEOUT) {
+                err = Get_ਆਖਰੀ_Error();
+                ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
             }
             /* The console cancelled the read and flushed its input buffer,
                but no exception was raised.  Start the read over. */
-            continue;
+            ਜਾਰੀ;
         }
 
-        total_read += n_read;
-        if (total_read == 0 || wbuf[total_read - 1] == L'\n') {
-            break;
+        ਕੁੱਲ_read += n_read;
+        ਜੇ (ਕੁੱਲ_read == 0 || wbuf[ਕੁੱਲ_read - 1] == L'\n') {
+            ਰੋਕੋ;
         }
-        wbuflen += chunk_size;
-        if (wbuf == wbuf_local) {
-            wbuf[total_read] = '\0';
-            wbuf = (wchar_t*)PyMem_RawMalloc(wbuflen * sizeof(wchar_t));
-            if (wbuf) {
+        wbuflen += chunk_ਮਾਪ;
+        ਜੇ (wbuf == wbuf_local) {
+            wbuf[ਕੁੱਲ_read] = '\0';
+            wbuf = (wchar_t*)PyMem_RawMalloc(wbuflen * ਆਕਾਰ(wchar_t));
+            ਜੇ (wbuf) {
                 wcscpy_s(wbuf, wbuflen, wbuf_local);
             }
-            else {
+            ਨਹੀਂਤਾਂ {
                 PyEval_RestoreThread(tstate);
-                PyErr_NoMemory();
+                Py_Err_No_ਸਮ੍ਰਿਤੀ();
                 PyEval_SaveThread();
-                goto exit;
+                ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
             }
         }
-        else {
-            wchar_t *tmp = PyMem_RawRealloc(wbuf, wbuflen * sizeof(wchar_t));
-            if (tmp == NULL) {
+        ਨਹੀਂਤਾਂ {
+            wchar_t *tmp = PyMem_RawRealloc(wbuf, wbuflen * ਆਕਾਰ(wchar_t));
+            ਜੇ (tmp == ਨਿਰਾ) {
                 PyEval_RestoreThread(tstate);
-                PyErr_NoMemory();
+                Py_Err_No_ਸਮ੍ਰਿਤੀ();
                 PyEval_SaveThread();
-                goto exit;
+                ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
             }
             wbuf = tmp;
         }
     }
 
-    if (wbuf[0] == '\x1a') {
+    ਜੇ (wbuf[0] == '\x1a') {
         buf = PyMem_RawMalloc(1);
-        if (buf) {
+        ਜੇ (buf) {
             buf[0] = '\0';
         }
-        else {
+        ਨਹੀਂਤਾਂ {
             PyEval_RestoreThread(tstate);
-            PyErr_NoMemory();
+            Py_Err_No_ਸਮ੍ਰਿਤੀ();
             PyEval_SaveThread();
         }
-        goto exit;
+        ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
     }
 
-    u8len = WideCharToMultiByte(CP_UTF8, 0,
-                                wbuf, total_read,
-                                NULL, 0,
-                                NULL, NULL);
+    u8len = Wide_Char_ਮੰਜ਼ਿਲ_Multi_Byte(CP_UTF8, 0,
+                                wbuf, ਕੁੱਲ_read,
+                                ਨਿਰਾ, 0,
+                                ਨਿਰਾ, ਨਿਰਾ);
     buf = PyMem_RawMalloc(u8len + 1);
-    if (buf == NULL) {
+    ਜੇ (buf == ਨਿਰਾ) {
         PyEval_RestoreThread(tstate);
-        PyErr_NoMemory();
+        Py_Err_No_ਸਮ੍ਰਿਤੀ();
         PyEval_SaveThread();
-        goto exit;
+        ਜਾਓ ਬਾਹਰ_ਨਿਕਲੋ;
     }
 
-    u8len = WideCharToMultiByte(CP_UTF8, 0,
-                                wbuf, total_read,
+    u8len = Wide_Char_ਮੰਜ਼ਿਲ_Multi_Byte(CP_UTF8, 0,
+                                wbuf, ਕੁੱਲ_read,
                                 buf, u8len,
-                                NULL, NULL);
+                                ਨਿਰਾ, ਨਿਰਾ);
     buf[u8len] = '\0';
 
-exit:
-    if (wbuf != wbuf_local) {
+ਬਾਹਰ_ਨਿਕਲੋ:
+    ਜੇ (wbuf != wbuf_local) {
         PyMem_RawFree(wbuf);
     }
 
-    if (err) {
+    ਜੇ (err) {
         PyEval_RestoreThread(tstate);
-        PyErr_SetFromWindowsErr(err);
+        Py_Err_ਸੈੱਟ_From_Windows_Err(err);
         PyEval_SaveThread();
     }
-    return buf;
+    ਵਾਪਸ buf;
 }
 
-#endif /* HAVE_WINDOWS_CONSOLE_IO */
+#ਜੇ_ਅੰਤ /* HAVE_WINDOWS_CONSOLE_IO */
 
 
 /* Readline implementation using fgets() */
 
-char *
-PyOS_StdioReadline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
+ਅੱਖਰ *
+PyOS_StdioReadline(FILE *sys_stdin, FILE *sys_stdout, ਅਚਲ ਅੱਖਰ *prompt)
 {
-    size_t n;
-    char *p, *pr;
+    ਮਾਪ_t n;
+    ਅੱਖਰ *p, *pr;
     PyThreadState *tstate = _PyOS_ReadlineTState;
-    assert(tstate != NULL);
+    ਪ੍ਰਤਿਜ੍ਞਾ(tstate != ਨਿਰਾ);
 
-#ifdef HAVE_WINDOWS_CONSOLE_IO
-    const PyConfig *config = _PyInterpreterState_GetConfig(tstate->interp);
-    if (!config->legacy_windows_stdio && sys_stdin == stdin) {
-        HANDLE hStdIn, hStdErr;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_WINDOWS_CONSOLE_IO
+    ਅਚਲ PyConfig *config = _PyInterpreterState_GetConfig(tstate->interp);
+    ਜੇ (!config->legacy_windows_stdio && sys_stdin == stdin) {
+        HANDLE h_Std_ਵਿੱਚ, hStdErr;
 
-        hStdIn = _Py_get_osfhandle_noraise(fileno(sys_stdin));
+        h_Std_ਵਿੱਚ = _Py_get_osfhandle_noraise(fileno(sys_stdin));
         hStdErr = _Py_get_osfhandle_noraise(fileno(stderr));
 
-        if (_get_console_type(hStdIn) == 'r') {
+        ਜੇ (_get_console_type(h_Std_ਵਿੱਚ) == 'r') {
             fflush(sys_stdout);
-            if (prompt) {
-                if (_get_console_type(hStdErr) == 'w') {
+            ਜੇ (prompt) {
+                ਜੇ (_get_console_type(hStdErr) == 'w') {
                     wchar_t *wbuf;
-                    int wlen;
-                    wlen = MultiByteToWideChar(CP_UTF8, 0, prompt, -1,
-                            NULL, 0);
-                    if (wlen) {
-                        wbuf = PyMem_RawMalloc(wlen * sizeof(wchar_t));
-                        if (wbuf == NULL) {
+                    ਪੂਰਨ wlen;
+                    wlen = Multi_Byte_ਮੰਜ਼ਿਲ_Wide_Char(CP_UTF8, 0, prompt, -1,
+                            ਨਿਰਾ, 0);
+                    ਜੇ (wlen) {
+                        wbuf = PyMem_RawMalloc(wlen * ਆਕਾਰ(wchar_t));
+                        ਜੇ (wbuf == ਨਿਰਾ) {
                             PyEval_RestoreThread(tstate);
-                            PyErr_NoMemory();
+                            Py_Err_No_ਸਮ੍ਰਿਤੀ();
                             PyEval_SaveThread();
-                            return NULL;
+                            ਵਾਪਸ ਨਿਰਾ;
                         }
-                        wlen = MultiByteToWideChar(CP_UTF8, 0, prompt, -1,
+                        wlen = Multi_Byte_ਮੰਜ਼ਿਲ_Wide_Char(CP_UTF8, 0, prompt, -1,
                                 wbuf, wlen);
-                        if (wlen) {
+                        ਜੇ (wlen) {
                             DWORD n;
                             fflush(stderr);
                             /* wlen includes null terminator, so subtract 1 */
-                            WriteConsoleW(hStdErr, wbuf, wlen - 1, &n, NULL);
+                            WriteConsoleW(hStdErr, wbuf, wlen - 1, &n, ਨਿਰਾ);
                         }
                         PyMem_RawFree(wbuf);
                     }
-                } else {
+                } ਨਹੀਂਤਾਂ {
                     fprintf(stderr, "%s", prompt);
                     fflush(stderr);
                 }
             }
             clearerr(sys_stdin);
-            return _PyOS_WindowsConsoleReadline(tstate, hStdIn);
+            ਵਾਪਸ _PyOS_WindowsConsoleReadline(tstate, h_Std_ਵਿੱਚ);
         }
     }
-#endif
+#ਜੇ_ਅੰਤ
 
     fflush(sys_stdout);
-    if (prompt) {
+    ਜੇ (prompt) {
         fprintf(stderr, "%s", prompt);
     }
     fflush(stderr);
 
     n = 0;
-    p = NULL;
-    do {
-        size_t incr = (n > 0) ? n + 2 : 100;
-        if (incr > INT_MAX) {
+    p = ਨਿਰਾ;
+    ਕਰੋ {
+        ਮਾਪ_t incr = (n > 0) ? n + 2 : 100;
+        ਜੇ (incr > ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ) {
             PyMem_RawFree(p);
             PyEval_RestoreThread(tstate);
-            PyErr_SetString(PyExc_OverflowError, "input line too long");
+            Py_Err_ਸੈੱਟ_String(Py_Exc_ਉਛਾਲ_Error, "input line too long");
             PyEval_SaveThread();
-            return NULL;
+            ਵਾਪਸ ਨਿਰਾ;
         }
-        pr = (char *)PyMem_RawRealloc(p, n + incr);
-        if (pr == NULL) {
+        pr = (ਅੱਖਰ *)PyMem_RawRealloc(p, n + incr);
+        ਜੇ (pr == ਨਿਰਾ) {
             PyMem_RawFree(p);
             PyEval_RestoreThread(tstate);
-            PyErr_NoMemory();
+            Py_Err_No_ਸਮ੍ਰਿਤੀ();
             PyEval_SaveThread();
-            return NULL;
+            ਵਾਪਸ ਨਿਰਾ;
         }
         p = pr;
-        int err = my_fgets(tstate, p + n, (int)incr, sys_stdin);
-        if (err == 1) {
-            // Interrupt
+        ਪੂਰਨ err = my_fgets(tstate, p + n, (ਪੂਰਨ)incr, sys_stdin);
+        ਜੇ (err == 1) {
+            //ਰੁਕਾਵਟ
             PyMem_RawFree(p);
-            return NULL;
-        } else if (err != 0) {
+            ਵਾਪਸ ਨਿਰਾ;
+        } ਨਹੀਂਤਾਂ ਜੇ (err != 0) {
             // EOF or error
             p[n] = '\0';
-            break;
+            ਰੋਕੋ;
         }
-        n += strlen(p + n);
-    } while (n == 0 || p[n-1] != '\n');
+        n += ਲੜੀ_ਲੰਬਾਈ(p + n);
+    } ਜਦੋਂ (n == 0 || p[n-1] != '\n');
 
-    pr = (char *)PyMem_RawRealloc(p, n+1);
-    if (pr == NULL) {
+    pr = (ਅੱਖਰ *)PyMem_RawRealloc(p, n+1);
+    ਜੇ (pr == ਨਿਰਾ) {
         PyMem_RawFree(p);
         PyEval_RestoreThread(tstate);
-        PyErr_NoMemory();
+        Py_Err_No_ਸਮ੍ਰਿਤੀ();
         PyEval_SaveThread();
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
-    return pr;
+    ਵਾਪਸ pr;
 }
 
 
@@ -369,30 +369,30 @@ PyOS_StdioReadline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
 
    Note: Python expects in return a buffer allocated with PyMem_Malloc. */
 
-char *(*PyOS_ReadlineFunctionPointer)(FILE *, FILE *, const char *) = NULL;
+ਅੱਖਰ *(*Py_OS_Readline_Function_ਸੂਚਕ)(FILE *, FILE *, ਅਚਲ ਅੱਖਰ *) = ਨਿਰਾ;
 
 
-char *
-PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
+ਅੱਖਰ *
+PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, ਅਚਲ ਅੱਖਰ *prompt)
 {
-    char *rv, *res;
-    size_t len;
+    ਅੱਖਰ *rv, *res;
+    ਮਾਪ_t len;
 
     PyThreadState *tstate = _PyThreadState_GET();
-    if (_Py_atomic_load_ptr_relaxed(&_PyOS_ReadlineTState) == tstate) {
-        PyErr_SetString(PyExc_RuntimeError,
+    ਜੇ (Py_atomic_ਲੱਦੋ_ptr_relaxed(&_PyOS_ReadlineTState) == tstate) {
+        Py_Err_ਸੈੱਟ_String(PyExc_RuntimeError,
                         "can't re-enter readline");
-        return NULL;
+        ਵਾਪਸ ਨਿਰਾ;
     }
 
     // GH-123321: We need to acquire the lock before setting
     // _PyOS_ReadlineTState, otherwise the variable may be nullified by a
     // different thread.
-    Py_BEGIN_ALLOW_THREADS
-    PyMutex_Lock(&_PyOS_ReadlineLock);
+    Py_BEGIN_ALLOW_ਧਾਗੇ
+    Py_Mutex_ਤਾਲਾ(&Py_OS_Readline_ਤਾਲਾ);
     _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, tstate);
-    if (PyOS_ReadlineFunctionPointer == NULL) {
-        PyOS_ReadlineFunctionPointer = PyOS_StdioReadline;
+    ਜੇ (Py_OS_Readline_Function_ਸੂਚਕ == ਨਿਰਾ) {
+        Py_OS_Readline_Function_ਸੂਚਕ = PyOS_StdioReadline;
     }
 
     /* This is needed to handle the unlikely case that the
@@ -400,7 +400,7 @@ PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
      * a tty.  This can happen, for example if python is run like
      * this: python -i < test1.py
      */
-    if (!isatty(fileno(sys_stdin)) || !isatty(fileno(sys_stdout)) ||
+    ਜੇ (!isatty(fileno(sys_stdin)) || !isatty(fileno(sys_stdout)) ||
         // GH-104668: Don't call global callbacks like PyOS_InputHook or
         // PyOS_ReadlineFunctionPointer from subinterpreters, since it seems
         // like there's no good way for users (like readline and tkinter) to
@@ -414,28 +414,28 @@ PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
     {
         rv = PyOS_StdioReadline(sys_stdin, sys_stdout, prompt);
     }
-    else {
-        rv = (*PyOS_ReadlineFunctionPointer)(sys_stdin, sys_stdout, prompt);
+    ਨਹੀਂਤਾਂ {
+        rv = (*Py_OS_Readline_Function_ਸੂਚਕ)(sys_stdin, sys_stdout, prompt);
     }
 
     // gh-123321: Must set the variable and then release the lock before
     // taking the GIL. Otherwise a deadlock or segfault may occur.
-    _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, NULL);
-    PyMutex_Unlock(&_PyOS_ReadlineLock);
-    Py_END_ALLOW_THREADS
+    _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, ਨਿਰਾ);
+    PyMutex_Unlock(&Py_OS_Readline_ਤਾਲਾ);
+    Py_ਸਿਰਾ_ALLOW_ਧਾਗੇ
 
-    if (rv == NULL)
-        return NULL;
+    ਜੇ (rv == ਨਿਰਾ)
+        ਵਾਪਸ ਨਿਰਾ;
 
-    len = strlen(rv) + 1;
+    len = ਲੜੀ_ਲੰਬਾਈ(rv) + 1;
     res = PyMem_Malloc(len);
-    if (res != NULL) {
-        memcpy(res, rv, len);
+    ਜੇ (res != ਨਿਰਾ) {
+        ਸਮ੍ਰਿਤੀ_ਨਕਲ(res, rv, len);
     }
-    else {
-        PyErr_NoMemory();
+    ਨਹੀਂਤਾਂ {
+        Py_Err_No_ਸਮ੍ਰਿਤੀ();
     }
     PyMem_RawFree(rv);
 
-    return res;
+    ਵਾਪਸ res;
 }

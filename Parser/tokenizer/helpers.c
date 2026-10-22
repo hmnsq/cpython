@@ -1,254 +1,254 @@
-#include "Python.h"
-#include "errcode.h"
-#include "pycore_runtime.h"       // _Py_ID()
-#include "pycore_token.h"
-#include "pycore_tuple.h"         // _PyTuple_FromPair
+#ਅਨ੍ਤਰ੍ਭਾਵ "Python.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "errcode.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_runtime.h"       // _Py_ID()
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_token.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_tuple.h"         // _PyTuple_FromPair
 
-#include "../lexer/state.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../lexer/state.h"
 
 
 /* ############## ERRORS ############## */
 
 /* Convert a 1-based column in bytes into a 1-based column in characters.
    The line is UTF-8 encoded, so it is enough to skip continuation bytes. */
-static int
-byte_col_to_char_col(const char *line, int byte_col)
+ਸਥਿਰ ਪੂਰਨ
+byte_ਖਾਨਾ_ਮੰਜ਼ਿਲ_char_ਖਾਨਾ(ਅਚਲ ਅੱਖਰ *ਸਤਰ, ਪੂਰਨ byte_ਖਾਨਾ)
 {
-    int char_col = 1;
-    for (int i = 0; i < byte_col - 1; i++) {
-        if ((line[i] & 0xC0) != 0x80) {
-            char_col++;
+    ਪੂਰਨ char_ਖਾਨਾ = 1;
+    ਲਈ (ਪੂਰਨ i = 0; i < byte_ਖਾਨਾ - 1; i++) {
+        ਜੇ ((ਸਤਰ[i] & 0xC0) != 0x80) {
+            char_ਖਾਨਾ++;
         }
     }
-    return char_col;
+    ਵਾਪਸ char_ਖਾਨਾ;
 }
 
-static int
-_syntaxerror_range(struct tok_state *tok, const char *line,
-                   Py_ssize_t cursor, int lineno, const char *format,
-                   int col_offset, int end_col_offset,
+ਸਥਿਰ ਪੂਰਨ
+_syntaxerror_range(ਬਣਤਰ tok_state *tok, ਅਚਲ ਅੱਖਰ *ਸਤਰ,
+                   Py_ssize_t cursor, ਪੂਰਨ lineno, ਅਚਲ ਅੱਖਰ *format,
+                   ਪੂਰਨ ਖਾਨਾ_ਵਿੱਥ, ਪੂਰਨ ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ,
                    va_list vargs)
 {
     // In release builds, we don't want to overwrite a previous error, but in debug builds we
     // want to fail if we are not doing it so we can fix it.
-    assert(tok->done != E_ERROR);
-    if (tok->done == E_ERROR) {
-        return ERRORTOKEN;
+    ਪ੍ਰਤਿਜ੍ਞਾ(tok->ਪੂਰਾ != E_ERROR);
+    ਜੇ (tok->ਪੂਰਾ == E_ERROR) {
+        ਵਾਪਸ ERRORTOKEN;
     }
-    PyObject *errmsg, *errtext, *args;
+    PyObject *errmsg, *errtext, *ਦਲੀਲਾਂ;
     errmsg = PyUnicode_FromFormatV(format, vargs);
-    if (!errmsg) {
-        goto error;
+    ਜੇ (!errmsg) {
+        ਜਾਓ error;
     }
 
-    errtext = PyUnicode_DecodeUTF8(line, cursor,
+    errtext = PyUnicode_DecodeUTF8(ਸਤਰ, cursor,
                                    "replace");
-    if (!errtext) {
-        goto error;
+    ਜੇ (!errtext) {
+        ਜਾਓ error;
     }
 
-    if (col_offset == -1) {
-        col_offset = (int)PyUnicode_GET_LENGTH(errtext);
+    ਜੇ (ਖਾਨਾ_ਵਿੱਥ == -1) {
+        ਖਾਨਾ_ਵਿੱਥ = (ਪੂਰਨ)Py_Unicode_GET_ਲੰਮਾਈ(errtext);
     }
-    else if (col_offset > 0) {
-        col_offset = byte_col_to_char_col(line, col_offset);
+    ਨਹੀਂਤਾਂ ਜੇ (ਖਾਨਾ_ਵਿੱਥ > 0) {
+        ਖਾਨਾ_ਵਿੱਥ = byte_ਖਾਨਾ_ਮੰਜ਼ਿਲ_char_ਖਾਨਾ(ਸਤਰ, ਖਾਨਾ_ਵਿੱਥ);
     }
-    if (end_col_offset == -1) {
-        end_col_offset = col_offset;
+    ਜੇ (ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ == -1) {
+        ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ = ਖਾਨਾ_ਵਿੱਥ;
     }
-    else if (end_col_offset > 0) {
-        end_col_offset = byte_col_to_char_col(line, end_col_offset);
+    ਨਹੀਂਤਾਂ ਜੇ (ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ > 0) {
+        ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ = byte_ਖਾਨਾ_ਮੰਜ਼ਿਲ_char_ਖਾਨਾ(ਸਤਰ, ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ);
     }
 
-    Py_ssize_t line_len = strcspn(line, "\n");
-    if (line_len != cursor) {
+    Py_ssize_t ਸਤਰ_len = strcspn(ਸਤਰ, "\n");
+    ਜੇ (ਸਤਰ_len != cursor) {
         Py_DECREF(errtext);
-        errtext = PyUnicode_DecodeUTF8(line, line_len,
+        errtext = PyUnicode_DecodeUTF8(ਸਤਰ, ਸਤਰ_len,
                                        "replace");
     }
-    if (!errtext) {
-        goto error;
+    ਜੇ (!errtext) {
+        ਜਾਓ error;
     }
 
-    args = Py_BuildValue("(O(OiiNii))", errmsg,
+    ਦਲੀਲਾਂ = Py_Build_ਮੁੱਲ("(O(OiiNii))", errmsg,
                          tok->filename ? tok->filename : Py_None,
-                         lineno, col_offset, errtext,
-                         lineno, end_col_offset);
-    if (args) {
-        PyErr_SetObject(PyExc_SyntaxError, args);
-        Py_DECREF(args);
+                         lineno, ਖਾਨਾ_ਵਿੱਥ, errtext,
+                         lineno, ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ);
+    ਜੇ (ਦਲੀਲਾਂ) {
+        Py_Err_ਸੈੱਟ_Object(PyExc_SyntaxError, ਦਲੀਲਾਂ);
+        Py_DECREF(ਦਲੀਲਾਂ);
     }
 
 error:
     Py_XDECREF(errmsg);
-    tok->done = E_ERROR;
-    return ERRORTOKEN;
+    tok->ਪੂਰਾ = E_ERROR;
+    ਵਾਪਸ ERRORTOKEN;
 }
 
-int
-_PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...)
+ਪੂਰਨ
+_PyTokenizer_syntaxerror(ਬਣਤਰ tok_state *tok, ਅਚਲ ਅੱਖਰ *format, ...)
 {
     // These errors are cleaned on startup. Todo: Fix it.
     va_list vargs;
-    va_start(vargs, format);
-    int ret = _syntaxerror_range(
-        tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-        tok->cur - tok->line_start, tok->lineno, format, -1, -1, vargs);
-    va_end(vargs);
-    return ret;
+    va_ਸ਼ੁਰੂ(vargs, format);
+    ਪੂਰਨ ret = _syntaxerror_range(
+        tok, Py_Tok_ਸਰੋਤ_ਸੂਚਕ(&tok->ਸਰੋਤ, tok->ਸਤਰ_ਸ਼ੁਰੂ),
+        tok->cur - tok->ਸਤਰ_ਸ਼ੁਰੂ, tok->lineno, format, -1, -1, vargs);
+    va_ਸਿਰਾ(vargs);
+    ਵਾਪਸ ret;
 }
 
-int
-_PyTokenizer_syntaxerror_known_range(struct tok_state *tok,
-                        int col_offset, int end_col_offset,
-                        const char *format, ...)
+ਪੂਰਨ
+Py_Tokenizer_syntaxerror_ਗਿਆਤ_range(ਬਣਤਰ tok_state *tok,
+                        ਪੂਰਨ ਖਾਨਾ_ਵਿੱਥ, ਪੂਰਨ ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ,
+                        ਅਚਲ ਅੱਖਰ *format, ...)
 {
     va_list vargs;
-    va_start(vargs, format);
-    int ret = _syntaxerror_range(
-        tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-        tok->cur - tok->line_start, tok->lineno,
-        format, col_offset, end_col_offset, vargs);
-    va_end(vargs);
-    return ret;
+    va_ਸ਼ੁਰੂ(vargs, format);
+    ਪੂਰਨ ret = _syntaxerror_range(
+        tok, Py_Tok_ਸਰੋਤ_ਸੂਚਕ(&tok->ਸਰੋਤ, tok->ਸਤਰ_ਸ਼ੁਰੂ),
+        tok->cur - tok->ਸਤਰ_ਸ਼ੁਰੂ, tok->lineno,
+        format, ਖਾਨਾ_ਵਿੱਥ, ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ, vargs);
+    va_ਸਿਰਾ(vargs);
+    ਵਾਪਸ ret;
 }
 
-int
-_PyTokenizer_syntaxerror_at(struct tok_state *tok, const char *line,
-                             Py_ssize_t cursor, int lineno,
-                             int col_offset, int end_col_offset,
-                             const char *format, ...)
+ਪੂਰਨ
+_PyTokenizer_syntaxerror_at(ਬਣਤਰ tok_state *tok, ਅਚਲ ਅੱਖਰ *ਸਤਰ,
+                             Py_ssize_t cursor, ਪੂਰਨ lineno,
+                             ਪੂਰਨ ਖਾਨਾ_ਵਿੱਥ, ਪੂਰਨ ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ,
+                             ਅਚਲ ਅੱਖਰ *format, ...)
 {
     va_list vargs;
-    va_start(vargs, format);
-    int ret = _syntaxerror_range(tok, line, cursor, lineno, format,
-                                col_offset, end_col_offset, vargs);
-    va_end(vargs);
-    return ret;
+    va_ਸ਼ੁਰੂ(vargs, format);
+    ਪੂਰਨ ret = _syntaxerror_range(tok, ਸਤਰ, cursor, lineno, format,
+                                ਖਾਨਾ_ਵਿੱਥ, ਸਿਰਾ_ਖਾਨਾ_ਵਿੱਥ, vargs);
+    va_ਸਿਰਾ(vargs);
+    ਵਾਪਸ ret;
 }
 
-int
-_PyTokenizer_indenterror(struct tok_state *tok)
+ਪੂਰਨ
+_PyTokenizer_indenterror(ਬਣਤਰ tok_state *tok)
 {
-    tok->done = E_TABSPACE;
+    tok->ਪੂਰਾ = E_TABSPACE;
     tok->cur = tok->inp;
-    return ERRORTOKEN;
+    ਵਾਪਸ ERRORTOKEN;
 }
 
-int
-_PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char)
+ਪੂਰਨ
+_PyTokenizer_warn_invalid_escape_sequence(ਬਣਤਰ tok_state *tok, ਪੂਰਨ ਪਹਿਲਾ_invalid_escape_char)
 {
-    PyObject *msg = PyUnicode_FromFormat(
+    PyObject *ਸੁਨੇਹਾ = PyUnicode_FromFormat(
         "\"\\%c\" is an invalid escape sequence. "
         "Such sequences will not work in the future. "
         "Did you mean \"\\\\%c\"? A raw string is also an option.",
-        (char) first_invalid_escape_char,
-        (char) first_invalid_escape_char
+        (ਅੱਖਰ) ਪਹਿਲਾ_invalid_escape_char,
+        (ਅੱਖਰ) ਪਹਿਲਾ_invalid_escape_char
     );
 
-    if (msg == NULL) {
-        return -1;
+    ਜੇ (ਸੁਨੇਹਾ == ਨਿਰਾ) {
+        ਵਾਪਸ -1;
     }
 
-    if (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, msg, tok->filename,
-                                 tok->lineno, tok->module, NULL) < 0) {
-        Py_DECREF(msg);
+    ਜੇ (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, ਸੁਨੇਹਾ, tok->filename,
+                                 tok->lineno, tok->module, ਨਿਰਾ) < 0) {
+        Py_DECREF(ਸੁਨੇਹਾ);
 
-        if (PyErr_ExceptionMatches(PyExc_SyntaxWarning)) {
+        ਜੇ (PyErr_ExceptionMatches(PyExc_SyntaxWarning)) {
             /* Replace the SyntaxWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
 
-            return _PyTokenizer_syntaxerror(tok,
+            ਵਾਪਸ _PyTokenizer_syntaxerror(tok,
                 "\"\\%c\" is an invalid escape sequence. "
                 "Did you mean \"\\\\%c\"? A raw string is also an option.",
-                (char) first_invalid_escape_char,
-                (char) first_invalid_escape_char);
+                (ਅੱਖਰ) ਪਹਿਲਾ_invalid_escape_char,
+                (ਅੱਖਰ) ਪਹਿਲਾ_invalid_escape_char);
         }
 
-        return -1;
+        ਵਾਪਸ -1;
     }
 
-    Py_DECREF(msg);
-    return 0;
+    Py_DECREF(ਸੁਨੇਹਾ);
+    ਵਾਪਸ 0;
 }
 
-void
+ਖਾਲੀ
 _PyTokenizer_raise_init_error(PyObject *filename)
 {
-    if (!(PyErr_ExceptionMatches(PyExc_LookupError)
+    ਜੇ (!(PyErr_ExceptionMatches(PyExc_LookupError)
           || PyErr_ExceptionMatches(PyExc_SyntaxError)
-          || PyErr_ExceptionMatches(PyExc_ValueError)
+          || PyErr_ExceptionMatches(Py_Exc_ਮੁੱਲ_Error)
           || PyErr_ExceptionMatches(PyExc_UnicodeDecodeError))) {
-        return;
+        ਵਾਪਸ;
     }
-    PyObject *errstr = NULL;
-    PyObject *tuple = NULL;
+    PyObject *errstr = ਨਿਰਾ;
+    PyObject *tuple = ਨਿਰਾ;
     PyObject *type;
-    PyObject *value;
+    PyObject *ਮੁੱਲ;
     PyObject *tback;
-    PyErr_Fetch(&type, &value, &tback);
-    if (PyErr_GivenExceptionMatches(value, PyExc_SyntaxError)) {
-        if (PyObject_SetAttr(value, &_Py_ID(filename), filename)) {
-            goto error;
+    PyErr_Fetch(&type, &ਮੁੱਲ, &tback);
+    ਜੇ (PyErr_GivenExceptionMatches(ਮੁੱਲ, PyExc_SyntaxError)) {
+        ਜੇ (Py_Object_ਸੈੱਟ_Attr(ਮੁੱਲ, &_Py_ID(filename), filename)) {
+            ਜਾਓ error;
         }
-        PyErr_Restore(type, value, tback);
-        return;
+        PyErr_Restore(type, ਮੁੱਲ, tback);
+        ਵਾਪਸ;
     }
-    errstr = PyObject_Str(value);
-    if (!errstr) {
-        goto error;
+    errstr = PyObject_Str(ਮੁੱਲ);
+    ਜੇ (!errstr) {
+        ਜਾਓ error;
     }
 
-    PyObject *tmp = Py_BuildValue("(OiiO)", filename, 0, -1, Py_None);
-    if (!tmp) {
-        goto error;
+    PyObject *tmp = Py_Build_ਮੁੱਲ("(OiiO)", filename, 0, -1, Py_None);
+    ਜੇ (!tmp) {
+        ਜਾਓ error;
     }
 
     tuple = _PyTuple_FromPair(errstr, tmp);
     Py_DECREF(tmp);
-    if (!tuple) {
-        goto error;
+    ਜੇ (!tuple) {
+        ਜਾਓ error;
     }
-    PyErr_SetObject(PyExc_SyntaxError, tuple);
+    Py_Err_ਸੈੱਟ_Object(PyExc_SyntaxError, tuple);
 
 error:
     Py_XDECREF(type);
-    Py_XDECREF(value);
+    Py_XDECREF(ਮੁੱਲ);
     Py_XDECREF(tback);
     Py_XDECREF(errstr);
     Py_XDECREF(tuple);
 }
 
-int
-_PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *format, ...)
+ਪੂਰਨ
+_PyTokenizer_parser_warn(ਬਣਤਰ tok_state *tok, PyObject *category, ਅਚਲ ਅੱਖਰ *format, ...)
 {
     PyObject *errmsg;
     va_list vargs;
-    va_start(vargs, format);
+    va_ਸ਼ੁਰੂ(vargs, format);
     errmsg = PyUnicode_FromFormatV(format, vargs);
-    va_end(vargs);
-    if (!errmsg) {
-        goto error;
+    va_ਸਿਰਾ(vargs);
+    ਜੇ (!errmsg) {
+        ਜਾਓ error;
     }
 
-    if (PyErr_WarnExplicitObject(category, errmsg, tok->filename,
-                                 tok->lineno, tok->module, NULL) < 0) {
-        if (PyErr_ExceptionMatches(category)) {
+    ਜੇ (PyErr_WarnExplicitObject(category, errmsg, tok->filename,
+                                 tok->lineno, tok->module, ਨਿਰਾ) < 0) {
+        ਜੇ (PyErr_ExceptionMatches(category)) {
             /* Replace the DeprecationWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
             _PyTokenizer_syntaxerror(tok, "%U", errmsg);
         }
-        goto error;
+        ਜਾਓ error;
     }
     Py_DECREF(errmsg);
-    return 0;
+    ਵਾਪਸ 0;
 
 error:
     Py_XDECREF(errmsg);
-    tok->done = E_ERROR;
-    return -1;
+    tok->ਪੂਰਾ = E_ERROR;
+    ਵਾਪਸ -1;
 }
 
 
@@ -257,126 +257,126 @@ error:
    the sequence if yes, 0 if not.  The special cases match
    those in stringlib/codecs.h:utf8_decode.
 */
-static int
-valid_utf8(const unsigned char* s)
+ਸਥਿਰ ਪੂਰਨ
+valid_utf8(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ* s)
 {
-    int expected = 0;
-    int length;
-    if (*s < 0x80) {
+    ਪੂਰਨ expected = 0;
+    ਪੂਰਨ ਲੰਮਾਈ;
+    ਜੇ (*s < 0x80) {
         /* single-byte code */
-        return 1;
+        ਵਾਪਸ 1;
     }
-    else if (*s < 0xE0) {
+    ਨਹੀਂਤਾਂ ਜੇ (*s < 0xE0) {
         /* \xC2\x80-\xDF\xBF -- 0080-07FF */
-        if (*s < 0xC2) {
+        ਜੇ (*s < 0xC2) {
             /* invalid sequence
                \x80-\xBF -- continuation byte
                \xC0-\xC1 -- fake 0000-007F */
-            return 0;
+            ਵਾਪਸ 0;
         }
         expected = 1;
     }
-    else if (*s < 0xF0) {
+    ਨਹੀਂਤਾਂ ਜੇ (*s < 0xF0) {
         /* \xE0\xA0\x80-\xEF\xBF\xBF -- 0800-FFFF */
-        if (*s == 0xE0 && *(s + 1) < 0xA0) {
+        ਜੇ (*s == 0xE0 && *(s + 1) < 0xA0) {
             /* invalid sequence
                \xE0\x80\x80-\xE0\x9F\xBF -- fake 0000-0800 */
-            return 0;
+            ਵਾਪਸ 0;
         }
-        else if (*s == 0xED && *(s + 1) >= 0xA0) {
+        ਨਹੀਂਤਾਂ ਜੇ (*s == 0xED && *(s + 1) >= 0xA0) {
             /* Decoding UTF-8 sequences in range \xED\xA0\x80-\xED\xBF\xBF
                will result in surrogates in range D800-DFFF. Surrogates are
                not valid UTF-8 so they are rejected.
                See https://www.unicode.org/versions/Unicode5.2.0/ch03.pdf
                (table 3-7) and http://www.rfc-editor.org/rfc/rfc3629.txt */
-            return 0;
+            ਵਾਪਸ 0;
         }
         expected = 2;
     }
-    else if (*s < 0xF5) {
+    ਨਹੀਂਤਾਂ ਜੇ (*s < 0xF5) {
         /* \xF0\x90\x80\x80-\xF4\x8F\xBF\xBF -- 10000-10FFFF */
-        if (*(s + 1) < 0x90 ? *s == 0xF0 : *s == 0xF4) {
+        ਜੇ (*(s + 1) < 0x90 ? *s == 0xF0 : *s == 0xF4) {
             /* invalid sequence -- one of:
                \xF0\x80\x80\x80-\xF0\x8F\xBF\xBF -- fake 0000-FFFF
                \xF4\x90\x80\x80- -- 110000- overflow */
-            return 0;
+            ਵਾਪਸ 0;
         }
         expected = 3;
     }
-    else {
+    ਨਹੀਂਤਾਂ {
         /* invalid start byte */
-        return 0;
+        ਵਾਪਸ 0;
     }
-    length = expected + 1;
-    for (int i = 1; i <= expected; i++) {
-        if (s[i] < 0x80 || s[i] >= 0xC0) {
-            return 0;
+    ਲੰਮਾਈ = expected + 1;
+    ਲਈ (ਪੂਰਨ i = 1; i <= expected; i++) {
+        ਜੇ (s[i] < 0x80 || s[i] >= 0xC0) {
+            ਵਾਪਸ 0;
         }
     }
-    return length;
+    ਵਾਪਸ ਲੰਮਾਈ;
 }
 
-int
-_PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
+ਪੂਰਨ
+_PyTokenizer_ensure_utf8(ਅਚਲ ਅੱਖਰ *ਸਤਰ, ਬਣਤਰ tok_state *tok, ਪੂਰਨ lineno)
 {
-    const char *badchar = NULL;
-    const char *c;
-    int length;
-    const char *line_start = line;
-    for (c = line; *c; c += length) {
-        if (!(length = valid_utf8((const unsigned char *)c))) {
+    ਅਚਲ ਅੱਖਰ *badchar = ਨਿਰਾ;
+    ਅਚਲ ਅੱਖਰ *c;
+    ਪੂਰਨ ਲੰਮਾਈ;
+    ਅਚਲ ਅੱਖਰ *ਸਤਰ_ਸ਼ੁਰੂ = ਸਤਰ;
+    ਲਈ (c = ਸਤਰ; *c; c += ਲੰਮਾਈ) {
+        ਜੇ (!(ਲੰਮਾਈ = valid_utf8((ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *)c))) {
             badchar = c;
-            break;
+            ਰੋਕੋ;
         }
-        if (*c == '\n') {
+        ਜੇ (*c == '\n') {
             lineno++;
-            line_start = c + 1;
+            ਸਤਰ_ਸ਼ੁਰੂ = c + 1;
         }
     }
-    if (badchar) {
+    ਜੇ (badchar) {
         _PyTokenizer_syntaxerror_at(
-                tok, line_start, badchar - line_start + 1, lineno,
+                tok, ਸਤਰ_ਸ਼ੁਰੂ, badchar - ਸਤਰ_ਸ਼ੁਰੂ + 1, lineno,
                 -1, -1,
                 "Non-UTF-8 code starting with '\\x%.2x'"
                 "%s%V on line %i, "
                 "but no encoding declared; "
                 "see https://peps.python.org/pep-0263/ for details",
-                (unsigned char)*badchar,
+                (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ)*badchar,
                 tok->filename ? " in file " : "", tok->filename, "",
                 lineno);
-        return 0;
+        ਵਾਪਸ 0;
     }
-    return 1;
+    ਵਾਪਸ 1;
 }
 
 
 /* ############## DEBUGGING STUFF ############## */
 
-#ifdef Py_DEBUG
-void
-_PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ Py_DEBUG
+ਖਾਲੀ
+_PyTokenizer_print_escape(FILE *f, ਅਚਲ ਅੱਖਰ *s, Py_ssize_t ਮਾਪ)
 {
-    if (s == NULL) {
+    ਜੇ (s == ਨਿਰਾ) {
         fputs("NULL", f);
-        return;
+        ਵਾਪਸ;
     }
     putc('"', f);
-    while (size-- > 0) {
-        unsigned char c = *s++;
-        switch (c) {
-            case '\n': fputs("\\n", f); break;
-            case '\r': fputs("\\r", f); break;
-            case '\t': fputs("\\t", f); break;
-            case '\f': fputs("\\f", f); break;
-            case '\'': fputs("\\'", f); break;
-            case '"': fputs("\\\"", f); break;
-            default:
-                if (0x20 <= c && c <= 0x7f)
+    ਜਦੋਂ (ਮਾਪ-- > 0) {
+        ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c = *s++;
+        ਚੋਣ (c) {
+            ਹਾਲਤ '\n': fputs("\\n", f); ਰੋਕੋ;
+            ਹਾਲਤ '\r': fputs("\\r", f); ਰੋਕੋ;
+            ਹਾਲਤ '\t': fputs("\\t", f); ਰੋਕੋ;
+            ਹਾਲਤ '\f': fputs("\\f", f); ਰੋਕੋ;
+            ਹਾਲਤ '\'': fputs("\\'", f); ਰੋਕੋ;
+            ਹਾਲਤ '"': fputs("\\\"", f); ਰੋਕੋ;
+            ਮੂਲ:
+                ਜੇ (0x20 <= c && c <= 0x7f)
                     putc(c, f);
-                else
+                ਨਹੀਂਤਾਂ
                     fprintf(f, "\\x%02x", c);
         }
     }
     putc('"', f);
 }
-#endif
+#ਜੇ_ਅੰਤ

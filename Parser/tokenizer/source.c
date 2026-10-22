@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#ਅਨ੍ਤਰ੍ਭਾਵ "Python.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "source.h"
 
-#define SOURCE_BUFFER_GROWTH_FACTOR 2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਰੋਤ_ਬਫਰ_GROWTH_ਗੁਣਕ 2
 
-void
-_PyTok_SourceInit(_PyTok_SourceText *source)
+ਖਾਲੀ
+Py_Tok_ਸਰੋਤ_Init(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ)
 {
-    *source = (_PyTok_SourceText){0};
+    *ਸਰੋਤ = (Py_Tok_ਸਰੋਤ_ਪਾਠ){0};
 }
 
-void
-_PyTok_SourceClear(_PyTok_SourceText *source)
+ਖਾਲੀ
+Py_Tok_ਸਰੋਤ_Clear(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ)
 {
-    PyMem_Free(source->bytes);
-    _PyTok_SourceInit(source);
+    PyMem_Free(ਸਰੋਤ->ਬਾਈਟਾਂ);
+    Py_Tok_ਸਰੋਤ_Init(ਸਰੋਤ);
 }
 
-void
-_PyTok_SourceDiscard(_PyTok_SourceText *source)
+ਖਾਲੀ
+Py_Tok_ਸਰੋਤ_Discard(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
-    source->base_offset += source->len;
-    source->len = 0;
-    if (source->bytes != NULL) {
-        source->bytes[0] = '\0';
+    ਪ੍ਰਤਿਜ੍ਞਾ(ਸਰੋਤ->ਅਧਾਰ_ਵਿੱਥ <= PY_SSIZE_T_MAX - ਸਰੋਤ->len);
+    ਸਰੋਤ->ਅਧਾਰ_ਵਿੱਥ += ਸਰੋਤ->len;
+    ਸਰੋਤ->len = 0;
+    ਜੇ (ਸਰੋਤ->ਬਾਈਟਾਂ != ਨਿਰਾ) {
+        ਸਰੋਤ->ਬਾਈਟਾਂ[0] = '\0';
     }
-    source->nlines = 0;
+    ਸਰੋਤ->nlines = 0;
 }
 
-static int
-reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
+ਸਥਿਰ ਪੂਰਨ
+reserve_ਬਾਈਟਾਂ(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    ਜੇ (needed <= ਸਰੋਤ->cap) {
+        ਵਾਪਸ 0;
     }
-    Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    Py_ssize_t cap = ਸਰੋਤ->cap > 0 ? ਸਰੋਤ->cap : BUFSIZ;
+    ਜਦੋਂ (cap < needed) {
+        ਜੇ (cap > PY_SSIZE_T_MAX / ਸਰੋਤ_ਬਫਰ_GROWTH_ਗੁਣਕ) {
             cap = needed;
-            break;
+            ਰੋਕੋ;
         }
-        cap *= SOURCE_BUFFER_GROWTH_FACTOR;
+        cap *= ਸਰੋਤ_ਬਫਰ_GROWTH_ਗੁਣਕ;
     }
-    char *bytes;
-#ifdef Py_DEBUG
+    ਅੱਖਰ *ਬਾਈਟਾਂ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
-    bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
-        memcpy(bytes, source->bytes, source->len);
+    ਬਾਈਟਾਂ = PyMem_Malloc(cap);
+    ਜੇ (ਬਾਈਟਾਂ != ਨਿਰਾ && ਸਰੋਤ->len > 0) {
+        ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਬਾਈਟਾਂ, ਸਰੋਤ->ਬਾਈਟਾਂ, ਸਰੋਤ->len);
     }
-#else
-    bytes = PyMem_Realloc(source->bytes, cap);
-#endif
-    if (bytes == NULL) {
-        PyErr_NoMemory();
-        return -1;
+#ਨਹੀਂਤਾਂ
+    ਬਾਈਟਾਂ = PyMem_Realloc(ਸਰੋਤ->ਬਾਈਟਾਂ, cap);
+#ਜੇ_ਅੰਤ
+    ਜੇ (ਬਾਈਟਾਂ == ਨਿਰਾ) {
+        Py_Err_No_ਸਮ੍ਰਿਤੀ();
+        ਵਾਪਸ -1;
     }
-#ifdef Py_DEBUG
-    if (source->bytes != NULL) {
-        memset(source->bytes, PYMEM_DEADBYTE, source->cap);
-        PyMem_Free(source->bytes);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ Py_DEBUG
+    ਜੇ (ਸਰੋਤ->ਬਾਈਟਾਂ != ਨਿਰਾ) {
+        memset(ਸਰੋਤ->ਬਾਈਟਾਂ, PYMEM_DEADBYTE, ਸਰੋਤ->cap);
+        PyMem_Free(ਸਰੋਤ->ਬਾਈਟਾਂ);
     }
-#endif
-    source->bytes = bytes;
-    source->cap = cap;
-    return 0;
+#ਜੇ_ਅੰਤ
+    ਸਰੋਤ->ਬਾਈਟਾਂ = ਬਾਈਟਾਂ;
+    ਸਰੋਤ->cap = cap;
+    ਵਾਪਸ 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+ਸਥਿਰ ਪੂਰਨ
+validate_ਸਤਰ(ਅਚਲ Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, ਅਚਲ ਅੱਖਰ *ਬਾਈਟਾਂ,
+              Py_ssize_t len, ਪੂਰਨ append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
-            (source->nlines > 0 &&
-             (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ਜੇ (len < 0 || (len == 0 && !append_newline) || ਬਾਈਟਾਂ == ਨਿਰਾ ||
+            (ਸਰੋਤ->nlines > 0 &&
+             (ਸਰੋਤ->len == 0 || ਸਰੋਤ->ਬਾਈਟਾਂ[ਸਰੋਤ->len - 1] != '\n'))) {
+        Py_Err_ਸੈੱਟ_String(PyExc_SystemError, "invalid tokenizer source line");
+        ਵਾਪਸ -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ਅਚਲ ਅੱਖਰ *newline = memchr(ਬਾਈਟਾਂ, '\n', len);
+    ਜੇ (newline != ਨਿਰਾ && (append_newline || newline != ਬਾਈਟਾਂ + len - 1)) {
+        Py_Err_ਸੈੱਟ_String(PyExc_SystemError, "invalid tokenizer source line");
+        ਵਾਪਸ -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
-        PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+    ਜੇ (ਸਰੋਤ->nlines == ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ ||
+            (ਸਰੋਤ->nlines == ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ - 1 && (newline != ਨਿਰਾ || append_newline))) {
+        Py_Err_ਸੈੱਟ_String(Py_Exc_ਉਛਾਲ_Error, "too many tokenizer source lines");
+        ਵਾਪਸ -1;
     }
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+ਸਥਿਰ _PyTok_Off
+append_ਸਤਰ(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, ਅਚਲ ਅੱਖਰ *ਬਾਈਟਾਂ,
+            Py_ssize_t len, ਪੂਰਨ append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    ਜੇ (validate_ਸਤਰ(ਸਰੋਤ, ਬਾਈਟਾਂ, len, append_newline) < 0) {
+        ਵਾਪਸ -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
-            source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
-        PyErr_NoMemory();
-        return -1;
+    ਜੇ (ਸਰੋਤ->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+            ਸਰੋਤ->ਅਧਾਰ_ਵਿੱਥ > PY_SSIZE_T_MAX - ਸਰੋਤ->len - len - append_newline) {
+        Py_Err_No_ਸਮ੍ਰਿਤੀ();
+        ਵਾਪਸ -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    ਜੇ (reserve_ਬਾਈਟਾਂ(ਸਰੋਤ, ਸਰੋਤ->len + len + append_newline + 1) < 0) {
+        ਵਾਪਸ -1;
     }
 
-    _PyTok_Off start = source->len;
-    memcpy(source->bytes + start, bytes, len);
-    source->len += len;
-    if (append_newline) {
-        source->bytes[source->len++] = '\n';
+    _PyTok_Off ਸ਼ੁਰੂ = ਸਰੋਤ->len;
+    ਸਮ੍ਰਿਤੀ_ਨਕਲ(ਸਰੋਤ->ਬਾਈਟਾਂ + ਸ਼ੁਰੂ, ਬਾਈਟਾਂ, len);
+    ਸਰੋਤ->len += len;
+    ਜੇ (append_newline) {
+        ਸਰੋਤ->ਬਾਈਟਾਂ[ਸਰੋਤ->len++] = '\n';
     }
-    source->bytes[source->len] = '\0';
-    source->nlines++;
-    return source->base_offset + start;
+    ਸਰੋਤ->ਬਾਈਟਾਂ[ਸਰੋਤ->len] = '\0';
+    ਸਰੋਤ->nlines++;
+    ਵਾਪਸ ਸਰੋਤ->ਅਧਾਰ_ਵਿੱਥ + ਸ਼ੁਰੂ;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ਸਰੋਤ_Append_ਸਤਰ(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, ਅਚਲ ਅੱਖਰ *ਬਾਈਟਾਂ,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    ਵਾਪਸ append_ਸਤਰ(ਸਰੋਤ, ਬਾਈਟਾਂ, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ਸਰੋਤ_Append_ਸਤਰ_With_Newline(Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, ਅਚਲ ਅੱਖਰ *ਬਾਈਟਾਂ,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    ਵਾਪਸ append_ਸਤਰ(ਸਰੋਤ, ਬਾਈਟਾਂ, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+ਅਚਲ ਅੱਖਰ *
+Py_Tok_ਸਰੋਤ_ਸਤਰ_View(ਅਚਲ Py_Tok_ਸਰੋਤ_ਪਾਠ *ਸਰੋਤ, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    ਪ੍ਰਤਿਜ੍ਞਾ(len != ਨਿਰਾ);
+    ਅਚਲ ਅੱਖਰ *ਸਤਰ = Py_Tok_ਸਰੋਤ_ਅੰਕੜੇ(ਸਰੋਤ);
+    ਅਚਲ ਅੱਖਰ *ਸਿਰਾ = ਸਤਰ + ਸਰੋਤ->len;
+    ਜਦੋਂ (lineno > 1) {
+        ਅਚਲ ਅੱਖਰ *newline = memchr(ਸਤਰ, '\n', ਸਿਰਾ - ਸਤਰ);
+        ਜੇ (newline == ਨਿਰਾ) {
+            ਰੋਕੋ;
         }
-        line = newline + 1;
+        ਸਤਰ = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    ਅਚਲ ਅੱਖਰ *newline = memchr(ਸਤਰ, '\n', ਸਿਰਾ - ਸਤਰ);
+    *len = (newline != ਨਿਰਾ ? newline : ਸਿਰਾ) - ਸਤਰ;
+    ਵਾਪਸ ਸਤਰ;
 }

@@ -1,589 +1,589 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "Python.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pycore_token.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "errcode.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "lexer_internal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../tokenizer/helpers.h"
 
-#define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAKE_TOKEN(token_type) Py_Lexer_token_ਤਿਆਰੀ(tok, token, token_type, p_ਸ਼ੁਰੂ, p_ਸਿਰਾ)
 
-static int
-string_error_token(struct tok_state *tok, struct token *token,
-                   _PyTok_Off start, _PyTok_Loc location)
+ਸਥਿਰ ਪੂਰਨ
+string_error_token(ਬਣਤਰ tok_state *tok, ਬਣਤਰ token *token,
+                   _PyTok_Off ਸ਼ੁਰੂ, _PyTok_Loc location)
 {
     tok->diagnostic = (_PyTokenizer_Diagnostic){
-        .location = {location.lineno, location.byte_col + 1},
-        .text_span = {start - location.byte_col, tok->inp},
+        .location = {location.lineno, location.byte_ਖਾਨਾ + 1},
+        .ਪਾਠ_ਵਿਸਤਾਰ = {ਸ਼ੁਰੂ - location.byte_ਖਾਨਾ, tok->inp},
     };
-    int type = _PyLexer_token_setup(tok, token, ERRORTOKEN, -1, -1);
-    token->start_loc = location;
-    token->end_loc = (_PyTok_Loc){location.lineno, -1};
-    return type;
+    ਪੂਰਨ type = Py_Lexer_token_ਤਿਆਰੀ(tok, token, ERRORTOKEN, -1, -1);
+    token->ਸ਼ੁਰੂ_loc = location;
+    token->ਸਿਰਾ_loc = (_PyTok_Loc){location.lineno, -1};
+    ਵਾਪਸ type;
 }
 
-static int
-incomplete_string_token(struct tok_state *tok, struct token *token,
-                        int type, _PyTok_Off start, _PyTok_Loc location)
+ਸਥਿਰ ਪੂਰਨ
+incomplete_string_token(ਬਣਤਰ tok_state *tok, ਬਣਤਰ token *token,
+                        ਪੂਰਨ type, _PyTok_Off ਸ਼ੁਰੂ, _PyTok_Loc location)
 {
-    string_error_token(tok, token, start, location);
-    tok->done = E_INCOMPLETE;
-    return type;
+    string_error_token(tok, token, ਸ਼ੁਰੂ, location);
+    tok->ਪੂਰਾ = E_INCOMPLETE;
+    ਵਾਪਸ type;
 }
 
-int
-_PyLexer_record_ftstring_comment(struct tok_state *tok, ftstring_state *state,
-                                 _PyTok_Off start, _PyTok_Off end)
+ਪੂਰਨ
+Py_Lexer_ਰਿਕਾਰਡ_ftstring_comment(ਬਣਤਰ tok_state *tok, ftstring_state *state,
+                                 _PyTok_Off ਸ਼ੁਰੂ, _PyTok_Off ਸਿਰਾ)
 {
-    assert(state == _PyLexer_CurrentFTString(tok) && state->mode == FTSTRING_MODE_EXPRESSION);
-    if (state->expr_span.end >= 0) {
-        return 0;
+    ਪ੍ਰਤਿਜ੍ਞਾ(state == _PyLexer_CurrentFTString(tok) && state->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    ਜੇ (state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ >= 0) {
+        ਵਾਪਸ 0;
     }
-    assert(state->expr_span.start >= 0);
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ >= 0);
     tokenizer_comments *comments = state->comments;
-    if (comments == NULL || comments->count == comments->capacity) {
-        Py_ssize_t max_capacity = (PY_SSIZE_T_MAX -
-            (Py_ssize_t)sizeof(*comments)) /
-            (Py_ssize_t)sizeof(*comments->spans);
-        if (comments != NULL && comments->capacity > max_capacity / 2) {
-            PyErr_NoMemory();
-            return -1;
+    ਜੇ (comments == ਨਿਰਾ || comments->ਗਿਣਤੀ_2 == comments->ਸਮਰੱਥਾ) {
+        Py_ssize_t max_ਸਮਰੱਥਾ = (PY_SSIZE_T_MAX -
+            (Py_ssize_t)ਆਕਾਰ(*comments)) /
+            (Py_ssize_t)ਆਕਾਰ(*comments->spans);
+        ਜੇ (comments != ਨਿਰਾ && comments->ਸਮਰੱਥਾ > max_ਸਮਰੱਥਾ / 2) {
+            Py_Err_No_ਸਮ੍ਰਿਤੀ();
+            ਵਾਪਸ -1;
         }
-        Py_ssize_t capacity = comments == NULL ? 4 : comments->capacity * 2;
-        size_t size = sizeof(*comments) +
-            (size_t)capacity * sizeof(*comments->spans);
-        tokenizer_comments *resized = PyMem_Realloc(comments, size);
-        if (resized == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        Py_ssize_t ਸਮਰੱਥਾ = comments == ਨਿਰਾ ? 4 : comments->ਸਮਰੱਥਾ * 2;
+        ਮਾਪ_t ਮਾਪ = ਆਕਾਰ(*comments) +
+            (ਮਾਪ_t)ਸਮਰੱਥਾ * ਆਕਾਰ(*comments->spans);
+        tokenizer_comments *resized = PyMem_Realloc(comments, ਮਾਪ);
+        ਜੇ (resized == ਨਿਰਾ) {
+            Py_Err_No_ਸਮ੍ਰਿਤੀ();
+            ਵਾਪਸ -1;
         }
         comments = resized;
-        if (state->comments == NULL) {
-            comments->count = 0;
+        ਜੇ (state->comments == ਨਿਰਾ) {
+            comments->ਗਿਣਤੀ_2 = 0;
         }
-        comments->capacity = capacity;
+        comments->ਸਮਰੱਥਾ = ਸਮਰੱਥਾ;
         state->comments = comments;
     }
-    comments->spans[comments->count++] =
-        (_PyTok_Span){start, end};
-    return 0;
+    comments->spans[comments->ਗਿਣਤੀ_2++] =
+        (Py_Tok_ਵਿਸਤਾਰ){ਸ਼ੁਰੂ, ਸਿਰਾ};
+    ਵਾਪਸ 0;
 }
 
-static int
-finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                     struct token *token)
+ਸਥਿਰ ਪੂਰਨ
+ਅੰਤ_ftstring_ਵਿਅੰਜਕ(ਬਣਤਰ tok_state *tok, ftstring_state *state,
+                     ਬਣਤਰ token *token)
 {
-    assert(token != NULL && state == _PyLexer_CurrentFTString(tok));
-    assert(state->mode == FTSTRING_MODE_EXPRESSION && tok->start >= 0);
+    ਪ੍ਰਤਿਜ੍ਞਾ(token != ਨਿਰਾ && state == _PyLexer_CurrentFTString(tok));
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ && tok->ਸ਼ੁਰੂ >= 0);
 
-    if (state->expr_span.end >= 0) {
-        return 0;
+    ਜੇ (state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ >= 0) {
+        ਵਾਪਸ 0;
     }
-    assert(state->expr_span.start >= 0);
-    state->expr_span.end = tok->start;
-    int tstring_interpolation = _PyLexer_IsTString(state->kind) &&
-        state->replacement_depth == 1;
-    if (!(state->debug_expr || tstring_interpolation) || token->metadata) {
-        return 0;
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ >= 0);
+    state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ = tok->ਸ਼ੁਰੂ;
+    ਪੂਰਨ tstring_interpolation = _PyLexer_IsTString(state->ਕਿਸਮ) &&
+        state->replacement_ਡੂੰਘਾਈ == 1;
+    ਜੇ (!(state->debug_ਵਿਅੰਜਕ || tstring_interpolation) || token->metadata) {
+        ਵਾਪਸ 0;
     }
     tokenizer_comments *comments = state->comments;
     PyObject *res;
-    if (comments != NULL && comments->count > 0) {
-        Py_ssize_t stripped_size =
-            state->expr_span.end - state->expr_span.start;
-        Py_ssize_t comment_count = 0;
-        for (Py_ssize_t i = 0; i < comments->count; i++) {
-            _PyTok_Span comment = comments->spans[i];
-            assert(_PyTok_SpanIsValid(comment));
-            assert(comment.start >= (i == 0 ? state->expr_span.start
-                                           : comments->spans[i - 1].end));
-            if (comment.start >= state->expr_span.end) {
-                break;
+    ਜੇ (comments != ਨਿਰਾ && comments->ਗਿਣਤੀ_2 > 0) {
+        Py_ssize_t stripped_ਮਾਪ =
+            state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ - state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ;
+        Py_ssize_t comment_ਗਿਣਤੀ = 0;
+        ਲਈ (Py_ssize_t i = 0; i < comments->ਗਿਣਤੀ_2; i++) {
+            Py_Tok_ਵਿਸਤਾਰ comment = comments->spans[i];
+            ਪ੍ਰਤਿਜ੍ਞਾ(Py_Tok_ਵਿਸਤਾਰ_Is_Valid(comment));
+            ਪ੍ਰਤਿਜ੍ਞਾ(comment.ਸ਼ੁਰੂ >= (i == 0 ? state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ
+                                           : comments->spans[i - 1].ਸਿਰਾ));
+            ਜੇ (comment.ਸ਼ੁਰੂ >= state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ) {
+                ਰੋਕੋ;
             }
-            assert(comment.end <= state->expr_span.end);
-            stripped_size -= comment.end - comment.start;
-            comment_count++;
+            ਪ੍ਰਤਿਜ੍ਞਾ(comment.ਸਿਰਾ <= state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ);
+            stripped_ਮਾਪ -= comment.ਸਿਰਾ - comment.ਸ਼ੁਰੂ;
+            comment_ਗਿਣਤੀ++;
         }
-        char *stripped = PyMem_Malloc((size_t)stripped_size);
-        if (stripped == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        ਅੱਖਰ *stripped = PyMem_Malloc((ਮਾਪ_t)stripped_ਮਾਪ);
+        ਜੇ (stripped == ਨਿਰਾ) {
+            Py_Err_No_ਸਮ੍ਰਿਤੀ();
+            ਵਾਪਸ -1;
         }
-        _PyTok_Span kept = {state->expr_span.start, state->expr_span.start};
+        Py_Tok_ਵਿਸਤਾਰ kept = {state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ, state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸ਼ੁਰੂ};
         Py_ssize_t stripped_len = 0;
-        for (Py_ssize_t i = 0; i < comment_count; i++) {
-            kept.end = comments->spans[i].start;
-            Py_ssize_t length;
-            const char *text = _PyTok_SourceSpanView(
-                &tok->source, kept, &length);
-            memcpy(stripped + stripped_len, text, (size_t)length);
-            stripped_len += length;
-            kept.start = comments->spans[i].end;
+        ਲਈ (Py_ssize_t i = 0; i < comment_ਗਿਣਤੀ; i++) {
+            kept.ਸਿਰਾ = comments->spans[i].ਸ਼ੁਰੂ;
+            Py_ssize_t ਲੰਮਾਈ;
+            ਅਚਲ ਅੱਖਰ *ਪਾਠ = Py_Tok_ਸਰੋਤ_ਵਿਸਤਾਰ_View(
+                &tok->ਸਰੋਤ, kept, &ਲੰਮਾਈ);
+            ਸਮ੍ਰਿਤੀ_ਨਕਲ(stripped + stripped_len, ਪਾਠ, (ਮਾਪ_t)ਲੰਮਾਈ);
+            stripped_len += ਲੰਮਾਈ;
+            kept.ਸ਼ੁਰੂ = comments->spans[i].ਸਿਰਾ;
         }
-        kept.end = state->expr_span.end;
-        Py_ssize_t length;
-        const char *text = _PyTok_SourceSpanView(&tok->source, kept, &length);
-        memcpy(stripped + stripped_len, text, (size_t)length);
-        res = PyUnicode_DecodeUTF8(stripped, stripped_size, NULL);
+        kept.ਸਿਰਾ = state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ.ਸਿਰਾ;
+        Py_ssize_t ਲੰਮਾਈ;
+        ਅਚਲ ਅੱਖਰ *ਪਾਠ = Py_Tok_ਸਰੋਤ_ਵਿਸਤਾਰ_View(&tok->ਸਰੋਤ, kept, &ਲੰਮਾਈ);
+        ਸਮ੍ਰਿਤੀ_ਨਕਲ(stripped + stripped_len, ਪਾਠ, (ਮਾਪ_t)ਲੰਮਾਈ);
+        res = PyUnicode_DecodeUTF8(stripped, stripped_ਮਾਪ, ਨਿਰਾ);
         PyMem_Free(stripped);
     }
-    else {
-        Py_ssize_t expr_len;
-        const char *expr = _PyTok_SourceSpanView(
-            &tok->source, state->expr_span, &expr_len);
-        res = PyUnicode_DecodeUTF8(expr, expr_len, NULL);
+    ਨਹੀਂਤਾਂ {
+        Py_ssize_t ਵਿਅੰਜਕ_len;
+        ਅਚਲ ਅੱਖਰ *ਵਿਅੰਜਕ = Py_Tok_ਸਰੋਤ_ਵਿਸਤਾਰ_View(
+            &tok->ਸਰੋਤ, state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ, &ਵਿਅੰਜਕ_len);
+        res = PyUnicode_DecodeUTF8(ਵਿਅੰਜਕ, ਵਿਅੰਜਕ_len, ਨਿਰਾ);
     }
 
-    if (!res) {
-        return -1;
+    ਜੇ (!res) {
+        ਵਾਪਸ -1;
     }
     token->metadata = res;
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-static int
-begin_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                    _PyTok_Off expr_start)
+ਸਥਿਰ ਪੂਰਨ
+begin_ftstring_ਵਿਅੰਜਕ(ਬਣਤਰ tok_state *tok, ftstring_state *state,
+                    _PyTok_Off ਵਿਅੰਜਕ_ਸ਼ੁਰੂ)
 {
-    assert(state->mode != FTSTRING_MODE_EXPRESSION);
-    state->expr_span = (_PyTok_Span){expr_start, -1};
-    if (state->comments != NULL) {
-        state->comments->count = 0;
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਬਹੁਲਕ != FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ = (Py_Tok_ਵਿਸਤਾਰ){ਵਿਅੰਜਕ_ਸ਼ੁਰੂ, -1};
+    ਜੇ (state->comments != ਨਿਰਾ) {
+        state->comments->ਗਿਣਤੀ_2 = 0;
     }
-    if (state->replacement_depth >= MAX_EXPR_NESTING) {
+    ਜੇ (state->replacement_ਡੂੰਘਾਈ >= MAX_ਵਿਅੰਜਕ_NESTING) {
         _PyTokenizer_syntaxerror(
             tok, "%c-string: expressions nested too deeply",
-            _PyLexer_StringPrefix(state->kind));
-        return -1;
+            Py_Lexer_String_ਅਗੇਤਰ(state->ਕਿਸਮ));
+        ਵਾਪਸ -1;
     }
-    state->replacement_depth++;
-    state->mode = FTSTRING_MODE_EXPRESSION;
-    state->debug_expr = 0;
-    return 0;
+    state->replacement_ਡੂੰਘਾਈ++;
+    state->ਬਹੁਲਕ = FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ;
+    state->debug_ਵਿਅੰਜਕ = 0;
+    ਵਾਪਸ 0;
 }
 
-int
-_PyLexer_ftstring_punctuation(struct tok_state *tok, ftstring_state *state,
-                              struct token *token, int c)
+ਪੂਰਨ
+_PyLexer_ftstring_punctuation(ਬਣਤਰ tok_state *tok, ftstring_state *state,
+                              ਬਣਤਰ token *token, ਪੂਰਨ c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ':' || c == '}' || c == '!');
-    if (_PyLexer_FTStringBracketDepth(tok, state) != state->replacement_depth) {
-        return 0;
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    ਪ੍ਰਤਿਜ੍ਞਾ(c == ':' || c == '}' || c == '!');
+    ਜੇ (Py_Lexer_FTString_Bracket_ਡੂੰਘਾਈ(tok, state) != state->replacement_ਡੂੰਘਾਈ) {
+        ਵਾਪਸ 0;
     }
-    if (c == '!') {
-        int next = tok_nextc(tok);
-        tok_backup(tok, next);
-        if (next == '=') {
-            return 0;
+    ਜੇ (c == '!') {
+        ਪੂਰਨ ਅਗਲਾ = tok_nextc(tok);
+        tok_backup(tok, ਅਗਲਾ);
+        ਜੇ (ਅਗਲਾ == '=') {
+            ਵਾਪਸ 0;
         }
     }
-    if (finish_ftstring_expr(tok, state, token) < 0) {
-        return -1;
+    ਜੇ (ਅੰਤ_ftstring_ਵਿਅੰਜਕ(tok, state, token) < 0) {
+        ਵਾਪਸ -1;
     }
-    if (c == ':') {
-        state->mode = FTSTRING_MODE_FORMAT_SPEC;
-        return COLON;
+    ਜੇ (c == ':') {
+        state->ਬਹੁਲਕ = FTSTRING_ਬਹੁਲਕ_FORMAT_SPEC;
+        ਵਾਪਸ COLON;
     }
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-int
-_PyLexer_close_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                             int c)
+ਪੂਰਨ
+Py_Lexer_close_ftstring_ਵਿਅੰਜਕ(ਬਣਤਰ tok_state *tok, ftstring_state *state,
+                             ਪੂਰਨ c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ')' || c == ']' || c == '}');
-    int depth = _PyLexer_FTStringBracketDepth(tok, state);
-    if (depth < 0) {
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    ਪ੍ਰਤਿਜ੍ਞਾ(c == ')' || c == ']' || c == '}');
+    ਪੂਰਨ ਡੂੰਘਾਈ = Py_Lexer_FTString_Bracket_ਡੂੰਘਾਈ(tok, state);
+    ਜੇ (ਡੂੰਘਾਈ < 0) {
         _PyTokenizer_syntaxerror(tok, "%c-string: unmatched '%c'",
-                                _PyLexer_StringPrefix(state->kind), c);
-        return -1;
+                                Py_Lexer_String_ਅਗੇਤਰ(state->ਕਿਸਮ), c);
+        ਵਾਪਸ -1;
     }
-    if (c == '}' && depth == state->replacement_depth - 1) {
-        state->replacement_depth--;
-        state->mode = FTSTRING_MODE_MIDDLE;
-        state->debug_expr = 0;
+    ਜੇ (c == '}' && ਡੂੰਘਾਈ == state->replacement_ਡੂੰਘਾਈ - 1) {
+        state->replacement_ਡੂੰਘਾਈ--;
+        state->ਬਹੁਲਕ = FTSTRING_ਬਹੁਲਕ_ਵਿਚਕਾਰ;
+        state->debug_ਵਿਅੰਜਕ = 0;
     }
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-void
-_PyLexer_mark_ftstring_debug(struct tok_state *tok, ftstring_state *state)
+ਖਾਲੀ
+_PyLexer_mark_ftstring_debug(ਬਣਤਰ tok_state *tok, ftstring_state *state)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    if (_PyLexer_FTStringBracketDepth(tok, state) == state->replacement_depth) {
-        state->debug_expr = 1;
+    ਪ੍ਰਤਿਜ੍ਞਾ(state->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    ਜੇ (Py_Lexer_FTString_Bracket_ਡੂੰਘਾਈ(tok, state) == state->replacement_ਡੂੰਘਾਈ) {
+        state->debug_ਵਿਅੰਜਕ = 1;
     }
 }
 
-int
-_PyLexer_check_string_prefixes(struct tok_state *tok,
-                                             int saw_b, int saw_r, int saw_u,
-                                             int saw_f, int saw_t) {
+ਪੂਰਨ
+_PyLexer_check_string_prefixes(ਬਣਤਰ tok_state *tok,
+                                             ਪੂਰਨ saw_b, ਪੂਰਨ saw_r, ਪੂਰਨ saw_u,
+                                             ਪੂਰਨ saw_f, ਪੂਰਨ saw_t) {
     // Supported: rb, rf, rt (in any order)
     // Unsupported: ub, ur, uf, ut, bf, bt, ft (in any order)
 
-#define RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
-    do {                                                                  \
-        (void)_PyTokenizer_syntaxerror_known_range(                       \
-            tok, (int)(tok->start + 1 - tok->line_start),                 \
-            (int)(tok->cur - tok->line_start),                            \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
+    ਕਰੋ {                                                                  \
+        (ਖਾਲੀ)Py_Tokenizer_syntaxerror_ਗਿਆਤ_range(                       \
+            tok, (ਪੂਰਨ)(tok->ਸ਼ੁਰੂ + 1 - tok->ਸਤਰ_ਸ਼ੁਰੂ),                 \
+            (ਪੂਰਨ)(tok->cur - tok->ਸਤਰ_ਸ਼ੁਰੂ),                            \
             "'" PREFIX1 "' and '" PREFIX2 "' prefixes are incompatible"); \
-        return -1;                                                        \
-    } while (0)
+        ਵਾਪਸ -1;                                                        \
+    } ਜਦੋਂ (0)
 
-    if (saw_u && saw_b) {
+    ਜੇ (saw_u && saw_b) {
         RETURN_SYNTAX_ERROR("u", "b");
     }
-    if (saw_u && saw_r) {
+    ਜੇ (saw_u && saw_r) {
         RETURN_SYNTAX_ERROR("u", "r");
     }
-    if (saw_u && saw_f) {
+    ਜੇ (saw_u && saw_f) {
         RETURN_SYNTAX_ERROR("u", "f");
     }
-    if (saw_u && saw_t) {
+    ਜੇ (saw_u && saw_t) {
         RETURN_SYNTAX_ERROR("u", "t");
     }
 
-    if (saw_b && saw_f) {
+    ਜੇ (saw_b && saw_f) {
         RETURN_SYNTAX_ERROR("b", "f");
     }
-    if (saw_b && saw_t) {
+    ਜੇ (saw_b && saw_t) {
         RETURN_SYNTAX_ERROR("b", "t");
     }
 
-    if (saw_f && saw_t) {
+    ਜੇ (saw_f && saw_t) {
         RETURN_SYNTAX_ERROR("f", "t");
     }
 
-#undef RETURN_SYNTAX_ERROR
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ RETURN_SYNTAX_ERROR
 
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-int
-_PyLexer_scan_fstring_start(struct tok_state *tok, struct token *token,
-                            int c, ftstring_kind kind)
+ਪੂਰਨ
+Py_Lexer_ਜਾਂਚ_fstring_ਸ਼ੁਰੂ(ਬਣਤਰ tok_state *tok, ਬਣਤਰ token *token,
+                            ਪੂਰਨ c, ftstring_ਕਿਸਮ ਕਿਸਮ)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_ਸ਼ੁਰੂ = -1;
+    _PyTok_Off p_ਸਿਰਾ = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
+    ਪੂਰਨ quote = c;
+    ਪੂਰਨ quote_ਮਾਪ = 1;             /* 1 or 3 */
 
     /* Find the quote size and start of string */
-    int after_quote = tok_nextc(tok);
-    if (after_quote == quote) {
-        int after_after_quote = tok_nextc(tok);
-        if (after_after_quote == quote) {
-            quote_size = 3;
+    ਪੂਰਨ after_quote = tok_nextc(tok);
+    ਜੇ (after_quote == quote) {
+        ਪੂਰਨ after_after_quote = tok_nextc(tok);
+        ਜੇ (after_after_quote == quote) {
+            quote_ਮਾਪ = 3;
         }
-        else {
+        ਨਹੀਂਤਾਂ {
             // TODO: Check this
             tok_backup(tok, after_after_quote);
             tok_backup(tok, after_quote);
         }
     }
-    if (after_quote != quote) {
+    ਜੇ (after_quote != quote) {
         tok_backup(tok, after_quote);
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    ftstring_state *state = _PyLexer_PushFTString(tok);
-    if (state == NULL) {
-        return MAKE_TOKEN(ERRORTOKEN);
+    p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+    p_ਸਿਰਾ = tok->cur;
+    ftstring_state *state = Py_Lexer_ਧੱਕੋ_FTString(tok);
+    ਜੇ (state == ਨਿਰਾ) {
+        ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
     }
-    state->mode = FTSTRING_MODE_MIDDLE;
+    state->ਬਹੁਲਕ = FTSTRING_ਬਹੁਲਕ_ਵਿਚਕਾਰ;
     state->quote = quote;
-    state->quote_size = quote_size;
+    state->quote_ਮਾਪ = quote_ਮਾਪ;
     state->paren_level = tok->level;
-    state->start = tok->start;
-    state->start_loc = tok->start_loc;
-    state->expr_span = (_PyTok_Span){-1, -1};
+    state->ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+    state->ਸ਼ੁਰੂ_loc = tok->ਸ਼ੁਰੂ_loc;
+    state->ਵਿਅੰਜਕ_ਵਿਸਤਾਰ = (Py_Tok_ਵਿਸਤਾਰ){-1, -1};
 
-    state->kind = kind;
-    return _PyLexer_IsTString(kind)
-        ? MAKE_TOKEN(TSTRING_START) : MAKE_TOKEN(FSTRING_START);
+    state->ਕਿਸਮ = ਕਿਸਮ;
+    ਵਾਪਸ _PyLexer_IsTString(ਕਿਸਮ)
+        ? MAKE_TOKEN(TSTRING_ਸ਼ੁਰੂ) : MAKE_TOKEN(FSTRING_ਸ਼ੁਰੂ);
 }
 
-int
-_PyLexer_scan_string(struct tok_state *tok, struct token *token, int c)
+ਪੂਰਨ
+Py_Lexer_ਜਾਂਚ_string(ਬਣਤਰ tok_state *tok, ਬਣਤਰ token *token, ਪੂਰਨ c)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_ਸ਼ੁਰੂ = -1;
+    _PyTok_Off p_ਸਿਰਾ = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
-    int end_quote_size = 0;
-    int has_escaped_quote = 0;
+    ਪੂਰਨ quote = c;
+    ਪੂਰਨ quote_ਮਾਪ = 1;             /* 1 or 3 */
+    ਪੂਰਨ ਸਿਰਾ_quote_ਮਾਪ = 0;
+    ਪੂਰਨ has_escaped_quote = 0;
 
     /* Find the quote size and start of string */
     c = tok_nextc(tok);
-    if (c == quote) {
+    ਜੇ (c == quote) {
         c = tok_nextc(tok);
-        if (c == quote) {
-            quote_size = 3;
+        ਜੇ (c == quote) {
+            quote_ਮਾਪ = 3;
         }
-        else {
-            end_quote_size = 1;     /* empty string found */
+        ਨਹੀਂਤਾਂ {
+            ਸਿਰਾ_quote_ਮਾਪ = 1;     /* empty string found */
         }
     }
-    if (c != quote) {
+    ਜੇ (c != quote) {
         tok_backup(tok, c);
     }
 
     /* Get rest of string */
-    while (end_quote_size != quote_size) {
+    ਜਦੋਂ (ਸਿਰਾ_quote_ਮਾਪ != quote_ਮਾਪ) {
         c = tok_nextc(tok);
-        if (tok->done == E_ERROR) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        ਜੇ (tok->ਪੂਰਾ == E_ERROR) {
+            ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
         }
-        if (tok->done == E_DECODE) {
-            break;
+        ਜੇ (tok->ਪੂਰਾ == E_DECODE) {
+            ਰੋਕੋ;
         }
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        ਜੇ (c == EOF || (quote_ਮਾਪ == 1 && c == '\n')) {
+            ਜੇ (tok_failed(tok)) {
+                ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token, STRING,
-                                               tok->start, tok->start_loc);
+            ਜੇ (c == EOF && tok->allow_incomplete_ਨਿਵੇਸ਼) {
+                ਵਾਪਸ incomplete_string_token(tok, token, STRING,
+                                               tok->ਸ਼ੁਰੂ, tok->ਸ਼ੁਰੂ_loc);
             }
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = tok->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, tok->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            ਪੂਰਨ ਸਿਰਾ_lineno = tok->lineno;
+            _PyTok_Loc location = tok->ਸ਼ੁਰੂ_loc;
+            ਅਚਲ ਅੱਖਰ *ਸਤਰ = Py_Tok_ਸਰੋਤ_ਸੂਚਕ(
+                &tok->ਸਰੋਤ, tok->ਸ਼ੁਰੂ - location.byte_ਖਾਨਾ);
+            Py_ssize_t cursor_ਵਿੱਥ = (Py_ssize_t)location.byte_ਖਾਨਾ + 1;
 
-            const ftstring_state *state = _PyLexer_CurrentFTString(tok);
-            if (state != NULL) {
+            ਅਚਲ ftstring_state *state = _PyLexer_CurrentFTString(tok);
+            ਜੇ (state != ਨਿਰਾ) {
                 /* A matching quote may have been intended to close the
                  * surrounding formatted string instead of opening a string
                  * inside a replacement field. */
-                if (state->quote == quote && state->quote_size == quote_size) {
-                    int level = state->paren_level + state->replacement_depth - 1;
-                    assert(level >= 0 && level < tok->level);
-                    assert(tok->parenstack[level] == '{');
-                    int lineno = tok->parenlinenostack[level];
-                    if (lineno != location.lineno) {
+                ਜੇ (state->quote == quote && state->quote_ਮਾਪ == quote_ਮਾਪ) {
+                    ਪੂਰਨ level = state->paren_level + state->replacement_ਡੂੰਘਾਈ - 1;
+                    ਪ੍ਰਤਿਜ੍ਞਾ(level >= 0 && level < tok->level);
+                    ਪ੍ਰਤਿਜ੍ਞਾ(tok->parenstack[level] == '{');
+                    ਪੂਰਨ lineno = tok->parenlinenostack[level];
+                    ਜੇ (lineno != location.lineno) {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                             "%c-string: expecting '}' to close '{' on line %d",
-                            _PyLexer_StringPrefix(state->kind), lineno);
+                            Py_Lexer_String_ਅਗੇਤਰ(state->ਕਿਸਮ), lineno);
                     }
-                    else {
+                    ਨਹੀਂਤਾਂ {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                             "%c-string: expecting '}'",
-                            _PyLexer_StringPrefix(state->kind));
+                            Py_Lexer_String_ਅਗੇਤਰ(state->ਕਿਸਮ));
                     }
-                    return string_error_token(tok, token, tok->start, location);
+                    ਵਾਪਸ string_error_token(tok, token, tok->ਸ਼ੁਰੂ, location);
                 }
             }
 
-            if (quote_size == 3) {
+            ਜੇ (quote_ਮਾਪ == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                     "unterminated triple-quoted string literal"
-                    " (detected at line %d)", end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    " (detected at line %d)", ਸਿਰਾ_lineno);
+                ਜੇ (c != '\n') {
+                    tok->ਪੂਰਾ = E_EOFS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                ਵਾਪਸ string_error_token(tok, token, tok->ਸ਼ੁਰੂ, location);
             }
-            else {
-                if (has_escaped_quote) {
+            ਨਹੀਂਤਾਂ {
+                ਜੇ (has_escaped_quote) {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
+                        tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                         "unterminated string literal (detected at line %d); "
                         "perhaps you escaped the end quote?",
-                        end_lineno
+                        ਸਿਰਾ_lineno
                     );
-                } else {
+                } ਨਹੀਂਤਾਂ {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
-                        "unterminated string literal (detected at line %d)", end_lineno
+                        tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
+                        "unterminated string literal (detected at line %d)", ਸਿਰਾ_lineno
                     );
                 }
-                if (c != '\n') {
-                    tok->done = E_EOLS;
+                ਜੇ (c != '\n') {
+                    tok->ਪੂਰਾ = E_EOLS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                ਵਾਪਸ string_error_token(tok, token, tok->ਸ਼ੁਰੂ, location);
             }
         }
-        if (c == quote) {
-            end_quote_size += 1;
+        ਜੇ (c == quote) {
+            ਸਿਰਾ_quote_ਮਾਪ += 1;
         }
-        else {
-            end_quote_size = 0;
-            if (c == '\\') {
+        ਨਹੀਂਤਾਂ {
+            ਸਿਰਾ_quote_ਮਾਪ = 0;
+            ਜੇ (c == '\\') {
                 c = tok_nextc(tok);  /* skip escaped char */
-                if (c == quote) {  /* but record whether the escaped char was a quote */
+                ਜੇ (c == quote) {  /* but record whether the escaped char was a quote */
                     has_escaped_quote = 1;
                 }
-                if (c == '\r') {
+                ਜੇ (c == '\r') {
                     c = tok_nextc(tok);
                 }
             }
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    return MAKE_TOKEN(STRING);
+    p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+    p_ਸਿਰਾ = tok->cur;
+    ਵਾਪਸ MAKE_TOKEN(STRING);
 }
 
-int
-_PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct token *token)
+ਪੂਰਨ
+_PyLexer_get_ftstring(ਬਣਤਰ tok_state *tok, ftstring_state *current, ਬਣਤਰ token *token)
 {
-    assert(current == _PyLexer_CurrentFTString(tok) && current->mode != FTSTRING_MODE_EXPRESSION);
-    assert((current->quote_size == 1 || current->quote_size == 3) &&
-           current->replacement_depth <= MAX_EXPR_NESTING);
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
-    int token_type;
-    int end_quote_size = 0;
-    int unicode_escape = 0;
-    int quote = current->quote;
-    int quote_size = current->quote_size;
-    int in_format_spec = current->mode == FTSTRING_MODE_FORMAT_SPEC;
-    int raw = _PyLexer_IsRawString(current->kind);
+    ਪ੍ਰਤਿਜ੍ਞਾ(current == _PyLexer_CurrentFTString(tok) && current->ਬਹੁਲਕ != FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ);
+    ਪ੍ਰਤਿਜ੍ਞਾ((current->quote_ਮਾਪ == 1 || current->quote_ਮਾਪ == 3) &&
+           current->replacement_ਡੂੰਘਾਈ <= MAX_ਵਿਅੰਜਕ_NESTING);
+    _PyTok_Off p_ਸ਼ੁਰੂ = -1;
+    _PyTok_Off p_ਸਿਰਾ = -1;
+    ਪੂਰਨ token_type;
+    ਪੂਰਨ ਸਿਰਾ_quote_ਮਾਪ = 0;
+    ਪੂਰਨ unicode_escape = 0;
+    ਪੂਰਨ quote = current->quote;
+    ਪੂਰਨ quote_ਮਾਪ = current->quote_ਮਾਪ;
+    ਪੂਰਨ ਵਿੱਚ_format_spec = current->ਬਹੁਲਕ == FTSTRING_ਬਹੁਲਕ_FORMAT_SPEC;
+    ਪੂਰਨ raw = _PyLexer_IsRawString(current->ਕਿਸਮ);
 
-    tok->start = tok->cur;
-    tok->start_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
+    tok->ਸ਼ੁਰੂ = tok->cur;
+    tok->ਸ਼ੁਰੂ_loc = (_PyTok_Loc){tok->lineno, Py_Lexer_Byte_ਕਾਲਮ(tok)};
 
-    while (end_quote_size != quote_size) {
-        int c = tok_nextc(tok);
-        if (tok->done == E_ERROR || tok->done == E_DECODE) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    ਜਦੋਂ (ਸਿਰਾ_quote_ਮਾਪ != quote_ਮਾਪ) {
+        ਪੂਰਨ c = tok_nextc(tok);
+        ਜੇ (tok->ਪੂਰਾ == E_ERROR || tok->ਪੂਰਾ == E_DECODE) {
+            ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
         }
 
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        ਜੇ (c == EOF || (quote_ਮਾਪ == 1 && c == '\n')) {
+            ਜੇ (tok_failed(tok)) {
+                ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token,
-                    FTSTRING_MIDDLE(current), current->start, current->start_loc);
+            ਜੇ (c == EOF && tok->allow_incomplete_ਨਿਵੇਸ਼) {
+                ਵਾਪਸ incomplete_string_token(tok, token,
+                    FTSTRING_ਵਿਚਕਾਰ(current), current->ਸ਼ੁਰੂ, current->ਸ਼ੁਰੂ_loc);
             }
 
-            if (in_format_spec && c == '\n') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            ਜੇ (ਵਿੱਚ_format_spec && c == '\n') {
+                ਵਾਪਸ MAKE_TOKEN(_PyTokenizer_syntaxerror(
                     tok,
                     "%c-string: newlines are not allowed in format specifiers for single quoted %c-strings",
-                    _PyLexer_StringPrefix(current->kind),
-                    _PyLexer_StringPrefix(current->kind)));
+                    Py_Lexer_String_ਅਗੇਤਰ(current->ਕਿਸਮ),
+                    Py_Lexer_String_ਅਗੇਤਰ(current->ਕਿਸਮ)));
             }
 
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = current->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, current->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            ਪੂਰਨ ਸਿਰਾ_lineno = tok->lineno;
+            _PyTok_Loc location = current->ਸ਼ੁਰੂ_loc;
+            ਅਚਲ ਅੱਖਰ *ਸਤਰ = Py_Tok_ਸਰੋਤ_ਸੂਚਕ(
+                &tok->ਸਰੋਤ, current->ਸ਼ੁਰੂ - location.byte_ਖਾਨਾ);
+            Py_ssize_t cursor_ਵਿੱਥ = (Py_ssize_t)location.byte_ਖਾਨਾ + 1;
 
-            if (quote_size == 3) {
+            ਜੇ (quote_ਮਾਪ == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                     "unterminated triple-quoted %c-string literal"
                     " (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    Py_Lexer_String_ਅਗੇਤਰ(current->ਕਿਸਮ), ਸਿਰਾ_lineno);
+                ਜੇ (c != '\n') {
+                    tok->ਪੂਰਾ = E_EOFS;
                 }
-                return string_error_token(tok, token,
-                    current->start, location);
+                ਵਾਪਸ string_error_token(tok, token,
+                    current->ਸ਼ੁਰੂ, location);
             }
-            else {
+            ਨਹੀਂਤਾਂ {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, ਸਤਰ, cursor_ਵਿੱਥ, location.lineno, -1, -1,
                     "unterminated %c-string literal (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                return string_error_token(tok, token,
-                    current->start, location);
+                    Py_Lexer_String_ਅਗੇਤਰ(current->ਕਿਸਮ), ਸਿਰਾ_lineno);
+                ਵਾਪਸ string_error_token(tok, token,
+                    current->ਸ਼ੁਰੂ, location);
             }
         }
 
-        if (c == quote) {
-            end_quote_size += 1;
-            continue;
-        } else {
-            end_quote_size = 0;
+        ਜੇ (c == quote) {
+            ਸਿਰਾ_quote_ਮਾਪ += 1;
+            ਜਾਰੀ;
+        } ਨਹੀਂਤਾਂ {
+            ਸਿਰਾ_quote_ਮਾਪ = 0;
         }
 
-        if (c == '{') {
-            int peek = tok_nextc(tok);
-            if (peek != '{' || in_format_spec) {
+        ਜੇ (c == '{') {
+            ਪੂਰਨ peek = tok_nextc(tok);
+            ਜੇ (peek != '{' || ਵਿੱਚ_format_spec) {
                 tok_backup(tok, peek);
-                _PyTok_Off expr_start = tok->cur;
+                _PyTok_Off ਵਿਅੰਜਕ_ਸ਼ੁਰੂ = tok->cur;
                 tok_backup(tok, c);
-                if (begin_ftstring_expr(tok, current, expr_start) < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                ਜੇ (begin_ftstring_ਵਿਅੰਜਕ(tok, current, ਵਿਅੰਜਕ_ਸ਼ੁਰੂ) < 0) {
+                    ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
                 }
-                p_start = tok->start;
-                p_end = tok->cur;
-                if (p_start == p_end) {
-                    return _PyLexer_get_normal(tok, current, token);
+                p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                p_ਸਿਰਾ = tok->cur;
+                ਜੇ (p_ਸ਼ੁਰੂ == p_ਸਿਰਾ) {
+                    ਵਾਪਸ Py_Lexer_get_ਸਾਧਾਰਨ(tok, current, token);
                 }
-            } else {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            } ਨਹੀਂਤਾਂ {
+                p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                p_ਸਿਰਾ = tok->cur - 1;
             }
-            goto emit_middle;
-        } else if (c == '}') {
-            if (unicode_escape) {
-                p_start = tok->start;
-                p_end = tok->cur;
-                goto emit_middle;
+            ਜਾਓ emit_ਵਿਚਕਾਰ;
+        } ਨਹੀਂਤਾਂ ਜੇ (c == '}') {
+            ਜੇ (unicode_escape) {
+                p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                p_ਸਿਰਾ = tok->cur;
+                ਜਾਓ emit_ਵਿਚਕਾਰ;
             }
-            int peek = tok_nextc(tok);
+            ਪੂਰਨ peek = tok_nextc(tok);
 
-            int bracket_depth = _PyLexer_FTStringBracketDepth(tok, current);
-            if (peek == '}' && !in_format_spec && bracket_depth == 0) {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            ਪੂਰਨ bracket_ਡੂੰਘਾਈ = Py_Lexer_FTString_Bracket_ਡੂੰਘਾਈ(tok, current);
+            ਜੇ (peek == '}' && !ਵਿੱਚ_format_spec && bracket_ਡੂੰਘਾਈ == 0) {
+                p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                p_ਸਿਰਾ = tok->cur - 1;
             }
-            else {
+            ਨਹੀਂਤਾਂ {
                 tok_backup(tok, peek);
-                if (!in_format_spec && bracket_depth == 0) {
-                    if (tok->start == tok->cur - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+                ਜੇ (!ਵਿੱਚ_format_spec && bracket_ਡੂੰਘਾਈ == 0) {
+                    ਜੇ (tok->ਸ਼ੁਰੂ == tok->cur - 1) {
+                        ਵਾਪਸ MAKE_TOKEN(_PyTokenizer_syntaxerror(
                             tok, "%c-string: single '}' is not allowed",
-                            _PyLexer_StringPrefix(current->kind)));
+                            Py_Lexer_String_ਅਗੇਤਰ(current->ਕਿਸਮ)));
                     }
                     tok_backup(tok, c);
-                    p_start = tok->start;
-                    p_end = tok->cur;
-                    goto emit_middle;
+                    p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                    p_ਸਿਰਾ = tok->cur;
+                    ਜਾਓ emit_ਵਿਚਕਾਰ;
                 }
                 tok_backup(tok, c);
-                current->mode = FTSTRING_MODE_EXPRESSION;
-                p_start = tok->start;
-                p_end = tok->cur;
+                current->ਬਹੁਲਕ = FTSTRING_ਬਹੁਲਕ_ਵਿਅੰਜਕ;
+                p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+                p_ਸਿਰਾ = tok->cur;
             }
-            goto emit_middle;
-        } else if (c == '\\') {
-            int peek = tok_nextc(tok);
-            if (peek == '\r') {
+            ਜਾਓ emit_ਵਿਚਕਾਰ;
+        } ਨਹੀਂਤਾਂ ਜੇ (c == '\\') {
+            ਪੂਰਨ peek = tok_nextc(tok);
+            ਜੇ (peek == '\r') {
                 peek = tok_nextc(tok);
             }
-            if (peek == '{' || peek == '}') {
-                if (!raw) {
-                    if (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+            ਜੇ (peek == '{' || peek == '}') {
+                ਜੇ (!raw) {
+                    ਜੇ (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
+                        ਵਾਪਸ MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
                 tok_backup(tok, peek);
-                continue;
+                ਜਾਰੀ;
             }
 
-            if (!raw) {
-                if (peek == 'N') {
+            ਜੇ (!raw) {
+                ਜੇ (peek == 'N') {
                     /* Handle named unicode escapes (\N{BULLET}) */
                     peek = tok_nextc(tok);
-                    if (peek == '{') {
+                    ਜੇ (peek == '{') {
                         unicode_escape = 1;
-                    } else {
+                    } ਨਹੀਂਤਾਂ {
                         tok_backup(tok, peek);
                     }
                 }
@@ -591,19 +591,19 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    if (p_end - quote_size == p_start) {
-        int end_token = FTSTRING_END(current);
-        _PyLexer_PopFTString(tok);
-        return MAKE_TOKEN(end_token);
+    p_ਸ਼ੁਰੂ = tok->ਸ਼ੁਰੂ;
+    p_ਸਿਰਾ = tok->cur;
+    ਜੇ (p_ਸਿਰਾ - quote_ਮਾਪ == p_ਸ਼ੁਰੂ) {
+        ਪੂਰਨ ਸਿਰਾ_token = FTSTRING_ਸਿਰਾ(current);
+        Py_Lexer_ਕੱਢੋ_FTString(tok);
+        ਵਾਪਸ MAKE_TOKEN(ਸਿਰਾ_token);
     }
-    for (int i = 0; i < quote_size; i++) {
+    ਲਈ (ਪੂਰਨ i = 0; i < quote_ਮਾਪ; i++) {
         tok_backup(tok, quote);
     }
-    p_end = tok->cur;
-emit_middle:
-    token_type = MAKE_TOKEN(FTSTRING_MIDDLE(current));
+    p_ਸਿਰਾ = tok->cur;
+emit_ਵਿਚਕਾਰ:
+    token_type = MAKE_TOKEN(FTSTRING_ਵਿਚਕਾਰ(current));
     token->is_raw = raw;
-    return token_type;
+    ਵਾਪਸ token_type;
 }

@@ -1,27 +1,27 @@
-#ifndef Py_TOKENIZER_TYPES_H
-#define Py_TOKENIZER_TYPES_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ Py_TOKENIZER_TYPES_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ Py_TOKENIZER_TYPES_H
 
-#include "Python.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "Python.h"
 
-typedef Py_ssize_t _PyTok_Off;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
-    _PyTok_Off start;
-    _PyTok_Off end;
-} _PyTok_Span;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    _PyTok_Off ਸ਼ੁਰੂ;
+    _PyTok_Off ਸਿਰਾ;
+} Py_Tok_ਵਿਸਤਾਰ;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+    ਪੂਰਨ lineno;
+    ਪੂਰਨ byte_ਖਾਨਾ;
 } _PyTok_Loc;
 
-static inline int
-_PyTok_SpanIsValid(_PyTok_Span span)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+Py_Tok_ਵਿਸਤਾਰ_Is_Valid(Py_Tok_ਵਿਸਤਾਰ ਵਿਸਤਾਰ)
 {
-    return span.start >= 0 && span.end >= span.start;
+    ਵਾਪਸ ਵਿਸਤਾਰ.ਸ਼ੁਰੂ >= 0 && ਵਿਸਤਾਰ.ਸਿਰਾ >= ਵਿਸਤਾਰ.ਸ਼ੁਰੂ;
 }
 
-#endif
+#ਜੇ_ਅੰਤ
