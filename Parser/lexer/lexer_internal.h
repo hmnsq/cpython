@@ -23,50 +23,50 @@
     (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
 #define tok_backup _PyLexer_backup
 
-static inline int
+static inline 整数
 tok_failed(const struct tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
+    返回 tok->done != E_OK && tok->done != E_EOF &&
            tok->done != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+整数 _PyLexer_refill(struct tok_state *);
 
-static inline int
+static inline 整数
 tok_nextc(struct tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    当 (tok->cur == tok->inp) {
+        如果 (!_PyLexer_refill(tok)) {
+            返回 EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
+    如果 (tok->cur - tok->line_start >= INT_MAX) {
         tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+        返回 EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    返回 _PyTok_SourceByte(&tok->source, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+整数 _PyLexer_BeginLine(struct tok_state *);
+整数 _PyLexer_ContinueLine(struct tok_state *);
+整数 _PyLexer_IndentationToken(struct tok_state *, struct token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
+整数 _PyLexer_Newline(struct tok_state *, struct token *, 整数);
+void _PyLexer_backup(struct tok_state *, 整数);
+整数 _PyLexer_record_ftstring_comment(
     struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
+整数 _PyLexer_ftstring_punctuation(
+    struct tok_state *, ftstring_state *, struct token *, 整数);
+整数 _PyLexer_close_ftstring_expr(
+    struct tok_state *, ftstring_state *, 整数);
 void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+整数 _PyLexer_check_string_prefixes(struct tok_state *, 整数, 整数, 整数, 整数, 整数);
+整数 _PyLexer_scan_number(struct tok_state *, struct token *, 整数, 整数);
+整数 _PyLexer_scan_fstring_start(
+    struct tok_state *, struct token *, 整数, ftstring_kind);
+整数 _PyLexer_scan_string(struct tok_state *, struct token *, 整数);
+整数 _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
+整数 _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
 
 #endif

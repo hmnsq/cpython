@@ -7,16 +7,16 @@
 #include "reader_internal.h"
 #include "../lexer/state.h"
 
-int
+整数
 _PyTokenizer_GetStatus(const struct tok_state *tok)
 {
-    return tok->done;
+    返回 tok->done;
 }
 
-int
+整数
 _PyTokenizer_GetNewlineRequirements(const struct tok_state *tok)
 {
-    return tok->needs_newline;
+    返回 tok->needs_newline;
 }
 
 _PyTokenizer_Info
@@ -27,7 +27,7 @@ _PyTokenizer_GetInfo(const struct tok_state *tok)
         .implicit_newline = tok->implicit_newline,
         .diagnostic = tok->diagnostic,
         .location = {tok->lineno, tok->line_start < 0
-            ? -1 : (int)(tok->cur - tok->line_start)},
+            ? -1 : (整数)(tok->cur - tok->line_start)},
         .cursor = tok->cur,
         .input_span = {tok->buf_offset, tok->inp},
         .line_span = {tok->line_start, tok->inp},
@@ -40,13 +40,13 @@ _PyTokenizer_GetInfo(const struct tok_state *tok)
         .module = tok->module,
         .encoding = tok->reader->encoding,
     };
-    if (tok->level > 0) {
-        int level = tok->level - 1;
+    如果 (tok->level > 0) {
+        整数 level = tok->level - 1;
         info.delimiter = tok->parenstack[level];
         info.delimiter_loc = (_PyTok_Loc){
             tok->parenlinenostack[level], tok->parencolstack[level]};
     }
-    return info;
+    返回 info;
 }
 
 const char *
@@ -54,19 +54,19 @@ _PyToken_TextView(const struct tok_state *tok, const struct token *token,
                   Py_ssize_t *length)
 {
     assert(length != NULL);
-    if (token->span.start < 0) {
+    如果 (token->span.start < 0) {
         assert(token->span.start == -1 && token->span.end == -1);
         *length = 0;
-        return "";
+        返回 "";
     }
-    return _PyTok_SourceSpanView(&tok->source, token->span, length);
+    返回 _PyTok_SourceSpanView(&tok->source, token->span, length);
 }
 
 const char *
 _PyTokenizer_SpanView(const struct tok_state *tok, _PyTok_Span span,
                       Py_ssize_t *length)
 {
-    return _PyTok_SourceSpanView(&tok->source, span, length);
+    返回 _PyTok_SourceSpanView(&tok->source, span, length);
 }
 
 void
@@ -89,7 +89,7 @@ const char *
 _PyTokenizer_LineView(const struct tok_state *tok, Py_ssize_t lineno,
                       Py_ssize_t *length)
 {
-    return _PyTok_SourceLineView(&tok->source, lineno, length);
+    返回 _PyTok_SourceLineView(&tok->source, lineno, length);
 }
 
 void
@@ -103,8 +103,8 @@ _PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
 }
 
 void
-_PyTokenizer_SetOptions(struct tok_state *tok, int extra_tokens,
-                        int type_comments)
+_PyTokenizer_SetOptions(struct tok_state *tok, 整数 extra_tokens,
+                        整数 type_comments)
 {
     tok->tok_extra_tokens = extra_tokens;
     tok->type_comments = type_comments;
@@ -117,42 +117,42 @@ _PyTokenizer_ImplyDedents(struct tok_state *tok)
 }
 
 void
-_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, int allow)
+_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, 整数 allow)
 {
     tok->allow_incomplete_input = allow != 0;
 }
 
-int
+整数
 _PyTokenizer_HasTrailingStatement(const struct tok_state *tok)
 {
     _PyTok_Off cur = tok->cur;
     _PyTok_Off end = tok->source.base_offset + tok->source.len;
-    while (cur < end) {
-        int c = _PyTok_SourceByte(&tok->source, cur++);
-        if (c == '\0') {
-            return 0;
+    当 (cur < end) {
+        整数 c = _PyTok_SourceByte(&tok->source, cur++);
+        如果 (c == '\0') {
+            返回 0;
         }
-        if (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
+        如果 (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
             continue;
         }
-        if (c != '#') {
-            return 1;
+        如果 (c != '#') {
+            返回 1;
         }
-        while (cur < end) {
+        当 (cur < end) {
             c = _PyTok_SourceByte(&tok->source, cur);
-            if (c == '\0' || c == '\n') {
+            如果 (c == '\0' || c == '\n') {
                 break;
             }
             cur++;
         }
     }
-    return 0;
+    返回 0;
 }
 
-int
+整数
 _PyTokenizer_IsInteractive(const struct tok_state *tok)
 {
-    return _PyTok_ReaderIsInteractive(tok);
+    返回 _PyTok_ReaderIsInteractive(tok);
 }
 
 void

@@ -80,131 +80,131 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+整数
+_PyToken_OneChar(整数 c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    case '!': 返回 EXCLAMATION;
+    case '%': 返回 PERCENT;
+    case '&': 返回 AMPER;
+    case '(': 返回 LPAR;
+    case ')': 返回 RPAR;
+    case '*': 返回 STAR;
+    case '+': 返回 PLUS;
+    case ',': 返回 COMMA;
+    case '-': 返回 MINUS;
+    case '.': 返回 DOT;
+    case '/': 返回 SLASH;
+    case ':': 返回 COLON;
+    case ';': 返回 SEMI;
+    case '<': 返回 LESS;
+    case '=': 返回 EQUAL;
+    case '>': 返回 GREATER;
+    case '@': 返回 AT;
+    case '[': 返回 LSQB;
+    case ']': 返回 RSQB;
+    case '^': 返回 CIRCUMFLEX;
+    case '{': 返回 LBRACE;
+    case '|': 返回 VBAR;
+    case '}': 返回 RBRACE;
+    case '~': 返回 TILDE;
     }
-    return OP;
+    返回 OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+整数
+_PyToken_TwoChars(整数 c1, 整数 c2, 整数 BARRY_AS_BDFL)
 {
     switch (c1) {
     case '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        case '=': 返回 NOTEQUAL;
         }
         break;
     case '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        case '=': 返回 PERCENTEQUAL;
         }
         break;
     case '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        case '=': 返回 AMPEREQUAL;
         }
         break;
     case '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        case '*': 返回 DOUBLESTAR;
+        case '=': 返回 STAREQUAL;
         }
         break;
     case '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        case '=': 返回 PLUSEQUAL;
         }
         break;
     case '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        case '=': 返回 MINEQUAL;
+        case '>': 返回 RARROW;
         }
         break;
     case '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        case '/': 返回 DOUBLESLASH;
+        case '=': 返回 SLASHEQUAL;
         }
         break;
     case ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        case '=': 返回 COLONEQUAL;
         }
         break;
     case '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        case '<': 返回 LEFTSHIFT;
+        case '=': 返回 LESSEQUAL;
+        case '>': 返回 BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
         break;
     case '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        case '=': 返回 EQEQUAL;
         }
         break;
     case '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        case '=': 返回 GREATEREQUAL;
+        case '>': 返回 RIGHTSHIFT;
         }
         break;
     case '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        case '=': 返回 ATEQUAL;
         }
         break;
     case '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        case '=': 返回 CIRCUMFLEXEQUAL;
         }
         break;
     case '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        case '=': 返回 VBAREQUAL;
         }
         break;
     }
-    return OP;
+    返回 OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+整数
+_PyToken_ThreeChars(整数 c1, 整数 c2, 整数 c3)
 {
     switch (c1) {
     case '*':
         switch (c2) {
         case '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            case '=': 返回 DOUBLESTAREQUAL;
             }
             break;
         }
@@ -213,7 +213,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            case '.': 返回 ELLIPSIS;
             }
             break;
         }
@@ -222,7 +222,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            case '=': 返回 DOUBLESLASHEQUAL;
             }
             break;
         }
@@ -231,7 +231,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            case '=': 返回 LEFTSHIFTEQUAL;
             }
             break;
         }
@@ -240,11 +240,11 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            case '=': 返回 RIGHTSHIFTEQUAL;
             }
             break;
         }
         break;
     }
-    return OP;
+    返回 OP;
 }
