@@ -1,8 +1,8 @@
 #ifndef _PY_LEXER_INTERNAL_H_
 #define _PY_LEXER_INTERNAL_H_
 
-#include "errcode.h"
-#include "state.h"
+#अन्तर्भाव "errcode.h"
+#अन्तर्भाव "state.h"
 
 #define is_potential_identifier_start(c) (\
               (c >= 'a' && c <= 'z')\
@@ -17,56 +17,56 @@
                || c == '_'\
                || (c >= 128))
 
-#define FTSTRING_MIDDLE(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_MIDDLE : FSTRING_MIDDLE)
+#define FTSTRING_मध्य(state) \
+    (_PyLexer_IsTString((state)->kind) ? TSTRING_मध्य : FSTRING_मध्य)
 #define FTSTRING_END(state) \
     (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
 #define tok_backup _PyLexer_backup
 
-static inline int
-tok_failed(const struct tok_state *tok)
+स्थिर अन्तःस्थ पूर्णाङ्क
+tok_failed(ध्रुव संरचना tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
+    प्रत्यागम tok->done != E_OK && tok->done != E_EOF &&
            tok->done != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+पूर्णाङ्क _PyLexer_refill(संरचना tok_state *);
 
-static inline int
-tok_nextc(struct tok_state *tok)
+स्थिर अन्तःस्थ पूर्णाङ्क
+tok_nextc(संरचना tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    यावत् (tok->cur == tok->inp) {
+        यदि (!_PyLexer_refill(tok)) {
+            प्रत्यागम EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
+    यदि (tok->cur - tok->पंक्ति_start >= INT_MAX) {
         tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+        प्रत्यागम EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    प्रत्यागम _PyTok_SourceByte(&tok->source, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+पूर्णाङ्क Py_Lexer_Begin_पंक्ति(संरचना tok_state *);
+पूर्णाङ्क Py_Lexer_Continue_पंक्ति(संरचना tok_state *);
+पूर्णाङ्क _PyLexer_IndentationToken(संरचना tok_state *, संरचना token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
-    struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
-void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+पूर्णाङ्क _PyLexer_Newline(संरचना tok_state *, संरचना token *, पूर्णाङ्क);
+शून्य _PyLexer_backup(संरचना tok_state *, पूर्णाङ्क);
+पूर्णाङ्क _PyLexer_record_ftstring_comment(
+    संरचना tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
+पूर्णाङ्क _PyLexer_ftstring_punctuation(
+    संरचना tok_state *, ftstring_state *, संरचना token *, पूर्णाङ्क);
+पूर्णाङ्क Py_Lexer_close_ftstring_व्यंजक(
+    संरचना tok_state *, ftstring_state *, पूर्णाङ्क);
+शून्य _PyLexer_mark_ftstring_debug(संरचना tok_state *, ftstring_state *);
+पूर्णाङ्क _PyLexer_check_string_prefixes(संरचना tok_state *, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क);
+पूर्णाङ्क Py_Lexer_scan_संख्या(संरचना tok_state *, संरचना token *, पूर्णाङ्क, पूर्णाङ्क);
+पूर्णाङ्क _PyLexer_scan_fstring_start(
+    संरचना tok_state *, संरचना token *, पूर्णाङ्क, ftstring_kind);
+पूर्णाङ्क _PyLexer_scan_string(संरचना tok_state *, संरचना token *, पूर्णाङ्क);
+पूर्णाङ्क _PyLexer_get_normal(संरचना tok_state *, ftstring_state *, संरचना token *);
+पूर्णाङ्क _PyLexer_get_ftstring(संरचना tok_state *, ftstring_state *, संरचना token *);
 
 #endif
