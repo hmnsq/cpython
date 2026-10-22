@@ -19,9 +19,9 @@
 # [1] "The Zephyr Abstract Syntax Description Language" by Wang, et. al. See
 #     http://asdl.sourceforge.net/
 #-------------------------------------------------------------------------------
-from collections import namedtuple
-import enum
-import re
+من collections استورد namedtuple
+استورد enum
+استورد re
 
 __all__ = [
     'builtin_types', 'parse', 'AST', 'Module', 'Type', 'Constructor',
@@ -36,98 +36,98 @@ __all__ = [
 
 builtin_types = {'identifier', 'string', 'int', 'constant'}
 
-class AST:
+מחלקה AST:
     def __repr__(self):
-        raise NotImplementedError
+        ارفع NotImplementedError
 
-class Module(AST):
+מחלקה Module(AST):
     def __init__(self, name, dfns):
         self.name = name
         self.dfns = dfns
-        self.types = {type.name: type.value for type in dfns}
+        self.types = {type.name: type.value עבור type في dfns}
 
     def __repr__(self):
-        return 'Module({0.name}, {0.dfns})'.format(self)
+        החזר 'Module({0.name}, {0.dfns})'.format(self)
 
-class Type(AST):
+מחלקה Type(AST):
     def __init__(self, name, value):
         self.name = name
         self.value = value
 
     def __repr__(self):
-        return 'Type({0.name}, {0.value})'.format(self)
+        החזר 'Type({0.name}, {0.value})'.format(self)
 
-class Constructor(AST):
+מחלקה Constructor(AST):
     def __init__(self, name, fields=None):
         self.name = name
-        self.fields = fields or []
+        self.fields = fields או []
 
     def __repr__(self):
-        return 'Constructor({0.name}, {0.fields})'.format(self)
+        החזר 'Constructor({0.name}, {0.fields})'.format(self)
 
-class Quantifier(enum.Enum):
+מחלקה Quantifier(enum.Enum):
     OPTIONAL = enum.auto()
     SEQUENCE = enum.auto()
 
-class Field(AST):
+מחלקה Field(AST):
     def __init__(self, type, name=None, quantifiers=None):
         self.type = type
         self.name = name
-        self.seq = False
-        self.opt = False
-        self.quantifiers = quantifiers or []
-        if len(self.quantifiers) > 0:
+        self.seq = שקר
+        self.opt = שקר
+        self.quantifiers = quantifiers או []
+        אם len(self.quantifiers) > 0:
             self.seq = self.quantifiers[-1] is Quantifier.SEQUENCE
             self.opt = self.quantifiers[-1] is Quantifier.OPTIONAL
 
     def __str__(self):
         extra = ""
-        for mod in self.quantifiers:
-            if mod is Quantifier.SEQUENCE:
+        עבור mod في self.quantifiers:
+            אם mod is Quantifier.SEQUENCE:
                 extra += "*"
-            elif mod is Quantifier.OPTIONAL:
+            وإلاإذا mod is Quantifier.OPTIONAL:
                 extra += "?"
 
-        return "{}{} {}".format(self.type, extra, self.name)
+        החזר "{}{} {}".format(self.type, extra, self.name)
 
     def __repr__(self):
-        if self.quantifiers:
+        אם self.quantifiers:
             texts = []
-            for mod in self.quantifiers:
-                if mod is Quantifier.SEQUENCE:
+            עבור mod في self.quantifiers:
+                אם mod is Quantifier.SEQUENCE:
                     texts.append("SEQUENCE")
-                elif mod is Quantifier.OPTIONAL:
+                وإلاإذا mod is Quantifier.OPTIONAL:
                     texts.append("OPTIONAL")
             extra = ", quantifiers=[{}]".format(", ".join(texts))
-        else:
+        אחרת:
             extra = ""
 
-        if self.name is None:
-            return 'Field({0.type}{1})'.format(self, extra)
-        else:
-            return 'Field({0.type}, {0.name}{1})'.format(self, extra)
+        אם self.name is None:
+            החזר 'Field({0.type}{1})'.format(self, extra)
+        אחרת:
+            החזר 'Field({0.type}, {0.name}{1})'.format(self, extra)
 
-class Sum(AST):
+מחלקה Sum(AST):
     def __init__(self, types, attributes=None):
         self.types = types
-        self.attributes = attributes or []
+        self.attributes = attributes או []
 
     def __repr__(self):
-        if self.attributes:
-            return 'Sum({0.types}, {0.attributes})'.format(self)
-        else:
-            return 'Sum({0.types})'.format(self)
+        אם self.attributes:
+            החזר 'Sum({0.types}, {0.attributes})'.format(self)
+        אחרת:
+            החזר 'Sum({0.types})'.format(self)
 
-class Product(AST):
+מחלקה Product(AST):
     def __init__(self, fields, attributes=None):
         self.fields = fields
-        self.attributes = attributes or []
+        self.attributes = attributes או []
 
     def __repr__(self):
-        if self.attributes:
-            return 'Product({0.fields}, {0.attributes})'.format(self)
-        else:
-            return 'Product({0.fields})'.format(self)
+        אם self.attributes:
+            החזר 'Product({0.fields}, {0.attributes})'.format(self)
+        אחרת:
+            החזר 'Product({0.fields})'.format(self)
 
 # A generic visitor for the meta-AST that describes ASDL. This can be used by
 # emitters. Note that this visitor does not provide a generic visit method, so a
@@ -135,7 +135,7 @@ class Product(AST):
 # interesting node.
 # We also define a Check visitor that makes sure the parsed ASDL is well-formed.
 
-class VisitorBase(object):
+מחלקה VisitorBase(object):
     """Generic tree visitor for ASTs."""
     def __init__(self):
         self.cache = {}
@@ -143,49 +143,49 @@ class VisitorBase(object):
     def visit(self, obj, *args):
         klass = obj.__class__
         meth = self.cache.get(klass)
-        if meth is None:
+        אם meth is None:
             methname = "visit" + klass.__name__
             meth = getattr(self, methname, None)
             self.cache[klass] = meth
-        if meth:
-            try:
+        אם meth:
+            حاول:
                 meth(obj, *args)
-            except Exception as e:
+            استثناء Exception كـ e:
                 print("Error visiting %r: %s" % (obj, e))
-                raise
+                ارفع
 
-class Check(VisitorBase):
+מחלקה Check(VisitorBase):
     """A visitor that checks a parsed ASDL tree for correctness.
 
     Errors are printed and accumulated.
     """
     def __init__(self):
-        super(Check, self).__init__()
+        أعلى(Check, self).__init__()
         self.cons = {}
         self.errors = 0
         self.types = {}
 
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        עבור dfn في mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type):
         self.visit(type.value, str(type.name))
 
     def visitSum(self, sum, name):
-        for t in sum.types:
+        עבור t في sum.types:
             self.visit(t, name)
 
     def visitConstructor(self, cons, name):
         key = str(cons.name)
         conflict = self.cons.get(key)
-        if conflict is None:
+        אם conflict is None:
             self.cons[key] = name
-        else:
+        אחרת:
             print('Redefinition of constructor {}'.format(key))
             print('Defined in {} and {}'.format(conflict, name))
             self.errors += 1
-        for f in cons.fields:
+        עבור f في cons.fields:
             self.visit(f, key)
 
     def visitField(self, field, name):
@@ -194,7 +194,7 @@ class Check(VisitorBase):
         l.append(name)
 
     def visitProduct(self, prod, name):
-        for f in prod.fields:
+        עבור f في prod.fields:
             self.visit(f, name)
 
 def check(mod):
@@ -206,24 +206,24 @@ def check(mod):
     v = Check()
     v.visit(mod)
 
-    for t in v.types:
-        if t not in mod.types and not t in builtin_types:
+    עבור t في v.types:
+        אם t לא في mod.types וגם לא t في builtin_types:
             v.errors += 1
             uses = ", ".join(v.types[t])
             print('Undefined type {}, used in {}'.format(t, uses))
-    return not v.errors
+    החזר לא v.errors
 
 # The ASDL parser itself comes next. The only interesting external interface
 # here is the top-level parse function.
 
 def parse(filename):
     """Parse ASDL from the given file and return a Module node describing it."""
-    with open(filename, encoding="utf-8") as f:
+    with open(filename, encoding="utf-8") كـ f:
         parser = ASDLParser()
-        return parser.parse(f.read())
+        החזר parser.parse(f.اقرأ())
 
 # Types for describing tokens in an ASDL specification.
-class TokenKind:
+מחלקה TokenKind:
     """TokenKind is provides a scope for enumerated token kinds."""
     (ConstructorId, TypeId, Equals, Comma, Question, Pipe, Asterisk,
      LParen, RParen, LBrace, RBrace) = range(11)
@@ -234,37 +234,37 @@ class TokenKind:
 
 Token = namedtuple('Token', 'kind value lineno')
 
-class ASDLSyntaxError(Exception):
+מחלקה ASDLSyntaxError(Exception):
     def __init__(self, msg, lineno=None):
         self.msg = msg
-        self.lineno = lineno or '<unknown>'
+        self.lineno = lineno או '<unknown>'
 
     def __str__(self):
-        return 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
+        החזר 'Syntax error on line {0.lineno}: {0.msg}'.format(self)
 
 def tokenize_asdl(buf):
     """Tokenize the given buffer. Yield Token objects."""
-    for lineno, line in enumerate(buf.splitlines(), 1):
-        for m in re.finditer(r'\s*(\w+|--.*|.)', line.strip()):
+    עבור lineno, line في enumerate(buf.splitlines(), 1):
+        עבור m في re.finditer(r'\s*(\w+|--.*|.)', line.strip()):
             c = m.group(1)
-            if c[0].isalpha():
+            אם c[0].isalpha():
                 # Some kind of identifier
-                if c[0].isupper():
-                    yield Token(TokenKind.ConstructorId, c, lineno)
-                else:
-                    yield Token(TokenKind.TypeId, c, lineno)
-            elif c[:2] == '--':
+                אם c[0].isupper():
+                    أنتج Token(TokenKind.ConstructorId, c, lineno)
+                אחרת:
+                    أنتج Token(TokenKind.TypeId, c, lineno)
+            وإلاإذا c[:2] == '--':
                 # Comment
-                break
-            else:
+                اكسر
+            אחרת:
                 # Operators
-                try:
+                حاول:
                     op_kind = TokenKind.operator_table[c]
-                except KeyError:
-                    raise ASDLSyntaxError('Invalid operator %s' % c, lineno)
-                yield Token(op_kind, c, lineno)
+                استثناء KeyError:
+                    ارفع ASDLSyntaxError('Invalid operator %s' % c, lineno)
+                أنتج Token(op_kind, c, lineno)
 
-class ASDLParser:
+מחלקה ASDLParser:
     """Parser for ASDL files.
 
     Create, then call the parse method on a buffer containing ASDL.
@@ -280,98 +280,98 @@ class ASDLParser:
         """
         self._tokenizer = tokenize_asdl(buf)
         self._advance()
-        return self._parse_module()
+        החזר self._parse_module()
 
     def _parse_module(self):
-        if self._at_keyword('module'):
+        אם self._at_keyword('module'):
             self._advance()
-        else:
-            raise ASDLSyntaxError(
+        אחרת:
+            ارفع ASDLSyntaxError(
                 'Expected "module" (found {})'.format(self.cur_token.value),
                 self.cur_token.lineno)
         name = self._match(self._id_kinds)
         self._match(TokenKind.LBrace)
         defs = self._parse_definitions()
         self._match(TokenKind.RBrace)
-        return Module(name, defs)
+        החזר Module(name, defs)
 
     def _parse_definitions(self):
         defs = []
-        while self.cur_token.kind == TokenKind.TypeId:
+        כלעוד self.cur_token.kind == TokenKind.TypeId:
             typename = self._advance()
             self._match(TokenKind.Equals)
             type = self._parse_type()
             defs.append(Type(typename, type))
-        return defs
+        החזר defs
 
     def _parse_type(self):
-        if self.cur_token.kind == TokenKind.LParen:
+        אם self.cur_token.kind == TokenKind.LParen:
             # If we see a (, it's a product
-            return self._parse_product()
-        else:
+            החזר self._parse_product()
+        אחרת:
             # Otherwise it's a sum. Look for ConstructorId
             sumlist = [Constructor(self._match(TokenKind.ConstructorId),
                                    self._parse_optional_fields())]
-            while self.cur_token.kind  == TokenKind.Pipe:
+            כלעוד self.cur_token.kind  == TokenKind.Pipe:
                 # More constructors
                 self._advance()
                 sumlist.append(Constructor(
                                 self._match(TokenKind.ConstructorId),
                                 self._parse_optional_fields()))
-            return Sum(sumlist, self._parse_optional_attributes())
+            החזר Sum(sumlist, self._parse_optional_attributes())
 
     def _parse_product(self):
-        return Product(self._parse_fields(), self._parse_optional_attributes())
+        החזר Product(self._parse_fields(), self._parse_optional_attributes())
 
     def _parse_fields(self):
         fields = []
         self._match(TokenKind.LParen)
-        while self.cur_token.kind == TokenKind.TypeId:
+        כלעוד self.cur_token.kind == TokenKind.TypeId:
             typename = self._advance()
             quantifiers = self._parse_optional_field_quantifier()
-            id = (self._advance() if self.cur_token.kind in self._id_kinds
-                                  else None)
+            id = (self._advance() אם self.cur_token.kind في self._id_kinds
+                                  אחרת None)
             fields.append(Field(typename, id, quantifiers=quantifiers))
-            if self.cur_token.kind == TokenKind.RParen:
-                break
-            elif self.cur_token.kind == TokenKind.Comma:
+            אם self.cur_token.kind == TokenKind.RParen:
+                اكسر
+            وإلاإذا self.cur_token.kind == TokenKind.Comma:
                 self._advance()
         self._match(TokenKind.RParen)
-        return fields
+        החזר fields
 
     def _parse_optional_fields(self):
-        if self.cur_token.kind == TokenKind.LParen:
-            return self._parse_fields()
-        else:
-            return None
+        אם self.cur_token.kind == TokenKind.LParen:
+            החזר self._parse_fields()
+        אחרת:
+            החזר None
 
     def _parse_optional_attributes(self):
-        if self._at_keyword('attributes'):
+        אם self._at_keyword('attributes'):
             self._advance()
-            return self._parse_fields()
-        else:
-            return None
+            החזר self._parse_fields()
+        אחרת:
+            החזר None
 
     def _parse_optional_field_quantifier(self):
         quantifiers = []
-        while self.cur_token.kind in (TokenKind.Asterisk, TokenKind.Question):
-            if self.cur_token.kind == TokenKind.Asterisk:
+        כלעוד self.cur_token.kind في (TokenKind.Asterisk, TokenKind.Question):
+            אם self.cur_token.kind == TokenKind.Asterisk:
                 quantifiers.append(Quantifier.SEQUENCE)
-            elif self.cur_token.kind == TokenKind.Question:
+            وإلاإذا self.cur_token.kind == TokenKind.Question:
                 quantifiers.append(Quantifier.OPTIONAL)
             self._advance()
-        return quantifiers
+        החזר quantifiers
 
     def _advance(self):
         """ Return the value of the current token and read the next one into
             self.cur_token.
         """
-        cur_val = None if self.cur_token is None else self.cur_token.value
-        try:
+        cur_val = None אם self.cur_token is None אחרת self.cur_token.value
+        حاول:
             self.cur_token = next(self._tokenizer)
-        except StopIteration:
+        استثناء StopIteration:
             self.cur_token = None
-        return cur_val
+        החזר cur_val
 
     _id_kinds = (TokenKind.ConstructorId, TokenKind.TypeId)
 
@@ -383,17 +383,17 @@ class ASDLParser:
         * Returns the value of the current token
         * Reads in the next token
         """
-        if (isinstance(kind, tuple) and self.cur_token.kind in kind or
+        אם (isinstance(kind, tuple) וגם self.cur_token.kind في kind או
             self.cur_token.kind == kind
             ):
             value = self.cur_token.value
             self._advance()
-            return value
-        else:
-            raise ASDLSyntaxError(
+            החזר value
+        אחרת:
+            ارفع ASDLSyntaxError(
                 'Unmatched {} (found {})'.format(kind, self.cur_token.kind),
                 self.cur_token.lineno)
 
     def _at_keyword(self, keyword):
-        return (self.cur_token.kind == TokenKind.TypeId and
+        החזר (self.cur_token.kind == TokenKind.TypeId וגם
                 self.cur_token.value == keyword)

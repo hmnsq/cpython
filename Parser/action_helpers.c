@@ -1,84 +1,84 @@
-#include <Python.h>
-#include "pycore_pystate.h"         // _PyInterpreterState_GET()
-#include "pycore_runtime.h"         // _PyRuntime
-#include "pycore_unicodeobject.h"   // _PyUnicode_InternImmortal()
-#include "pycore_pyerrors.h"        // _PyErr_EmitSyntaxWarning()
+#ضمن <Python.h>
+#ضمن "pycore_pystate.h"         // _PyInterpreterState_GET()
+#ضمن "pycore_runtime.h"         // _PyRuntime
+#ضمن "pycore_unicodeobject.h"   // _PyUnicode_InternImmortal()
+#ضمن "pycore_pyerrors.h"        // _PyErr_EmitSyntaxWarning()
 
-#include "pegen.h"
-#include "string_parser.h"          // _PyPegen_decode_string()
-#include "lexer/state.h"            // tok_state
+#ضمن "pegen.h"
+#ضمن "string_parser.h"          // _PyPegen_decode_string()
+#ضمن "lexer/state.h"            // tok_state
 
 
-void *
+فراغ *
 _PyPegen_dummy_name(Parser *p, ...)
 {
-    return &_PyRuntime.parser.dummy_name;
+    החזר &_PyRuntime.parser.dummy_name;
 }
 
 /* Creates a single-element asdl_seq* that contains a */
 asdl_seq *
-_PyPegen_singleton_seq(Parser *p, void *a)
+_PyPegen_singleton_seq(Parser *p, فراغ *a)
 {
-    assert(a != NULL);
+    أكد(a != عدم);
     asdl_seq *seq = (asdl_seq*)_Py_asdl_generic_seq_new(1, p->arena);
-    if (!seq) {
-        return NULL;
+    אם (!seq) {
+        החזר عدم;
     }
     asdl_seq_SET_UNTYPED(seq, 0, a);
-    return seq;
+    החזר seq;
 }
 
 /* Creates a copy of seq and prepends a to it */
 asdl_seq *
-_PyPegen_seq_insert_in_front(Parser *p, void *a, asdl_seq *seq)
+_PyPegen_seq_insert_in_front(Parser *p, فراغ *a, asdl_seq *seq)
 {
-    assert(a != NULL);
-    if (!seq) {
-        return _PyPegen_singleton_seq(p, a);
+    أكد(a != عدم);
+    אם (!seq) {
+        החזר _PyPegen_singleton_seq(p, a);
     }
 
     asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(asdl_seq_LEN(seq) + 1, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
 
     asdl_seq_SET_UNTYPED(new_seq, 0, a);
-    for (Py_ssize_t i = 1, l = asdl_seq_LEN(new_seq); i < l; i++) {
+    עבור (Py_ssize_t i = 1, l = asdl_seq_LEN(new_seq); i < l; i++) {
         asdl_seq_SET_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i - 1));
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Creates a copy of seq and appends a to it */
 asdl_seq *
-_PyPegen_seq_append_to_end(Parser *p, asdl_seq *seq, void *a)
+_PyPegen_seq_append_to_end(Parser *p, asdl_seq *seq, فراغ *a)
 {
-    assert(a != NULL);
-    if (!seq) {
-        return _PyPegen_singleton_seq(p, a);
+    أكد(a != عدم);
+    אם (!seq) {
+        החזר _PyPegen_singleton_seq(p, a);
     }
 
     asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(asdl_seq_LEN(seq) + 1, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
 
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(new_seq); i + 1 < l; i++) {
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(new_seq); i + 1 < l; i++) {
         asdl_seq_SET_UNTYPED(new_seq, i, asdl_seq_GET_UNTYPED(seq, i));
     }
     asdl_seq_SET_UNTYPED(new_seq, asdl_seq_LEN(new_seq) - 1, a);
-    return new_seq;
+    החזר new_seq;
 }
 
-static Py_ssize_t
+ساكن Py_ssize_t
 _get_flattened_seq_size(asdl_seq *seqs)
 {
     Py_ssize_t size = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
         asdl_seq *inner_seq = asdl_seq_GET_UNTYPED(seqs, i);
         size += asdl_seq_LEN(inner_seq);
     }
-    return size;
+    החזר size;
 }
 
 /* Flattens an asdl_seq* of asdl_seq*s */
@@ -86,93 +86,93 @@ asdl_seq *
 _PyPegen_seq_flatten(Parser *p, asdl_seq *seqs)
 {
     Py_ssize_t flattened_seq_size = _get_flattened_seq_size(seqs);
-    assert(flattened_seq_size > 0);
+    أكد(flattened_seq_size > 0);
 
     asdl_seq *flattened_seq = (asdl_seq*)_Py_asdl_generic_seq_new(flattened_seq_size, p->arena);
-    if (!flattened_seq) {
-        return NULL;
+    אם (!flattened_seq) {
+        החזר عدم;
     }
 
-    int flattened_seq_idx = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
+    صحيح flattened_seq_idx = 0;
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(seqs); i < l; i++) {
         asdl_seq *inner_seq = asdl_seq_GET_UNTYPED(seqs, i);
-        for (Py_ssize_t j = 0, li = asdl_seq_LEN(inner_seq); j < li; j++) {
+        עבור (Py_ssize_t j = 0, li = asdl_seq_LEN(inner_seq); j < li; j++) {
             asdl_seq_SET_UNTYPED(flattened_seq, flattened_seq_idx++, asdl_seq_GET_UNTYPED(inner_seq, j));
         }
     }
-    assert(flattened_seq_idx == flattened_seq_size);
+    أكد(flattened_seq_idx == flattened_seq_size);
 
-    return flattened_seq;
+    החזר flattened_seq;
 }
 
-void *
+فراغ *
 _PyPegen_seq_last_item(asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    return asdl_seq_GET_UNTYPED(seq, len - 1);
+    החזר asdl_seq_GET_UNTYPED(seq, len - 1);
 }
 
-void *
+فراغ *
 _PyPegen_seq_first_item(asdl_seq *seq)
 {
-    return asdl_seq_GET_UNTYPED(seq, 0);
+    החזר asdl_seq_GET_UNTYPED(seq, 0);
 }
 
 /* Creates a new name of the form <first_name>.<second_name> */
 expr_ty
 _PyPegen_join_names_with_dot(Parser *p, expr_ty first_name, expr_ty second_name)
 {
-    assert(first_name != NULL && second_name != NULL);
+    أكد(first_name != عدم && second_name != عدم);
     PyObject *uni = PyUnicode_FromFormat("%U.%U",
             first_name->v.Name.id, second_name->v.Name.id);
-    if (!uni) {
-        return NULL;
+    אם (!uni) {
+        החזר عدم;
     }
     PyInterpreterState *interp = _PyInterpreterState_GET();
     _PyUnicode_InternImmortal(interp, &uni);
-    if (_PyArena_AddPyObject(p->arena, uni) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, uni) < 0) {
         Py_DECREF(uni);
-        return NULL;
+        החזר عدم;
     }
 
-    return _PyAST_Name(uni, Load, EXTRA_EXPR(first_name, second_name));
+    החזר _PyAST_Name(uni, Load, EXTRA_EXPR(first_name, second_name));
 }
 
 /* Counts the total number of dots in seq's tokens */
-int
+صحيح
 _PyPegen_seq_count_dots(asdl_seq *seq)
 {
-    int number_of_dots = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
+    صحيح number_of_dots = 0;
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
         Token *current_expr = asdl_seq_GET_UNTYPED(seq, i);
-        switch (current_expr->type) {
-            case ELLIPSIS:
+        بدل (current_expr->type) {
+            حالة ELLIPSIS:
                 number_of_dots += 3;
-                break;
-            case DOT:
+                اكسر;
+            حالة DOT:
                 number_of_dots += 1;
-                break;
-            default:
+                اكسر;
+            افتراضي:
                 Py_UNREACHABLE();
         }
     }
 
-    return number_of_dots;
+    החזר number_of_dots;
 }
 
 /* Creates an alias with '*' as the identifier name */
 alias_ty
-_PyPegen_alias_for_star(Parser *p, int lineno, int col_offset, int end_lineno,
-                        int end_col_offset, PyArena *arena) {
+_PyPegen_alias_for_star(Parser *p, صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                        صحيح end_col_offset, PyArena *arena) {
     PyObject *str = PyUnicode_InternFromString("*");
-    if (!str) {
-        return NULL;
+    אם (!str) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_alias(str, NULL, lineno, col_offset, end_lineno, end_col_offset, arena);
+    החזר _PyAST_alias(str, عدم, lineno, col_offset, end_lineno, end_col_offset, arena);
 }
 
 /* Creates a new asdl_seq* with the identifiers of all the names in seq */
@@ -180,171 +180,171 @@ asdl_identifier_seq *
 _PyPegen_map_names_to_ids(Parser *p, asdl_expr_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    أكد(len > 0);
 
     asdl_identifier_seq *new_seq = _Py_asdl_identifier_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty e = asdl_seq_GET(seq, i);
         asdl_seq_SET(new_seq, i, e->v.Name.id);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Constructs a CmpopExprPair */
 CmpopExprPair *
 _PyPegen_cmpop_expr_pair(Parser *p, cmpop_ty cmpop, expr_ty expr)
 {
-    assert(expr != NULL);
-    CmpopExprPair *a = _PyArena_Malloc(p->arena, sizeof(CmpopExprPair));
-    if (!a) {
-        return NULL;
+    أكد(expr != عدم);
+    CmpopExprPair *a = _PyArena_Malloc(p->arena, حجم(CmpopExprPair));
+    אם (!a) {
+        החזר عدم;
     }
     a->cmpop = cmpop;
     a->expr = expr;
-    return a;
+    החזר a;
 }
 
 asdl_int_seq *
 _PyPegen_get_cmpops(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    أكد(len > 0);
 
     asdl_int_seq *new_seq = _Py_asdl_int_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         CmpopExprPair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->cmpop);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 asdl_expr_seq *
 _PyPegen_get_exprs(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    assert(len > 0);
+    أكد(len > 0);
 
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         CmpopExprPair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->expr);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Creates an asdl_seq* where all the elements have been changed to have ctx as context */
-static asdl_expr_seq *
+ساكن asdl_expr_seq *
 _set_seq_context(Parser *p, asdl_expr_seq *seq, expr_context_ty ctx)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
-    if (len == 0) {
-        return NULL;
+    אם (len == 0) {
+        החזר عدم;
     }
 
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty e = asdl_seq_GET(seq, i);
         expr_ty new_e = _PyPegen_set_expr_context(p, e, ctx);
-        if (!new_e) {
-            return NULL;
+        אם (!new_e) {
+            החזר عدم;
         }
         asdl_seq_SET(new_seq, i, new_e);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
-static expr_ty
+ساكن expr_ty
 _set_name_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
-    return _PyAST_Name(e->v.Name.id, ctx, EXTRA_EXPR(e, e));
+    החזר _PyAST_Name(e->v.Name.id, ctx, EXTRA_EXPR(e, e));
 }
 
-static expr_ty
+ساكن expr_ty
 _set_tuple_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
     asdl_expr_seq *seq = _set_seq_context(p, e->v.Tuple.elts, ctx);
-    if (!seq && PyErr_Occurred()) {
-        return NULL;
+    אם (!seq && PyErr_Occurred()) {
+        החזר عدم;
     }
-    return _PyAST_Tuple(seq, ctx, EXTRA_EXPR(e, e));
+    החזר _PyAST_Tuple(seq, ctx, EXTRA_EXPR(e, e));
 }
 
-static expr_ty
+ساكن expr_ty
 _set_list_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
     asdl_expr_seq *seq = _set_seq_context(p, e->v.List.elts, ctx);
-    if (!seq && PyErr_Occurred()) {
-        return NULL;
+    אם (!seq && PyErr_Occurred()) {
+        החזר عدم;
     }
-    return _PyAST_List(seq, ctx, EXTRA_EXPR(e, e));
+    החזר _PyAST_List(seq, ctx, EXTRA_EXPR(e, e));
 }
 
-static expr_ty
+ساكن expr_ty
 _set_subscript_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
-    return _PyAST_Subscript(e->v.Subscript.value, e->v.Subscript.slice,
+    החזר _PyAST_Subscript(e->v.Subscript.value, e->v.Subscript.slice,
                             ctx, EXTRA_EXPR(e, e));
 }
 
-static expr_ty
+ساكن expr_ty
 _set_attribute_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
-    return _PyAST_Attribute(e->v.Attribute.value, e->v.Attribute.attr,
+    החזר _PyAST_Attribute(e->v.Attribute.value, e->v.Attribute.attr,
                             ctx, EXTRA_EXPR(e, e));
 }
 
-static expr_ty
+ساكن expr_ty
 _set_starred_context(Parser *p, expr_ty e, expr_context_ty ctx)
 {
     expr_ty inner = _PyPegen_set_expr_context(p, e->v.Starred.value, ctx);
-    if (!inner) {
-        return NULL;
+    אם (!inner) {
+        החזר عدم;
     }
-    return _PyAST_Starred(inner, ctx, EXTRA_EXPR(e, e));
+    החזר _PyAST_Starred(inner, ctx, EXTRA_EXPR(e, e));
 }
 
 /* Creates an `expr_ty` equivalent to `expr` but with `ctx` as context */
 expr_ty
 _PyPegen_set_expr_context(Parser *p, expr_ty expr, expr_context_ty ctx)
 {
-    assert(expr != NULL);
+    أكد(expr != عدم);
 
-    expr_ty new = NULL;
-    switch (expr->kind) {
-        case Name_kind:
+    expr_ty new = عدم;
+    بدل (expr->kind) {
+        حالة Name_kind:
             new = _set_name_context(p, expr, ctx);
-            break;
-        case Tuple_kind:
+            اكسر;
+        حالة Tuple_kind:
             new = _set_tuple_context(p, expr, ctx);
-            break;
-        case List_kind:
+            اكسر;
+        حالة List_kind:
             new = _set_list_context(p, expr, ctx);
-            break;
-        case Subscript_kind:
+            اكسر;
+        حالة Subscript_kind:
             new = _set_subscript_context(p, expr, ctx);
-            break;
-        case Attribute_kind:
+            اكسر;
+        حالة Attribute_kind:
             new = _set_attribute_context(p, expr, ctx);
-            break;
-        case Starred_kind:
+            اكسر;
+        حالة Starred_kind:
             new = _set_starred_context(p, expr, ctx);
-            break;
-        default:
+            اكسر;
+        افتراضي:
             new = expr;
     }
-    return new;
+    החזר new;
 }
 
 /* Invalid targets return NULL without raising, allowing parsing to backtrack.
@@ -352,12 +352,12 @@ _PyPegen_set_expr_context(Parser *p, expr_ty expr, expr_context_ty ctx)
 expr_ty
 _PyPegen_make_target(Parser *p, expr_ty expr, TARGETS_TYPE targets_type)
 {
-    assert(expr != NULL);
-    assert(targets_type != FOR_TARGETS);
-    if (_PyPegen_get_invalid_target(expr, targets_type) != NULL) {
-        return NULL;
+    أكد(expr != عدم);
+    أكد(targets_type != FOR_TARGETS);
+    אם (_PyPegen_get_invalid_target(expr, targets_type) != عدم) {
+        החזר عدم;
     }
-    return _PyPegen_set_expr_context(
+    החזר _PyPegen_set_expr_context(
         p, expr, targets_type == DEL_TARGETS ? Del : Store);
 }
 
@@ -365,13 +365,13 @@ _PyPegen_make_target(Parser *p, expr_ty expr, TARGETS_TYPE targets_type)
 KeyValuePair *
 _PyPegen_key_value_pair(Parser *p, expr_ty key, expr_ty value)
 {
-    KeyValuePair *a = _PyArena_Malloc(p->arena, sizeof(KeyValuePair));
-    if (!a) {
-        return NULL;
+    KeyValuePair *a = _PyArena_Malloc(p->arena, حجم(KeyValuePair));
+    אם (!a) {
+        החזר عدم;
     }
     a->key = key;
     a->value = value;
-    return a;
+    החזר a;
 }
 
 /* Extracts all keys from an asdl_seq* of KeyValuePair*'s */
@@ -380,14 +380,14 @@ _PyPegen_get_keys(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         KeyValuePair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->key);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Extracts all values from an asdl_seq* of KeyValuePair*'s */
@@ -396,27 +396,27 @@ _PyPegen_get_values(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         KeyValuePair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->value);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Constructs a KeyPatternPair that is used when parsing mapping & class patterns */
 KeyPatternPair *
 _PyPegen_key_pattern_pair(Parser *p, expr_ty key, pattern_ty pattern)
 {
-    KeyPatternPair *a = _PyArena_Malloc(p->arena, sizeof(KeyPatternPair));
-    if (!a) {
-        return NULL;
+    KeyPatternPair *a = _PyArena_Malloc(p->arena, حجم(KeyPatternPair));
+    אם (!a) {
+        החזר عدم;
     }
     a->key = key;
     a->pattern = pattern;
-    return a;
+    החזר a;
 }
 
 /* Extracts all keys from an asdl_seq* of KeyPatternPair*'s */
@@ -425,14 +425,14 @@ _PyPegen_get_pattern_keys(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         KeyPatternPair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->key);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Extracts all patterns from an asdl_seq* of KeyPatternPair*'s */
@@ -441,57 +441,57 @@ _PyPegen_get_patterns(Parser *p, asdl_seq *seq)
 {
     Py_ssize_t len = asdl_seq_LEN(seq);
     asdl_pattern_seq *new_seq = _Py_asdl_pattern_seq_new(len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         KeyPatternPair *pair = asdl_seq_GET_UNTYPED(seq, i);
         asdl_seq_SET(new_seq, i, pair->pattern);
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Constructs a NameDefaultPair */
 NameDefaultPair *
 _PyPegen_name_default_pair(Parser *p, arg_ty arg, expr_ty value, Token *tc)
 {
-    NameDefaultPair *a = _PyArena_Malloc(p->arena, sizeof(NameDefaultPair));
-    if (!a) {
-        return NULL;
+    NameDefaultPair *a = _PyArena_Malloc(p->arena, حجم(NameDefaultPair));
+    אם (!a) {
+        החזר عدم;
     }
     a->arg = _PyPegen_add_type_comment_to_arg(p, arg, tc);
-    if (!a->arg) {
-        return NULL;
+    אם (!a->arg) {
+        החזר عدم;
     }
     a->value = value;
-    return a;
+    החזר a;
 }
 
 /* Constructs a SlashWithDefault */
 SlashWithDefault *
 _PyPegen_slash_with_default(Parser *p, asdl_arg_seq *plain_names, asdl_seq *names_with_defaults)
 {
-    SlashWithDefault *a = _PyArena_Malloc(p->arena, sizeof(SlashWithDefault));
-    if (!a) {
-        return NULL;
+    SlashWithDefault *a = _PyArena_Malloc(p->arena, حجم(SlashWithDefault));
+    אם (!a) {
+        החזר عدم;
     }
     a->plain_names = plain_names;
     a->names_with_defaults = names_with_defaults;
-    return a;
+    החזר a;
 }
 
 /* Constructs a StarEtc */
 StarEtc *
 _PyPegen_star_etc(Parser *p, arg_ty vararg, asdl_seq *kwonlyargs, arg_ty kwarg)
 {
-    StarEtc *a = _PyArena_Malloc(p->arena, sizeof(StarEtc));
-    if (!a) {
-        return NULL;
+    StarEtc *a = _PyArena_Malloc(p->arena, حجم(StarEtc));
+    אם (!a) {
+        החזר عدم;
     }
     a->vararg = vararg;
     a->kwonlyargs = kwonlyargs;
     a->kwarg = kwarg;
-    return a;
+    החזר a;
 }
 
 asdl_seq *
@@ -500,168 +500,168 @@ _PyPegen_join_sequences(Parser *p, asdl_seq *a, asdl_seq *b)
     Py_ssize_t first_len = asdl_seq_LEN(a);
     Py_ssize_t second_len = asdl_seq_LEN(b);
     asdl_seq *new_seq = (asdl_seq*)_Py_asdl_generic_seq_new(first_len + second_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
 
-    int k = 0;
-    for (Py_ssize_t i = 0; i < first_len; i++) {
+    صحيح k = 0;
+    עבור (Py_ssize_t i = 0; i < first_len; i++) {
         asdl_seq_SET_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(a, i));
     }
-    for (Py_ssize_t i = 0; i < second_len; i++) {
+    עבור (Py_ssize_t i = 0; i < second_len; i++) {
         asdl_seq_SET_UNTYPED(new_seq, k++, asdl_seq_GET_UNTYPED(b, i));
     }
 
-    return new_seq;
+    החזר new_seq;
 }
 
-static asdl_arg_seq*
+ساكن asdl_arg_seq*
 _get_names(Parser *p, asdl_seq *names_with_defaults)
 {
     Py_ssize_t len = asdl_seq_LEN(names_with_defaults);
     asdl_arg_seq *seq = _Py_asdl_arg_seq_new(len, p->arena);
-    if (!seq) {
-        return NULL;
+    אם (!seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         NameDefaultPair *pair = asdl_seq_GET_UNTYPED(names_with_defaults, i);
         asdl_seq_SET(seq, i, pair->arg);
     }
-    return seq;
+    החזר seq;
 }
 
-static asdl_expr_seq *
+ساكن asdl_expr_seq *
 _get_defaults(Parser *p, asdl_seq *names_with_defaults)
 {
     Py_ssize_t len = asdl_seq_LEN(names_with_defaults);
     asdl_expr_seq *seq = _Py_asdl_expr_seq_new(len, p->arena);
-    if (!seq) {
-        return NULL;
+    אם (!seq) {
+        החזר عدم;
     }
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         NameDefaultPair *pair = asdl_seq_GET_UNTYPED(names_with_defaults, i);
         asdl_seq_SET(seq, i, pair->value);
     }
-    return seq;
+    החזר seq;
 }
 
-static int
+ساكن صحيح
 _make_posonlyargs(Parser *p,
                   asdl_arg_seq *slash_without_default,
                   SlashWithDefault *slash_with_default,
                   asdl_arg_seq **posonlyargs) {
-    if (slash_without_default != NULL) {
+    אם (slash_without_default != عدم) {
         *posonlyargs = slash_without_default;
     }
-    else if (slash_with_default != NULL) {
+    אחרת אם (slash_with_default != عدم) {
         asdl_arg_seq *slash_with_default_names =
                 _get_names(p, slash_with_default->names_with_defaults);
-        if (!slash_with_default_names) {
-            return -1;
+        אם (!slash_with_default_names) {
+            החזר -1;
         }
         *posonlyargs = (asdl_arg_seq*)_PyPegen_join_sequences(
                 p,
                 (asdl_seq*)slash_with_default->plain_names,
                 (asdl_seq*)slash_with_default_names);
     }
-    else {
+    אחרת {
         *posonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
     }
-    return *posonlyargs == NULL ? -1 : 0;
+    החזר *posonlyargs == عدم ? -1 : 0;
 }
 
-static int
+ساكن صحيح
 _make_posargs(Parser *p,
               asdl_arg_seq *plain_names,
               asdl_seq *names_with_default,
               asdl_arg_seq **posargs) {
 
-    if (names_with_default != NULL) {
-        if (plain_names != NULL) {
+    אם (names_with_default != عدم) {
+        אם (plain_names != عدم) {
             asdl_arg_seq *names_with_default_names = _get_names(p, names_with_default);
-            if (!names_with_default_names) {
-                return -1;
+            אם (!names_with_default_names) {
+                החזר -1;
             }
             *posargs = (asdl_arg_seq*)_PyPegen_join_sequences(
                     p,(asdl_seq*)plain_names, (asdl_seq*)names_with_default_names);
         }
-        else {
+        אחרת {
             *posargs = _get_names(p, names_with_default);
         }
     }
-    else {
-        if (plain_names != NULL) {
+    אחרת {
+        אם (plain_names != عدم) {
             // With the current grammar, we never get here.
             // If that has changed, remove the assert, and test thoroughly.
-            assert(0);
+            أكد(0);
             *posargs = plain_names;
         }
-        else {
+        אחרת {
             *posargs = _Py_asdl_arg_seq_new(0, p->arena);
         }
     }
-    return *posargs == NULL ? -1 : 0;
+    החזר *posargs == عدم ? -1 : 0;
 }
 
-static int
+ساكن صحيح
 _make_posdefaults(Parser *p,
                   SlashWithDefault *slash_with_default,
                   asdl_seq *names_with_default,
                   asdl_expr_seq **posdefaults) {
-    if (slash_with_default != NULL && names_with_default != NULL) {
+    אם (slash_with_default != عدم && names_with_default != عدم) {
         asdl_expr_seq *slash_with_default_values =
                 _get_defaults(p, slash_with_default->names_with_defaults);
-        if (!slash_with_default_values) {
-            return -1;
+        אם (!slash_with_default_values) {
+            החזר -1;
         }
         asdl_expr_seq *names_with_default_values = _get_defaults(p, names_with_default);
-        if (!names_with_default_values) {
-            return -1;
+        אם (!names_with_default_values) {
+            החזר -1;
         }
         *posdefaults = (asdl_expr_seq*)_PyPegen_join_sequences(
                 p,
                 (asdl_seq*)slash_with_default_values,
                 (asdl_seq*)names_with_default_values);
     }
-    else if (slash_with_default == NULL && names_with_default != NULL) {
+    אחרת אם (slash_with_default == عدم && names_with_default != عدم) {
         *posdefaults = _get_defaults(p, names_with_default);
     }
-    else if (slash_with_default != NULL && names_with_default == NULL) {
+    אחרת אם (slash_with_default != عدم && names_with_default == عدم) {
         *posdefaults = _get_defaults(p, slash_with_default->names_with_defaults);
     }
-    else {
+    אחרת {
         *posdefaults = _Py_asdl_expr_seq_new(0, p->arena);
     }
-    return *posdefaults == NULL ? -1 : 0;
+    החזר *posdefaults == عدم ? -1 : 0;
 }
 
-static int
+ساكن صحيح
 _make_kwargs(Parser *p, StarEtc *star_etc,
              asdl_arg_seq **kwonlyargs,
              asdl_expr_seq **kwdefaults) {
-    if (star_etc != NULL && star_etc->kwonlyargs != NULL) {
+    אם (star_etc != عدم && star_etc->kwonlyargs != عدم) {
         *kwonlyargs = _get_names(p, star_etc->kwonlyargs);
     }
-    else {
+    אחרת {
         *kwonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
     }
 
-    if (*kwonlyargs == NULL) {
-        return -1;
+    אם (*kwonlyargs == عدم) {
+        החזר -1;
     }
 
-    if (star_etc != NULL && star_etc->kwonlyargs != NULL) {
+    אם (star_etc != عدم && star_etc->kwonlyargs != عدم) {
         *kwdefaults = _get_defaults(p, star_etc->kwonlyargs);
     }
-    else {
+    אחרת {
         *kwdefaults = _Py_asdl_expr_seq_new(0, p->arena);
     }
 
-    if (*kwdefaults == NULL) {
-        return -1;
+    אם (*kwdefaults == عدم) {
+        החזר -1;
     }
 
-    return 0;
+    החזר 0;
 }
 
 /* Constructs an arguments_ty object out of all the parsed constructs in the parameters rule */
@@ -671,37 +671,37 @@ _PyPegen_make_arguments(Parser *p, asdl_arg_seq *slash_without_default,
                         asdl_seq *names_with_default, StarEtc *star_etc)
 {
     asdl_arg_seq *posonlyargs;
-    if (_make_posonlyargs(p, slash_without_default, slash_with_default, &posonlyargs) == -1) {
-        return NULL;
+    אם (_make_posonlyargs(p, slash_without_default, slash_with_default, &posonlyargs) == -1) {
+        החזר عدم;
     }
 
     asdl_arg_seq *posargs;
-    if (_make_posargs(p, plain_names, names_with_default, &posargs) == -1) {
-        return NULL;
+    אם (_make_posargs(p, plain_names, names_with_default, &posargs) == -1) {
+        החזר عدم;
     }
 
     asdl_expr_seq *posdefaults;
-    if (_make_posdefaults(p,slash_with_default, names_with_default, &posdefaults) == -1) {
-        return NULL;
+    אם (_make_posdefaults(p,slash_with_default, names_with_default, &posdefaults) == -1) {
+        החזר عدم;
     }
 
-    arg_ty vararg = NULL;
-    if (star_etc != NULL && star_etc->vararg != NULL) {
+    arg_ty vararg = عدم;
+    אם (star_etc != عدم && star_etc->vararg != عدم) {
         vararg = star_etc->vararg;
     }
 
     asdl_arg_seq *kwonlyargs;
     asdl_expr_seq *kwdefaults;
-    if (_make_kwargs(p, star_etc, &kwonlyargs, &kwdefaults) == -1) {
-        return NULL;
+    אם (_make_kwargs(p, star_etc, &kwonlyargs, &kwdefaults) == -1) {
+        החזר عدم;
     }
 
-    arg_ty kwarg = NULL;
-    if (star_etc != NULL && star_etc->kwarg != NULL) {
+    arg_ty kwarg = عدم;
+    אם (star_etc != عدم && star_etc->kwarg != عدم) {
         kwarg = star_etc->kwarg;
     }
 
-    return _PyAST_arguments(posonlyargs, posargs, vararg, kwonlyargs,
+    החזר _PyAST_arguments(posonlyargs, posargs, vararg, kwonlyargs,
                             kwdefaults, kwarg, posdefaults, p->arena);
 }
 
@@ -712,49 +712,49 @@ arguments_ty
 _PyPegen_empty_arguments(Parser *p)
 {
     asdl_arg_seq *posonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!posonlyargs) {
-        return NULL;
+    אם (!posonlyargs) {
+        החזר عدم;
     }
     asdl_arg_seq *posargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!posargs) {
-        return NULL;
+    אם (!posargs) {
+        החזר عدم;
     }
     asdl_expr_seq *posdefaults = _Py_asdl_expr_seq_new(0, p->arena);
-    if (!posdefaults) {
-        return NULL;
+    אם (!posdefaults) {
+        החזר عدم;
     }
     asdl_arg_seq *kwonlyargs = _Py_asdl_arg_seq_new(0, p->arena);
-    if (!kwonlyargs) {
-        return NULL;
+    אם (!kwonlyargs) {
+        החזר عدم;
     }
     asdl_expr_seq *kwdefaults = _Py_asdl_expr_seq_new(0, p->arena);
-    if (!kwdefaults) {
-        return NULL;
+    אם (!kwdefaults) {
+        החזר عدم;
     }
 
-    return _PyAST_arguments(posonlyargs, posargs, NULL, kwonlyargs,
-                            kwdefaults, NULL, posdefaults, p->arena);
+    החזר _PyAST_arguments(posonlyargs, posargs, عدم, kwonlyargs,
+                            kwdefaults, عدم, posdefaults, p->arena);
 }
 
 /* Encapsulates the value of an operator_ty into an AugOperator struct */
 AugOperator *
 _PyPegen_augoperator(Parser *p, operator_ty kind)
 {
-    AugOperator *a = _PyArena_Malloc(p->arena, sizeof(AugOperator));
-    if (!a) {
-        return NULL;
+    AugOperator *a = _PyArena_Malloc(p->arena, حجم(AugOperator));
+    אם (!a) {
+        החזר عدم;
     }
     a->kind = kind;
-    return a;
+    החזר a;
 }
 
 /* Construct a FunctionDef equivalent to function_def, but with decorators */
 stmt_ty
 _PyPegen_function_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty function_def)
 {
-    assert(function_def != NULL);
-    if (function_def->kind == AsyncFunctionDef_kind) {
-        return _PyAST_AsyncFunctionDef(
+    أكد(function_def != عدم);
+    אם (function_def->kind == AsyncFunctionDef_kind) {
+        החזר _PyAST_AsyncFunctionDef(
             function_def->v.AsyncFunctionDef.name,
             function_def->v.AsyncFunctionDef.args,
             function_def->v.AsyncFunctionDef.body, decorators,
@@ -765,7 +765,7 @@ _PyPegen_function_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty f
             function_def->end_lineno, function_def->end_col_offset, p->arena);
     }
 
-    return _PyAST_FunctionDef(
+    החזר _PyAST_FunctionDef(
         function_def->v.FunctionDef.name,
         function_def->v.FunctionDef.args,
         function_def->v.FunctionDef.body, decorators,
@@ -780,8 +780,8 @@ _PyPegen_function_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty f
 stmt_ty
 _PyPegen_class_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty class_def)
 {
-    assert(class_def != NULL);
-    return _PyAST_ClassDef(
+    أكد(class_def != عدم);
+    החזר _PyAST_ClassDef(
         class_def->v.ClassDef.name,
         class_def->v.ClassDef.bases, class_def->v.ClassDef.keywords,
         class_def->v.ClassDef.body, decorators,
@@ -792,52 +792,52 @@ _PyPegen_class_def_decorators(Parser *p, asdl_expr_seq *decorators, stmt_ty clas
 
 /* Construct a KeywordOrStarred */
 KeywordOrStarred *
-_PyPegen_keyword_or_starred(Parser *p, void *element, int is_keyword)
+_PyPegen_keyword_or_starred(Parser *p, فراغ *element, صحيح is_keyword)
 {
-    KeywordOrStarred *a = _PyArena_Malloc(p->arena, sizeof(KeywordOrStarred));
-    if (!a) {
-        return NULL;
+    KeywordOrStarred *a = _PyArena_Malloc(p->arena, حجم(KeywordOrStarred));
+    אם (!a) {
+        החזר عدم;
     }
     a->element = element;
     a->is_keyword = is_keyword;
-    return a;
+    החזר a;
 }
 
 /* Get the number of starred expressions in an asdl_seq* of KeywordOrStarred*s */
-static int
+ساكن صحيح
 _seq_number_of_starred_exprs(asdl_seq *seq)
 {
-    int n = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
+    صحيح n = 0;
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(seq); i < l; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(seq, i);
-        if (!k->is_keyword) {
+        אם (!k->is_keyword) {
             n++;
         }
     }
-    return n;
+    החזר n;
 }
 
 /* Extract the starred expressions of an asdl_seq* of KeywordOrStarred*s */
 asdl_expr_seq *
 _PyPegen_seq_extract_starred_exprs(Parser *p, asdl_seq *kwargs)
 {
-    int new_len = _seq_number_of_starred_exprs(kwargs);
-    if (new_len == 0) {
-        return NULL;
+    صحيح new_len = _seq_number_of_starred_exprs(kwargs);
+    אם (new_len == 0) {
+        החזר عدم;
     }
     asdl_expr_seq *new_seq = _Py_asdl_expr_seq_new(new_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
 
-    int idx = 0;
-    for (Py_ssize_t i = 0, len = asdl_seq_LEN(kwargs); i < len; i++) {
+    صحيح idx = 0;
+    עבור (Py_ssize_t i = 0, len = asdl_seq_LEN(kwargs); i < len; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(kwargs, i);
-        if (!k->is_keyword) {
+        אם (!k->is_keyword) {
             asdl_seq_SET(new_seq, idx++, k->element);
         }
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 /* Return a new asdl_seq* with only the keywords in kwargs */
@@ -846,188 +846,188 @@ _PyPegen_seq_delete_starred_exprs(Parser *p, asdl_seq *kwargs)
 {
     Py_ssize_t len = asdl_seq_LEN(kwargs);
     Py_ssize_t new_len = len - _seq_number_of_starred_exprs(kwargs);
-    if (new_len == 0) {
-        return NULL;
+    אם (new_len == 0) {
+        החזר عدم;
     }
     asdl_keyword_seq *new_seq = _Py_asdl_keyword_seq_new(new_len, p->arena);
-    if (!new_seq) {
-        return NULL;
+    אם (!new_seq) {
+        החזר عدم;
     }
 
-    int idx = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
+    صحيح idx = 0;
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         KeywordOrStarred *k = asdl_seq_GET_UNTYPED(kwargs, i);
-        if (k->is_keyword) {
+        אם (k->is_keyword) {
             asdl_seq_SET(new_seq, idx++, k->element);
         }
     }
-    return new_seq;
+    החזר new_seq;
 }
 
 expr_ty
 _PyPegen_ensure_imaginary(Parser *p, expr_ty exp)
 {
-    if (exp->kind != Constant_kind || !PyComplex_CheckExact(exp->v.Constant.value)) {
+    אם (exp->kind != Constant_kind || !PyComplex_CheckExact(exp->v.Constant.value)) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(exp, "imaginary number required in complex literal");
-        return NULL;
+        החזר عدم;
     }
-    return exp;
+    החזר exp;
 }
 
 expr_ty
 _PyPegen_ensure_real(Parser *p, expr_ty exp)
 {
-    if (exp->kind != Constant_kind || PyComplex_CheckExact(exp->v.Constant.value)) {
+    אם (exp->kind != Constant_kind || PyComplex_CheckExact(exp->v.Constant.value)) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(exp, "real number required in complex literal");
-        return NULL;
+        החזר عدم;
     }
-    return exp;
+    החזר exp;
 }
 
 mod_ty
 _PyPegen_make_module(Parser *p, asdl_stmt_seq *a) {
-    asdl_type_ignore_seq *type_ignores = NULL;
+    asdl_type_ignore_seq *type_ignores = عدم;
     Py_ssize_t num = p->type_ignore_comments.num_items;
-    if (num > 0) {
+    אם (num > 0) {
         // Turn the raw (comment, lineno) pairs into TypeIgnore objects in the arena
         type_ignores = _Py_asdl_type_ignore_seq_new(num, p->arena);
-        if (type_ignores == NULL) {
-            return NULL;
+        אם (type_ignores == عدم) {
+            החזר عدم;
         }
-        for (Py_ssize_t i = 0; i < num; i++) {
+        עבור (Py_ssize_t i = 0; i < num; i++) {
             PyObject *tag = _PyPegen_new_type_comment(p, p->type_ignore_comments.items[i].comment);
-            if (tag == NULL) {
-                return NULL;
+            אם (tag == عدم) {
+                החזר عدم;
             }
             type_ignore_ty ti = _PyAST_TypeIgnore(p->type_ignore_comments.items[i].lineno,
                                                   tag, p->arena);
-            if (ti == NULL) {
-                return NULL;
+            אם (ti == عدم) {
+                החזר عدم;
             }
             asdl_seq_SET(type_ignores, i, ti);
         }
     }
-    return _PyAST_Module(a, type_ignores, p->arena);
+    החזר _PyAST_Module(a, type_ignores, p->arena);
 }
 
 PyObject *
-_PyPegen_new_type_comment(Parser *p, const char *s)
+_PyPegen_new_type_comment(Parser *p, ثابت حرف *s)
 {
-    PyObject *res = PyUnicode_DecodeUTF8(s, strlen(s), NULL);
-    if (res == NULL) {
-        return NULL;
+    PyObject *res = PyUnicode_DecodeUTF8(s, strlen(s), عدم);
+    אם (res == عدم) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, res) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, res) < 0) {
         Py_DECREF(res);
-        return NULL;
+        החזר عدم;
     }
-    return res;
+    החזר res;
 }
 
 arg_ty
 _PyPegen_add_type_comment_to_arg(Parser *p, arg_ty a, Token *tc)
 {
-    if (tc == NULL) {
-        return a;
+    אם (tc == عدم) {
+        החזר a;
     }
-    const char *bytes = PyBytes_AsString(tc->bytes);
-    if (bytes == NULL) {
-        return NULL;
+    ثابت حرف *bytes = PyBytes_AsString(tc->bytes);
+    אם (bytes == عدم) {
+        החזר عدم;
     }
     PyObject *tco = _PyPegen_new_type_comment(p, bytes);
-    if (tco == NULL) {
-        return NULL;
+    אם (tco == عدم) {
+        החזר عدم;
     }
-    return _PyAST_arg(a->arg, a->annotation, tco,
+    החזר _PyAST_arg(a->arg, a->annotation, tco,
                       a->lineno, a->col_offset, a->end_lineno, a->end_col_offset,
                       p->arena);
 }
 
 /* Checks if the NOTEQUAL token is valid given the current parser flags
 0 indicates success and nonzero indicates failure (an exception may be set) */
-int
+صحيح
 _PyPegen_check_barry_as_flufl(Parser *p, Token* t) {
-    assert(t->bytes != NULL);
-    assert(t->type == NOTEQUAL);
+    أكد(t->bytes != عدم);
+    أكد(t->type == NOTEQUAL);
 
-    const char* tok_str = PyBytes_AS_STRING(t->bytes);
-    if (p->flags & PyPARSE_BARRY_AS_BDFL && strcmp(tok_str, "<>") != 0) {
+    ثابت حرف* tok_str = PyBytes_AS_STRING(t->bytes);
+    אם (p->flags & PyPARSE_BARRY_AS_BDFL && strcmp(tok_str, "<>") != 0) {
         RAISE_SYNTAX_ERROR("with Barry as BDFL, use '<>' instead of '!='");
-        return -1;
+        החזר -1;
     }
-    if (!(p->flags & PyPARSE_BARRY_AS_BDFL)) {
-        return strcmp(tok_str, "!=");
+    אם (!(p->flags & PyPARSE_BARRY_AS_BDFL)) {
+        החזר strcmp(tok_str, "!=");
     }
-    return 0;
+    החזר 0;
 }
 
-int
+صحيح
 _PyPegen_check_legacy_stmt(Parser *p, expr_ty name) {
-    if (name->kind != Name_kind) {
-        return 0;
+    אם (name->kind != Name_kind) {
+        החזר 0;
     }
-    const char* candidates[2] = {"print", "exec"};
-    for (int i=0; i<2; i++) {
-        if (PyUnicode_CompareWithASCIIString(name->v.Name.id, candidates[i]) == 0) {
-            return 1;
+    ثابت حرف* candidates[2] = {"print", "exec"};
+    עבור (صحيح i=0; i<2; i++) {
+        אם (PyUnicode_CompareWithASCIIString(name->v.Name.id, candidates[i]) == 0) {
+            החזר 1;
         }
     }
-    return 0;
+    החזר 0;
 }
 
-void *
+فراغ *
 _PyPegen_raise_error_for_missing_comma(Parser *p, expr_ty a, expr_ty b)
 {
     // Don't raise for legacy statements like "print x" or "exec x"
-    if (_PyPegen_check_legacy_stmt(p, a)) {
-        return NULL;
+    אם (_PyPegen_check_legacy_stmt(p, a)) {
+        החזר عدم;
     }
     // Only raise inside parentheses/brackets (level > 0)
-    if (p->tokens[p->mark - 1]->level == 0) {
-        return NULL;
+    אם (p->tokens[p->mark - 1]->level == 0) {
+        החזר عدم;
     }
     // For multi-line expressions (like string concatenations), point to the
     // last line instead of the first for a more helpful error message.
     // Use a->col_offset as the starting column since all strings in the
     // concatenation typically share the same indentation.
-    if (a->end_lineno > a->lineno) {
-        return RAISE_ERROR_KNOWN_LOCATION(
+    אם (a->end_lineno > a->lineno) {
+        החזר RAISE_ERROR_KNOWN_LOCATION(
             p, PyExc_SyntaxError, a->end_lineno, a->col_offset,
             a->end_lineno, a->end_col_offset,
             "invalid syntax. Perhaps you forgot a comma?"
         );
     }
-    return RAISE_ERROR_KNOWN_LOCATION(
+    החזר RAISE_ERROR_KNOWN_LOCATION(
         p, PyExc_SyntaxError, a->lineno, a->col_offset,
         b->end_lineno, b->end_col_offset,
         "invalid syntax. Perhaps you forgot a comma?"
     );
 }
 
-static ResultTokenWithMetadata *
-result_token_with_metadata(Parser *p, void *result, PyObject *metadata)
+ساكن ResultTokenWithMetadata *
+result_token_with_metadata(Parser *p, فراغ *result, PyObject *metadata)
 {
-    ResultTokenWithMetadata *res = _PyArena_Malloc(p->arena, sizeof(ResultTokenWithMetadata));
-    if (res == NULL) {
-        return NULL;
+    ResultTokenWithMetadata *res = _PyArena_Malloc(p->arena, حجم(ResultTokenWithMetadata));
+    אם (res == عدم) {
+        החזר عدم;
     }
     res->metadata = metadata;
     res->result = result;
-    return res;
+    החזר res;
 }
 
-static char
-formatted_string_prefix(const Parser *p)
+ساكن حرف
+formatted_string_prefix(ثابت Parser *p)
 {
-    int nested = 0;
-    for (int i = p->mark - 1; i >= 0; i--) {
-        int type = p->tokens[i]->type;
-        if (type == FSTRING_END || type == TSTRING_END) {
+    صحيح nested = 0;
+    עבור (صحيح i = p->mark - 1; i >= 0; i--) {
+        صحيح type = p->tokens[i]->type;
+        אם (type == FSTRING_END || type == TSTRING_END) {
             nested++;
         }
-        else if (type == FSTRING_START || type == TSTRING_START) {
-            if (nested == 0) {
-                return type == TSTRING_START ? 't' : 'f';
+        אחרת אם (type == FSTRING_START || type == TSTRING_START) {
+            אם (nested == 0) {
+                החזר type == TSTRING_START ? 't' : 'f';
             }
             nested--;
         }
@@ -1038,8 +1038,8 @@ formatted_string_prefix(const Parser *p)
 ResultTokenWithMetadata *
 _PyPegen_check_fstring_conversion(Parser *p, Token* conv_token, expr_ty conv)
 {
-    if (conv_token->lineno != conv->lineno || conv_token->end_col_offset != conv->col_offset) {
-        return RAISE_SYNTAX_ERROR_KNOWN_RANGE(
+    אם (conv_token->lineno != conv->lineno || conv_token->end_col_offset != conv->col_offset) {
+        החזר RAISE_SYNTAX_ERROR_KNOWN_RANGE(
             conv_token, conv,
             "%c-string: conversion type must come right after the exclamation mark",
             formatted_string_prefix(p)
@@ -1047,24 +1047,24 @@ _PyPegen_check_fstring_conversion(Parser *p, Token* conv_token, expr_ty conv)
     }
 
     Py_UCS4 first = PyUnicode_READ_CHAR(conv->v.Name.id, 0);
-    if (PyUnicode_GET_LENGTH(conv->v.Name.id) > 1 ||
+    אם (PyUnicode_GET_LENGTH(conv->v.Name.id) > 1 ||
             !(first == 's' || first == 'r' || first == 'a')) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(conv,
                                             "%c-string: invalid conversion character %R: expected 's', 'r', or 'a'",
                                             formatted_string_prefix(p),
                                             conv->v.Name.id);
-        return NULL;
+        החזר عدم;
     }
 
-    return result_token_with_metadata(p, conv, conv_token->metadata);
+    החזר result_token_with_metadata(p, conv, conv_token->metadata);
 }
 
 ResultTokenWithMetadata *
-_PyPegen_setup_full_format_spec(Parser *p, Token *colon, asdl_expr_seq *spec, int lineno, int col_offset,
-                                int end_lineno, int end_col_offset, PyArena *arena)
+_PyPegen_setup_full_format_spec(Parser *p, Token *colon, asdl_expr_seq *spec, صحيح lineno, صحيح col_offset,
+                                صحيح end_lineno, صحيح end_col_offset, PyArena *arena)
 {
-    if (!spec) {
-        return NULL;
+    אם (!spec) {
+        החזר عدم;
     }
 
     // This is needed to keep compatibility with 3.11, where an empty format
@@ -1072,173 +1072,173 @@ _PyPegen_setup_full_format_spec(Parser *p, Token *colon, asdl_expr_seq *spec, in
     // constant in it.
     Py_ssize_t n_items = asdl_seq_LEN(spec);
     Py_ssize_t non_empty_count = 0;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
+    עבור (Py_ssize_t i = 0; i < n_items; i++) {
         expr_ty item = asdl_seq_GET(spec, i);
         non_empty_count += !(item->kind == Constant_kind &&
                              PyUnicode_CheckExact(item->v.Constant.value) &&
                              PyUnicode_GET_LENGTH(item->v.Constant.value) == 0);
     }
-    if (non_empty_count != n_items) {
+    אם (non_empty_count != n_items) {
         asdl_expr_seq *resized_spec =
             _Py_asdl_expr_seq_new(non_empty_count, p->arena);
-        if (resized_spec == NULL) {
-            return NULL;
+        אם (resized_spec == عدم) {
+            החזר عدم;
         }
         Py_ssize_t j = 0;
-        for (Py_ssize_t i = 0; i < n_items; i++) {
+        עבור (Py_ssize_t i = 0; i < n_items; i++) {
             expr_ty item = asdl_seq_GET(spec, i);
-            if (item->kind == Constant_kind &&
+            אם (item->kind == Constant_kind &&
                 PyUnicode_CheckExact(item->v.Constant.value) &&
                 PyUnicode_GET_LENGTH(item->v.Constant.value) == 0) {
-                continue;
+                استمر;
             }
             asdl_seq_SET(resized_spec, j++, item);
         }
-        assert(j == non_empty_count);
+        أكد(j == non_empty_count);
         spec = resized_spec;
     }
     expr_ty res;
     Py_ssize_t n = asdl_seq_LEN(spec);
-    if (n == 0 || (n == 1 && asdl_seq_GET(spec, 0)->kind == Constant_kind)) {
+    אם (n == 0 || (n == 1 && asdl_seq_GET(spec, 0)->kind == Constant_kind)) {
         res = _PyAST_JoinedStr(spec, lineno, col_offset, end_lineno,
                                     end_col_offset, p->arena);
-    } else {
+    } אחרת {
         res = _PyPegen_concatenate_strings(p, spec,
                              lineno, col_offset, end_lineno,
                              end_col_offset, arena);
     }
-    if (!res) {
-        return NULL;
+    אם (!res) {
+        החזר عدم;
     }
-    return result_token_with_metadata(p, res, colon->metadata);
+    החזר result_token_with_metadata(p, res, colon->metadata);
 }
 
-const char *
+ثابت حرف *
 _PyPegen_get_expr_name(expr_ty e)
 {
-    assert(e != NULL);
-    switch (e->kind) {
-        case Attribute_kind:
-            return "attribute";
-        case Subscript_kind:
-            return "subscript";
-        case Starred_kind:
-            return "starred";
-        case Name_kind:
-            return "name";
-        case List_kind:
-            return "list";
-        case Tuple_kind:
-            return "tuple";
-        case Lambda_kind:
-            return "lambda";
-        case Call_kind:
-            return "function call";
-        case BoolOp_kind:
-        case BinOp_kind:
-        case UnaryOp_kind:
-            return "expression";
-        case GeneratorExp_kind:
-            return "generator expression";
-        case Yield_kind:
-        case YieldFrom_kind:
-            return "yield expression";
-        case Await_kind:
-            return "await expression";
-        case ListComp_kind:
-            return "list comprehension";
-        case SetComp_kind:
-            return "set comprehension";
-        case DictComp_kind:
-            return "dict comprehension";
-        case Dict_kind:
-            return "dict literal";
-        case Set_kind:
-            return "set display";
-        case JoinedStr_kind:
-        case FormattedValue_kind:
-            return "f-string expression";
-        case TemplateStr_kind:
-        case Interpolation_kind:
-            return "t-string expression";
-        case Constant_kind: {
+    أكد(e != عدم);
+    بدل (e->kind) {
+        حالة Attribute_kind:
+            החזר "attribute";
+        حالة Subscript_kind:
+            החזר "subscript";
+        حالة Starred_kind:
+            החזר "starred";
+        حالة Name_kind:
+            החזר "name";
+        حالة List_kind:
+            החזר "list";
+        حالة Tuple_kind:
+            החזר "tuple";
+        حالة Lambda_kind:
+            החזר "lambda";
+        حالة Call_kind:
+            החזר "function call";
+        حالة BoolOp_kind:
+        حالة BinOp_kind:
+        حالة UnaryOp_kind:
+            החזר "expression";
+        حالة GeneratorExp_kind:
+            החזר "generator expression";
+        حالة Yield_kind:
+        حالة YieldFrom_kind:
+            החזר "yield expression";
+        حالة Await_kind:
+            החזר "await expression";
+        حالة ListComp_kind:
+            החזר "list comprehension";
+        حالة SetComp_kind:
+            החזר "set comprehension";
+        حالة DictComp_kind:
+            החזר "dict comprehension";
+        حالة Dict_kind:
+            החזר "dict literal";
+        حالة Set_kind:
+            החזר "set display";
+        حالة JoinedStr_kind:
+        حالة FormattedValue_kind:
+            החזר "f-string expression";
+        حالة TemplateStr_kind:
+        حالة Interpolation_kind:
+            החזר "t-string expression";
+        حالة Constant_kind: {
             PyObject *value = e->v.Constant.value;
-            if (value == Py_None) {
-                return "None";
+            אם (value == Py_None) {
+                החזר "None";
             }
-            if (value == Py_False) {
-                return "False";
+            אם (value == Py_False) {
+                החזר "False";
             }
-            if (value == Py_True) {
-                return "True";
+            אם (value == Py_True) {
+                החזר "True";
             }
-            if (value == Py_Ellipsis) {
-                return "ellipsis";
+            אם (value == Py_Ellipsis) {
+                החזר "ellipsis";
             }
-            return "literal";
+            החזר "literal";
         }
-        case Compare_kind:
-            return "comparison";
-        case IfExp_kind:
-            return "conditional expression";
-        case NamedExpr_kind:
-            return "named expression";
-        default:
+        حالة Compare_kind:
+            החזר "comparison";
+        حالة IfExp_kind:
+            החזר "conditional expression";
+        حالة NamedExpr_kind:
+            החזר "named expression";
+        افتراضي:
             PyErr_Format(PyExc_SystemError,
                          "unexpected expression in assignment %d (line %d)",
                          e->kind, e->lineno);
-            return NULL;
+            החזר عدم;
     }
 }
 
 expr_ty
 _PyPegen_get_last_comprehension_item(comprehension_ty comprehension) {
-    if (comprehension->ifs == NULL || asdl_seq_LEN(comprehension->ifs) == 0) {
-        return comprehension->iter;
+    אם (comprehension->ifs == عدم || asdl_seq_LEN(comprehension->ifs) == 0) {
+        החזר comprehension->iter;
     }
-    return PyPegen_last_item(comprehension->ifs, expr_ty);
+    החזר PyPegen_last_item(comprehension->ifs, expr_ty);
 }
 
 expr_ty _PyPegen_collect_call_seqs(Parser *p, asdl_expr_seq *a, asdl_seq *b,
-                     int lineno, int col_offset, int end_lineno,
-                     int end_col_offset, PyArena *arena) {
+                     صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                     صحيح end_col_offset, PyArena *arena) {
     Py_ssize_t args_len = asdl_seq_LEN(a);
     Py_ssize_t total_len = args_len;
 
-    if (b == NULL) {
-        return _PyAST_Call(_PyPegen_dummy_name(p), a, NULL, lineno, col_offset,
+    אם (b == عدم) {
+        החזר _PyAST_Call(_PyPegen_dummy_name(p), a, عدم, lineno, col_offset,
                         end_lineno, end_col_offset, arena);
 
     }
 
     asdl_expr_seq *starreds = _PyPegen_seq_extract_starred_exprs(p, b);
-    if (!starreds && PyErr_Occurred()) {
-        return NULL;
+    אם (!starreds && PyErr_Occurred()) {
+        החזר عدم;
     }
 
     asdl_keyword_seq *keywords = _PyPegen_seq_delete_starred_exprs(p, b);
-    if (!keywords && PyErr_Occurred()) {
-        return NULL;
+    אם (!keywords && PyErr_Occurred()) {
+        החזר عدم;
     }
 
-    if (starreds) {
+    אם (starreds) {
         total_len += asdl_seq_LEN(starreds);
     }
 
     asdl_expr_seq *args = _Py_asdl_expr_seq_new(total_len, arena);
-    if (args == NULL) {
-        return NULL;
+    אם (args == عدم) {
+        החזר عدم;
     }
 
     Py_ssize_t i = 0;
-    for (i = 0; i < args_len; i++) {
+    עבור (i = 0; i < args_len; i++) {
         asdl_seq_SET(args, i, asdl_seq_GET(a, i));
     }
-    for (; i < total_len; i++) {
+    עבור (; i < total_len; i++) {
         asdl_seq_SET(args, i, asdl_seq_GET(starreds, i - args_len));
     }
 
-    return _PyAST_Call(_PyPegen_dummy_name(p), args, keywords, lineno,
+    החזר _PyAST_Call(_PyPegen_dummy_name(p), args, keywords, lineno,
                        col_offset, end_lineno, end_col_offset, arena);
 }
 
@@ -1247,28 +1247,28 @@ expr_ty _PyPegen_collect_call_seqs(Parser *p, asdl_expr_seq *a, asdl_seq *b,
 expr_ty
 _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type)
 {
-    if (e == NULL) {
-        return NULL;
+    אם (e == عدم) {
+        החזר عدم;
     }
 
-    if (targets_type == SINGLE_TARGETS ||
+    אם (targets_type == SINGLE_TARGETS ||
         targets_type == ATTRIBUTE_OR_SUBSCRIPT_TARGETS) {
-        if (targets_type == SINGLE_TARGETS && e->kind == Name_kind) {
-            return NULL;
+        אם (targets_type == SINGLE_TARGETS && e->kind == Name_kind) {
+            החזר عدم;
         }
-        return e->kind == Attribute_kind || e->kind == Subscript_kind ? NULL : e;
+        החזר e->kind == Attribute_kind || e->kind == Subscript_kind ? عدم : e;
     }
 
-#define VISIT_CONTAINER(CONTAINER, TYPE) do { \
+#define VISIT_CONTAINER(CONTAINER, TYPE) עשה { \
         Py_ssize_t len = asdl_seq_LEN((CONTAINER)->v.TYPE.elts);\
-        for (Py_ssize_t i = 0; i < len; i++) {\
+        עבור (Py_ssize_t i = 0; i < len; i++) {\
             expr_ty other = asdl_seq_GET((CONTAINER)->v.TYPE.elts, i);\
             expr_ty child = _PyPegen_get_invalid_target(other, targets_type);\
-            if (child != NULL) {\
-                return child;\
+            אם (child != عدم) {\
+                החזר child;\
             }\
         }\
-    } while (0)
+    } כלעוד (0)
 
     // We only need to visit List and Tuple nodes recursively as those
     // are the only ones that can contain valid names in targets when
@@ -1276,59 +1276,59 @@ _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type)
     // that is a container (like Sets or Dicts) is directly invalid and
     // we don't need to visit it recursively.
 
-    switch (e->kind) {
-        case List_kind:
+    بدل (e->kind) {
+        حالة List_kind:
             VISIT_CONTAINER(e, List);
-            return NULL;
-        case Tuple_kind:
+            החזר عدم;
+        حالة Tuple_kind:
             VISIT_CONTAINER(e, Tuple);
-            return NULL;
-        case Starred_kind:
-            if (targets_type == DEL_TARGETS) {
-                return e;
+            החזר عدم;
+        حالة Starred_kind:
+            אם (targets_type == DEL_TARGETS) {
+                החזר e;
             }
-            return _PyPegen_get_invalid_target(e->v.Starred.value, targets_type);
-        case Compare_kind:
+            החזר _PyPegen_get_invalid_target(e->v.Starred.value, targets_type);
+        حالة Compare_kind:
             // This is needed, because the `a in b` in `for a in b` gets parsed
             // as a comparison, and so we need to search the left side of the comparison
             // for invalid targets.
-            if (targets_type == FOR_TARGETS) {
+            אם (targets_type == FOR_TARGETS) {
                 cmpop_ty cmpop = (cmpop_ty) asdl_seq_GET(e->v.Compare.ops, 0);
-                if (cmpop == In) {
-                    return _PyPegen_get_invalid_target(e->v.Compare.left, targets_type);
+                אם (cmpop == In) {
+                    החזר _PyPegen_get_invalid_target(e->v.Compare.left, targets_type);
                 }
-                return NULL;
+                החזר عدم;
             }
-            return e;
-        case Name_kind:
-        case Subscript_kind:
-        case Attribute_kind:
-            return NULL;
-        default:
-            return e;
+            החזר e;
+        حالة Name_kind:
+        حالة Subscript_kind:
+        حالة Attribute_kind:
+            החזר عدم;
+        افتراضي:
+            החזר e;
     }
 }
 
-void *_PyPegen_arguments_parsing_error(Parser *p, expr_ty e) {
-    int kwarg_unpacking = 0;
-    for (Py_ssize_t i = 0, l = asdl_seq_LEN(e->v.Call.keywords); i < l; i++) {
+فراغ *_PyPegen_arguments_parsing_error(Parser *p, expr_ty e) {
+    صحيح kwarg_unpacking = 0;
+    עבור (Py_ssize_t i = 0, l = asdl_seq_LEN(e->v.Call.keywords); i < l; i++) {
         keyword_ty keyword = asdl_seq_GET(e->v.Call.keywords, i);
-        if (!keyword->arg) {
+        אם (!keyword->arg) {
             kwarg_unpacking = 1;
         }
     }
 
-    const char *msg = NULL;
-    if (kwarg_unpacking) {
+    ثابت حرف *msg = عدم;
+    אם (kwarg_unpacking) {
         msg = "positional argument follows keyword argument unpacking";
-    } else {
+    } אחרת {
         msg = "positional argument follows keyword argument";
     }
 
-    return RAISE_SYNTAX_ERROR(msg);
+    החזר RAISE_SYNTAX_ERROR(msg);
 }
 
-void *
+فراغ *
 _PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq *comprehensions)
 {
     /* The rule that calls this function is 'args for_if_clauses'.
@@ -1339,13 +1339,13 @@ _PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq
        argument (x in the above example) as the location of the
        error */
     Py_ssize_t len = asdl_seq_LEN(args->v.Call.args);
-    if (len <= 1) {
-        return NULL;
+    אם (len <= 1) {
+        החזר عدم;
     }
 
     comprehension_ty last_comprehension = PyPegen_last_item(comprehensions, comprehension_ty);
 
-    return RAISE_SYNTAX_ERROR_KNOWN_RANGE(
+    החזר RAISE_SYNTAX_ERROR_KNOWN_RANGE(
         (expr_ty) asdl_seq_GET(args->v.Call.args, len - 1),
         _PyPegen_get_last_comprehension_item(last_comprehension),
         "Generator expression must be parenthesized"
@@ -1354,132 +1354,132 @@ _PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq
 
 // Fstring stuff
 
-static expr_ty
-_PyPegen_decode_fstring_part(Parser* p, int is_raw, expr_ty constant, Token* token) {
-    assert(PyUnicode_CheckExact(constant->v.Constant.value));
+ساكن expr_ty
+_PyPegen_decode_fstring_part(Parser* p, صحيح is_raw, expr_ty constant, Token* token) {
+    أكد(PyUnicode_CheckExact(constant->v.Constant.value));
 
-    const char* bstr = PyUnicode_AsUTF8(constant->v.Constant.value);
-    if (bstr == NULL) {
-        return NULL;
+    ثابت حرف* bstr = PyUnicode_AsUTF8(constant->v.Constant.value);
+    אם (bstr == عدم) {
+        החזר عدم;
     }
 
     size_t len;
-    if (strcmp(bstr, "{{") == 0 || strcmp(bstr, "}}") == 0) {
+    אם (strcmp(bstr, "{{") == 0 || strcmp(bstr, "}}") == 0) {
         len = 1;
-    } else {
+    } אחרת {
         len = strlen(bstr);
     }
 
-    is_raw = is_raw || strchr(bstr, '\\') == NULL;
+    is_raw = is_raw || strchr(bstr, '\\') == عدم;
     PyObject *str = _PyPegen_decode_string(p, is_raw, bstr, len, token);
-    if (str == NULL) {
+    אם (str == عدم) {
         _Pypegen_raise_decode_error(p);
-        return NULL;
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_Constant(str, NULL, constant->lineno, constant->col_offset,
+    החזר _PyAST_Constant(str, عدم, constant->lineno, constant->col_offset,
                            constant->end_lineno, constant->end_col_offset,
                            p->arena);
 }
 
-static asdl_expr_seq *
+ساكن asdl_expr_seq *
 _get_resized_exprs(Parser *p, Token *a, asdl_expr_seq *raw_expressions,
-                   Token *b, int is_tstring)
+                   Token *b, صحيح is_tstring)
 {
     Py_ssize_t n_items = asdl_seq_LEN(raw_expressions);
     Py_ssize_t total_items = n_items;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
+    עבור (Py_ssize_t i = 0; i < n_items; i++) {
         expr_ty item = asdl_seq_GET(raw_expressions, i);
-        if (item->kind == JoinedStr_kind) {
+        אם (item->kind == JoinedStr_kind) {
             total_items += asdl_seq_LEN(item->v.JoinedStr.values) - 1;
         }
     }
 
-    const char* quote_str = PyBytes_AsString(a->bytes);
-    if (quote_str == NULL) {
-        return NULL;
+    ثابت حرف* quote_str = PyBytes_AsString(a->bytes);
+    אם (quote_str == عدم) {
+        החזר عدم;
     }
-    int is_raw = strpbrk(quote_str, "rR") != NULL;
+    صحيح is_raw = strpbrk(quote_str, "rR") != عدم;
 
     asdl_expr_seq *seq = _Py_asdl_expr_seq_new(total_items, p->arena);
-    if (seq == NULL) {
-        return NULL;
+    אם (seq == عدم) {
+        החזר عدم;
     }
 
     Py_ssize_t index = 0;
-    for (Py_ssize_t i = 0; i < n_items; i++) {
+    עבור (Py_ssize_t i = 0; i < n_items; i++) {
         expr_ty item = asdl_seq_GET(raw_expressions, i);
 
         /* Debug expressions arrive as JoinedStr(text, value); flatten them
            into the surrounding string. */
-        if (item->kind == JoinedStr_kind) {
+        אם (item->kind == JoinedStr_kind) {
             asdl_expr_seq *values = item->v.JoinedStr.values;
-            if (asdl_seq_LEN(values) != 2) {
+            אם (asdl_seq_LEN(values) != 2) {
                 PyErr_Format(PyExc_SystemError,
                              is_tstring
                              ? "unexpected TemplateStr node without debug data in t-string at line %d"
                              : "unexpected JoinedStr node without debug data in f-string at line %d",
                              item->lineno);
-                return NULL;
+                החזר عدم;
             }
 
             expr_ty first = asdl_seq_GET(values, 0);
-            assert(first->kind == Constant_kind);
+            أكد(first->kind == Constant_kind);
             asdl_seq_SET(seq, index++, first);
 
             expr_ty second = asdl_seq_GET(values, 1);
-            assert((is_tstring &&
+            أكد((is_tstring &&
                     second->kind == Interpolation_kind) ||
                    second->kind == FormattedValue_kind);
             asdl_seq_SET(seq, index++, second);
 
-            continue;
+            استمر;
         }
 
-        if (item->kind == Constant_kind) {
+        אם (item->kind == Constant_kind) {
             item = _PyPegen_decode_fstring_part(p, is_raw, item, b);
-            if (item == NULL) {
-                return NULL;
+            אם (item == عدم) {
+                החזר عدم;
             }
 
             /* Tokenizer emits string parts even when the underlying string
             might become an empty value (e.g. FSTRING_MIDDLE with the value \\n)
             so we need to check for them and simplify it here. */
-            if (PyUnicode_CheckExact(item->v.Constant.value)
+            אם (PyUnicode_CheckExact(item->v.Constant.value)
                 && PyUnicode_GET_LENGTH(item->v.Constant.value) == 0) {
-                continue;
+                استمر;
             }
         }
         asdl_seq_SET(seq, index++, item);
     }
 
     asdl_expr_seq *resized_exprs;
-    if (index != total_items) {
+    אם (index != total_items) {
         resized_exprs = _Py_asdl_expr_seq_new(index, p->arena);
-        if (resized_exprs == NULL) {
-            return NULL;
+        אם (resized_exprs == عدم) {
+            החזר عدم;
         }
-        for (Py_ssize_t i = 0; i < index; i++) {
+        עבור (Py_ssize_t i = 0; i < index; i++) {
             asdl_seq_SET(resized_exprs, i, asdl_seq_GET(seq, i));
         }
     }
-    else {
+    אחרת {
         resized_exprs = seq;
     }
-    return resized_exprs;
+    החזר resized_exprs;
 }
 
 expr_ty
 _PyPegen_template_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b) {
 
     asdl_expr_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 1);
-    if (resized_exprs == NULL) {
-        return NULL;
+    אם (resized_exprs == عدم) {
+        החזר عدم;
     }
-    return _PyAST_TemplateStr(resized_exprs, a->lineno, a->col_offset,
+    החזר _PyAST_TemplateStr(resized_exprs, a->lineno, a->col_offset,
                               b->end_lineno, b->end_col_offset,
                               p->arena);
 }
@@ -1488,247 +1488,247 @@ expr_ty
 _PyPegen_joined_str(Parser *p, Token* a, asdl_expr_seq* raw_expressions, Token*b) {
 
     asdl_expr_seq *resized_exprs = _get_resized_exprs(p, a, raw_expressions, b, 0);
-    if (resized_exprs == NULL) {
-        return NULL;
+    אם (resized_exprs == عدم) {
+        החזר عدم;
     }
-    return _PyAST_JoinedStr(resized_exprs, a->lineno, a->col_offset,
+    החזר _PyAST_JoinedStr(resized_exprs, a->lineno, a->col_offset,
                             b->end_lineno, b->end_col_offset,
                             p->arena);
 }
 
 expr_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+    אם (tok->bytes == عدم) {
+        החזר _PyPegen_raise_incomplete_input(p);
     }
     Py_ssize_t bsize = PyBytes_GET_SIZE(tok->bytes);
-    const char *bstr = PyBytes_AS_STRING(tok->bytes);
+    ثابت حرف *bstr = PyBytes_AS_STRING(tok->bytes);
 
-    int is_raw = tok->is_raw;
+    صحيح is_raw = tok->is_raw;
 
     PyObject* str = _PyPegen_decode_string(p, is_raw, bstr, bsize, tok);
-    if (str == NULL) {
-        return NULL;
+    אם (str == عدم) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_Constant(str, NULL, tok->lineno, tok->col_offset,
+    החזר _PyAST_Constant(str, عدم, tok->lineno, tok->col_offset,
                            tok->end_lineno, tok->end_col_offset,
                            p->arena);
 }
 
 expr_ty _PyPegen_constant_from_token(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+    אם (tok->bytes == عدم) {
+        החזר _PyPegen_raise_incomplete_input(p);
     }
-    const char *bstr = PyBytes_AS_STRING(tok->bytes);
+    ثابت حرف *bstr = PyBytes_AS_STRING(tok->bytes);
     PyObject* str = PyUnicode_FromString(bstr);
-    if (str == NULL) {
-        return NULL;
+    אם (str == عدم) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, str) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, str) < 0) {
         Py_DECREF(str);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_Constant(str, NULL, tok->lineno, tok->col_offset,
+    החזר _PyAST_Constant(str, عدم, tok->lineno, tok->col_offset,
                            tok->end_lineno, tok->end_col_offset,
                            p->arena);
 }
 
 expr_ty _PyPegen_constant_from_string(Parser* p, Token* tok) {
-    if (tok->bytes == NULL) {
-        return _PyPegen_raise_incomplete_input(p);
+    אם (tok->bytes == عدم) {
+        החזר _PyPegen_raise_incomplete_input(p);
     }
-    const char *the_str = PyBytes_AS_STRING(tok->bytes);
+    ثابت حرف *the_str = PyBytes_AS_STRING(tok->bytes);
     PyObject *s = _PyPegen_parse_string(p, tok);
-    if (s == NULL) {
+    אם (s == عدم) {
         _Pypegen_raise_decode_error(p);
-        return NULL;
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, s) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, s) < 0) {
         Py_DECREF(s);
-        return NULL;
+        החזר عدم;
     }
-    PyObject *kind = NULL;
-    if (the_str && the_str[0] == 'u') {
+    PyObject *kind = عدم;
+    אם (the_str && the_str[0] == 'u') {
         kind = _PyPegen_new_identifier(p, "u");
-        if (kind == NULL) {
-            return NULL;
+        אם (kind == عدم) {
+            החזר عدم;
         }
     }
-    return _PyAST_Constant(s, kind, tok->lineno, tok->col_offset, tok->end_lineno, tok->end_col_offset, p->arena);
+    החזר _PyAST_Constant(s, kind, tok->lineno, tok->col_offset, tok->end_lineno, tok->end_col_offset, p->arena);
 }
 
-static int
+ساكن صحيح
 _get_interpolation_conversion(Parser *p, Token *debug, ResultTokenWithMetadata *conversion,
                               ResultTokenWithMetadata *format)
 {
-    if (conversion != NULL) {
+    אם (conversion != عدم) {
         expr_ty conversion_expr = (expr_ty) conversion->result;
-        assert(conversion_expr->kind == Name_kind);
+        أكد(conversion_expr->kind == Name_kind);
         Py_UCS4 first = PyUnicode_READ_CHAR(conversion_expr->v.Name.id, 0);
-        return Py_SAFE_DOWNCAST(first, Py_UCS4, int);
+        החזר Py_SAFE_DOWNCAST(first, Py_UCS4, صحيح);
     }
-    else if (debug && !format) {
+    אחרת אם (debug && !format) {
         /* If no conversion is specified, use !r for debug expressions */
-        return (int)'r';
+        החזר (صحيح)'r';
     }
-    return -1;
+    החזר -1;
 }
 
-static PyObject *
+ساكن PyObject *
 _strip_interpolation_debug_expr(PyObject *exprstr)
 {
     Py_ssize_t len = PyUnicode_GET_LENGTH(exprstr);
 
     /* Discard whitespace and explicit line continuations after the debug "="
        but preserve whitespace before it. */
-    while (len > 0) {
-        int has_newline = 0;
-        while (len > 0) {
+    כלעוד (len > 0) {
+        صحيح has_newline = 0;
+        כלעוד (len > 0) {
             Py_UCS4 c = PyUnicode_READ_CHAR(exprstr, len - 1);
-            if (!_PyUnicode_IsWhitespace(c)) {
-                break;
+            אם (!_PyUnicode_IsWhitespace(c)) {
+                اكسر;
             }
-            if (c == '\r' || c == '\n') {
+            אם (c == '\r' || c == '\n') {
                 has_newline = 1;
             }
             len--;
         }
-        if (!has_newline || len == 0 ||
+        אם (!has_newline || len == 0 ||
             PyUnicode_READ_CHAR(exprstr, len - 1) != '\\')
         {
-            break;
+            اكسر;
         }
         len--;
     }
 
     /* Preserve unexpected metadata instead of dropping source text. */
-    if (len == 0 || PyUnicode_READ_CHAR(exprstr, len - 1) != '=') {
-        return Py_NewRef(exprstr);
+    אם (len == 0 || PyUnicode_READ_CHAR(exprstr, len - 1) != '=') {
+        החזר Py_NewRef(exprstr);
     }
 
-    return PyUnicode_Substring(exprstr, 0, len - 1);
+    החזר PyUnicode_Substring(exprstr, 0, len - 1);
 }
 
 expr_ty _PyPegen_interpolation(Parser *p, expr_ty expression, Token *debug, ResultTokenWithMetadata *conversion,
-                                 ResultTokenWithMetadata *format, Token *closing_brace, int lineno, int col_offset,
-                                 int end_lineno, int end_col_offset, PyArena *arena) {
+                                 ResultTokenWithMetadata *format, Token *closing_brace, صحيح lineno, صحيح col_offset,
+                                 صحيح end_lineno, صحيح end_col_offset, PyArena *arena) {
 
-    int conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
+    صحيح conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
 
     /* Find the non whitespace token after the "=" */
-    int debug_end_line, debug_end_offset;
+    صحيح debug_end_line, debug_end_offset;
     PyObject *debug_metadata;
     constant exprstr;
 
-    if (conversion) {
+    אם (conversion) {
         debug_end_line = ((expr_ty) conversion->result)->lineno;
         debug_end_offset = ((expr_ty) conversion->result)->col_offset;
         debug_metadata = exprstr = conversion->metadata;
     }
-    else if (format) {
+    אחרת אם (format) {
         debug_end_line = ((expr_ty) format->result)->lineno;
         debug_end_offset = ((expr_ty) format->result)->col_offset + 1;
         debug_metadata = exprstr = format->metadata;
     }
-    else {
+    אחרת {
         debug_end_line = end_lineno;
         debug_end_offset = end_col_offset;
         debug_metadata = exprstr = closing_brace->metadata;
     }
 
-    assert(exprstr != NULL);
+    أكد(exprstr != عدم);
     PyObject *final_exprstr = debug
         ? _strip_interpolation_debug_expr(exprstr)
         : Py_NewRef(exprstr);
-    if (!final_exprstr || _PyArena_AddPyObject(arena, final_exprstr) < 0) {
+    אם (!final_exprstr || _PyArena_AddPyObject(arena, final_exprstr) < 0) {
         Py_XDECREF(final_exprstr);
-        return NULL;
+        החזר عدم;
     }
 
     expr_ty interpolation = _PyAST_Interpolation(
-        expression, final_exprstr, conversion_val, format ? (expr_ty) format->result : NULL,
+        expression, final_exprstr, conversion_val, format ? (expr_ty) format->result : عدم,
         lineno, col_offset, end_lineno,
         end_col_offset, arena
     );
 
-    if (!interpolation || !debug) {
-        return interpolation;
+    אם (!interpolation || !debug) {
+        החזר interpolation;
     }
 
-    expr_ty debug_text = _PyAST_Constant(debug_metadata, NULL, lineno, col_offset + 1, debug_end_line,
+    expr_ty debug_text = _PyAST_Constant(debug_metadata, عدم, lineno, col_offset + 1, debug_end_line,
                                             debug_end_offset - 1, p->arena);
-    if (!debug_text) {
-        return NULL;
+    אם (!debug_text) {
+        החזר عدم;
     }
 
     asdl_expr_seq *values = _Py_asdl_expr_seq_new(2, arena);
-    if (!values) {
-        return NULL;
+    אם (!values) {
+        החזר عدم;
     }
     asdl_seq_SET(values, 0, debug_text);
     asdl_seq_SET(values, 1, interpolation);
-    return _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
+    החזר _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
 }
 
 expr_ty _PyPegen_formatted_value(Parser *p, expr_ty expression, Token *debug, ResultTokenWithMetadata *conversion,
-                                 ResultTokenWithMetadata *format, Token *closing_brace, int lineno, int col_offset,
-                                 int end_lineno, int end_col_offset, PyArena *arena) {
-    int conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
+                                 ResultTokenWithMetadata *format, Token *closing_brace, صحيح lineno, صحيح col_offset,
+                                 صحيح end_lineno, صحيح end_col_offset, PyArena *arena) {
+    صحيح conversion_val = _get_interpolation_conversion(p, debug, conversion, format);
 
     expr_ty formatted_value = _PyAST_FormattedValue(
-        expression, conversion_val, format ? (expr_ty) format->result : NULL,
+        expression, conversion_val, format ? (expr_ty) format->result : عدم,
         lineno, col_offset, end_lineno,
         end_col_offset, arena
     );
 
-    if (!formatted_value || !debug) {
-        return formatted_value;
+    אם (!formatted_value || !debug) {
+        החזר formatted_value;
     }
 
     /* Find the non whitespace token after the "=" */
-    int debug_end_line, debug_end_offset;
+    صحيح debug_end_line, debug_end_offset;
     PyObject *debug_metadata;
 
-    if (conversion) {
+    אם (conversion) {
         debug_end_line = ((expr_ty) conversion->result)->lineno;
         debug_end_offset = ((expr_ty) conversion->result)->col_offset;
         debug_metadata = conversion->metadata;
     }
-    else if (format) {
+    אחרת אם (format) {
         debug_end_line = ((expr_ty) format->result)->lineno;
         debug_end_offset = ((expr_ty) format->result)->col_offset + 1;
         debug_metadata = format->metadata;
     }
-    else {
+    אחרת {
         debug_end_line = end_lineno;
         debug_end_offset = end_col_offset;
         debug_metadata = closing_brace->metadata;
     }
-    expr_ty debug_text = _PyAST_Constant(debug_metadata, NULL, lineno, col_offset + 1, debug_end_line,
+    expr_ty debug_text = _PyAST_Constant(debug_metadata, عدم, lineno, col_offset + 1, debug_end_line,
                                             debug_end_offset - 1, p->arena);
-    if (!debug_text) {
-        return NULL;
+    אם (!debug_text) {
+        החזר عدم;
     }
 
     asdl_expr_seq *values = _Py_asdl_expr_seq_new(2, arena);
-    if (!values) {
-        return NULL;
+    אם (!values) {
+        החזר عدم;
     }
     asdl_seq_SET(values, 0, debug_text);
     asdl_seq_SET(values, 1, formatted_value);
-    return _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
+    החזר _PyAST_JoinedStr(values, lineno, col_offset, debug_end_line, debug_end_offset, p->arena);
 }
 
-static expr_ty
-_build_concatenated_bytes(Parser *p, asdl_expr_seq *strings, int lineno,
-                        int col_offset, int end_lineno, int end_col_offset,
+ساكن expr_ty
+_build_concatenated_bytes(Parser *p, asdl_expr_seq *strings, صحيح lineno,
+                        صحيح col_offset, صحيح end_lineno, صحيح end_col_offset,
                         PyArena *arena)
 {
     Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    أكد(len > 0);
 
     /* Bytes literals never get a kind, but just for consistency
         since they are represented as Constant nodes, we'll mirror
@@ -1737,51 +1737,51 @@ _build_concatenated_bytes(Parser *p, asdl_expr_seq *strings, int lineno,
     PyObject *kind = asdl_seq_GET(strings, 0)->v.Constant.kind;
 
     Py_ssize_t total = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty elem = asdl_seq_GET(strings, i);
         PyObject *bytes = elem->v.Constant.value;
         Py_ssize_t part = PyBytes_GET_SIZE(bytes);
-        if (part > PY_SSIZE_T_MAX - total) {
+        אם (part > PY_SSIZE_T_MAX - total) {
             PyErr_NoMemory();
-            return NULL;
+            החזר عدم;
         }
         total += part;
     }
 
     PyBytesWriter *writer = PyBytesWriter_Create(total);
-    if (writer == NULL) {
-        return NULL;
+    אם (writer == عدم) {
+        החזר عدم;
     }
-    char *out = PyBytesWriter_GetData(writer);
+    حرف *out = PyBytesWriter_GetData(writer);
 
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty elem = asdl_seq_GET(strings, i);
         PyObject *bytes = elem->v.Constant.value;
         Py_ssize_t part = PyBytes_GET_SIZE(bytes);
-        if (part > 0) {
+        אם (part > 0) {
             memcpy(out, PyBytes_AS_STRING(bytes), part);
             out += part;
         }
     }
 
     PyObject *res = PyBytesWriter_Finish(writer);
-    if (res == NULL) {
-        return NULL;
+    אם (res == عدم) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(arena, res) < 0) {
+    אם (_PyArena_AddPyObject(arena, res) < 0) {
         Py_DECREF(res);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_Constant(res, kind, lineno, col_offset, end_lineno, end_col_offset, p->arena);
+    החזר _PyAST_Constant(res, kind, lineno, col_offset, end_lineno, end_col_offset, p->arena);
 }
 
-static expr_ty
-_build_concatenated_unicode(Parser *p, asdl_expr_seq *strings, int lineno,
-                        int col_offset, int end_lineno, int end_col_offset,
+ساكن expr_ty
+_build_concatenated_unicode(Parser *p, asdl_expr_seq *strings, صحيح lineno,
+                        صحيح col_offset, صحيح end_lineno, صحيح end_col_offset,
                         PyArena *arena)
 {
     Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 1);
+    أكد(len > 1);
 
     expr_ty first = asdl_seq_GET(strings, 0);
 
@@ -1794,126 +1794,126 @@ _build_concatenated_unicode(Parser *p, asdl_expr_seq *strings, int lineno,
     PyObject *kind = first->v.Constant.kind;
 
     PyUnicodeWriter *writer = PyUnicodeWriter_Create(0);
-    if (writer == NULL) {
-        return NULL;
+    אם (writer == عدم) {
+        החזר عدم;
     }
 
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty current_elem = asdl_seq_GET(strings, i);
-        assert(current_elem->kind == Constant_kind);
+        أكد(current_elem->kind == Constant_kind);
 
-        if (PyUnicodeWriter_WriteStr(writer,
+        אם (PyUnicodeWriter_WriteStr(writer,
                                      current_elem->v.Constant.value)) {
             PyUnicodeWriter_Discard(writer);
-            return NULL;
+            החזר عدم;
         }
     }
 
     PyObject *final = PyUnicodeWriter_Finish(writer);
-    if (final == NULL) {
-        return NULL;
+    אם (final == عدم) {
+        החזר عدم;
     }
-    if (_PyArena_AddPyObject(p->arena, final) < 0) {
+    אם (_PyArena_AddPyObject(p->arena, final) < 0) {
         Py_DECREF(final);
-        return NULL;
+        החזר عدم;
     }
-    return _PyAST_Constant(final, kind, lineno, col_offset,
+    החזר _PyAST_Constant(final, kind, lineno, col_offset,
                            end_lineno, end_col_offset, arena);
 }
 
-static asdl_expr_seq *
+ساكن asdl_expr_seq *
 _build_concatenated_str(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+                               صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                               صحيح end_col_offset, PyArena *arena)
 {
     Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    أكد(len > 0);
 
     Py_ssize_t n_flattened_elements = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case JoinedStr_kind:
+        بدل(elem->kind) {
+            حالة JoinedStr_kind:
                 n_flattened_elements += asdl_seq_LEN(elem->v.JoinedStr.values);
-                break;
-            case TemplateStr_kind:
+                اكسر;
+            حالة TemplateStr_kind:
                 n_flattened_elements += asdl_seq_LEN(elem->v.TemplateStr.values);
-                break;
-            default:
+                اكسر;
+            افتراضي:
                 n_flattened_elements++;
-                break;
+                اكسر;
         }
     }
 
 
     asdl_expr_seq* flattened = _Py_asdl_expr_seq_new(n_flattened_elements, p->arena);
-    if (flattened == NULL) {
-        return NULL;
+    אם (flattened == عدم) {
+        החזר عدم;
     }
 
     /* build flattened list */
     Py_ssize_t current_pos = 0;
-    for (Py_ssize_t i = 0; i < len; i++) {
+    עבור (Py_ssize_t i = 0; i < len; i++) {
         expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case JoinedStr_kind:
-                for (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.JoinedStr.values); j++) {
+        بدل(elem->kind) {
+            حالة JoinedStr_kind:
+                עבור (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.JoinedStr.values); j++) {
                     expr_ty subvalue = asdl_seq_GET(elem->v.JoinedStr.values, j);
-                    if (subvalue == NULL) {
-                        return NULL;
+                    אם (subvalue == عدم) {
+                        החזר عدم;
                     }
                     asdl_seq_SET(flattened, current_pos++, subvalue);
                 }
-                break;
-            case TemplateStr_kind:
-                for (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.TemplateStr.values); j++) {
+                اكسر;
+            حالة TemplateStr_kind:
+                עבור (Py_ssize_t j = 0; j < asdl_seq_LEN(elem->v.TemplateStr.values); j++) {
                     expr_ty subvalue = asdl_seq_GET(elem->v.TemplateStr.values, j);
-                    if (subvalue == NULL) {
-                        return NULL;
+                    אם (subvalue == عدم) {
+                        החזר عدم;
                     }
                     asdl_seq_SET(flattened, current_pos++, subvalue);
                 }
-                break;
-            default:
+                اكسر;
+            افتراضي:
                 asdl_seq_SET(flattened, current_pos++, elem);
-                break;
+                اكسر;
         }
     }
 
     /* calculate folded element count */
     Py_ssize_t n_elements = 0;
-    int prev_is_constant = 0;
-    for (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
+    صحيح prev_is_constant = 0;
+    עבור (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
         expr_ty elem = asdl_seq_GET(flattened, i);
 
         /* The concatenation of a FormattedValue and an empty Constant should
            lead to the FormattedValue itself. Thus, we will not take any empty
            constants into account, just as in `_PyPegen_joined_str` */
-        if (elem->kind == Constant_kind &&
+        אם (elem->kind == Constant_kind &&
             PyUnicode_CheckExact(elem->v.Constant.value) &&
             PyUnicode_GET_LENGTH(elem->v.Constant.value) == 0)
-            continue;
+            استمر;
 
-        if (!prev_is_constant || elem->kind != Constant_kind) {
+        אם (!prev_is_constant || elem->kind != Constant_kind) {
             n_elements++;
         }
         prev_is_constant = elem->kind == Constant_kind;
     }
 
     asdl_expr_seq* values = _Py_asdl_expr_seq_new(n_elements, p->arena);
-    if (values == NULL) {
-        return NULL;
+    אם (values == عدم) {
+        החזר عدم;
     }
 
     /* build folded list */
     current_pos = 0;
-    for (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
+    עבור (Py_ssize_t i = 0; i < n_flattened_elements; i++) {
         expr_ty elem = asdl_seq_GET(flattened, i);
 
         /* if the current elem and the following are constants,
            fold them and all consequent constants */
-        if (elem->kind == Constant_kind) {
-            if (i + 1 < n_flattened_elements &&
+        אם (elem->kind == Constant_kind) {
+            אם (i + 1 < n_flattened_elements &&
                 asdl_seq_GET(flattened, i + 1)->kind == Constant_kind) {
                 expr_ty first_elem = elem;
 
@@ -1926,171 +1926,171 @@ _build_concatenated_str(Parser *p, asdl_expr_seq *strings,
                 PyObject *kind = elem->v.Constant.kind;
 
                 PyUnicodeWriter *writer = PyUnicodeWriter_Create(0);
-                if (writer == NULL) {
-                    return NULL;
+                אם (writer == عدم) {
+                    החזר عدم;
                 }
                 expr_ty last_elem = elem;
                 Py_ssize_t j;
-                for (j = i; j < n_flattened_elements; j++) {
+                עבור (j = i; j < n_flattened_elements; j++) {
                     expr_ty current_elem = asdl_seq_GET(flattened, j);
-                    if (current_elem->kind == Constant_kind) {
-                        if (PyUnicodeWriter_WriteStr(writer,
+                    אם (current_elem->kind == Constant_kind) {
+                        אם (PyUnicodeWriter_WriteStr(writer,
                                                      current_elem->v.Constant.value)) {
                             PyUnicodeWriter_Discard(writer);
-                            return NULL;
+                            החזר عدم;
                         }
                         last_elem = current_elem;
-                    } else {
-                        break;
+                    } אחרת {
+                        اكسر;
                     }
                 }
                 i = j - 1;
 
                 PyObject *concat_str = PyUnicodeWriter_Finish(writer);
-                if (concat_str == NULL) {
-                    return NULL;
+                אם (concat_str == عدم) {
+                    החזר عدم;
                 }
-                if (_PyArena_AddPyObject(p->arena, concat_str) < 0) {
+                אם (_PyArena_AddPyObject(p->arena, concat_str) < 0) {
                     Py_DECREF(concat_str);
-                    return NULL;
+                    החזר عدم;
                 }
                 elem = _PyAST_Constant(concat_str, kind, first_elem->lineno,
                                        first_elem->col_offset,
                                        last_elem->end_lineno,
                                        last_elem->end_col_offset, p->arena);
-                if (elem == NULL) {
-                    return NULL;
+                אם (elem == عدم) {
+                    החזר عدم;
                 }
             }
 
             /* Drop all empty contanst strings */
-            if (PyUnicode_CheckExact(elem->v.Constant.value) &&
+            אם (PyUnicode_CheckExact(elem->v.Constant.value) &&
                 PyUnicode_GET_LENGTH(elem->v.Constant.value) == 0) {
-                continue;
+                استمر;
             }
         }
 
         asdl_seq_SET(values, current_pos++, elem);
     }
 
-    assert(current_pos == n_elements);
-    return values;
+    أكد(current_pos == n_elements);
+    החזר values;
 }
 
-static expr_ty
+ساكن expr_ty
 _build_concatenated_joined_str(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+                               صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                               صحيح end_col_offset, PyArena *arena)
 {
     asdl_expr_seq *values = _build_concatenated_str(p, strings, lineno,
         col_offset, end_lineno, end_col_offset, arena);
-    if (!values) {
-        return NULL;
+    אם (!values) {
+        החזר عدم;
     }
-    return _PyAST_JoinedStr(values, lineno, col_offset, end_lineno, end_col_offset, p->arena);
+    החזר _PyAST_JoinedStr(values, lineno, col_offset, end_lineno, end_col_offset, p->arena);
 }
 
 expr_ty
 _PyPegen_concatenate_tstrings(Parser *p, asdl_expr_seq *strings,
-                               int lineno, int col_offset, int end_lineno,
-                               int end_col_offset, PyArena *arena)
+                               صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                               صحيح end_col_offset, PyArena *arena)
 {
     asdl_expr_seq *values = _build_concatenated_str(p, strings, lineno,
         col_offset, end_lineno, end_col_offset, arena);
-    if (!values) {
-        return NULL;
+    אם (!values) {
+        החזר عدم;
     }
-    return _PyAST_TemplateStr(values, lineno, col_offset, end_lineno,
+    החזר _PyAST_TemplateStr(values, lineno, col_offset, end_lineno,
         end_col_offset, arena);
 }
 
 expr_ty
 _PyPegen_concatenate_strings(Parser *p, asdl_expr_seq *strings,
-                             int lineno, int col_offset, int end_lineno,
-                             int end_col_offset, PyArena *arena)
+                             صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                             صحيح end_col_offset, PyArena *arena)
 {
     Py_ssize_t len = asdl_seq_LEN(strings);
-    assert(len > 0);
+    أكد(len > 0);
 
-    int f_string_found = 0;
-    int unicode_string_found = 0;
-    int bytes_found = 0;
+    صحيح f_string_found = 0;
+    صحيح unicode_string_found = 0;
+    صحيح bytes_found = 0;
 
     Py_ssize_t i = 0;
-    for (i = 0; i < len; i++) {
+    עבור (i = 0; i < len; i++) {
         expr_ty elem = asdl_seq_GET(strings, i);
-        switch(elem->kind) {
-            case Constant_kind:
-                if (PyBytes_CheckExact(elem->v.Constant.value)) {
+        بدل(elem->kind) {
+            حالة Constant_kind:
+                אם (PyBytes_CheckExact(elem->v.Constant.value)) {
                     bytes_found = 1;
-                } else {
+                } אחרת {
                     unicode_string_found = 1;
                 }
-                break;
-            case JoinedStr_kind:
+                اكسر;
+            حالة JoinedStr_kind:
                 f_string_found = 1;
-                break;
-            case TemplateStr_kind:
+                اكسر;
+            حالة TemplateStr_kind:
                 // python.gram handles this; we should never get here
-                assert(0);
-                break;
-            default:
+                أكد(0);
+                اكسر;
+            افتراضي:
                 f_string_found = 1;
-                break;
+                اكسر;
         }
     }
 
     // Cannot mix unicode and bytes
-    if ((unicode_string_found || f_string_found) && bytes_found) {
+    אם ((unicode_string_found || f_string_found) && bytes_found) {
         RAISE_SYNTAX_ERROR("cannot mix bytes and nonbytes literals");
-        return NULL;
+        החזר عدم;
     }
 
     // If it's only bytes or only unicode string, do a simple concat
-    if (!f_string_found) {
-        if (len == 1) {
-            return asdl_seq_GET(strings, 0);
+    אם (!f_string_found) {
+        אם (len == 1) {
+            החזר asdl_seq_GET(strings, 0);
         }
-        else if (bytes_found) {
-            return _build_concatenated_bytes(p, strings, lineno, col_offset,
+        אחרת אם (bytes_found) {
+            החזר _build_concatenated_bytes(p, strings, lineno, col_offset,
                 end_lineno, end_col_offset, arena);
         }
-        else {
-            return _build_concatenated_unicode(p, strings, lineno, col_offset,
+        אחרת {
+            החזר _build_concatenated_unicode(p, strings, lineno, col_offset,
                 end_lineno, end_col_offset, arena);
         }
     }
 
-    return _build_concatenated_joined_str(p, strings, lineno,
+    החזר _build_concatenated_joined_str(p, strings, lineno,
         col_offset, end_lineno, end_col_offset, arena);
 }
 
-static int
+ساكن صحيح
 _warn_relative_import_of_lazy(Parser *p, asdl_seq *dots, expr_ty module)
 {
     // Warn about `from . lazy import x`: the whitespace between the dots and
     // the module name is insignificant, so this is parsed exactly like
     // `from .lazy import x` (an import of the relative module "lazy"), but it
     // is most likely a transposition of `lazy from . import x` (PEP 810).
-    if (p->call_invalid_rules) {
-        return 0;
+    אם (p->call_invalid_rules) {
+        החזר 0;
     }
 
     // Only fire if there is whitespace between the last dot and the name,
     // i.e. not for the common `from .lazy import x` spelling.
     Token *last_dot = asdl_seq_GET_UNTYPED(dots, asdl_seq_LEN(dots) - 1);
-    if (
+    אם (
         last_dot->end_lineno == module->lineno
         && last_dot->end_col_offset == module->col_offset
     ) {
-        return 0;
+        החזר 0;
     }
 
-    int count = _PyPegen_seq_count_dots(dots);
-    char *buf = PyMem_RawMalloc(count + 1);
-    if (buf == NULL) {
+    صحيح count = _PyPegen_seq_count_dots(dots);
+    حرف *buf = PyMem_RawMalloc(count + 1);
+    אם (buf == عدم) {
         PyErr_NoMemory();
-        return -1;
+        החזר -1;
     }
     memset(buf, '.', count);
     buf[count] = '\0';
@@ -2100,12 +2100,12 @@ _warn_relative_import_of_lazy(Parser *p, asdl_seq *dots, expr_ty module)
         "did you mean 'lazy from %s import'?",
         buf, buf, buf);
     PyMem_RawFree(buf);
-    if (msg == NULL) {
-        return -1;
+    אם (msg == عدم) {
+        החזר -1;
     }
 
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    int res = _PyErr_EmitSyntaxWarning(msg,
+    صحيح res = _PyErr_EmitSyntaxWarning(msg,
                                        info.filename,
                                        module->lineno,
                                        module->col_offset + 1,
@@ -2113,60 +2113,60 @@ _warn_relative_import_of_lazy(Parser *p, asdl_seq *dots, expr_ty module)
                                        module->end_col_offset + 1,
                                        info.module);
     Py_DECREF(msg);
-    return res;
+    החזר res;
 }
 
 stmt_ty
 _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, expr_ty module_name,
-                             asdl_alias_seq *names, expr_ty lazy_token, int lineno,
-                             int col_offset, int end_lineno, int end_col_offset,
+                             asdl_alias_seq *names, expr_ty lazy_token, صحيح lineno,
+                             صحيح col_offset, صحيح end_lineno, صحيح end_col_offset,
                              PyArena *arena)
 {
     identifier module = module_name->v.Name.id;
-    int level = _PyPegen_seq_count_dots(dots);
-    if (level == 0 && PyUnicode_CompareWithASCIIString(module, "__future__") == 0) {
-        if (lazy_token) {
+    صحيح level = _PyPegen_seq_count_dots(dots);
+    אם (level == 0 && PyUnicode_CompareWithASCIIString(module, "__future__") == 0) {
+        אם (lazy_token) {
             RAISE_SYNTAX_ERROR_KNOWN_LOCATION(lazy_token,
                 "lazy from __future__ import is not allowed");
-            return NULL;
+            החזר عدم;
         }
-        for (Py_ssize_t i = 0; i < asdl_seq_LEN(names); i++) {
+        עבור (Py_ssize_t i = 0; i < asdl_seq_LEN(names); i++) {
             alias_ty alias = asdl_seq_GET(names, i);
-            if (PyUnicode_CompareWithASCIIString(alias->name, "barry_as_FLUFL") == 0) {
+            אם (PyUnicode_CompareWithASCIIString(alias->name, "barry_as_FLUFL") == 0) {
                 p->flags |= PyPARSE_BARRY_AS_BDFL;
                 p->tok->barry_as_bdfl = 1;
             }
         }
     }
-    else if (
+    אחרת אם (
         level > 0
-        && lazy_token == NULL
+        && lazy_token == عدم
         && PyUnicode_CompareWithASCIIString(module, "lazy") == 0
     ) {
-        if (_warn_relative_import_of_lazy(p, dots, module_name) < 0) {
-            return NULL;
+        אם (_warn_relative_import_of_lazy(p, dots, module_name) < 0) {
+            החזר عدم;
         }
     }
-    return _PyAST_ImportFrom(module, names, level, lazy_token ? 1 : 0, lineno,
+    החזר _PyAST_ImportFrom(module, names, level, lazy_token ? 1 : 0, lineno,
                              col_offset, end_lineno, end_col_offset, arena);
 }
 
 asdl_stmt_seq*
 _PyPegen_register_stmts(Parser *p, asdl_stmt_seq* stmts) {
-    if (!p->call_invalid_rules) {
-        return stmts;
+    אם (!p->call_invalid_rules) {
+        החזר stmts;
     }
     Py_ssize_t len = asdl_seq_LEN(stmts);
-    if (len == 0) {
-        return stmts;
+    אם (len == 0) {
+        החזר stmts;
     }
     stmt_ty last_stmt = asdl_seq_GET(stmts, len - 1);
-    if (p->last_stmt_location.lineno > last_stmt->lineno) {
-        return stmts;
+    אם (p->last_stmt_location.lineno > last_stmt->lineno) {
+        החזר stmts;
     }
     p->last_stmt_location.lineno = last_stmt->lineno;
     p->last_stmt_location.col_offset = last_stmt->col_offset;
     p->last_stmt_location.end_lineno = last_stmt->end_lineno;
     p->last_stmt_location.end_col_offset = last_stmt->end_col_offset;
-    return stmts;
+    החזר stmts;
 }
