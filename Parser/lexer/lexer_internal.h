@@ -23,50 +23,50 @@
     (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
 #define tok_backup _PyLexer_backup
 
-static inline int
-tok_failed(const struct tok_state *tok)
+static anta_hstha puur_naa_nka
+tok_failed(const sa_nracanaa tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
+    ꦮꦭꦶ tok->done != E_OK && tok->done != E_EOF &&
            tok->done != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+puur_naa_nka _PyLexer_refill(sa_nracanaa tok_state *);
 
-static inline int
-tok_nextc(struct tok_state *tok)
+static anta_hstha puur_naa_nka
+tok_nextc(sa_nracanaa tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    ꦱꦼꦢꦼꦭ (tok->cur == tok->inp) {
+        ꦪꦼꦤ꧀ (!_PyLexer_refill(tok)) {
+            ꦮꦭꦶ EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
+    ꦪꦼꦤ꧀ (tok->cur - tok->line_start >= INT_MAX) {
         tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+        ꦮꦭꦶ EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    ꦮꦭꦶ _PyTok_SourceByte(&tok->source, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+puur_naa_nka _PyLexer_BeginLine(sa_nracanaa tok_state *);
+puur_naa_nka _PyLexer_ContinueLine(sa_nracanaa tok_state *);
+puur_naa_nka _PyLexer_IndentationToken(sa_nracanaa tok_state *, sa_nracanaa token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
-    struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
-void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+puur_naa_nka _PyLexer_Newline(sa_nracanaa tok_state *, sa_nracanaa token *, puur_naa_nka);
+void _PyLexer_backup(sa_nracanaa tok_state *, puur_naa_nka);
+puur_naa_nka _PyLexer_record_ftstring_comment(
+    sa_nracanaa tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
+puur_naa_nka _PyLexer_ftstring_punctuation(
+    sa_nracanaa tok_state *, ftstring_state *, sa_nracanaa token *, puur_naa_nka);
+puur_naa_nka _PyLexer_close_ftstring_expr(
+    sa_nracanaa tok_state *, ftstring_state *, puur_naa_nka);
+void _PyLexer_mark_ftstring_debug(sa_nracanaa tok_state *, ftstring_state *);
+puur_naa_nka _PyLexer_check_string_prefixes(sa_nracanaa tok_state *, puur_naa_nka, puur_naa_nka, puur_naa_nka, puur_naa_nka, puur_naa_nka);
+puur_naa_nka _PyLexer_scan_number(sa_nracanaa tok_state *, sa_nracanaa token *, puur_naa_nka, puur_naa_nka);
+puur_naa_nka _PyLexer_scan_fstring_start(
+    sa_nracanaa tok_state *, sa_nracanaa token *, puur_naa_nka, ftstring_kind);
+puur_naa_nka _PyLexer_scan_string(sa_nracanaa tok_state *, sa_nracanaa token *, puur_naa_nka);
+puur_naa_nka _PyLexer_get_normal(sa_nracanaa tok_state *, ftstring_state *, sa_nracanaa token *);
+puur_naa_nka _PyLexer_get_ftstring(sa_nracanaa tok_state *, ftstring_state *, sa_nracanaa token *);
 
 #endif
