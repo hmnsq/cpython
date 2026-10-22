@@ -1,27 +1,27 @@
-#ifndef Py_TOKENIZER_TYPES_H
-#define Py_TOKENIZER_TYPES_H
+#جے_بنا_تعریف Py_TOKENIZER_TYPES_H
+#تعریف_کرو Py_TOKENIZER_TYPES_H
 
-#include "Python.h"
+#ضمن "Python.h"
 
-typedef Py_ssize_t _PyTok_Off;
+تعريفنوع Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
-    _PyTok_Off start;
-    _PyTok_Off end;
-} _PyTok_Span;
+تعريفنوع بنية {
+    _PyTok_Off شروع;
+    _PyTok_Off سرا;
+} Py_Tok_وسعت;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+تعريفنوع بنية {
+    صحيح lineno;
+    صحيح byte_خانہ;
 } _PyTok_Loc;
 
-static inline int
-_PyTok_SpanIsValid(_PyTok_Span span)
+ساكن مضمن صحيح
+Py_Tok_وسعت_Is_Valid(Py_Tok_وسعت وسعت)
 {
-    return span.start >= 0 && span.end >= span.start;
+    أرجع وسعت.شروع >= 0 && وسعت.سرا >= وسعت.شروع;
 }
 
-#endif
+#جے_انت
