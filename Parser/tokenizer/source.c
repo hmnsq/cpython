@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#ضمن "Python.h"
+#ضمن "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#ضمن "source.h"
 
-#define SOURCE_BUFFER_GROWTH_FACTOR 2
+#وصف_ڪريو ذريعو_بفر_GROWTH_ضرب_ڪندڙ 2
 
-void
-_PyTok_SourceInit(_PyTok_SourceText *source)
+فراغ
+Py_Tok_ذريعو_Init(Py_Tok_ذريعو_متن *ذريعو)
 {
-    *source = (_PyTok_SourceText){0};
+    *ذريعو = (Py_Tok_ذريعو_متن){0};
 }
 
-void
-_PyTok_SourceClear(_PyTok_SourceText *source)
+فراغ
+Py_Tok_ذريعو_Clear(Py_Tok_ذريعو_متن *ذريعو)
 {
-    PyMem_Free(source->bytes);
-    _PyTok_SourceInit(source);
+    PyMem_Free(ذريعو->بائيٽون);
+    Py_Tok_ذريعو_Init(ذريعو);
 }
 
-void
-_PyTok_SourceDiscard(_PyTok_SourceText *source)
+فراغ
+Py_Tok_ذريعو_Discard(Py_Tok_ذريعو_متن *ذريعو)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
-    source->base_offset += source->len;
-    source->len = 0;
-    if (source->bytes != NULL) {
-        source->bytes[0] = '\0';
+    أكد(ذريعو->بنياد_وٿي <= PY_SSIZE_T_MAX - ذريعو->len);
+    ذريعو->بنياد_وٿي += ذريعو->len;
+    ذريعو->len = 0;
+    إذا (ذريعو->بائيٽون != عدم) {
+        ذريعو->بائيٽون[0] = '\0';
     }
-    source->nlines = 0;
+    ذريعو->nlines = 0;
 }
 
-static int
-reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
+ساكن صحيح
+reserve_بائيٽون(Py_Tok_ذريعو_متن *ذريعو, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    إذا (needed <= ذريعو->cap) {
+        أرجع 0;
     }
-    Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    Py_ssize_t cap = ذريعو->cap > 0 ? ذريعو->cap : BUFSIZ;
+    طالما (cap < needed) {
+        إذا (cap > PY_SSIZE_T_MAX / ذريعو_بفر_GROWTH_ضرب_ڪندڙ) {
             cap = needed;
-            break;
+            اكسر;
         }
-        cap *= SOURCE_BUFFER_GROWTH_FACTOR;
+        cap *= ذريعو_بفر_GROWTH_ضرب_ڪندڙ;
     }
-    char *bytes;
-#ifdef Py_DEBUG
+    حرف *بائيٽون;
+#جيڪڏهن_وصف_ٿيل Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
-    bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
-        memcpy(bytes, source->bytes, source->len);
+    بائيٽون = PyMem_Malloc(cap);
+    إذا (بائيٽون != عدم && ذريعو->len > 0) {
+        يادگيري_نقل(بائيٽون, ذريعو->بائيٽون, ذريعو->len);
     }
-#else
-    bytes = PyMem_Realloc(source->bytes, cap);
-#endif
-    if (bytes == NULL) {
-        PyErr_NoMemory();
-        return -1;
+#وإلا
+    بائيٽون = PyMem_Realloc(ذريعو->بائيٽون, cap);
+#جيڪڏهن_پورو
+    إذا (بائيٽون == عدم) {
+        Py_Err_No_يادگيري();
+        أرجع -1;
     }
-#ifdef Py_DEBUG
-    if (source->bytes != NULL) {
-        memset(source->bytes, PYMEM_DEADBYTE, source->cap);
-        PyMem_Free(source->bytes);
+#جيڪڏهن_وصف_ٿيل Py_DEBUG
+    إذا (ذريعو->بائيٽون != عدم) {
+        memset(ذريعو->بائيٽون, PYMEM_DEADBYTE, ذريعو->cap);
+        PyMem_Free(ذريعو->بائيٽون);
     }
-#endif
-    source->bytes = bytes;
-    source->cap = cap;
-    return 0;
+#جيڪڏهن_پورو
+    ذريعو->بائيٽون = بائيٽون;
+    ذريعو->cap = cap;
+    أرجع 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+ساكن صحيح
+validate_سٽ(ثابت Py_Tok_ذريعو_متن *ذريعو, ثابت حرف *بائيٽون,
+              Py_ssize_t len, صحيح append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
-            (source->nlines > 0 &&
-             (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    إذا (len < 0 || (len == 0 && !append_newline) || بائيٽون == عدم ||
+            (ذريعو->nlines > 0 &&
+             (ذريعو->len == 0 || ذريعو->بائيٽون[ذريعو->len - 1] != '\n'))) {
+        Py_Err_سيٽ_String(PyExc_SystemError, "invalid tokenizer source line");
+        أرجع -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ثابت حرف *newline = memchr(بائيٽون, '\n', len);
+    إذا (newline != عدم && (append_newline || newline != بائيٽون + len - 1)) {
+        Py_Err_سيٽ_String(PyExc_SystemError, "invalid tokenizer source line");
+        أرجع -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
-        PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+    إذا (ذريعو->nlines == وڌ_کان_وڌ_عدد ||
+            (ذريعو->nlines == وڌ_کان_وڌ_عدد - 1 && (newline != عدم || append_newline))) {
+        Py_Err_سيٽ_String(Py_Exc_حد_کان_مٿي_Error, "too many tokenizer source lines");
+        أرجع -1;
     }
-    return 0;
+    أرجع 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+ساكن _PyTok_Off
+append_سٽ(Py_Tok_ذريعو_متن *ذريعو, ثابت حرف *بائيٽون,
+            Py_ssize_t len, صحيح append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    إذا (validate_سٽ(ذريعو, بائيٽون, len, append_newline) < 0) {
+        أرجع -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
-            source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
-        PyErr_NoMemory();
-        return -1;
+    إذا (ذريعو->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+            ذريعو->بنياد_وٿي > PY_SSIZE_T_MAX - ذريعو->len - len - append_newline) {
+        Py_Err_No_يادگيري();
+        أرجع -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    إذا (reserve_بائيٽون(ذريعو, ذريعو->len + len + append_newline + 1) < 0) {
+        أرجع -1;
     }
 
-    _PyTok_Off start = source->len;
-    memcpy(source->bytes + start, bytes, len);
-    source->len += len;
-    if (append_newline) {
-        source->bytes[source->len++] = '\n';
+    _PyTok_Off شروعات = ذريعو->len;
+    يادگيري_نقل(ذريعو->بائيٽون + شروعات, بائيٽون, len);
+    ذريعو->len += len;
+    إذا (append_newline) {
+        ذريعو->بائيٽون[ذريعو->len++] = '\n';
     }
-    source->bytes[source->len] = '\0';
-    source->nlines++;
-    return source->base_offset + start;
+    ذريعو->بائيٽون[ذريعو->len] = '\0';
+    ذريعو->nlines++;
+    أرجع ذريعو->بنياد_وٿي + شروعات;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ذريعو_Append_سٽ(Py_Tok_ذريعو_متن *ذريعو, ثابت حرف *بائيٽون,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    أرجع append_سٽ(ذريعو, بائيٽون, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ذريعو_Append_سٽ_With_Newline(Py_Tok_ذريعو_متن *ذريعو, ثابت حرف *بائيٽون,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    أرجع append_سٽ(ذريعو, بائيٽون, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+ثابت حرف *
+Py_Tok_ذريعو_سٽ_View(ثابت Py_Tok_ذريعو_متن *ذريعو, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    أكد(len != عدم);
+    ثابت حرف *سٽ = Py_Tok_ذريعو_معلومات(ذريعو);
+    ثابت حرف *پڇاڙي = سٽ + ذريعو->len;
+    طالما (lineno > 1) {
+        ثابت حرف *newline = memchr(سٽ, '\n', پڇاڙي - سٽ);
+        إذا (newline == عدم) {
+            اكسر;
         }
-        line = newline + 1;
+        سٽ = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    ثابت حرف *newline = memchr(سٽ, '\n', پڇاڙي - سٽ);
+    *len = (newline != عدم ? newline : پڇاڙي) - سٽ;
+    أرجع سٽ;
 }

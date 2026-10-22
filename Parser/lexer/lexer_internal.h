@@ -1,72 +1,72 @@
-#ifndef _PY_LEXER_INTERNAL_H_
-#define _PY_LEXER_INTERNAL_H_
+#جيڪڏهن_وصف_نه_ٿيل PY_LEXER_اندروني_H
+#وصف_ڪريو PY_LEXER_اندروني_H
 
-#include "errcode.h"
-#include "state.h"
+#ضمن "errcode.h"
+#ضمن "state.h"
 
-#define is_potential_identifier_start(c) (\
+#وصف_ڪريو is_potential_identifier_شروعات(c) (\
               (c >= 'a' && c <= 'z')\
                || (c >= 'A' && c <= 'Z')\
                || c == '_'\
                || (c >= 128))
 
-#define is_potential_identifier_char(c) (\
+#وصف_ڪريو is_potential_identifier_char(c) (\
               (c >= 'a' && c <= 'z')\
                || (c >= 'A' && c <= 'Z')\
                || (c >= '0' && c <= '9')\
                || c == '_'\
                || (c >= 128))
 
-#define FTSTRING_MIDDLE(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_MIDDLE : FSTRING_MIDDLE)
-#define FTSTRING_END(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
-#define tok_backup _PyLexer_backup
+#وصف_ڪريو FTSTRING_وچ(state) \
+    (_PyLexer_IsTString((state)->قسم) ? TSTRING_وچ : FSTRING_وچ)
+#وصف_ڪريو FTSTRING_پڇاڙي(state) \
+    (_PyLexer_IsTString((state)->قسم) ? TSTRING_پڇاڙي : FSTRING_پڇاڙي)
+#وصف_ڪريو tok_backup _PyLexer_backup
 
-static inline int
-tok_failed(const struct tok_state *tok)
+ساكن مضمن صحيح
+tok_failed(ثابت بنية tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
-           tok->done != E_INTERACT_STOP;
+    أرجع tok->پورو != E_OK && tok->پورو != E_EOF &&
+           tok->پورو != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+صحيح _PyLexer_refill(بنية tok_state *);
 
-static inline int
-tok_nextc(struct tok_state *tok)
+ساكن مضمن صحيح
+tok_nextc(بنية tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    طالما (tok->cur == tok->inp) {
+        إذا (!_PyLexer_refill(tok)) {
+            أرجع EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
-        tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+    إذا (tok->cur - tok->سٽ_شروعات >= وڌ_کان_وڌ_عدد) {
+        tok->پورو = E_COLUMNOVERFLOW;
+        أرجع EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    أرجع Py_Tok_ذريعو_Byte(&tok->ذريعو, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+صحيح Py_Lexer_Begin_سٽ(بنية tok_state *);
+صحيح Py_Lexer_Continue_سٽ(بنية tok_state *);
+صحيح _PyLexer_IndentationToken(بنية tok_state *, بنية token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
-    struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
-void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+صحيح _PyLexer_Newline(بنية tok_state *, بنية token *, صحيح);
+فراغ _PyLexer_backup(بنية tok_state *, صحيح);
+صحيح Py_Lexer_رڪارڊ_ftstring_comment(
+    بنية tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
+صحيح _PyLexer_ftstring_punctuation(
+    بنية tok_state *, ftstring_state *, بنية token *, صحيح);
+صحيح Py_Lexer_close_ftstring_اظهار(
+    بنية tok_state *, ftstring_state *, صحيح);
+فراغ _PyLexer_mark_ftstring_debug(بنية tok_state *, ftstring_state *);
+صحيح _PyLexer_check_string_prefixes(بنية tok_state *, صحيح, صحيح, صحيح, صحيح, صحيح);
+صحيح Py_Lexer_جاچ_عدد(بنية tok_state *, بنية token *, صحيح, صحيح);
+صحيح Py_Lexer_جاچ_fstring_شروعات(
+    بنية tok_state *, بنية token *, صحيح, ftstring_قسم);
+صحيح Py_Lexer_جاچ_string(بنية tok_state *, بنية token *, صحيح);
+صحيح Py_Lexer_get_عام(بنية tok_state *, ftstring_state *, بنية token *);
+صحيح _PyLexer_get_ftstring(بنية tok_state *, ftstring_state *, بنية token *);
 
-#endif
+#جيڪڏهن_پورو

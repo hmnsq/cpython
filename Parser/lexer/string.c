@@ -1,589 +1,589 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#ضمن "Python.h"
+#ضمن "pycore_token.h"
+#ضمن "errcode.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#ضمن "lexer_internal.h"
+#ضمن "../tokenizer/helpers.h"
 
-#define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
+#وصف_ڪريو MAKE_TOKEN(token_type) Py_Lexer_token_تياري(tok, token, token_type, p_شروعات, p_پڇاڙي)
 
-static int
-string_error_token(struct tok_state *tok, struct token *token,
-                   _PyTok_Off start, _PyTok_Loc location)
+ساكن صحيح
+string_error_token(بنية tok_state *tok, بنية token *token,
+                   _PyTok_Off شروعات, _PyTok_Loc location)
 {
     tok->diagnostic = (_PyTokenizer_Diagnostic){
-        .location = {location.lineno, location.byte_col + 1},
-        .text_span = {start - location.byte_col, tok->inp},
+        .location = {location.lineno, location.byte_کانو + 1},
+        .متن_وسعت = {شروعات - location.byte_کانو, tok->inp},
     };
-    int type = _PyLexer_token_setup(tok, token, ERRORTOKEN, -1, -1);
-    token->start_loc = location;
-    token->end_loc = (_PyTok_Loc){location.lineno, -1};
-    return type;
+    صحيح type = Py_Lexer_token_تياري(tok, token, ERRORTOKEN, -1, -1);
+    token->شروعات_loc = location;
+    token->پڇاڙي_loc = (_PyTok_Loc){location.lineno, -1};
+    أرجع type;
 }
 
-static int
-incomplete_string_token(struct tok_state *tok, struct token *token,
-                        int type, _PyTok_Off start, _PyTok_Loc location)
+ساكن صحيح
+incomplete_string_token(بنية tok_state *tok, بنية token *token,
+                        صحيح type, _PyTok_Off شروعات, _PyTok_Loc location)
 {
-    string_error_token(tok, token, start, location);
-    tok->done = E_INCOMPLETE;
-    return type;
+    string_error_token(tok, token, شروعات, location);
+    tok->پورو = E_INCOMPLETE;
+    أرجع type;
 }
 
-int
-_PyLexer_record_ftstring_comment(struct tok_state *tok, ftstring_state *state,
-                                 _PyTok_Off start, _PyTok_Off end)
+صحيح
+Py_Lexer_رڪارڊ_ftstring_comment(بنية tok_state *tok, ftstring_state *state,
+                                 _PyTok_Off شروعات, _PyTok_Off پڇاڙي)
 {
-    assert(state == _PyLexer_CurrentFTString(tok) && state->mode == FTSTRING_MODE_EXPRESSION);
-    if (state->expr_span.end >= 0) {
-        return 0;
+    أكد(state == _PyLexer_CurrentFTString(tok) && state->گهڻائي == FTSTRING_گهڻائي_اظهار);
+    إذا (state->اظهار_وسعت.پڇاڙي >= 0) {
+        أرجع 0;
     }
-    assert(state->expr_span.start >= 0);
+    أكد(state->اظهار_وسعت.شروعات >= 0);
     tokenizer_comments *comments = state->comments;
-    if (comments == NULL || comments->count == comments->capacity) {
-        Py_ssize_t max_capacity = (PY_SSIZE_T_MAX -
-            (Py_ssize_t)sizeof(*comments)) /
-            (Py_ssize_t)sizeof(*comments->spans);
-        if (comments != NULL && comments->capacity > max_capacity / 2) {
-            PyErr_NoMemory();
-            return -1;
+    إذا (comments == عدم || comments->ڳڻپ == comments->صلاحيت) {
+        Py_ssize_t max_صلاحيت = (PY_SSIZE_T_MAX -
+            (Py_ssize_t)حجم(*comments)) /
+            (Py_ssize_t)حجم(*comments->spans);
+        إذا (comments != عدم && comments->صلاحيت > max_صلاحيت / 2) {
+            Py_Err_No_يادگيري();
+            أرجع -1;
         }
-        Py_ssize_t capacity = comments == NULL ? 4 : comments->capacity * 2;
-        size_t size = sizeof(*comments) +
-            (size_t)capacity * sizeof(*comments->spans);
-        tokenizer_comments *resized = PyMem_Realloc(comments, size);
-        if (resized == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        Py_ssize_t صلاحيت = comments == عدم ? 4 : comments->صلاحيت * 2;
+        سائيز_t سائيز = حجم(*comments) +
+            (سائيز_t)صلاحيت * حجم(*comments->spans);
+        tokenizer_comments *resized = PyMem_Realloc(comments, سائيز);
+        إذا (resized == عدم) {
+            Py_Err_No_يادگيري();
+            أرجع -1;
         }
         comments = resized;
-        if (state->comments == NULL) {
-            comments->count = 0;
+        إذا (state->comments == عدم) {
+            comments->ڳڻپ = 0;
         }
-        comments->capacity = capacity;
+        comments->صلاحيت = صلاحيت;
         state->comments = comments;
     }
-    comments->spans[comments->count++] =
-        (_PyTok_Span){start, end};
-    return 0;
+    comments->spans[comments->ڳڻپ++] =
+        (Py_Tok_وسعت){شروعات, پڇاڙي};
+    أرجع 0;
 }
 
-static int
-finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                     struct token *token)
+ساكن صحيح
+پڄاڻي_ftstring_اظهار(بنية tok_state *tok, ftstring_state *state,
+                     بنية token *token)
 {
-    assert(token != NULL && state == _PyLexer_CurrentFTString(tok));
-    assert(state->mode == FTSTRING_MODE_EXPRESSION && tok->start >= 0);
+    أكد(token != عدم && state == _PyLexer_CurrentFTString(tok));
+    أكد(state->گهڻائي == FTSTRING_گهڻائي_اظهار && tok->شروعات >= 0);
 
-    if (state->expr_span.end >= 0) {
-        return 0;
+    إذا (state->اظهار_وسعت.پڇاڙي >= 0) {
+        أرجع 0;
     }
-    assert(state->expr_span.start >= 0);
-    state->expr_span.end = tok->start;
-    int tstring_interpolation = _PyLexer_IsTString(state->kind) &&
-        state->replacement_depth == 1;
-    if (!(state->debug_expr || tstring_interpolation) || token->metadata) {
-        return 0;
+    أكد(state->اظهار_وسعت.شروعات >= 0);
+    state->اظهار_وسعت.پڇاڙي = tok->شروعات;
+    صحيح tstring_interpolation = _PyLexer_IsTString(state->قسم) &&
+        state->replacement_اونهائي == 1;
+    إذا (!(state->debug_اظهار || tstring_interpolation) || token->metadata) {
+        أرجع 0;
     }
     tokenizer_comments *comments = state->comments;
     PyObject *res;
-    if (comments != NULL && comments->count > 0) {
-        Py_ssize_t stripped_size =
-            state->expr_span.end - state->expr_span.start;
-        Py_ssize_t comment_count = 0;
-        for (Py_ssize_t i = 0; i < comments->count; i++) {
-            _PyTok_Span comment = comments->spans[i];
-            assert(_PyTok_SpanIsValid(comment));
-            assert(comment.start >= (i == 0 ? state->expr_span.start
-                                           : comments->spans[i - 1].end));
-            if (comment.start >= state->expr_span.end) {
-                break;
+    إذا (comments != عدم && comments->ڳڻپ > 0) {
+        Py_ssize_t stripped_سائيز =
+            state->اظهار_وسعت.پڇاڙي - state->اظهار_وسعت.شروعات;
+        Py_ssize_t comment_ڳڻپ = 0;
+        لكل (Py_ssize_t i = 0; i < comments->ڳڻپ; i++) {
+            Py_Tok_وسعت comment = comments->spans[i];
+            أكد(Py_Tok_وسعت_Is_Valid(comment));
+            أكد(comment.شروعات >= (i == 0 ? state->اظهار_وسعت.شروعات
+                                           : comments->spans[i - 1].پڇاڙي));
+            إذا (comment.شروعات >= state->اظهار_وسعت.پڇاڙي) {
+                اكسر;
             }
-            assert(comment.end <= state->expr_span.end);
-            stripped_size -= comment.end - comment.start;
-            comment_count++;
+            أكد(comment.پڇاڙي <= state->اظهار_وسعت.پڇاڙي);
+            stripped_سائيز -= comment.پڇاڙي - comment.شروعات;
+            comment_ڳڻپ++;
         }
-        char *stripped = PyMem_Malloc((size_t)stripped_size);
-        if (stripped == NULL) {
-            PyErr_NoMemory();
-            return -1;
+        حرف *stripped = PyMem_Malloc((سائيز_t)stripped_سائيز);
+        إذا (stripped == عدم) {
+            Py_Err_No_يادگيري();
+            أرجع -1;
         }
-        _PyTok_Span kept = {state->expr_span.start, state->expr_span.start};
+        Py_Tok_وسعت kept = {state->اظهار_وسعت.شروعات, state->اظهار_وسعت.شروعات};
         Py_ssize_t stripped_len = 0;
-        for (Py_ssize_t i = 0; i < comment_count; i++) {
-            kept.end = comments->spans[i].start;
-            Py_ssize_t length;
-            const char *text = _PyTok_SourceSpanView(
-                &tok->source, kept, &length);
-            memcpy(stripped + stripped_len, text, (size_t)length);
-            stripped_len += length;
-            kept.start = comments->spans[i].end;
+        لكل (Py_ssize_t i = 0; i < comment_ڳڻپ; i++) {
+            kept.پڇاڙي = comments->spans[i].شروعات;
+            Py_ssize_t ڊيگهائي;
+            ثابت حرف *متن = Py_Tok_ذريعو_وسعت_View(
+                &tok->ذريعو, kept, &ڊيگهائي);
+            يادگيري_نقل(stripped + stripped_len, متن, (سائيز_t)ڊيگهائي);
+            stripped_len += ڊيگهائي;
+            kept.شروعات = comments->spans[i].پڇاڙي;
         }
-        kept.end = state->expr_span.end;
-        Py_ssize_t length;
-        const char *text = _PyTok_SourceSpanView(&tok->source, kept, &length);
-        memcpy(stripped + stripped_len, text, (size_t)length);
-        res = PyUnicode_DecodeUTF8(stripped, stripped_size, NULL);
+        kept.پڇاڙي = state->اظهار_وسعت.پڇاڙي;
+        Py_ssize_t ڊيگهائي;
+        ثابت حرف *متن = Py_Tok_ذريعو_وسعت_View(&tok->ذريعو, kept, &ڊيگهائي);
+        يادگيري_نقل(stripped + stripped_len, متن, (سائيز_t)ڊيگهائي);
+        res = PyUnicode_DecodeUTF8(stripped, stripped_سائيز, عدم);
         PyMem_Free(stripped);
     }
-    else {
-        Py_ssize_t expr_len;
-        const char *expr = _PyTok_SourceSpanView(
-            &tok->source, state->expr_span, &expr_len);
-        res = PyUnicode_DecodeUTF8(expr, expr_len, NULL);
+    وإلا {
+        Py_ssize_t اظهار_len;
+        ثابت حرف *اظهار = Py_Tok_ذريعو_وسعت_View(
+            &tok->ذريعو, state->اظهار_وسعت, &اظهار_len);
+        res = PyUnicode_DecodeUTF8(اظهار, اظهار_len, عدم);
     }
 
-    if (!res) {
-        return -1;
+    إذا (!res) {
+        أرجع -1;
     }
     token->metadata = res;
-    return 0;
+    أرجع 0;
 }
 
-static int
-begin_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                    _PyTok_Off expr_start)
+ساكن صحيح
+begin_ftstring_اظهار(بنية tok_state *tok, ftstring_state *state,
+                    _PyTok_Off اظهار_شروعات)
 {
-    assert(state->mode != FTSTRING_MODE_EXPRESSION);
-    state->expr_span = (_PyTok_Span){expr_start, -1};
-    if (state->comments != NULL) {
-        state->comments->count = 0;
+    أكد(state->گهڻائي != FTSTRING_گهڻائي_اظهار);
+    state->اظهار_وسعت = (Py_Tok_وسعت){اظهار_شروعات, -1};
+    إذا (state->comments != عدم) {
+        state->comments->ڳڻپ = 0;
     }
-    if (state->replacement_depth >= MAX_EXPR_NESTING) {
+    إذا (state->replacement_اونهائي >= MAX_اظهار_NESTING) {
         _PyTokenizer_syntaxerror(
             tok, "%c-string: expressions nested too deeply",
-            _PyLexer_StringPrefix(state->kind));
-        return -1;
+            Py_Lexer_String_اڳياڙي(state->قسم));
+        أرجع -1;
     }
-    state->replacement_depth++;
-    state->mode = FTSTRING_MODE_EXPRESSION;
-    state->debug_expr = 0;
-    return 0;
+    state->replacement_اونهائي++;
+    state->گهڻائي = FTSTRING_گهڻائي_اظهار;
+    state->debug_اظهار = 0;
+    أرجع 0;
 }
 
-int
-_PyLexer_ftstring_punctuation(struct tok_state *tok, ftstring_state *state,
-                              struct token *token, int c)
+صحيح
+_PyLexer_ftstring_punctuation(بنية tok_state *tok, ftstring_state *state,
+                              بنية token *token, صحيح c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ':' || c == '}' || c == '!');
-    if (_PyLexer_FTStringBracketDepth(tok, state) != state->replacement_depth) {
-        return 0;
+    أكد(state->گهڻائي == FTSTRING_گهڻائي_اظهار);
+    أكد(c == ':' || c == '}' || c == '!');
+    إذا (Py_Lexer_FTString_Bracket_اونهائي(tok, state) != state->replacement_اونهائي) {
+        أرجع 0;
     }
-    if (c == '!') {
-        int next = tok_nextc(tok);
-        tok_backup(tok, next);
-        if (next == '=') {
-            return 0;
+    إذا (c == '!') {
+        صحيح ايندڙ = tok_nextc(tok);
+        tok_backup(tok, ايندڙ);
+        إذا (ايندڙ == '=') {
+            أرجع 0;
         }
     }
-    if (finish_ftstring_expr(tok, state, token) < 0) {
-        return -1;
+    إذا (پڄاڻي_ftstring_اظهار(tok, state, token) < 0) {
+        أرجع -1;
     }
-    if (c == ':') {
-        state->mode = FTSTRING_MODE_FORMAT_SPEC;
-        return COLON;
+    إذا (c == ':') {
+        state->گهڻائي = FTSTRING_گهڻائي_FORMAT_SPEC;
+        أرجع COLON;
     }
-    return 0;
+    أرجع 0;
 }
 
-int
-_PyLexer_close_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                             int c)
+صحيح
+Py_Lexer_close_ftstring_اظهار(بنية tok_state *tok, ftstring_state *state,
+                             صحيح c)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    assert(c == ')' || c == ']' || c == '}');
-    int depth = _PyLexer_FTStringBracketDepth(tok, state);
-    if (depth < 0) {
+    أكد(state->گهڻائي == FTSTRING_گهڻائي_اظهار);
+    أكد(c == ')' || c == ']' || c == '}');
+    صحيح اونهائي = Py_Lexer_FTString_Bracket_اونهائي(tok, state);
+    إذا (اونهائي < 0) {
         _PyTokenizer_syntaxerror(tok, "%c-string: unmatched '%c'",
-                                _PyLexer_StringPrefix(state->kind), c);
-        return -1;
+                                Py_Lexer_String_اڳياڙي(state->قسم), c);
+        أرجع -1;
     }
-    if (c == '}' && depth == state->replacement_depth - 1) {
-        state->replacement_depth--;
-        state->mode = FTSTRING_MODE_MIDDLE;
-        state->debug_expr = 0;
+    إذا (c == '}' && اونهائي == state->replacement_اونهائي - 1) {
+        state->replacement_اونهائي--;
+        state->گهڻائي = FTSTRING_گهڻائي_وچ;
+        state->debug_اظهار = 0;
     }
-    return 0;
+    أرجع 0;
 }
 
-void
-_PyLexer_mark_ftstring_debug(struct tok_state *tok, ftstring_state *state)
+فراغ
+_PyLexer_mark_ftstring_debug(بنية tok_state *tok, ftstring_state *state)
 {
-    assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    if (_PyLexer_FTStringBracketDepth(tok, state) == state->replacement_depth) {
-        state->debug_expr = 1;
+    أكد(state->گهڻائي == FTSTRING_گهڻائي_اظهار);
+    إذا (Py_Lexer_FTString_Bracket_اونهائي(tok, state) == state->replacement_اونهائي) {
+        state->debug_اظهار = 1;
     }
 }
 
-int
-_PyLexer_check_string_prefixes(struct tok_state *tok,
-                                             int saw_b, int saw_r, int saw_u,
-                                             int saw_f, int saw_t) {
+صحيح
+_PyLexer_check_string_prefixes(بنية tok_state *tok,
+                                             صحيح saw_b, صحيح saw_r, صحيح saw_u,
+                                             صحيح saw_f, صحيح saw_t) {
     // Supported: rb, rf, rt (in any order)
     // Unsupported: ub, ur, uf, ut, bf, bt, ft (in any order)
 
-#define RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
-    do {                                                                  \
-        (void)_PyTokenizer_syntaxerror_known_range(                       \
-            tok, (int)(tok->start + 1 - tok->line_start),                 \
-            (int)(tok->cur - tok->line_start),                            \
+#وصف_ڪريو RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
+    افعل {                                                                  \
+        (فراغ)Py_Tokenizer_syntaxerror_معلوم_range(                       \
+            tok, (صحيح)(tok->شروعات + 1 - tok->سٽ_شروعات),                 \
+            (صحيح)(tok->cur - tok->سٽ_شروعات),                            \
             "'" PREFIX1 "' and '" PREFIX2 "' prefixes are incompatible"); \
-        return -1;                                                        \
-    } while (0)
+        أرجع -1;                                                        \
+    } طالما (0)
 
-    if (saw_u && saw_b) {
+    إذا (saw_u && saw_b) {
         RETURN_SYNTAX_ERROR("u", "b");
     }
-    if (saw_u && saw_r) {
+    إذا (saw_u && saw_r) {
         RETURN_SYNTAX_ERROR("u", "r");
     }
-    if (saw_u && saw_f) {
+    إذا (saw_u && saw_f) {
         RETURN_SYNTAX_ERROR("u", "f");
     }
-    if (saw_u && saw_t) {
+    إذا (saw_u && saw_t) {
         RETURN_SYNTAX_ERROR("u", "t");
     }
 
-    if (saw_b && saw_f) {
+    إذا (saw_b && saw_f) {
         RETURN_SYNTAX_ERROR("b", "f");
     }
-    if (saw_b && saw_t) {
+    إذا (saw_b && saw_t) {
         RETURN_SYNTAX_ERROR("b", "t");
     }
 
-    if (saw_f && saw_t) {
+    إذا (saw_f && saw_t) {
         RETURN_SYNTAX_ERROR("f", "t");
     }
 
-#undef RETURN_SYNTAX_ERROR
+#وصف_رد RETURN_SYNTAX_ERROR
 
-    return 0;
+    أرجع 0;
 }
 
-int
-_PyLexer_scan_fstring_start(struct tok_state *tok, struct token *token,
-                            int c, ftstring_kind kind)
+صحيح
+Py_Lexer_جاچ_fstring_شروعات(بنية tok_state *tok, بنية token *token,
+                            صحيح c, ftstring_قسم قسم)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_شروعات = -1;
+    _PyTok_Off p_پڇاڙي = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
+    صحيح quote = c;
+    صحيح quote_سائيز = 1;             /* 1 or 3 */
 
     /* Find the quote size and start of string */
-    int after_quote = tok_nextc(tok);
-    if (after_quote == quote) {
-        int after_after_quote = tok_nextc(tok);
-        if (after_after_quote == quote) {
-            quote_size = 3;
+    صحيح after_quote = tok_nextc(tok);
+    إذا (after_quote == quote) {
+        صحيح after_after_quote = tok_nextc(tok);
+        إذا (after_after_quote == quote) {
+            quote_سائيز = 3;
         }
-        else {
+        وإلا {
             // TODO: Check this
             tok_backup(tok, after_after_quote);
             tok_backup(tok, after_quote);
         }
     }
-    if (after_quote != quote) {
+    إذا (after_quote != quote) {
         tok_backup(tok, after_quote);
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    ftstring_state *state = _PyLexer_PushFTString(tok);
-    if (state == NULL) {
-        return MAKE_TOKEN(ERRORTOKEN);
+    p_شروعات = tok->شروعات;
+    p_پڇاڙي = tok->cur;
+    ftstring_state *state = Py_Lexer_ڌڪو_FTString(tok);
+    إذا (state == عدم) {
+        أرجع MAKE_TOKEN(ERRORTOKEN);
     }
-    state->mode = FTSTRING_MODE_MIDDLE;
+    state->گهڻائي = FTSTRING_گهڻائي_وچ;
     state->quote = quote;
-    state->quote_size = quote_size;
+    state->quote_سائيز = quote_سائيز;
     state->paren_level = tok->level;
-    state->start = tok->start;
-    state->start_loc = tok->start_loc;
-    state->expr_span = (_PyTok_Span){-1, -1};
+    state->شروعات = tok->شروعات;
+    state->شروعات_loc = tok->شروعات_loc;
+    state->اظهار_وسعت = (Py_Tok_وسعت){-1, -1};
 
-    state->kind = kind;
-    return _PyLexer_IsTString(kind)
-        ? MAKE_TOKEN(TSTRING_START) : MAKE_TOKEN(FSTRING_START);
+    state->قسم = قسم;
+    أرجع _PyLexer_IsTString(قسم)
+        ? MAKE_TOKEN(TSTRING_شروعات) : MAKE_TOKEN(FSTRING_شروعات);
 }
 
-int
-_PyLexer_scan_string(struct tok_state *tok, struct token *token, int c)
+صحيح
+Py_Lexer_جاچ_string(بنية tok_state *tok, بنية token *token, صحيح c)
 {
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_شروعات = -1;
+    _PyTok_Off p_پڇاڙي = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
-    int end_quote_size = 0;
-    int has_escaped_quote = 0;
+    صحيح quote = c;
+    صحيح quote_سائيز = 1;             /* 1 or 3 */
+    صحيح پڇاڙي_quote_سائيز = 0;
+    صحيح has_escaped_quote = 0;
 
     /* Find the quote size and start of string */
     c = tok_nextc(tok);
-    if (c == quote) {
+    إذا (c == quote) {
         c = tok_nextc(tok);
-        if (c == quote) {
-            quote_size = 3;
+        إذا (c == quote) {
+            quote_سائيز = 3;
         }
-        else {
-            end_quote_size = 1;     /* empty string found */
+        وإلا {
+            پڇاڙي_quote_سائيز = 1;     /* empty string found */
         }
     }
-    if (c != quote) {
+    إذا (c != quote) {
         tok_backup(tok, c);
     }
 
     /* Get rest of string */
-    while (end_quote_size != quote_size) {
+    طالما (پڇاڙي_quote_سائيز != quote_سائيز) {
         c = tok_nextc(tok);
-        if (tok->done == E_ERROR) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        إذا (tok->پورو == E_ERROR) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
-        if (tok->done == E_DECODE) {
-            break;
+        إذا (tok->پورو == E_DECODE) {
+            اكسر;
         }
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        إذا (c == EOF || (quote_سائيز == 1 && c == '\n')) {
+            إذا (tok_failed(tok)) {
+                أرجع MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token, STRING,
-                                               tok->start, tok->start_loc);
+            إذا (c == EOF && tok->allow_incomplete_داخلا) {
+                أرجع incomplete_string_token(tok, token, STRING,
+                                               tok->شروعات, tok->شروعات_loc);
             }
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = tok->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, tok->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            صحيح پڇاڙي_lineno = tok->lineno;
+            _PyTok_Loc location = tok->شروعات_loc;
+            ثابت حرف *سٽ = Py_Tok_ذريعو_اشارو(
+                &tok->ذريعو, tok->شروعات - location.byte_کانو);
+            Py_ssize_t cursor_وٿي = (Py_ssize_t)location.byte_کانو + 1;
 
-            const ftstring_state *state = _PyLexer_CurrentFTString(tok);
-            if (state != NULL) {
+            ثابت ftstring_state *state = _PyLexer_CurrentFTString(tok);
+            إذا (state != عدم) {
                 /* A matching quote may have been intended to close the
                  * surrounding formatted string instead of opening a string
                  * inside a replacement field. */
-                if (state->quote == quote && state->quote_size == quote_size) {
-                    int level = state->paren_level + state->replacement_depth - 1;
-                    assert(level >= 0 && level < tok->level);
-                    assert(tok->parenstack[level] == '{');
-                    int lineno = tok->parenlinenostack[level];
-                    if (lineno != location.lineno) {
+                إذا (state->quote == quote && state->quote_سائيز == quote_سائيز) {
+                    صحيح level = state->paren_level + state->replacement_اونهائي - 1;
+                    أكد(level >= 0 && level < tok->level);
+                    أكد(tok->parenstack[level] == '{');
+                    صحيح lineno = tok->parenlinenostack[level];
+                    إذا (lineno != location.lineno) {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                             "%c-string: expecting '}' to close '{' on line %d",
-                            _PyLexer_StringPrefix(state->kind), lineno);
+                            Py_Lexer_String_اڳياڙي(state->قسم), lineno);
                     }
-                    else {
+                    وإلا {
                         _PyTokenizer_syntaxerror_at(
-                            tok, line, cursor_offset, location.lineno, -1, -1,
+                            tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                             "%c-string: expecting '}'",
-                            _PyLexer_StringPrefix(state->kind));
+                            Py_Lexer_String_اڳياڙي(state->قسم));
                     }
-                    return string_error_token(tok, token, tok->start, location);
+                    أرجع string_error_token(tok, token, tok->شروعات, location);
                 }
             }
 
-            if (quote_size == 3) {
+            إذا (quote_سائيز == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                     "unterminated triple-quoted string literal"
-                    " (detected at line %d)", end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    " (detected at line %d)", پڇاڙي_lineno);
+                إذا (c != '\n') {
+                    tok->پورو = E_EOFS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                أرجع string_error_token(tok, token, tok->شروعات, location);
             }
-            else {
-                if (has_escaped_quote) {
+            وإلا {
+                إذا (has_escaped_quote) {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
+                        tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                         "unterminated string literal (detected at line %d); "
                         "perhaps you escaped the end quote?",
-                        end_lineno
+                        پڇاڙي_lineno
                     );
-                } else {
+                } وإلا {
                     _PyTokenizer_syntaxerror_at(
-                        tok, line, cursor_offset, location.lineno, -1, -1,
-                        "unterminated string literal (detected at line %d)", end_lineno
+                        tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
+                        "unterminated string literal (detected at line %d)", پڇاڙي_lineno
                     );
                 }
-                if (c != '\n') {
-                    tok->done = E_EOLS;
+                إذا (c != '\n') {
+                    tok->پورو = E_EOLS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                أرجع string_error_token(tok, token, tok->شروعات, location);
             }
         }
-        if (c == quote) {
-            end_quote_size += 1;
+        إذا (c == quote) {
+            پڇاڙي_quote_سائيز += 1;
         }
-        else {
-            end_quote_size = 0;
-            if (c == '\\') {
+        وإلا {
+            پڇاڙي_quote_سائيز = 0;
+            إذا (c == '\\') {
                 c = tok_nextc(tok);  /* skip escaped char */
-                if (c == quote) {  /* but record whether the escaped char was a quote */
+                إذا (c == quote) {  /* but record whether the escaped char was a quote */
                     has_escaped_quote = 1;
                 }
-                if (c == '\r') {
+                إذا (c == '\r') {
                     c = tok_nextc(tok);
                 }
             }
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    return MAKE_TOKEN(STRING);
+    p_شروعات = tok->شروعات;
+    p_پڇاڙي = tok->cur;
+    أرجع MAKE_TOKEN(STRING);
 }
 
-int
-_PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct token *token)
+صحيح
+_PyLexer_get_ftstring(بنية tok_state *tok, ftstring_state *current, بنية token *token)
 {
-    assert(current == _PyLexer_CurrentFTString(tok) && current->mode != FTSTRING_MODE_EXPRESSION);
-    assert((current->quote_size == 1 || current->quote_size == 3) &&
-           current->replacement_depth <= MAX_EXPR_NESTING);
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
-    int token_type;
-    int end_quote_size = 0;
-    int unicode_escape = 0;
-    int quote = current->quote;
-    int quote_size = current->quote_size;
-    int in_format_spec = current->mode == FTSTRING_MODE_FORMAT_SPEC;
-    int raw = _PyLexer_IsRawString(current->kind);
+    أكد(current == _PyLexer_CurrentFTString(tok) && current->گهڻائي != FTSTRING_گهڻائي_اظهار);
+    أكد((current->quote_سائيز == 1 || current->quote_سائيز == 3) &&
+           current->replacement_اونهائي <= MAX_اظهار_NESTING);
+    _PyTok_Off p_شروعات = -1;
+    _PyTok_Off p_پڇاڙي = -1;
+    صحيح token_type;
+    صحيح پڇاڙي_quote_سائيز = 0;
+    صحيح unicode_escape = 0;
+    صحيح quote = current->quote;
+    صحيح quote_سائيز = current->quote_سائيز;
+    صحيح اندريون_format_spec = current->گهڻائي == FTSTRING_گهڻائي_FORMAT_SPEC;
+    صحيح raw = _PyLexer_IsRawString(current->قسم);
 
-    tok->start = tok->cur;
-    tok->start_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
+    tok->شروعات = tok->cur;
+    tok->شروعات_loc = (_PyTok_Loc){tok->lineno, Py_Lexer_Byte_ڪالم(tok)};
 
-    while (end_quote_size != quote_size) {
-        int c = tok_nextc(tok);
-        if (tok->done == E_ERROR || tok->done == E_DECODE) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    طالما (پڇاڙي_quote_سائيز != quote_سائيز) {
+        صحيح c = tok_nextc(tok);
+        إذا (tok->پورو == E_ERROR || tok->پورو == E_DECODE) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
 
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        إذا (c == EOF || (quote_سائيز == 1 && c == '\n')) {
+            إذا (tok_failed(tok)) {
+                أرجع MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token,
-                    FTSTRING_MIDDLE(current), current->start, current->start_loc);
+            إذا (c == EOF && tok->allow_incomplete_داخلا) {
+                أرجع incomplete_string_token(tok, token,
+                    FTSTRING_وچ(current), current->شروعات, current->شروعات_loc);
             }
 
-            if (in_format_spec && c == '\n') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            إذا (اندريون_format_spec && c == '\n') {
+                أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(
                     tok,
                     "%c-string: newlines are not allowed in format specifiers for single quoted %c-strings",
-                    _PyLexer_StringPrefix(current->kind),
-                    _PyLexer_StringPrefix(current->kind)));
+                    Py_Lexer_String_اڳياڙي(current->قسم),
+                    Py_Lexer_String_اڳياڙي(current->قسم)));
             }
 
-            int end_lineno = tok->lineno;
-            _PyTok_Loc location = current->start_loc;
-            const char *line = _PyTok_SourcePointer(
-                &tok->source, current->start - location.byte_col);
-            Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
+            صحيح پڇاڙي_lineno = tok->lineno;
+            _PyTok_Loc location = current->شروعات_loc;
+            ثابت حرف *سٽ = Py_Tok_ذريعو_اشارو(
+                &tok->ذريعو, current->شروعات - location.byte_کانو);
+            Py_ssize_t cursor_وٿي = (Py_ssize_t)location.byte_کانو + 1;
 
-            if (quote_size == 3) {
+            إذا (quote_سائيز == 3) {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                     "unterminated triple-quoted %c-string literal"
                     " (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                if (c != '\n') {
-                    tok->done = E_EOFS;
+                    Py_Lexer_String_اڳياڙي(current->قسم), پڇاڙي_lineno);
+                إذا (c != '\n') {
+                    tok->پورو = E_EOFS;
                 }
-                return string_error_token(tok, token,
-                    current->start, location);
+                أرجع string_error_token(tok, token,
+                    current->شروعات, location);
             }
-            else {
+            وإلا {
                 _PyTokenizer_syntaxerror_at(
-                    tok, line, cursor_offset, location.lineno, -1, -1,
+                    tok, سٽ, cursor_وٿي, location.lineno, -1, -1,
                     "unterminated %c-string literal (detected at line %d)",
-                    _PyLexer_StringPrefix(current->kind), end_lineno);
-                return string_error_token(tok, token,
-                    current->start, location);
+                    Py_Lexer_String_اڳياڙي(current->قسم), پڇاڙي_lineno);
+                أرجع string_error_token(tok, token,
+                    current->شروعات, location);
             }
         }
 
-        if (c == quote) {
-            end_quote_size += 1;
-            continue;
-        } else {
-            end_quote_size = 0;
+        إذا (c == quote) {
+            پڇاڙي_quote_سائيز += 1;
+            استمر;
+        } وإلا {
+            پڇاڙي_quote_سائيز = 0;
         }
 
-        if (c == '{') {
-            int peek = tok_nextc(tok);
-            if (peek != '{' || in_format_spec) {
+        إذا (c == '{') {
+            صحيح peek = tok_nextc(tok);
+            إذا (peek != '{' || اندريون_format_spec) {
                 tok_backup(tok, peek);
-                _PyTok_Off expr_start = tok->cur;
+                _PyTok_Off اظهار_شروعات = tok->cur;
                 tok_backup(tok, c);
-                if (begin_ftstring_expr(tok, current, expr_start) < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                إذا (begin_ftstring_اظهار(tok, current, اظهار_شروعات) < 0) {
+                    أرجع MAKE_TOKEN(ERRORTOKEN);
                 }
-                p_start = tok->start;
-                p_end = tok->cur;
-                if (p_start == p_end) {
-                    return _PyLexer_get_normal(tok, current, token);
+                p_شروعات = tok->شروعات;
+                p_پڇاڙي = tok->cur;
+                إذا (p_شروعات == p_پڇاڙي) {
+                    أرجع Py_Lexer_get_عام(tok, current, token);
                 }
-            } else {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            } وإلا {
+                p_شروعات = tok->شروعات;
+                p_پڇاڙي = tok->cur - 1;
             }
-            goto emit_middle;
-        } else if (c == '}') {
-            if (unicode_escape) {
-                p_start = tok->start;
-                p_end = tok->cur;
-                goto emit_middle;
+            اذهب emit_وچ;
+        } وإلا إذا (c == '}') {
+            إذا (unicode_escape) {
+                p_شروعات = tok->شروعات;
+                p_پڇاڙي = tok->cur;
+                اذهب emit_وچ;
             }
-            int peek = tok_nextc(tok);
+            صحيح peek = tok_nextc(tok);
 
-            int bracket_depth = _PyLexer_FTStringBracketDepth(tok, current);
-            if (peek == '}' && !in_format_spec && bracket_depth == 0) {
-                p_start = tok->start;
-                p_end = tok->cur - 1;
+            صحيح bracket_اونهائي = Py_Lexer_FTString_Bracket_اونهائي(tok, current);
+            إذا (peek == '}' && !اندريون_format_spec && bracket_اونهائي == 0) {
+                p_شروعات = tok->شروعات;
+                p_پڇاڙي = tok->cur - 1;
             }
-            else {
+            وإلا {
                 tok_backup(tok, peek);
-                if (!in_format_spec && bracket_depth == 0) {
-                    if (tok->start == tok->cur - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+                إذا (!اندريون_format_spec && bracket_اونهائي == 0) {
+                    إذا (tok->شروعات == tok->cur - 1) {
+                        أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(
                             tok, "%c-string: single '}' is not allowed",
-                            _PyLexer_StringPrefix(current->kind)));
+                            Py_Lexer_String_اڳياڙي(current->قسم)));
                     }
                     tok_backup(tok, c);
-                    p_start = tok->start;
-                    p_end = tok->cur;
-                    goto emit_middle;
+                    p_شروعات = tok->شروعات;
+                    p_پڇاڙي = tok->cur;
+                    اذهب emit_وچ;
                 }
                 tok_backup(tok, c);
-                current->mode = FTSTRING_MODE_EXPRESSION;
-                p_start = tok->start;
-                p_end = tok->cur;
+                current->گهڻائي = FTSTRING_گهڻائي_اظهار;
+                p_شروعات = tok->شروعات;
+                p_پڇاڙي = tok->cur;
             }
-            goto emit_middle;
-        } else if (c == '\\') {
-            int peek = tok_nextc(tok);
-            if (peek == '\r') {
+            اذهب emit_وچ;
+        } وإلا إذا (c == '\\') {
+            صحيح peek = tok_nextc(tok);
+            إذا (peek == '\r') {
                 peek = tok_nextc(tok);
             }
-            if (peek == '{' || peek == '}') {
-                if (!raw) {
-                    if (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+            إذا (peek == '{' || peek == '}') {
+                إذا (!raw) {
+                    إذا (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
+                        أرجع MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
                 tok_backup(tok, peek);
-                continue;
+                استمر;
             }
 
-            if (!raw) {
-                if (peek == 'N') {
+            إذا (!raw) {
+                إذا (peek == 'N') {
                     /* Handle named unicode escapes (\N{BULLET}) */
                     peek = tok_nextc(tok);
-                    if (peek == '{') {
+                    إذا (peek == '{') {
                         unicode_escape = 1;
-                    } else {
+                    } وإلا {
                         tok_backup(tok, peek);
                     }
                 }
@@ -591,19 +591,19 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
         }
     }
 
-    p_start = tok->start;
-    p_end = tok->cur;
-    if (p_end - quote_size == p_start) {
-        int end_token = FTSTRING_END(current);
-        _PyLexer_PopFTString(tok);
-        return MAKE_TOKEN(end_token);
+    p_شروعات = tok->شروعات;
+    p_پڇاڙي = tok->cur;
+    إذا (p_پڇاڙي - quote_سائيز == p_شروعات) {
+        صحيح پڇاڙي_token = FTSTRING_پڇاڙي(current);
+        Py_Lexer_ڪڍو_FTString(tok);
+        أرجع MAKE_TOKEN(پڇاڙي_token);
     }
-    for (int i = 0; i < quote_size; i++) {
+    لكل (صحيح i = 0; i < quote_سائيز; i++) {
         tok_backup(tok, quote);
     }
-    p_end = tok->cur;
-emit_middle:
-    token_type = MAKE_TOKEN(FTSTRING_MIDDLE(current));
+    p_پڇاڙي = tok->cur;
+emit_وچ:
+    token_type = MAKE_TOKEN(FTSTRING_وچ(current));
     token->is_raw = raw;
-    return token_type;
+    أرجع token_type;
 }
