@@ -1,26 +1,26 @@
-#include <Python.h>
-#include "pycore_ast.h"           // _PyAST_Validate(),
-#include "pycore_pystate.h"       // _PyThreadState_GET()
-#include "pycore_parser.h"        // _PYPEGEN_NSTATISTICS
-#include "pycore_pyerrors.h"      // PyExc_IncompleteInputError
-#include "pycore_runtime.h"       // _PyRuntime
-#include "pycore_unicodeobject.h" // _PyUnicode_InternImmortal
-#include <errcode.h>
+#அந்தர்பாவ <Python.h>
+#அந்தர்பாவ "pycore_ast.h"           // _PyAST_Validate(),
+#அந்தர்பாவ "pycore_pystate.h"       // _PyThreadState_GET()
+#அந்தர்பாவ "pycore_parser.h"        // _PYPEGEN_NSTATISTICS
+#அந்தர்பாவ "pycore_pyerrors.h"      // PyExc_IncompleteInputError
+#அந்தர்பாவ "pycore_runtime.h"       // _PyRuntime
+#அந்தர்பாவ "pycore_unicodeobject.h" // _PyUnicode_InternImmortal
+#அந்தர்பாவ <errcode.h>
 
-#include "lexer/state.h"
-#include "tokenizer/tokenizer.h"
-#include "pegen.h"
+#அந்தர்பாவ "lexer/state.h"
+#அந்தர்பாவ "tokenizer/tokenizer.h"
+#அந்தர்பாவ "pegen.h"
 
 #define IDENTIFIER_CACHE_SIZE 2048  // Must be a power of two.
 #define IDENTIFIER_CACHE_MAX_PROBES 8
 #define PEGEN_ARRAY_GROWTH_FACTOR 2
 #define TYPE_IGNORE_INITIAL_CAPACITY 10
 
-struct _identifier_cache_entry {
-    const char *key;   // Borrowed from arena-owned token bytes.
+கட்டமைப்பு _identifier_cache_entry {
+    மாறிலி எழுத்து *சாவி;   // Borrowed from arena-owned token bytes.
     Py_ssize_t len;
     Py_hash_t hash;
-    PyObject *value;   // Borrowed from an arena-owned identifier.
+    PyObject *மதிப்பு;   // Borrowed from an arena-owned identifier.
 };
 
 // Internal parser functions
@@ -28,253 +28,253 @@ struct _identifier_cache_entry {
 asdl_stmt_seq*
 _PyPegen_interactive_exit(Parser *p)
 {
-    if (p->errcode) {
+    எனில் (p->errcode) {
         *(p->errcode) = E_EOF;
     }
-    return NULL;
+    திரும்பு வெற்று;
 }
 
 Py_ssize_t
-_PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
+Py_Pegen_byte_offset_to_character_offset_வரி(PyObject *வரி, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
 {
-    const unsigned char *data = (const unsigned char*)PyUnicode_AsUTF8(line);
-    if (data == NULL) {
-        return -1;
+    மாறிலி unsigned எழுத்து *data = (மாறிலி unsigned எழுத்து*)PyUnicode_AsUTF8(வரி);
+    எனில் (data == வெற்று) {
+        திரும்பு -1;
     }
 
     Py_ssize_t len = 0;
-    while (col_offset < end_col_offset) {
+    போது (col_offset < end_col_offset) {
         Py_UCS4 ch = data[col_offset];
-        if (ch < 0x80) {
+        எனில் (ch < 0x80) {
             col_offset += 1;
-        } else if ((ch & 0xe0) == 0xc0) {
+        } இல்லையெனில் எனில் ((ch & 0xe0) == 0xc0) {
             col_offset += 2;
-        } else if ((ch & 0xf0) == 0xe0) {
+        } இல்லையெனில் எனில் ((ch & 0xf0) == 0xe0) {
             col_offset += 3;
-        } else if ((ch & 0xf8) == 0xf0) {
+        } இல்லையெனில் எனில் ((ch & 0xf8) == 0xf0) {
             col_offset += 4;
-        } else {
-            PyErr_SetString(PyExc_ValueError, "Invalid UTF-8 sequence");
-            return -1;
+        } இல்லையெனில் {
+            PyErr_SetString(Py_Exc_மதிப்பு_Error, "Invalid UTF-8 sequence");
+            திரும்பு -1;
         }
         len++;
     }
-    return len;
+    திரும்பு len;
 }
 
 Py_ssize_t
-_PyPegen_byte_offset_to_character_offset_raw(const char* str, Py_ssize_t col_offset)
+_PyPegen_byte_offset_to_character_offset_raw(மாறிலி எழுத்து* str, Py_ssize_t col_offset)
 {
     Py_ssize_t len = (Py_ssize_t)strlen(str);
-    if (col_offset > len + 1) {
+    எனில் (col_offset > len + 1) {
         col_offset = len + 1;
     }
-    assert(col_offset >= 0);
+    ப்ரதிஜ்ஞா(col_offset >= 0);
     PyObject *text = PyUnicode_DecodeUTF8(str, col_offset, "replace");
-    if (!text) {
-        return -1;
+    எனில் (!text) {
+        திரும்பு -1;
     }
     Py_ssize_t size = PyUnicode_GET_LENGTH(text);
     Py_DECREF(text);
-    return size;
+    திரும்பு size;
 }
 
 Py_ssize_t
-_PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset)
+_PyPegen_byte_offset_to_character_offset(PyObject *வரி, Py_ssize_t col_offset)
 {
-    const char *str = PyUnicode_AsUTF8(line);
-    if (!str) {
-        return -1;
+    மாறிலி எழுத்து *str = PyUnicode_AsUTF8(வரி);
+    எனில் (!str) {
+        திரும்பு -1;
     }
-    return _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
+    திரும்பு _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
 }
 
 // Here, mark is the start of the node, while p->mark is the end.
 // If node==NULL, they should be the same.
-int
-_PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
+முழு
+Py_Pegen_செருகு_memo(Parser *p, முழு mark, முழு type, வெறுமை *முனை)
 {
     // Insert in front
-    Memo *m = _PyArena_Malloc(p->arena, sizeof(Memo));
-    if (m == NULL) {
-        return -1;
+    Memo *m = _PyArena_Malloc(p->arena, அளவு(Memo));
+    எனில் (m == வெற்று) {
+        திரும்பு -1;
     }
     m->type = type;
-    m->node = node;
+    m->முனை = முனை;
     m->mark = p->mark;
     m->next = p->tokens[mark]->memo;
     p->tokens[mark]->memo = m;
     p->tokens[mark]->memo_mask |= 1ULL << (type & 63);
-    return 0;
+    திரும்பு 0;
 }
 
 // Like _PyPegen_insert_memo(), but returns the inserted Memo so callers
 // can update it in place without re-walking the token's memo list.
 Memo *
-_PyPegen_insert_memo_direct(Parser *p, int mark, int type)
+Py_Pegen_செருகு_memo_direct(Parser *p, முழு mark, முழு type)
 {
-    if (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
-        return NULL;
+    எனில் (Py_Pegen_செருகு_memo(p, mark, type, வெற்று) < 0) {
+        திரும்பு வெற்று;
     }
-    return p->tokens[mark]->memo;
+    திரும்பு p->tokens[mark]->memo;
 }
 
 // Like _PyPegen_insert_memo(), but updates an existing node if found.
-int
-_PyPegen_update_memo(Parser *p, int mark, int type, void *node)
+முழு
+_PyPegen_update_memo(Parser *p, முழு mark, முழு type, வெறுமை *முனை)
 {
-    for (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
+    க்கு (Memo *m = p->tokens[mark]->memo; m != வெற்று; m = m->next) {
+        எனில் (m->type == type) {
             // Update existing node.
-            m->node = node;
+            m->முனை = முனை;
             m->mark = p->mark;
-            return 0;
+            திரும்பு 0;
         }
     }
     // Insert new node.
-    return _PyPegen_insert_memo(p, mark, type, node);
+    திரும்பு Py_Pegen_செருகு_memo(p, mark, type, முனை);
 }
 
-static int
+நிலையான முழு
 init_normalization(Parser *p)
 {
-    if (p->normalize) {
-        return 1;
+    எனில் (p->normalize) {
+        திரும்பு 1;
     }
     p->normalize = PyImport_ImportModuleAttrString("unicodedata", "normalize");
-    if (!p->normalize)
+    எனில் (!p->normalize)
     {
-        return 0;
+        திரும்பு 0;
     }
-    return 1;
+    திரும்பு 1;
 }
 
-int
-_PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity)
+முழு
+_PyPegen_grow_loop_buffer(வெறுமை ***buffer, Py_ssize_t *capacity)
 {
-    if ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
-            (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(**buffer))) {
-        return -1;
+    எனில் ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
+            (PEGEN_ARRAY_GROWTH_FACTOR * அளவு(**buffer))) {
+        திரும்பு -1;
     }
     Py_ssize_t new_capacity = *capacity == 0
         ? 1 : *capacity * PEGEN_ARRAY_GROWTH_FACTOR;
-    void **new_buffer = PyMem_Realloc(*buffer, new_capacity * sizeof(**buffer));
-    if (new_buffer == NULL) {
-        return -1;
+    வெறுமை **new_buffer = PyMem_Realloc(*buffer, new_capacity * அளவு(**buffer));
+    எனில் (new_buffer == வெற்று) {
+        திரும்பு -1;
     }
     *buffer = new_buffer;
     *capacity = new_capacity;
-    return 0;
+    திரும்பு 0;
 }
 
-static int
-growable_comment_array_add(growable_comment_array *arr, int lineno, char *comment)
+நிலையான முழு
+growable_comment_array_add(growable_comment_array *arr, முழு lineno, எழுத்து *comment)
 {
-    if (arr->num_items >= arr->size) {
-        if (arr->size > (size_t)PY_SSIZE_T_MAX /
-                (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*arr->items))) {
-            return 0;
+    எனில் (arr->இலக்கம்_பொருட்கள் >= arr->size) {
+        எனில் (arr->size > (size_t)PY_SSIZE_T_MAX /
+                (PEGEN_ARRAY_GROWTH_FACTOR * அளவு(*arr->பொருட்கள்))) {
+            திரும்பு 0;
         }
         size_t new_size = arr->size == 0
             ? TYPE_IGNORE_INITIAL_CAPACITY
             : arr->size * PEGEN_ARRAY_GROWTH_FACTOR;
-        void *new_items_array = PyMem_Realloc(
-            arr->items, new_size * sizeof(*arr->items));
-        if (!new_items_array) {
-            return 0;
+        வெறுமை *new_பொருட்கள்_array = PyMem_Realloc(
+            arr->பொருட்கள், new_size * அளவு(*arr->பொருட்கள்));
+        எனில் (!new_பொருட்கள்_array) {
+            திரும்பு 0;
         }
-        arr->items = new_items_array;
+        arr->பொருட்கள் = new_பொருட்கள்_array;
         arr->size = new_size;
     }
 
-    arr->items[arr->num_items].lineno = lineno;
-    arr->items[arr->num_items].comment = comment;  // Take ownership
-    arr->num_items++;
-    return 1;
+    arr->பொருட்கள்[arr->இலக்கம்_பொருட்கள்].lineno = lineno;
+    arr->பொருட்கள்[arr->இலக்கம்_பொருட்கள்].comment = comment;  // Take ownership
+    arr->இலக்கம்_பொருட்கள்++;
+    திரும்பு 1;
 }
 
-static void
+நிலையான வெறுமை
 growable_comment_array_deallocate(growable_comment_array *arr)
 {
-    for (size_t i = 0; i < arr->num_items; i++) {
-        PyMem_Free(arr->items[i].comment);
+    க்கு (size_t i = 0; i < arr->இலக்கம்_பொருட்கள்; i++) {
+        PyMem_Free(arr->பொருட்கள்[i].comment);
     }
-    PyMem_Free(arr->items);
+    PyMem_Free(arr->பொருட்கள்);
 }
 
-static int
-_get_keyword_or_name_type(Parser *p, const char *text, Py_ssize_t length)
+நிலையான முழு
+_get_keyword_or_name_type(Parser *p, மாறிலி எழுத்து *text, Py_ssize_t length)
 {
-    assert(length > 0);
+    ப்ரதிஜ்ஞா(length > 0);
 
-    if (length >= p->n_keyword_lists ||
-        p->keywords[length] == NULL ||
+    எனில் (length >= p->n_keyword_lists ||
+        p->keywords[length] == வெற்று ||
         p->keywords[length]->type == -1) {
-        return NAME;
+        திரும்பு NAME;
     }
-    for (KeywordToken *k = p->keywords[length]; k != NULL && k->type != -1; k++) {
-        if (memcmp(k->str, text, (size_t)length) == 0) {
-            return k->type;
+    க்கு (KeywordToken *k = p->keywords[length]; k != வெற்று && k->type != -1; k++) {
+        எனில் (memcmp(k->str, text, (size_t)length) == 0) {
+            திரும்பு k->type;
         }
     }
-    return NAME;
+    திரும்பு NAME;
 }
 
 // Keep text only where grammar actions or helpers read it. Keyword error
 // actions use fixed spellings, so keywords do not need their text.
-static inline int
-token_needs_text(int type)
+நிலையான உள்வரி முழு
+token_needs_text(முழு type)
 {
-    switch (type) {
-        case NAME:
-        case NUMBER:
-        case STRING:
-        case FSTRING_START:
-        case FSTRING_MIDDLE:
-        case FSTRING_END:
-        case TSTRING_START:
-        case TSTRING_MIDDLE:
-        case TSTRING_END:
-        case TYPE_COMMENT:
-        case NOTEQUAL:  // _PyPegen_check_barry_as_flufl() distinguishes != and <>.
-            return 1;
-        default:
-            return 0;
+    தேர்வு (type) {
+        நிலை NAME:
+        நிலை எண்:
+        நிலை STRING:
+        நிலை FSTRING_START:
+        நிலை FSTRING_நடு:
+        நிலை FSTRING_END:
+        நிலை TSTRING_START:
+        நிலை TSTRING_நடு:
+        நிலை TSTRING_END:
+        நிலை TYPE_COMMENT:
+        நிலை NOTEQUAL:  // _PyPegen_check_barry_as_flufl() distinguishes != and <>.
+            திரும்பு 1;
+        இயல்பு:
+            திரும்பு 0;
     }
 }
 
-static int
-initialize_token(Parser *p, Token *parser_token, struct token *new_token, int token_type) {
-    assert(parser_token != NULL);
+நிலையான முழு
+initialize_token(Parser *p, Token *parser_token, கட்டமைப்பு token *new_token, முழு token_type) {
+    ப்ரதிஜ்ஞா(parser_token != வெற்று);
 
     parser_token->type = token_type;
-    parser_token->bytes = NULL;
-    if (token_needs_text(token_type) && new_token->span.start >= 0) {
+    parser_token->bytes = வெற்று;
+    எனில் (token_needs_text(token_type) && new_token->span.start >= 0) {
         Py_ssize_t length;
-        const char *text = _PyToken_TextView(p->tok, new_token, &length);
-        if (token_type == NAME) {
+        மாறிலி எழுத்து *text = _PyToken_TextView(p->tok, new_token, &length);
+        எனில் (token_type == NAME) {
             parser_token->type = _get_keyword_or_name_type(p, text, length);
         }
         // A name reclassified as a keyword does not need its text.
-        if (parser_token->type == token_type) {
+        எனில் (parser_token->type == token_type) {
             parser_token->bytes = PyBytes_FromStringAndSize(text, length);
-            if (parser_token->bytes == NULL) {
-                return -1;
+            எனில் (parser_token->bytes == வெற்று) {
+                திரும்பு -1;
             }
-            if (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
+            எனில் (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
                 Py_DECREF(parser_token->bytes);
-                return -1;
+                திரும்பு -1;
             }
         }
     }
 
-    parser_token->metadata = NULL;
-    if (new_token->metadata != NULL) {
-        if (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
-            return -1;
+    parser_token->metadata = வெற்று;
+    எனில் (new_token->metadata != வெற்று) {
+        எனில் (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
+            திரும்பு -1;
         }
         parser_token->metadata = new_token->metadata;
-        new_token->metadata = NULL;
+        new_token->metadata = வெற்று;
     }
 
     parser_token->level = new_token->level;
@@ -290,107 +290,107 @@ initialize_token(Parser *p, Token *parser_token, struct token *new_token, int to
 
     p->fill += 1;
 
-    if (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
-        return _Pypegen_raise_decode_error(p);
+    எனில் (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
+        திரும்பு _Pypegen_raise_decode_error(p);
     }
 
-    return (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
+    திரும்பு (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
 }
 
-static int
+நிலையான முழு
 _resize_tokens_array(Parser *p) {
-    if (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
+    எனில் (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
             (size_t)p->size > PY_SSIZE_T_MAX /
-                (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*p->tokens))) {
+                (PEGEN_ARRAY_GROWTH_FACTOR * அளவு(*p->tokens))) {
         PyErr_NoMemory();
-        return -1;
+        திரும்பு -1;
     }
-    int newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
-    Token **new_tokens = PyMem_Realloc(p->tokens, (size_t)newsize * sizeof(Token *));
-    if (new_tokens == NULL) {
+    முழு newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
+    Token **new_tokens = PyMem_Realloc(p->tokens, (size_t)newsize * அளவு(Token *));
+    எனில் (new_tokens == வெற்று) {
         PyErr_NoMemory();
-        return -1;
+        திரும்பு -1;
     }
     p->tokens = new_tokens;
 
     // Allocate new tokens together without moving existing ones: parser rules
     // may still hold pointers into earlier blocks. Parser_Free frees each block.
-    Token *chunk = PyMem_Calloc((size_t)(newsize - p->size), sizeof(Token));
-    if (chunk == NULL) {
+    Token *chunk = PyMem_Calloc((size_t)(newsize - p->size), அளவு(Token));
+    எனில் (chunk == வெற்று) {
         PyErr_NoMemory();
-        return -1;
+        திரும்பு -1;
     }
-    for (int i = p->size; i < newsize; i++) {
+    க்கு (முழு i = p->size; i < newsize; i++) {
         p->tokens[i] = &chunk[i - p->size];
     }
     p->size = newsize;
-    return 0;
+    திரும்பு 0;
 }
 
-int
+முழு
 _PyPegen_fill_token(Parser *p)
 {
-    struct token new_token;
+    கட்டமைப்பு token new_token;
     _PyToken_Init(&new_token);
     _PyTokenizer_Get(p->tok, &new_token);
 
     // Record and skip '# type: ignore' comments
-    while (new_token.type == TYPE_IGNORE) {
+    போது (new_token.type == TYPE_IGNORE) {
         Py_ssize_t len;
-        const char *text = _PyToken_TextView(p->tok, &new_token, &len);
-        char *tag = PyMem_Malloc((size_t)len + 1);
-        if (tag == NULL) {
+        மாறிலி எழுத்து *text = _PyToken_TextView(p->tok, &new_token, &len);
+        எழுத்து *tag = PyMem_Malloc((size_t)len + 1);
+        எனில் (tag == வெற்று) {
             PyErr_NoMemory();
-            goto error;
+            செல் error;
         }
         memcpy(tag, text, (size_t)len);
         tag[len] = '\0';
         // Ownership of tag passes to the growable array
-        if (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
+        எனில் (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
             PyMem_Free(tag);
             PyErr_NoMemory();
-            goto error;
+            செல் error;
         }
         _PyTokenizer_Get(p->tok, &new_token);
     }
 
-    int type = new_token.type;
+    முழு type = new_token.type;
     // EOF can finish an ordinary token. Only a boundary token means that
     // the grammar requested input beyond the last physical line.
-    if (type == ENDMARKER ||
-        (type == DEDENT && (p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+    எனில் (type == ENDMARKER ||
+        (type == DEDENT && (p->flags & Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு) &&
          _PyTokenizer_GetStatus(p->tok) == E_EOF)) {
-        p->input_exhausted = 1;
+        p->உள்ளீடு_exhausted = 1;
     }
 
     // If we have reached the end and we are in single input mode we need to insert a newline and reset the parsing
-    if (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
+    எனில் (p->start_rule == Py_single_உள்ளீடு && type == ENDMARKER && p->parsing_started) {
         type = NEWLINE; /* Add an extra newline */
         p->parsing_started = 0;
 
-        if (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
+        எனில் (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
             _PyTokenizer_ImplyDedents(p->tok);
         }
     }
-    else {
+    இல்லையெனில் {
         p->parsing_started = 1;
     }
 
     // Check if we are at the limit of the token array capacity and resize if needed
-    if ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
-        goto error;
+    எனில் ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
+        செல் error;
     }
 
     Token *t = p->tokens[p->fill];
-    int result = initialize_token(p, t, &new_token, type);
+    முழு result = initialize_token(p, t, &new_token, type);
     _PyToken_Free(&new_token);
-    return result;
+    திரும்பு result;
 error:
     _PyToken_Free(&new_token);
-    return -1;
+    திரும்பு -1;
 }
 
-#if defined(Py_DEBUG)
+#எனில் defined(Py_DEBUG)
 // Instrumentation to count the effectiveness of memoization.
 // The array counts the number of tokens skipped by memoization,
 // indexed by type.
@@ -398,279 +398,279 @@ error:
 #define NSTATISTICS _PYPEGEN_NSTATISTICS
 #define memo_statistics _PyRuntime.parser.memo_statistics
 
-void
-_PyPegen_clear_memo_statistics(void)
+வெறுமை
+_PyPegen_clear_memo_statistics(வெறுமை)
 {
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
+    க்கு (முழு i = 0; i < NSTATISTICS; i++) {
         memo_statistics[i] = 0;
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
 }
 
 PyObject *
-_PyPegen_get_memo_statistics(void)
+_PyPegen_get_memo_statistics(வெறுமை)
 {
     PyObject *ret = PyList_New(NSTATISTICS);
-    if (ret == NULL) {
-        return NULL;
+    எனில் (ret == வெற்று) {
+        திரும்பு வெற்று;
     }
 
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
-        PyObject *value = PyLong_FromLong(memo_statistics[i]);
-        if (value == NULL) {
+    க்கு (முழு i = 0; i < NSTATISTICS; i++) {
+        PyObject *மதிப்பு = PyLong_FromLong(memo_statistics[i]);
+        எனில் (மதிப்பு == வெற்று) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            திரும்பு வெற்று;
         }
         // PyList_SetItem borrows a reference to value.
-        if (PyList_SetItem(ret, i, value) < 0) {
+        எனில் (PyList_SetItem(ret, i, மதிப்பு) < 0) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            திரும்பு வெற்று;
         }
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
-    return ret;
+    திரும்பு ret;
 }
 #endif
 
-int  // bool
-_PyPegen_is_memoized(Parser *p, int type, void *pres)
+முழு  // bool
+_PyPegen_is_memoized(Parser *p, முழு type, வெறுமை *pres)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    எனில் (p->mark == p->fill) {
+        எனில் (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return -1;
+            திரும்பு -1;
         }
     }
 
     Token *t = p->tokens[p->mark];
 
-    if (!(t->memo_mask & (1ULL << (type & 63)))) {
-        return 0;
+    எனில் (!(t->memo_mask & (1ULL << (type & 63)))) {
+        திரும்பு 0;
     }
 
-    for (Memo *m = t->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
-#if defined(Py_DEBUG)
-            if (0 <= type && type < NSTATISTICS) {
-                long count = m->mark - p->mark;
+    க்கு (Memo *m = t->memo; m != வெற்று; m = m->next) {
+        எனில் (m->type == type) {
+#எனில் defined(Py_DEBUG)
+            எனில் (0 <= type && type < NSTATISTICS) {
+                long மொத்தம் = m->mark - p->mark;
                 // A memoized negative result counts for one.
-                if (count <= 0) {
-                    count = 1;
+                எனில் (மொத்தம் <= 0) {
+                    மொத்தம் = 1;
                 }
                 PyMutex_Lock(&_PyRuntime.parser.mutex);
-                memo_statistics[type] += count;
+                memo_statistics[type] += மொத்தம்;
                 PyMutex_Unlock(&_PyRuntime.parser.mutex);
             }
 #endif
             p->mark = m->mark;
-            *(void **)(pres) = m->node;
-            return 1;
+            *(வெறுமை **)(pres) = m->முனை;
+            திரும்பு 1;
         }
     }
-    return 0;
+    திரும்பு 0;
 }
 
 #define LOOKAHEAD1(NAME, RES_TYPE)                                  \
-    int                                                             \
-    NAME (int positive, RES_TYPE (func)(Parser *), Parser *p)       \
+    முழு                                                             \
+    NAME (முழு positive, RES_TYPE (func)(Parser *), Parser *p)       \
     {                                                               \
-        int mark = p->mark;                                         \
-        void *res = func(p);                                        \
+        முழு mark = p->mark;                                         \
+        வெறுமை *res = func(p);                                        \
         p->mark = mark;                                             \
-        return (res != NULL) == positive;                           \
+        திரும்பு (res != வெற்று) == positive;                           \
     }
 
-LOOKAHEAD1(_PyPegen_lookahead, void *)
-LOOKAHEAD1(_PyPegen_lookahead_for_expr, expr_ty)
+LOOKAHEAD1(_PyPegen_lookahead, வெறுமை *)
+LOOKAHEAD1(Py_Pegen_lookahead_for_கோவை, கோவை_ty)
 LOOKAHEAD1(_PyPegen_lookahead_for_stmt, stmt_ty)
 #undef LOOKAHEAD1
 
 #define LOOKAHEAD2(NAME, RES_TYPE, T)                                   \
-    int                                                                 \
-    NAME (int positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
+    முழு                                                                 \
+    NAME (முழு positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
     {                                                                   \
-        int mark = p->mark;                                             \
-        void *res = func(p, arg);                                       \
+        முழு mark = p->mark;                                             \
+        வெறுமை *res = func(p, arg);                                       \
         p->mark = mark;                                                 \
-        return (res != NULL) == positive;                               \
+        திரும்பு (res != வெற்று) == positive;                               \
     }
 
-LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, int)
-LOOKAHEAD2(_PyPegen_lookahead_with_string, expr_ty, const char *)
+LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, முழு)
+LOOKAHEAD2(_PyPegen_lookahead_with_string, கோவை_ty, மாறிலி எழுத்து *)
 #undef LOOKAHEAD2
 
 Token *
-_PyPegen_expect_token(Parser *p, int type)
+_PyPegen_expect_token(Parser *p, முழு type)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    எனில் (p->mark == p->fill) {
+        எனில் (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            திரும்பு வெற்று;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
-       return NULL;
+    எனில் (t->type != type) {
+       திரும்பு வெற்று;
     }
     p->mark += 1;
-    return t;
+    திரும்பு t;
 }
 
-void*
-_PyPegen_expect_forced_result(Parser *p, void* result, const char* expected) {
+வெறுமை*
+_PyPegen_expect_forced_result(Parser *p, வெறுமை* result, மாறிலி எழுத்து* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    எனில் (p->error_indicator == 1) {
+        திரும்பு வெற்று;
     }
-    if (result == NULL) {
+    எனில் (result == வெற்று) {
         RAISE_SYNTAX_ERROR("expected (%s)", expected);
-        return NULL;
+        திரும்பு வெற்று;
     }
-    return result;
+    திரும்பு result;
 }
 
 Token *
-_PyPegen_expect_forced_token(Parser *p, int type, const char* expected) {
+_PyPegen_expect_forced_token(Parser *p, முழு type, மாறிலி எழுத்து* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    எனில் (p->error_indicator == 1) {
+        திரும்பு வெற்று;
     }
 
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    எனில் (p->mark == p->fill) {
+        எனில் (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            திரும்பு வெற்று;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
+    எனில் (t->type != type) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(t, "expected '%s'", expected);
-        return NULL;
+        திரும்பு வெற்று;
     }
     p->mark += 1;
-    return t;
+    திரும்பு t;
 }
 
-expr_ty
-_PyPegen_expect_soft_keyword(Parser *p, const char *keyword)
+கோவை_ty
+_PyPegen_expect_soft_keyword(Parser *p, மாறிலி எழுத்து *keyword)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    எனில் (p->mark == p->fill) {
+        எனில் (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            திரும்பு வெற்று;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != NAME) {
-        return NULL;
+    எனில் (t->type != NAME) {
+        திரும்பு வெற்று;
     }
-    const char *s = PyBytes_AsString(t->bytes);
-    if (!s) {
+    மாறிலி எழுத்து *s = PyBytes_AsString(t->bytes);
+    எனில் (!s) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
-    if (strcmp(s, keyword) != 0) {
-        return NULL;
+    எனில் (strcmp(s, keyword) != 0) {
+        திரும்பு வெற்று;
     }
-    return _PyPegen_name_token(p);
+    திரும்பு _PyPegen_name_token(p);
 }
 
 Token *
 _PyPegen_get_last_nonnwhitespace_token(Parser *p)
 {
-    assert(p->mark >= 0);
-    Token *token = NULL;
-    for (int m = p->mark - 1; m >= 0; m--) {
+    ப்ரதிஜ்ஞா(p->mark >= 0);
+    Token *token = வெற்று;
+    க்கு (முழு m = p->mark - 1; m >= 0; m--) {
         token = p->tokens[m];
-        if (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
-            break;
+        எனில் (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
+            நிறுத்து;
         }
     }
-    return token;
+    திரும்பு token;
 }
 
 PyObject *
-_PyPegen_new_identifier(Parser *p, const char *n)
+_PyPegen_new_identifier(Parser *p, மாறிலி எழுத்து *n)
 {
-    PyObject *id = PyUnicode_DecodeUTF8(n, (Py_ssize_t)strlen(n), NULL);
-    if (!id) {
-        goto error;
+    PyObject *id = PyUnicode_DecodeUTF8(n, (Py_ssize_t)strlen(n), வெற்று);
+    எனில் (!id) {
+        செல் error;
     }
     /* Check whether there are non-ASCII characters in the
        identifier; if so, normalize to NFKC. */
-    if (!PyUnicode_IS_ASCII(id))
+    எனில் (!PyUnicode_IS_ASCII(id))
     {
-        if (!init_normalization(p))
+        எனில் (!init_normalization(p))
         {
             Py_DECREF(id);
-            goto error;
+            செல் error;
         }
         PyObject *form = PyUnicode_InternFromString("NFKC");
-        if (form == NULL)
+        எனில் (form == வெற்று)
         {
             Py_DECREF(id);
-            goto error;
+            செல் error;
         }
         PyObject *args[2] = {form, id};
-        PyObject *id2 = PyObject_Vectorcall(p->normalize, args, 2, NULL);
+        PyObject *id2 = PyObject_Vectorcall(p->normalize, args, 2, வெற்று);
         Py_DECREF(id);
         Py_DECREF(form);
-        if (!id2) {
-            goto error;
+        எனில் (!id2) {
+            செல் error;
         }
 
-        if (!PyUnicode_Check(id2))
+        எனில் (!PyUnicode_Check(id2))
         {
             PyErr_Format(PyExc_TypeError,
                          "unicodedata.normalize() must return a string, not "
                          "%.200s",
                          _PyType_Name(Py_TYPE(id2)));
             Py_DECREF(id2);
-            goto error;
+            செல் error;
         }
         id = id2;
     }
-    static const char * const forbidden[] = {
+    நிலையான மாறிலி எழுத்து * மாறிலி forbidden[] = {
         "None",
         "True",
         "False",
-        NULL
+        வெற்று
     };
-    for (int i = 0; forbidden[i] != NULL; i++) {
-        if (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
-            PyErr_Format(PyExc_ValueError,
+    க்கு (முழு i = 0; forbidden[i] != வெற்று; i++) {
+        எனில் (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
+            PyErr_Format(Py_Exc_மதிப்பு_Error,
                          "identifier field can't represent '%s' constant",
                          forbidden[i]);
             Py_DECREF(id);
-            goto error;
+            செல் error;
         }
     }
     PyInterpreterState *interp = _PyInterpreterState_GET();
     _PyUnicode_InternImmortal(interp, &id);
-    if (_PyArena_AddPyObject(p->arena, id) < 0)
+    எனில் (_PyArena_AddPyObject(p->arena, id) < 0)
     {
         Py_DECREF(id);
-        goto error;
+        செல் error;
     }
-    return id;
+    திரும்பு id;
 
 error:
     p->error_indicator = 1;
-    return NULL;
+    திரும்பு வெற்று;
 }
 
 // Return an arena-owned identifier; callers borrow the reference.
-static PyObject *
+நிலையான PyObject *
 get_cached_identifier(Parser *p, PyObject *bytes)
 {
-    const char *s = PyBytes_AsString(bytes);
-    if (!s) {
+    மாறிலி எழுத்து *s = PyBytes_AsString(bytes);
+    எனில் (!s) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
     // Identifiers repeat constantly; a small span-keyed cache skips the
     // UTF-8 decode + intern for repeated occurrences. Keys point into
@@ -679,219 +679,219 @@ get_cached_identifier(Parser *p, PyObject *bytes)
     // (including the second error pass, which reuses parser and arena).
     Py_ssize_t len = PyBytes_GET_SIZE(bytes);
     Py_hash_t hash = PyObject_Hash(bytes);
-    if (hash == -1) {
+    எனில் (hash == -1) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
     // Parses without identifiers do not need this cache.
-    if (p->identifier_cache == NULL) {
+    எனில் (p->identifier_cache == வெற்று) {
         p->identifier_cache = PyMem_Calloc(
-            IDENTIFIER_CACHE_SIZE, sizeof(*p->identifier_cache));
-        if (p->identifier_cache == NULL) {
+            IDENTIFIER_CACHE_SIZE, அளவு(*p->identifier_cache));
+        எனில் (p->identifier_cache == வெற்று) {
             p->error_indicator = 1;
-            return PyErr_NoMemory();
+            திரும்பு PyErr_NoMemory();
         }
     }
-    IdentifierCacheEntry *free_slot = NULL;
+    IdentifierCacheEntry *free_slot = வெற்று;
     size_t idx = (size_t)hash & (IDENTIFIER_CACHE_SIZE - 1);
-    for (int probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
+    க்கு (முழு probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
         IdentifierCacheEntry *entry = &p->identifier_cache[
             (idx + probe) & (IDENTIFIER_CACHE_SIZE - 1)];
-        if (entry->key == NULL) {
+        எனில் (entry->சாவி == வெற்று) {
             free_slot = entry;
-            break;
+            நிறுத்து;
         }
-        if (entry->hash == hash && entry->len == len &&
-            memcmp(entry->key, s, len) == 0)
+        எனில் (entry->hash == hash && entry->len == len &&
+            memcmp(entry->சாவி, s, len) == 0)
         {
-            return entry->value;
+            திரும்பு entry->மதிப்பு;
         }
     }
     PyObject *id = _PyPegen_new_identifier(p, s);
-    if (id == NULL) {
+    எனில் (id == வெற்று) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
-    if (free_slot != NULL) {
-        free_slot->key = s;
+    எனில் (free_slot != வெற்று) {
+        free_slot->சாவி = s;
         free_slot->len = len;
         free_slot->hash = hash;
-        free_slot->value = id;
+        free_slot->மதிப்பு = id;
     }
-    return id;
+    திரும்பு id;
 }
 
-static expr_ty
+நிலையான கோவை_ty
 _PyPegen_name_from_token(Parser *p, Token* t)
 {
-    if (t == NULL) {
-        return NULL;
+    எனில் (t == வெற்று) {
+        திரும்பு வெற்று;
     }
     // Reuse the AST node when backtracking revisits this token. Memo lookup
     // starts before the token and restores the position after it on a hit.
     // Token kinds can be memo keys: generated grammar rule IDs start at 1000.
-    int mark = p->mark - 1;
+    முழு mark = p->mark - 1;
     p->mark = mark;
-    expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NAME, &cached)) {
-        return cached;
+    கோவை_ty cached = வெற்று;
+    எனில் (_PyPegen_is_memoized(p, NAME, &cached)) {
+        திரும்பு cached;
     }
     p->mark = mark + 1;
     PyObject *id = get_cached_identifier(p, t->bytes);
-    if (id == NULL) {
-        return NULL;
+    எனில் (id == வெற்று) {
+        திரும்பு வெற்று;
     }
-    expr_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
+    கோவை_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
                                 t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
+    எனில் (result != வெற்று && Py_Pegen_செருகு_memo(p, mark, NAME, result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
-    return result;
+    திரும்பு result;
 }
 
-expr_ty
+கோவை_ty
 _PyPegen_name_token(Parser *p)
 {
     Token *t = _PyPegen_expect_token(p, NAME);
-    return _PyPegen_name_from_token(p, t);
+    திரும்பு _PyPegen_name_from_token(p, t);
 }
 
-void *
+வெறுமை *
 _PyPegen_string_token(Parser *p)
 {
-    return _PyPegen_expect_token(p, STRING);
+    திரும்பு _PyPegen_expect_token(p, STRING);
 }
 
-expr_ty _PyPegen_soft_keyword_token(Parser *p) {
+கோவை_ty _PyPegen_soft_keyword_token(Parser *p) {
     Token *t = _PyPegen_expect_token(p, NAME);
-    if (t == NULL) {
-        return NULL;
+    எனில் (t == வெற்று) {
+        திரும்பு வெற்று;
     }
-    char *the_token;
+    எழுத்து *the_token;
     Py_ssize_t size;
     PyBytes_AsStringAndSize(t->bytes, &the_token, &size);
-    for (char **keyword = p->soft_keywords; *keyword != NULL; keyword++) {
-        if (strlen(*keyword) == (size_t)size &&
+    க்கு (எழுத்து **keyword = p->soft_keywords; *keyword != வெற்று; keyword++) {
+        எனில் (strlen(*keyword) == (size_t)size &&
             strncmp(*keyword, the_token, (size_t)size) == 0) {
-            return _PyPegen_name_from_token(p, t);
+            திரும்பு _PyPegen_name_from_token(p, t);
         }
     }
-    return NULL;
+    திரும்பு வெற்று;
 }
 
-static PyObject *
-parsenumber_raw(const char *s)
+நிலையான PyObject *
+parsenumber_raw(மாறிலி எழுத்து *s)
 {
-    const char *end;
+    மாறிலி எழுத்து *end;
     long x;
-    double dx;
+    இரட்டை dx;
     Py_complex compl;
-    int imflag;
+    முழு imflag;
 
-    assert(s != NULL);
+    ப்ரதிஜ்ஞா(s != வெற்று);
     errno = 0;
     end = s + strlen(s) - 1;
     imflag = *end == 'j' || *end == 'J';
-    if (s[0] == '0') {
-        x = (long)PyOS_strtoul(s, (char **)&end, 0);
-        if (x < 0 && errno == 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+    எனில் (s[0] == '0') {
+        x = (long)PyOS_strtoul(s, (எழுத்து **)&end, 0);
+        எனில் (x < 0 && errno == 0) {
+            திரும்பு PyLong_FromString(s, (எழுத்து **)0, 0);
         }
     }
-    else {
-        x = PyOS_strtol(s, (char **)&end, 0);
+    இல்லையெனில் {
+        x = PyOS_strtol(s, (எழுத்து **)&end, 0);
     }
-    if (*end == '\0') {
-        if (errno != 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+    எனில் (*end == '\0') {
+        எனில் (errno != 0) {
+            திரும்பு PyLong_FromString(s, (எழுத்து **)0, 0);
         }
-        return PyLong_FromLong(x);
+        திரும்பு PyLong_FromLong(x);
     }
     /* XXX Huge floats may silently fail */
-    if (imflag) {
+    எனில் (imflag) {
         compl.real = 0.;
-        compl.imag = PyOS_string_to_double(s, (char **)&end, NULL);
-        if (compl.imag == -1.0 && PyErr_Occurred()) {
-            return NULL;
+        compl.imag = PyOS_string_to_double(s, (எழுத்து **)&end, வெற்று);
+        எனில் (compl.imag == -1.0 && PyErr_Occurred()) {
+            திரும்பு வெற்று;
         }
-        return PyComplex_FromCComplex(compl);
+        திரும்பு PyComplex_FromCComplex(compl);
     }
-    dx = PyOS_string_to_double(s, NULL, NULL);
-    if (dx == -1.0 && PyErr_Occurred()) {
-        return NULL;
+    dx = PyOS_string_to_double(s, வெற்று, வெற்று);
+    எனில் (dx == -1.0 && PyErr_Occurred()) {
+        திரும்பு வெற்று;
     }
-    return PyFloat_FromDouble(dx);
+    திரும்பு PyFloat_FromDouble(dx);
 }
 
-static PyObject *
-parsenumber(const char *s)
+நிலையான PyObject *
+parsenumber(மாறிலி எழுத்து *s)
 {
-    char *dup;
-    char *end;
-    PyObject *res = NULL;
+    எழுத்து *dup;
+    எழுத்து *end;
+    PyObject *res = வெற்று;
 
-    assert(s != NULL);
+    ப்ரதிஜ்ஞா(s != வெற்று);
 
-    if (strchr(s, '_') == NULL) {
-        return parsenumber_raw(s);
+    எனில் (strchr(s, '_') == வெற்று) {
+        திரும்பு parsenumber_raw(s);
     }
     /* Create a duplicate without underscores. */
     dup = PyMem_Malloc(strlen(s) + 1);
-    if (dup == NULL) {
-        return PyErr_NoMemory();
+    எனில் (dup == வெற்று) {
+        திரும்பு PyErr_NoMemory();
     }
     end = dup;
-    for (; *s; s++) {
-        if (*s != '_') {
+    க்கு (; *s; s++) {
+        எனில் (*s != '_') {
             *end++ = *s;
         }
     }
     *end = '\0';
     res = parsenumber_raw(dup);
     PyMem_Free(dup);
-    return res;
+    திரும்பு res;
 }
 
-expr_ty
-_PyPegen_number_token(Parser *p)
+கோவை_ty
+Py_Pegen_எண்_token(Parser *p)
 {
-    int mark = p->mark;
-    Token *t = _PyPegen_expect_token(p, NUMBER);
-    if (t == NULL) {
-        return NULL;
+    முழு mark = p->mark;
+    Token *t = _PyPegen_expect_token(p, எண்);
+    எனில் (t == வெற்று) {
+        திரும்பு வெற்று;
     }
 
     // Look up the node at the token's start, as for NAME tokens. A memo hit
     // advances the mark; on a miss, restore the position after the token.
     p->mark = mark;
-    expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NUMBER, &cached)) {
-        return cached;
+    கோவை_ty cached = வெற்று;
+    எனில் (_PyPegen_is_memoized(p, எண், &cached)) {
+        திரும்பு cached;
     }
     p->mark = mark + 1;
 
-    const char *num_raw = PyBytes_AsString(t->bytes);
-    if (num_raw == NULL) {
+    மாறிலி எழுத்து *இலக்கம்_raw = PyBytes_AsString(t->bytes);
+    எனில் (இலக்கம்_raw == வெற்று) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    if (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
+    எனில் (p->feature_version < 6 && strchr(இலக்கம்_raw, '_') != வெற்று) {
         p->error_indicator = 1;
-        return RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
+        திரும்பு RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
                                   "in Python 3.6 and greater");
     }
 
-    PyObject *c = parsenumber(num_raw);
+    PyObject *c = parsenumber(இலக்கம்_raw);
 
-    if (c == NULL) {
+    எனில் (c == வெற்று) {
         p->error_indicator = 1;
         PyThreadState *tstate = _PyThreadState_GET();
         // The only way a ValueError should happen in _this_ code is via
         // PyLong_FromString hitting a length limit.
-        if (tstate->current_exception != NULL &&
-            Py_TYPE(tstate->current_exception) == (PyTypeObject *)PyExc_ValueError
+        எனில் (tstate->current_exception != வெற்று &&
+            Py_TYPE(tstate->current_exception) == (PyTypeObject *)Py_Exc_மதிப்பு_Error
         ) {
             PyObject *exc = PyErr_GetRaisedException();
             /* Intentionally omitting columns to avoid a wall of 1000s of '^'s
@@ -906,78 +906,78 @@ _PyPegen_number_token(Parser *p)
                 exc);
             Py_DECREF(exc);
         }
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    if (_PyArena_AddPyObject(p->arena, c) < 0) {
+    எனில் (_PyArena_AddPyObject(p->arena, c) < 0) {
         Py_DECREF(c);
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
 
-    expr_ty result = _PyAST_Constant(c, NULL, t->lineno, t->col_offset,
+    கோவை_ty result = _PyAST_Constant(c, வெற்று, t->lineno, t->col_offset,
                                     t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
+    எனில் (result != வெற்று && Py_Pegen_செருகு_memo(p, mark, எண், result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        திரும்பு வெற்று;
     }
-    return result;
+    திரும்பு result;
 }
 
 
 
-static int
+நிலையான முழு
 compute_parser_flags(PyCompilerFlags *flags)
 {
-    int parser_flags = 0;
-    if (!flags) {
-        return 0;
+    முழு parser_flags = 0;
+    எனில் (!flags) {
+        திரும்பு 0;
     }
-    if (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
+    எனில் (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
         parser_flags |= PyPARSE_DONT_IMPLY_DEDENT;
     }
-    if (flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    எனில் (flags->cf_flags & PyCF_IGNORE_COOKIE) {
         parser_flags |= PyPARSE_IGNORE_COOKIE;
     }
-    if (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
+    எனில் (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
         parser_flags |= PyPARSE_BARRY_AS_BDFL;
     }
-    if (flags->cf_flags & PyCF_TYPE_COMMENTS) {
+    எனில் (flags->cf_flags & PyCF_TYPE_COMMENTS) {
         parser_flags |= PyPARSE_TYPE_COMMENTS;
     }
-    if (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
-        parser_flags |= PyPARSE_ALLOW_INCOMPLETE_INPUT;
+    எனில் (flags->cf_flags & Py_CF_ALLOW_INCOMPLETE_உள்ளீடு) {
+        parser_flags |= Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு;
     }
-    return parser_flags;
+    திரும்பு parser_flags;
 }
 
 // Parser API
 
 Parser *
-_PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
-                    int feature_version, int *errcode, const char* source, PyArena *arena)
+_PyPegen_Parser_New(கட்டமைப்பு tok_state *tok, முழு start_rule, முழு flags,
+                    முழு feature_version, முழு *errcode, மாறிலி எழுத்து* source, PyArena *arena)
 {
-    Parser *p = PyMem_Malloc(sizeof(Parser));
-    if (p == NULL) {
-        return (Parser *) PyErr_NoMemory();
+    Parser *p = PyMem_Malloc(அளவு(Parser));
+    எனில் (p == வெற்று) {
+        திரும்பு (Parser *) PyErr_NoMemory();
     }
-    assert(tok != NULL);
+    ப்ரதிஜ்ஞா(tok != வெற்று);
     _PyTokenizer_SetOptions(tok, 0, (flags & PyPARSE_TYPE_COMMENTS) > 0);
-    _PyTokenizer_AllowIncompleteInput(tok, flags & PyPARSE_ALLOW_INCOMPLETE_INPUT);
+    Py_Tokenizer_Allow_Incomplete_உள்ளீடு(tok, flags & Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு);
     p->tok = tok;
-    p->keywords = NULL;
+    p->keywords = வெற்று;
     p->n_keyword_lists = -1;
-    p->soft_keywords = NULL;
-    p->tokens = PyMem_Malloc(sizeof(Token *));
-    if (!p->tokens) {
+    p->soft_keywords = வெற்று;
+    p->tokens = PyMem_Malloc(அளவு(Token *));
+    எனில் (!p->tokens) {
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        திரும்பு (Parser *) PyErr_NoMemory();
     }
-    p->tokens[0] = PyMem_Calloc(1, sizeof(Token));
-    if (!p->tokens[0]) {
+    p->tokens[0] = PyMem_Calloc(1, அளவு(Token));
+    எனில் (!p->tokens[0]) {
         PyMem_Free(p->tokens);
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        திரும்பு (Parser *) PyErr_NoMemory();
     }
     p->type_ignore_comments = (growable_comment_array){0};
 
@@ -989,27 +989,27 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     p->arena = arena;
     p->start_rule = start_rule;
     p->parsing_started = 0;
-    p->normalize = NULL;
+    p->normalize = வெற்று;
     p->error_indicator = 0;
 
     p->starting_lineno = 0;
     p->starting_col_offset = 0;
     p->flags = flags;
     p->feature_version = feature_version;
-    p->known_err_token = NULL;
-    p->identifier_cache = NULL;
+    p->known_err_token = வெற்று;
+    p->identifier_cache = வெற்று;
     p->tstate = PyThreadState_Get();
     // Stack limits are initialized when the thread state is attached.
-    assert(((_PyThreadStateImpl *)p->tstate)->c_stack_hard_limit != 0);
-    p->stack_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_stack_soft_limit;
-#if _Py_STACK_GROWS_DOWN
-    p->stack_soft_limit += _PyOS_STACK_MARGIN_BYTES;
-#else
-    p->stack_soft_limit -= _PyOS_STACK_MARGIN_BYTES;
+    ப்ரதிஜ்ஞா(((_PyThreadStateImpl *)p->tstate)->c_அடுக்கு_hard_limit != 0);
+    p->அடுக்கு_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_அடுக்கு_soft_limit;
+#எனில் Py_அடுக்கு_GROWS_DOWN
+    p->அடுக்கு_soft_limit += Py_OS_அடுக்கு_MARGIN_BYTES;
+#இல்லையெனில்
+    p->அடுக்கு_soft_limit -= Py_OS_அடுக்கு_MARGIN_BYTES;
 #endif
     p->level = 0;
     p->call_invalid_rules = 0;
-    p->input_exhausted = 0;
+    p->உள்ளீடு_exhausted = 0;
     p->last_stmt_location.lineno = 0;
     p->last_stmt_location.col_offset = 0;
     p->last_stmt_location.end_lineno = 0;
@@ -1017,17 +1017,17 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
 #ifdef Py_DEBUG
     p->debug = _Py_GetConfig()->parser_debug;
 #endif
-    return p;
+    திரும்பு p;
 }
 
-void
+வெறுமை
 _PyPegen_Parser_Free(Parser *p)
 {
     PyMem_Free(p->identifier_cache);
     Py_XDECREF(p->normalize);
     // Resizes allocate blocks starting at indices 1, 2, 4, and so on.
     PyMem_Free(p->tokens[0]);
-    for (int i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
+    க்கு (முழு i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
         PyMem_Free(p->tokens[i]);
     }
     PyMem_Free(p->tokens);
@@ -1035,56 +1035,56 @@ _PyPegen_Parser_Free(Parser *p)
     PyMem_Free(p);
 }
 
-static void
+நிலையான வெறுமை
 reset_parser_state_for_error_pass(Parser *p)
 {
     p->last_stmt_location.lineno = 0;
     p->last_stmt_location.col_offset = 0;
     p->last_stmt_location.end_lineno = 0;
     p->last_stmt_location.end_col_offset = 0;
-    for (int i = 0; i < p->fill; i++) {
-        p->tokens[i]->memo = NULL;
+    க்கு (முழு i = 0; i < p->fill; i++) {
+        p->tokens[i]->memo = வெற்று;
         p->tokens[i]->memo_mask = 0;
     }
     p->mark = 0;
-    p->flags &= ~PyPARSE_ALLOW_INCOMPLETE_INPUT;
-    _PyTokenizer_AllowIncompleteInput(p->tok, 0);
+    p->flags &= ~Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு;
+    Py_Tokenizer_Allow_Incomplete_உள்ளீடு(p->tok, 0);
     p->call_invalid_rules = 1;
     _PyTokenizer_StopInteractive(p->tok);
 }
 
-static void
+நிலையான வெறுமை
 _PyPegen_set_syntax_error_metadata(Parser *p) {
     PyObject *exc = PyErr_GetRaisedException();
-    if (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
+    எனில் (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
         PyErr_SetRaisedException(exc);
-        return;
+        திரும்பு;
     }
-    const char *source = _PyTokenizer_RetainedSource(p->tok);
-    const char *encoding = _PyTokenizer_GetInfo(p->tok).encoding;
-    PyObject* the_source = NULL;
-    if (source) {
-        if (encoding == NULL) {
+    மாறிலி எழுத்து *source = _PyTokenizer_RetainedSource(p->tok);
+    மாறிலி எழுத்து *encoding = _PyTokenizer_GetInfo(p->tok).encoding;
+    PyObject* the_source = வெற்று;
+    எனில் (source) {
+        எனில் (encoding == வெற்று) {
             the_source = PyUnicode_FromString(source);
-        } else {
-            the_source = PyUnicode_Decode(source, strlen(source), encoding, NULL);
+        } இல்லையெனில் {
+            the_source = PyUnicode_Decode(source, strlen(source), encoding, வெற்று);
         }
     }
-    if (!the_source) {
+    எனில் (!the_source) {
         PyErr_Clear();
         the_source = Py_None;
         Py_INCREF(the_source);
     }
-    PyObject* metadata = Py_BuildValue(
+    PyObject* metadata = Py_Build_மதிப்பு(
         "(iiN)",
         p->last_stmt_location.lineno,
         p->last_stmt_location.col_offset,
         the_source // N gives ownership to metadata
     );
-    if (!metadata) {
+    எனில் (!metadata) {
         PyErr_Clear();
         PyErr_SetRaisedException(exc);
-        return;
+        திரும்பு;
     }
     PySyntaxErrorObject *syntax_error = (PySyntaxErrorObject *)exc;
 
@@ -1093,25 +1093,25 @@ _PyPegen_set_syntax_error_metadata(Parser *p) {
     PyErr_SetRaisedException(exc);
 }
 
-void *
+வெறுமை *
 _PyPegen_run_parser(Parser *p)
 {
-    void *res = _PyPegen_parse(p);
-    assert(p->level == 0);
-    if (res != NULL && PyErr_Occurred()) {
+    வெறுமை *res = _PyPegen_parse(p);
+    ப்ரதிஜ்ஞா(p->level == 0);
+    எனில் (res != வெற்று && PyErr_Occurred()) {
         // Discard a result returned with an exception still pending
         // (e.g. a MemoryError from a recovered-from allocation failure).
-        return NULL;
+        திரும்பு வெற்று;
     }
-    if (res == NULL) {
-        if (PyErr_Occurred() &&
-            (PyErr_ExceptionMatches(PyExc_IncompleteInputError) ||
+    எனில் (res == வெற்று) {
+        எனில் (PyErr_Occurred() &&
+            (PyErr_ExceptionMatches(Py_Exc_Incomplete_உள்ளீடு_Error) ||
              !PyErr_ExceptionMatches(PyExc_SyntaxError))) {
-            return NULL;
+            திரும்பு வெற்று;
         }
-        if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
-            p->input_exhausted && !PyErr_Occurred()) {
-            return _PyPegen_raise_incomplete_input(p);
+        எனில் ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு) &&
+            p->உள்ளீடு_exhausted && !PyErr_Occurred()) {
+            திரும்பு Py_Pegen_raise_incomplete_உள்ளீடு(p);
         }
        // Make a second parser pass. In this pass we activate heavier and slower checks
         // to produce better error messages and more complete diagnostics. Extra "invalid_*"
@@ -1125,141 +1125,141 @@ _PyPegen_run_parser(Parser *p)
         _Pypegen_set_syntax_error(p, last_token);
 
         // Set the metadata in the exception from p->last_stmt_location
-        if (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        எனில் (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_set_syntax_error_metadata(p);
         }
-       return NULL;
+       திரும்பு வெற்று;
     }
 
-    if (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
-        return RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
+    எனில் (p->start_rule == Py_single_உள்ளீடு && _PyTokenizer_HasTrailingStatement(p->tok)) {
+        திரும்பு RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
     }
 
     // test_peg_generator defines _Py_TEST_PEGEN to not call PyAST_Validate()
-#if defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
-    if (p->start_rule == Py_single_input ||
-        p->start_rule == Py_file_input ||
-        p->start_rule == Py_eval_input)
+#எனில் defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
+    எனில் (p->start_rule == Py_single_உள்ளீடு ||
+        p->start_rule == Py_file_உள்ளீடு ||
+        p->start_rule == Py_eval_உள்ளீடு)
     {
-        if (!_PyAST_Validate(res)) {
-            return NULL;
+        எனில் (!_PyAST_Validate(res)) {
+            திரும்பு வெற்று;
         }
     }
 #endif
-    return res;
+    திரும்பு res;
 }
 
 mod_ty
-_PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filename_ob,
-                             const char *enc, const char *ps1, const char *ps2,
-                             PyCompilerFlags *flags, int *errcode,
+_PyPegen_run_parser_from_file_pointer(FILE *fp, முழு start_rule, PyObject *filename_ob,
+                             மாறிலி எழுத்து *enc, மாறிலி எழுத்து *ps1, மாறிலி எழுத்து *ps2,
+                             PyCompilerFlags *flags, முழு *errcode,
                              PyObject **interactive_src, PyArena *arena)
 {
-    int parser_flags = compute_parser_flags(flags);
-    struct tok_state *tok = _PyTokenizer_FromFile(fp, enc, ps1, ps2);
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    முழு parser_flags = compute_parser_flags(flags);
+    கட்டமைப்பு tok_state *tok = _PyTokenizer_FromFile(fp, enc, ps1, ps2);
+    எனில் (tok == வெற்று) {
+        எனில் (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        இல்லையெனில் {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        திரும்பு வெற்று;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
     // From here on we need to clean up even if there's an error
-    mod_ty result = NULL;
+    mod_ty result = வெற்று;
 
     PyObject *module = PyUnicode_FromString("__main__");
-    if (module == NULL) {
-        goto error;
+    எனில் (module == வெற்று) {
+        செல் error;
     }
     _PyTokenizer_SetContext(tok, filename_ob, module);
     Py_DECREF(module);
 
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, PY_MINOR_VERSION,
-                                    errcode, NULL, arena);
-    if (p == NULL) {
-        goto error;
+                                    errcode, வெற்று, arena);
+    எனில் (p == வெற்று) {
+        செல் error;
     }
 
     result = _PyPegen_run_parser(p);
     _PyPegen_Parser_Free(p);
 
-    const char *source = _PyTokenizer_RetainedSource(tok);
-    if (source != NULL && result && interactive_src != NULL) {
+    மாறிலி எழுத்து *source = _PyTokenizer_RetainedSource(tok);
+    எனில் (source != வெற்று && result && interactive_src != வெற்று) {
         *interactive_src = PyUnicode_FromString(source);
-        if (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
+        எனில் (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
             Py_XDECREF(*interactive_src);
-            result = NULL;
-            goto error;
+            result = வெற்று;
+            செல் error;
         }
     }
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    திரும்பு result;
 }
 
 mod_ty
-_PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filename_ob,
+_PyPegen_run_parser_from_string(மாறிலி எழுத்து *str, முழு start_rule, PyObject *filename_ob,
                        PyCompilerFlags *flags, PyArena *arena, PyObject *module,
                        PyObject **incomplete)
 {
-    _PyTokenizer_Newline newline_mode = start_rule == Py_file_input
+    _PyTokenizer_Newline newline_mode = start_rule == Py_file_உள்ளீடு
         ? _PyTokenizer_IMPLY_NEWLINE : _PyTokenizer_KEEP_NEWLINE;
-    int parser_flags = compute_parser_flags(flags);
-    if (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
+    முழு parser_flags = compute_parser_flags(flags);
+    எனில் (parser_flags & Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு) {
         newline_mode = _PyTokenizer_APPEND_NEWLINE;
     }
 
-    struct tok_state *tok;
-    if (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    கட்டமைப்பு tok_state *tok;
+    எனில் (flags != வெற்று && flags->cf_flags & PyCF_IGNORE_COOKIE) {
         tok = _PyTokenizer_FromUTF8(str, newline_mode, 0);
-    } else {
+    } இல்லையெனில் {
         tok = _PyTokenizer_FromString(str, newline_mode, 0);
     }
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    எனில் (tok == வெற்று) {
+        எனில் (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        இல்லையெனில் {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        திரும்பு வெற்று;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
     _PyTokenizer_SetContext(tok, filename_ob, module);
 
     // We need to clear up from here on
-    mod_ty result = NULL;
+    mod_ty result = வெற்று;
 
-    int feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
+    முழு feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
         flags->cf_feature_version : PY_MINOR_VERSION;
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, feature_version,
-                                    NULL, str, arena);
-    if (p == NULL) {
-        goto error;
+                                    வெற்று, str, arena);
+    எனில் (p == வெற்று) {
+        செல் error;
     }
 
     result = _PyPegen_run_parser(p);
-    if (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
-        int needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
-        if ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
-            (start_rule != Py_file_input &&
+    எனில் (result != வெற்று && (parser_flags & Py_PARSE_ALLOW_INCOMPLETE_உள்ளீடு)) {
+        முழு needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
+        எனில் ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
+            (start_rule != Py_file_உள்ளீடு &&
              (needs_newline & _PyTokenizer_NEWLINE_INDENT)) ||
-            (start_rule == Py_single_input && p->input_exhausted &&
+            (start_rule == Py_single_உள்ளீடு && p->உள்ளீடு_exhausted &&
              (needs_newline & _PyTokenizer_NEWLINE_STATEMENT))) {
-            _PyPegen_raise_incomplete_input(p);
-            if (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
+            Py_Pegen_raise_incomplete_உள்ளீடு(p);
+            எனில் (incomplete != வெற்று && PyErr_ExceptionMatches(Py_Exc_Incomplete_உள்ளீடு_Error)) {
                 *incomplete = PyErr_GetRaisedException();
             }
-            else {
-                result = NULL;
+            இல்லையெனில் {
+                result = வெற்று;
             }
         }
     }
@@ -1267,5 +1267,5 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    திரும்பு result;
 }
