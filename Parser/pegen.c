@@ -28,76 +28,76 @@ struct _identifier_cache_entry {
 asdl_stmt_seq*
 _PyPegen_interactive_exit(Parser *p)
 {
-    if (p->errcode) {
+    ако (p->errcode) {
         *(p->errcode) = E_EOF;
     }
-    return NULL;
+    върни NULL;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
 {
     const unsigned char *data = (const unsigned char*)PyUnicode_AsUTF8(line);
-    if (data == NULL) {
-        return -1;
+    ако (data == NULL) {
+        върни -1;
     }
 
     Py_ssize_t len = 0;
-    while (col_offset < end_col_offset) {
+    докато (col_offset < end_col_offset) {
         Py_UCS4 ch = data[col_offset];
-        if (ch < 0x80) {
+        ако (ch < 0x80) {
             col_offset += 1;
-        } else if ((ch & 0xe0) == 0xc0) {
+        } иначе ако ((ch & 0xe0) == 0xc0) {
             col_offset += 2;
-        } else if ((ch & 0xf0) == 0xe0) {
+        } иначе ако ((ch & 0xf0) == 0xe0) {
             col_offset += 3;
-        } else if ((ch & 0xf8) == 0xf0) {
+        } иначе ако ((ch & 0xf8) == 0xf0) {
             col_offset += 4;
-        } else {
+        } иначе {
             PyErr_SetString(PyExc_ValueError, "Invalid UTF-8 sequence");
-            return -1;
+            върни -1;
         }
         len++;
     }
-    return len;
+    върни len;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset_raw(const char* str, Py_ssize_t col_offset)
 {
     Py_ssize_t len = (Py_ssize_t)strlen(str);
-    if (col_offset > len + 1) {
+    ако (col_offset > len + 1) {
         col_offset = len + 1;
     }
     assert(col_offset >= 0);
     PyObject *text = PyUnicode_DecodeUTF8(str, col_offset, "replace");
-    if (!text) {
-        return -1;
+    ако (!text) {
+        върни -1;
     }
     Py_ssize_t size = PyUnicode_GET_LENGTH(text);
     Py_DECREF(text);
-    return size;
+    върни size;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset)
 {
     const char *str = PyUnicode_AsUTF8(line);
-    if (!str) {
-        return -1;
+    ако (!str) {
+        върни -1;
     }
-    return _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
+    върни _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
 }
 
 // Here, mark is the start of the node, while p->mark is the end.
 // If node==NULL, they should be the same.
-int
-_PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
+цяло
+_PyPegen_insert_memo(Parser *p, цяло mark, цяло type, void *node)
 {
     // Insert in front
     Memo *m = _PyArena_Malloc(p->arena, sizeof(Memo));
-    if (m == NULL) {
-        return -1;
+    ако (m == NULL) {
+        върни -1;
     }
     m->type = type;
     m->node = node;
@@ -105,83 +105,83 @@ _PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
     m->next = p->tokens[mark]->memo;
     p->tokens[mark]->memo = m;
     p->tokens[mark]->memo_mask |= 1ULL << (type & 63);
-    return 0;
+    върни 0;
 }
 
 // Like _PyPegen_insert_memo(), but returns the inserted Memo so callers
 // can update it in place without re-walking the token's memo list.
 Memo *
-_PyPegen_insert_memo_direct(Parser *p, int mark, int type)
+_PyPegen_insert_memo_direct(Parser *p, цяло mark, цяло type)
 {
-    if (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
-        return NULL;
+    ако (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
+        върни NULL;
     }
-    return p->tokens[mark]->memo;
+    върни p->tokens[mark]->memo;
 }
 
 // Like _PyPegen_insert_memo(), but updates an existing node if found.
-int
-_PyPegen_update_memo(Parser *p, int mark, int type, void *node)
+цяло
+_PyPegen_update_memo(Parser *p, цяло mark, цяло type, void *node)
 {
-    for (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
+    за (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
+        ако (m->type == type) {
             // Update existing node.
             m->node = node;
             m->mark = p->mark;
-            return 0;
+            върни 0;
         }
     }
     // Insert new node.
-    return _PyPegen_insert_memo(p, mark, type, node);
+    върни _PyPegen_insert_memo(p, mark, type, node);
 }
 
-static int
+static цяло
 init_normalization(Parser *p)
 {
-    if (p->normalize) {
-        return 1;
+    ако (p->normalize) {
+        върни 1;
     }
     p->normalize = PyImport_ImportModuleAttrString("unicodedata", "normalize");
-    if (!p->normalize)
+    ако (!p->normalize)
     {
-        return 0;
+        върни 0;
     }
-    return 1;
+    върни 1;
 }
 
-int
+цяло
 _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity)
 {
-    if ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
+    ако ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
             (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(**buffer))) {
-        return -1;
+        върни -1;
     }
     Py_ssize_t new_capacity = *capacity == 0
         ? 1 : *capacity * PEGEN_ARRAY_GROWTH_FACTOR;
     void **new_buffer = PyMem_Realloc(*buffer, new_capacity * sizeof(**buffer));
-    if (new_buffer == NULL) {
-        return -1;
+    ако (new_buffer == NULL) {
+        върни -1;
     }
     *buffer = new_buffer;
     *capacity = new_capacity;
-    return 0;
+    върни 0;
 }
 
-static int
-growable_comment_array_add(growable_comment_array *arr, int lineno, char *comment)
+static цяло
+growable_comment_array_add(growable_comment_array *arr, цяло lineno, char *comment)
 {
-    if (arr->num_items >= arr->size) {
-        if (arr->size > (size_t)PY_SSIZE_T_MAX /
+    ако (arr->num_items >= arr->size) {
+        ако (arr->size > (size_t)PY_SSIZE_T_MAX /
                 (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*arr->items))) {
-            return 0;
+            върни 0;
         }
         size_t new_size = arr->size == 0
             ? TYPE_IGNORE_INITIAL_CAPACITY
             : arr->size * PEGEN_ARRAY_GROWTH_FACTOR;
         void *new_items_array = PyMem_Realloc(
             arr->items, new_size * sizeof(*arr->items));
-        if (!new_items_array) {
-            return 0;
+        ако (!new_items_array) {
+            върни 0;
         }
         arr->items = new_items_array;
         arr->size = new_size;
@@ -190,40 +190,40 @@ growable_comment_array_add(growable_comment_array *arr, int lineno, char *commen
     arr->items[arr->num_items].lineno = lineno;
     arr->items[arr->num_items].comment = comment;  // Take ownership
     arr->num_items++;
-    return 1;
+    върни 1;
 }
 
 static void
 growable_comment_array_deallocate(growable_comment_array *arr)
 {
-    for (size_t i = 0; i < arr->num_items; i++) {
+    за (size_t i = 0; i < arr->num_items; i++) {
         PyMem_Free(arr->items[i].comment);
     }
     PyMem_Free(arr->items);
 }
 
-static int
+static цяло
 _get_keyword_or_name_type(Parser *p, const char *text, Py_ssize_t length)
 {
     assert(length > 0);
 
-    if (length >= p->n_keyword_lists ||
+    ако (length >= p->n_keyword_lists ||
         p->keywords[length] == NULL ||
         p->keywords[length]->type == -1) {
-        return NAME;
+        върни NAME;
     }
-    for (KeywordToken *k = p->keywords[length]; k != NULL && k->type != -1; k++) {
-        if (memcmp(k->str, text, (size_t)length) == 0) {
-            return k->type;
+    за (KeywordToken *k = p->keywords[length]; k != NULL && k->type != -1; k++) {
+        ако (memcmp(k->str, text, (size_t)length) == 0) {
+            върни k->type;
         }
     }
-    return NAME;
+    върни NAME;
 }
 
 // Keep text only where grammar actions or helpers read it. Keyword error
 // actions use fixed spellings, so keywords do not need their text.
-static inline int
-token_needs_text(int type)
+static inline цяло
+token_needs_text(цяло type)
 {
     switch (type) {
         case NAME:
@@ -237,41 +237,41 @@ token_needs_text(int type)
         case TSTRING_END:
         case TYPE_COMMENT:
         case NOTEQUAL:  // _PyPegen_check_barry_as_flufl() distinguishes != and <>.
-            return 1;
+            върни 1;
         default:
-            return 0;
+            върни 0;
     }
 }
 
-static int
-initialize_token(Parser *p, Token *parser_token, struct token *new_token, int token_type) {
+static цяло
+initialize_token(Parser *p, Token *parser_token, struct token *new_token, цяло token_type) {
     assert(parser_token != NULL);
 
     parser_token->type = token_type;
     parser_token->bytes = NULL;
-    if (token_needs_text(token_type) && new_token->span.start >= 0) {
+    ако (token_needs_text(token_type) && new_token->span.start >= 0) {
         Py_ssize_t length;
         const char *text = _PyToken_TextView(p->tok, new_token, &length);
-        if (token_type == NAME) {
+        ако (token_type == NAME) {
             parser_token->type = _get_keyword_or_name_type(p, text, length);
         }
         // A name reclassified as a keyword does not need its text.
-        if (parser_token->type == token_type) {
+        ако (parser_token->type == token_type) {
             parser_token->bytes = PyBytes_FromStringAndSize(text, length);
-            if (parser_token->bytes == NULL) {
-                return -1;
+            ако (parser_token->bytes == NULL) {
+                върни -1;
             }
-            if (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
+            ако (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
                 Py_DECREF(parser_token->bytes);
-                return -1;
+                върни -1;
             }
         }
     }
 
     parser_token->metadata = NULL;
-    if (new_token->metadata != NULL) {
-        if (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
-            return -1;
+    ако (new_token->metadata != NULL) {
+        ако (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
+            върни -1;
         }
         parser_token->metadata = new_token->metadata;
         new_token->metadata = NULL;
@@ -290,44 +290,44 @@ initialize_token(Parser *p, Token *parser_token, struct token *new_token, int to
 
     p->fill += 1;
 
-    if (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
-        return _Pypegen_raise_decode_error(p);
+    ако (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
+        върни _Pypegen_raise_decode_error(p);
     }
 
-    return (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
+    върни (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
 }
 
-static int
+static цяло
 _resize_tokens_array(Parser *p) {
-    if (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
+    ако (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
             (size_t)p->size > PY_SSIZE_T_MAX /
                 (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*p->tokens))) {
         PyErr_NoMemory();
-        return -1;
+        върни -1;
     }
-    int newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
+    цяло newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
     Token **new_tokens = PyMem_Realloc(p->tokens, (size_t)newsize * sizeof(Token *));
-    if (new_tokens == NULL) {
+    ако (new_tokens == NULL) {
         PyErr_NoMemory();
-        return -1;
+        върни -1;
     }
     p->tokens = new_tokens;
 
     // Allocate new tokens together without moving existing ones: parser rules
     // may still hold pointers into earlier blocks. Parser_Free frees each block.
     Token *chunk = PyMem_Calloc((size_t)(newsize - p->size), sizeof(Token));
-    if (chunk == NULL) {
+    ако (chunk == NULL) {
         PyErr_NoMemory();
-        return -1;
+        върни -1;
     }
-    for (int i = p->size; i < newsize; i++) {
+    за (цяло i = p->size; i < newsize; i++) {
         p->tokens[i] = &chunk[i - p->size];
     }
     p->size = newsize;
-    return 0;
+    върни 0;
 }
 
-int
+цяло
 _PyPegen_fill_token(Parser *p)
 {
     struct token new_token;
@@ -335,18 +335,18 @@ _PyPegen_fill_token(Parser *p)
     _PyTokenizer_Get(p->tok, &new_token);
 
     // Record and skip '# type: ignore' comments
-    while (new_token.type == TYPE_IGNORE) {
+    докато (new_token.type == TYPE_IGNORE) {
         Py_ssize_t len;
         const char *text = _PyToken_TextView(p->tok, &new_token, &len);
         char *tag = PyMem_Malloc((size_t)len + 1);
-        if (tag == NULL) {
+        ако (tag == NULL) {
             PyErr_NoMemory();
             goto error;
         }
         memcpy(tag, text, (size_t)len);
         tag[len] = '\0';
         // Ownership of tag passes to the growable array
-        if (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
+        ако (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
             PyMem_Free(tag);
             PyErr_NoMemory();
             goto error;
@@ -354,43 +354,43 @@ _PyPegen_fill_token(Parser *p)
         _PyTokenizer_Get(p->tok, &new_token);
     }
 
-    int type = new_token.type;
+    цяло type = new_token.type;
     // EOF can finish an ordinary token. Only a boundary token means that
     // the grammar requested input beyond the last physical line.
-    if (type == ENDMARKER ||
+    ако (type == ENDMARKER ||
         (type == DEDENT && (p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
          _PyTokenizer_GetStatus(p->tok) == E_EOF)) {
         p->input_exhausted = 1;
     }
 
     // If we have reached the end and we are in single input mode we need to insert a newline and reset the parsing
-    if (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
+    ако (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
         type = NEWLINE; /* Add an extra newline */
         p->parsing_started = 0;
 
-        if (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
+        ако (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
             _PyTokenizer_ImplyDedents(p->tok);
         }
     }
-    else {
+    иначе {
         p->parsing_started = 1;
     }
 
     // Check if we are at the limit of the token array capacity and resize if needed
-    if ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
+    ако ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
         goto error;
     }
 
     Token *t = p->tokens[p->fill];
-    int result = initialize_token(p, t, &new_token, type);
+    цяло result = initialize_token(p, t, &new_token, type);
     _PyToken_Free(&new_token);
-    return result;
+    върни result;
 error:
     _PyToken_Free(&new_token);
-    return -1;
+    върни -1;
 }
 
-#if defined(Py_DEBUG)
+#ако defined(Py_DEBUG)
 // Instrumentation to count the effectiveness of memoization.
 // The array counts the number of tokens skipped by memoization,
 // indexed by type.
@@ -402,7 +402,7 @@ void
 _PyPegen_clear_memo_statistics(void)
 {
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
+    за (цяло i = 0; i < NSTATISTICS; i++) {
         memo_statistics[i] = 0;
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
@@ -412,53 +412,53 @@ PyObject *
 _PyPegen_get_memo_statistics(void)
 {
     PyObject *ret = PyList_New(NSTATISTICS);
-    if (ret == NULL) {
-        return NULL;
+    ако (ret == NULL) {
+        върни NULL;
     }
 
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
+    за (цяло i = 0; i < NSTATISTICS; i++) {
         PyObject *value = PyLong_FromLong(memo_statistics[i]);
-        if (value == NULL) {
+        ако (value == NULL) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            върни NULL;
         }
         // PyList_SetItem borrows a reference to value.
-        if (PyList_SetItem(ret, i, value) < 0) {
+        ако (PyList_SetItem(ret, i, value) < 0) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            върни NULL;
         }
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
-    return ret;
+    върни ret;
 }
 #endif
 
-int  // bool
-_PyPegen_is_memoized(Parser *p, int type, void *pres)
+цяло  // bool
+_PyPegen_is_memoized(Parser *p, цяло type, void *pres)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    ако (p->mark == p->fill) {
+        ако (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return -1;
+            върни -1;
         }
     }
 
     Token *t = p->tokens[p->mark];
 
-    if (!(t->memo_mask & (1ULL << (type & 63)))) {
-        return 0;
+    ако (!(t->memo_mask & (1ULL << (type & 63)))) {
+        върни 0;
     }
 
-    for (Memo *m = t->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
-#if defined(Py_DEBUG)
-            if (0 <= type && type < NSTATISTICS) {
+    за (Memo *m = t->memo; m != NULL; m = m->next) {
+        ако (m->type == type) {
+#ако defined(Py_DEBUG)
+            ако (0 <= type && type < NSTATISTICS) {
                 long count = m->mark - p->mark;
                 // A memoized negative result counts for one.
-                if (count <= 0) {
+                ако (count <= 0) {
                     count = 1;
                 }
                 PyMutex_Lock(&_PyRuntime.parser.mutex);
@@ -468,20 +468,20 @@ _PyPegen_is_memoized(Parser *p, int type, void *pres)
 #endif
             p->mark = m->mark;
             *(void **)(pres) = m->node;
-            return 1;
+            върни 1;
         }
     }
-    return 0;
+    върни 0;
 }
 
 #define LOOKAHEAD1(NAME, RES_TYPE)                                  \
-    int                                                             \
-    NAME (int positive, RES_TYPE (func)(Parser *), Parser *p)       \
+    цяло                                                             \
+    NAME (цяло positive, RES_TYPE (func)(Parser *), Parser *p)       \
     {                                                               \
-        int mark = p->mark;                                         \
+        цяло mark = p->mark;                                         \
         void *res = func(p);                                        \
         p->mark = mark;                                             \
-        return (res != NULL) == positive;                           \
+        върни (res != NULL) == positive;                           \
     }
 
 LOOKAHEAD1(_PyPegen_lookahead, void *)
@@ -490,93 +490,93 @@ LOOKAHEAD1(_PyPegen_lookahead_for_stmt, stmt_ty)
 #undef LOOKAHEAD1
 
 #define LOOKAHEAD2(NAME, RES_TYPE, T)                                   \
-    int                                                                 \
-    NAME (int positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
+    цяло                                                                 \
+    NAME (цяло positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
     {                                                                   \
-        int mark = p->mark;                                             \
+        цяло mark = p->mark;                                             \
         void *res = func(p, arg);                                       \
         p->mark = mark;                                                 \
-        return (res != NULL) == positive;                               \
+        върни (res != NULL) == positive;                               \
     }
 
-LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, int)
+LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, цяло)
 LOOKAHEAD2(_PyPegen_lookahead_with_string, expr_ty, const char *)
 #undef LOOKAHEAD2
 
 Token *
-_PyPegen_expect_token(Parser *p, int type)
+_PyPegen_expect_token(Parser *p, цяло type)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    ако (p->mark == p->fill) {
+        ако (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            върни NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
-       return NULL;
+    ако (t->type != type) {
+       върни NULL;
     }
     p->mark += 1;
-    return t;
+    върни t;
 }
 
 void*
 _PyPegen_expect_forced_result(Parser *p, void* result, const char* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    ако (p->error_indicator == 1) {
+        върни NULL;
     }
-    if (result == NULL) {
+    ако (result == NULL) {
         RAISE_SYNTAX_ERROR("expected (%s)", expected);
-        return NULL;
+        върни NULL;
     }
-    return result;
+    върни result;
 }
 
 Token *
-_PyPegen_expect_forced_token(Parser *p, int type, const char* expected) {
+_PyPegen_expect_forced_token(Parser *p, цяло type, const char* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    ако (p->error_indicator == 1) {
+        върни NULL;
     }
 
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    ако (p->mark == p->fill) {
+        ако (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            върни NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
+    ако (t->type != type) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(t, "expected '%s'", expected);
-        return NULL;
+        върни NULL;
     }
     p->mark += 1;
-    return t;
+    върни t;
 }
 
 expr_ty
 _PyPegen_expect_soft_keyword(Parser *p, const char *keyword)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    ако (p->mark == p->fill) {
+        ако (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            върни NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != NAME) {
-        return NULL;
+    ако (t->type != NAME) {
+        върни NULL;
     }
     const char *s = PyBytes_AsString(t->bytes);
-    if (!s) {
+    ако (!s) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
-    if (strcmp(s, keyword) != 0) {
-        return NULL;
+    ако (strcmp(s, keyword) != 0) {
+        върни NULL;
     }
-    return _PyPegen_name_token(p);
+    върни _PyPegen_name_token(p);
 }
 
 Token *
@@ -584,33 +584,33 @@ _PyPegen_get_last_nonnwhitespace_token(Parser *p)
 {
     assert(p->mark >= 0);
     Token *token = NULL;
-    for (int m = p->mark - 1; m >= 0; m--) {
+    за (цяло m = p->mark - 1; m >= 0; m--) {
         token = p->tokens[m];
-        if (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
+        ако (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
             break;
         }
     }
-    return token;
+    върни token;
 }
 
 PyObject *
 _PyPegen_new_identifier(Parser *p, const char *n)
 {
     PyObject *id = PyUnicode_DecodeUTF8(n, (Py_ssize_t)strlen(n), NULL);
-    if (!id) {
+    ако (!id) {
         goto error;
     }
     /* Check whether there are non-ASCII characters in the
        identifier; if so, normalize to NFKC. */
-    if (!PyUnicode_IS_ASCII(id))
+    ако (!PyUnicode_IS_ASCII(id))
     {
-        if (!init_normalization(p))
+        ако (!init_normalization(p))
         {
             Py_DECREF(id);
             goto error;
         }
         PyObject *form = PyUnicode_InternFromString("NFKC");
-        if (form == NULL)
+        ако (form == NULL)
         {
             Py_DECREF(id);
             goto error;
@@ -619,11 +619,11 @@ _PyPegen_new_identifier(Parser *p, const char *n)
         PyObject *id2 = PyObject_Vectorcall(p->normalize, args, 2, NULL);
         Py_DECREF(id);
         Py_DECREF(form);
-        if (!id2) {
+        ако (!id2) {
             goto error;
         }
 
-        if (!PyUnicode_Check(id2))
+        ако (!PyUnicode_Check(id2))
         {
             PyErr_Format(PyExc_TypeError,
                          "unicodedata.normalize() must return a string, not "
@@ -640,8 +640,8 @@ _PyPegen_new_identifier(Parser *p, const char *n)
         "False",
         NULL
     };
-    for (int i = 0; forbidden[i] != NULL; i++) {
-        if (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
+    за (цяло i = 0; forbidden[i] != NULL; i++) {
+        ако (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
             PyErr_Format(PyExc_ValueError,
                          "identifier field can't represent '%s' constant",
                          forbidden[i]);
@@ -651,16 +651,16 @@ _PyPegen_new_identifier(Parser *p, const char *n)
     }
     PyInterpreterState *interp = _PyInterpreterState_GET();
     _PyUnicode_InternImmortal(interp, &id);
-    if (_PyArena_AddPyObject(p->arena, id) < 0)
+    ако (_PyArena_AddPyObject(p->arena, id) < 0)
     {
         Py_DECREF(id);
         goto error;
     }
-    return id;
+    върни id;
 
 error:
     p->error_indicator = 1;
-    return NULL;
+    върни NULL;
 }
 
 // Return an arena-owned identifier; callers borrow the reference.
@@ -668,9 +668,9 @@ static PyObject *
 get_cached_identifier(Parser *p, PyObject *bytes)
 {
     const char *s = PyBytes_AsString(bytes);
-    if (!s) {
+    ако (!s) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
     // Identifiers repeat constantly; a small span-keyed cache skips the
     // UTF-8 decode + intern for repeated occurrences. Keys point into
@@ -679,105 +679,105 @@ get_cached_identifier(Parser *p, PyObject *bytes)
     // (including the second error pass, which reuses parser and arena).
     Py_ssize_t len = PyBytes_GET_SIZE(bytes);
     Py_hash_t hash = PyObject_Hash(bytes);
-    if (hash == -1) {
+    ако (hash == -1) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
     // Parses without identifiers do not need this cache.
-    if (p->identifier_cache == NULL) {
+    ако (p->identifier_cache == NULL) {
         p->identifier_cache = PyMem_Calloc(
             IDENTIFIER_CACHE_SIZE, sizeof(*p->identifier_cache));
-        if (p->identifier_cache == NULL) {
+        ако (p->identifier_cache == NULL) {
             p->error_indicator = 1;
-            return PyErr_NoMemory();
+            върни PyErr_NoMemory();
         }
     }
     IdentifierCacheEntry *free_slot = NULL;
     size_t idx = (size_t)hash & (IDENTIFIER_CACHE_SIZE - 1);
-    for (int probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
+    за (цяло probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
         IdentifierCacheEntry *entry = &p->identifier_cache[
             (idx + probe) & (IDENTIFIER_CACHE_SIZE - 1)];
-        if (entry->key == NULL) {
+        ако (entry->key == NULL) {
             free_slot = entry;
             break;
         }
-        if (entry->hash == hash && entry->len == len &&
+        ако (entry->hash == hash && entry->len == len &&
             memcmp(entry->key, s, len) == 0)
         {
-            return entry->value;
+            върни entry->value;
         }
     }
     PyObject *id = _PyPegen_new_identifier(p, s);
-    if (id == NULL) {
+    ако (id == NULL) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
-    if (free_slot != NULL) {
+    ако (free_slot != NULL) {
         free_slot->key = s;
         free_slot->len = len;
         free_slot->hash = hash;
         free_slot->value = id;
     }
-    return id;
+    върни id;
 }
 
 static expr_ty
 _PyPegen_name_from_token(Parser *p, Token* t)
 {
-    if (t == NULL) {
-        return NULL;
+    ако (t == NULL) {
+        върни NULL;
     }
     // Reuse the AST node when backtracking revisits this token. Memo lookup
     // starts before the token and restores the position after it on a hit.
     // Token kinds can be memo keys: generated grammar rule IDs start at 1000.
-    int mark = p->mark - 1;
+    цяло mark = p->mark - 1;
     p->mark = mark;
     expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NAME, &cached)) {
-        return cached;
+    ако (_PyPegen_is_memoized(p, NAME, &cached)) {
+        върни cached;
     }
     p->mark = mark + 1;
     PyObject *id = get_cached_identifier(p, t->bytes);
-    if (id == NULL) {
-        return NULL;
+    ако (id == NULL) {
+        върни NULL;
     }
     expr_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
                                 t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
+    ако (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
-    return result;
+    върни result;
 }
 
 expr_ty
 _PyPegen_name_token(Parser *p)
 {
     Token *t = _PyPegen_expect_token(p, NAME);
-    return _PyPegen_name_from_token(p, t);
+    върни _PyPegen_name_from_token(p, t);
 }
 
 void *
 _PyPegen_string_token(Parser *p)
 {
-    return _PyPegen_expect_token(p, STRING);
+    върни _PyPegen_expect_token(p, STRING);
 }
 
 expr_ty _PyPegen_soft_keyword_token(Parser *p) {
     Token *t = _PyPegen_expect_token(p, NAME);
-    if (t == NULL) {
-        return NULL;
+    ако (t == NULL) {
+        върни NULL;
     }
     char *the_token;
     Py_ssize_t size;
     PyBytes_AsStringAndSize(t->bytes, &the_token, &size);
-    for (char **keyword = p->soft_keywords; *keyword != NULL; keyword++) {
-        if (strlen(*keyword) == (size_t)size &&
+    за (char **keyword = p->soft_keywords; *keyword != NULL; keyword++) {
+        ако (strlen(*keyword) == (size_t)size &&
             strncmp(*keyword, the_token, (size_t)size) == 0) {
-            return _PyPegen_name_from_token(p, t);
+            върни _PyPegen_name_from_token(p, t);
         }
     }
-    return NULL;
+    върни NULL;
 }
 
 static PyObject *
@@ -787,41 +787,41 @@ parsenumber_raw(const char *s)
     long x;
     double dx;
     Py_complex compl;
-    int imflag;
+    цяло imflag;
 
     assert(s != NULL);
     errno = 0;
     end = s + strlen(s) - 1;
     imflag = *end == 'j' || *end == 'J';
-    if (s[0] == '0') {
+    ако (s[0] == '0') {
         x = (long)PyOS_strtoul(s, (char **)&end, 0);
-        if (x < 0 && errno == 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+        ако (x < 0 && errno == 0) {
+            върни PyLong_FromString(s, (char **)0, 0);
         }
     }
-    else {
+    иначе {
         x = PyOS_strtol(s, (char **)&end, 0);
     }
-    if (*end == '\0') {
-        if (errno != 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+    ако (*end == '\0') {
+        ако (errno != 0) {
+            върни PyLong_FromString(s, (char **)0, 0);
         }
-        return PyLong_FromLong(x);
+        върни PyLong_FromLong(x);
     }
     /* XXX Huge floats may silently fail */
-    if (imflag) {
+    ако (imflag) {
         compl.real = 0.;
         compl.imag = PyOS_string_to_double(s, (char **)&end, NULL);
-        if (compl.imag == -1.0 && PyErr_Occurred()) {
-            return NULL;
+        ако (compl.imag == -1.0 && PyErr_Occurred()) {
+            върни NULL;
         }
-        return PyComplex_FromCComplex(compl);
+        върни PyComplex_FromCComplex(compl);
     }
     dx = PyOS_string_to_double(s, NULL, NULL);
-    if (dx == -1.0 && PyErr_Occurred()) {
-        return NULL;
+    ако (dx == -1.0 && PyErr_Occurred()) {
+        върни NULL;
     }
-    return PyFloat_FromDouble(dx);
+    върни PyFloat_FromDouble(dx);
 }
 
 static PyObject *
@@ -833,64 +833,64 @@ parsenumber(const char *s)
 
     assert(s != NULL);
 
-    if (strchr(s, '_') == NULL) {
-        return parsenumber_raw(s);
+    ако (strchr(s, '_') == NULL) {
+        върни parsenumber_raw(s);
     }
     /* Create a duplicate without underscores. */
     dup = PyMem_Malloc(strlen(s) + 1);
-    if (dup == NULL) {
-        return PyErr_NoMemory();
+    ако (dup == NULL) {
+        върни PyErr_NoMemory();
     }
     end = dup;
-    for (; *s; s++) {
-        if (*s != '_') {
+    за (; *s; s++) {
+        ако (*s != '_') {
             *end++ = *s;
         }
     }
     *end = '\0';
     res = parsenumber_raw(dup);
     PyMem_Free(dup);
-    return res;
+    върни res;
 }
 
 expr_ty
 _PyPegen_number_token(Parser *p)
 {
-    int mark = p->mark;
+    цяло mark = p->mark;
     Token *t = _PyPegen_expect_token(p, NUMBER);
-    if (t == NULL) {
-        return NULL;
+    ако (t == NULL) {
+        върни NULL;
     }
 
     // Look up the node at the token's start, as for NAME tokens. A memo hit
     // advances the mark; on a miss, restore the position after the token.
     p->mark = mark;
     expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NUMBER, &cached)) {
-        return cached;
+    ако (_PyPegen_is_memoized(p, NUMBER, &cached)) {
+        върни cached;
     }
     p->mark = mark + 1;
 
     const char *num_raw = PyBytes_AsString(t->bytes);
-    if (num_raw == NULL) {
+    ако (num_raw == NULL) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
 
-    if (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
+    ако (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
         p->error_indicator = 1;
-        return RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
+        върни RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
                                   "in Python 3.6 and greater");
     }
 
     PyObject *c = parsenumber(num_raw);
 
-    if (c == NULL) {
+    ако (c == NULL) {
         p->error_indicator = 1;
         PyThreadState *tstate = _PyThreadState_GET();
         // The only way a ValueError should happen in _this_ code is via
         // PyLong_FromString hitting a length limit.
-        if (tstate->current_exception != NULL &&
+        ако (tstate->current_exception != NULL &&
             Py_TYPE(tstate->current_exception) == (PyTypeObject *)PyExc_ValueError
         ) {
             PyObject *exc = PyErr_GetRaisedException();
@@ -906,60 +906,60 @@ _PyPegen_number_token(Parser *p)
                 exc);
             Py_DECREF(exc);
         }
-        return NULL;
+        върни NULL;
     }
 
-    if (_PyArena_AddPyObject(p->arena, c) < 0) {
+    ако (_PyArena_AddPyObject(p->arena, c) < 0) {
         Py_DECREF(c);
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
 
     expr_ty result = _PyAST_Constant(c, NULL, t->lineno, t->col_offset,
                                     t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
+    ако (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        върни NULL;
     }
-    return result;
+    върни result;
 }
 
 
 
-static int
+static цяло
 compute_parser_flags(PyCompilerFlags *flags)
 {
-    int parser_flags = 0;
-    if (!flags) {
-        return 0;
+    цяло parser_flags = 0;
+    ако (!flags) {
+        върни 0;
     }
-    if (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
+    ако (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
         parser_flags |= PyPARSE_DONT_IMPLY_DEDENT;
     }
-    if (flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    ако (flags->cf_flags & PyCF_IGNORE_COOKIE) {
         parser_flags |= PyPARSE_IGNORE_COOKIE;
     }
-    if (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
+    ако (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
         parser_flags |= PyPARSE_BARRY_AS_BDFL;
     }
-    if (flags->cf_flags & PyCF_TYPE_COMMENTS) {
+    ако (flags->cf_flags & PyCF_TYPE_COMMENTS) {
         parser_flags |= PyPARSE_TYPE_COMMENTS;
     }
-    if (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
+    ако (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
         parser_flags |= PyPARSE_ALLOW_INCOMPLETE_INPUT;
     }
-    return parser_flags;
+    върни parser_flags;
 }
 
 // Parser API
 
 Parser *
-_PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
-                    int feature_version, int *errcode, const char* source, PyArena *arena)
+_PyPegen_Parser_New(struct tok_state *tok, цяло start_rule, цяло flags,
+                    цяло feature_version, цяло *errcode, const char* source, PyArena *arena)
 {
     Parser *p = PyMem_Malloc(sizeof(Parser));
-    if (p == NULL) {
-        return (Parser *) PyErr_NoMemory();
+    ако (p == NULL) {
+        върни (Parser *) PyErr_NoMemory();
     }
     assert(tok != NULL);
     _PyTokenizer_SetOptions(tok, 0, (flags & PyPARSE_TYPE_COMMENTS) > 0);
@@ -969,15 +969,15 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     p->n_keyword_lists = -1;
     p->soft_keywords = NULL;
     p->tokens = PyMem_Malloc(sizeof(Token *));
-    if (!p->tokens) {
+    ако (!p->tokens) {
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        върни (Parser *) PyErr_NoMemory();
     }
     p->tokens[0] = PyMem_Calloc(1, sizeof(Token));
-    if (!p->tokens[0]) {
+    ако (!p->tokens[0]) {
         PyMem_Free(p->tokens);
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        върни (Parser *) PyErr_NoMemory();
     }
     p->type_ignore_comments = (growable_comment_array){0};
 
@@ -1002,9 +1002,9 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     // Stack limits are initialized when the thread state is attached.
     assert(((_PyThreadStateImpl *)p->tstate)->c_stack_hard_limit != 0);
     p->stack_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_stack_soft_limit;
-#if _Py_STACK_GROWS_DOWN
+#ако _Py_STACK_GROWS_DOWN
     p->stack_soft_limit += _PyOS_STACK_MARGIN_BYTES;
-#else
+#иначе
     p->stack_soft_limit -= _PyOS_STACK_MARGIN_BYTES;
 #endif
     p->level = 0;
@@ -1017,7 +1017,7 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
 #ifdef Py_DEBUG
     p->debug = _Py_GetConfig()->parser_debug;
 #endif
-    return p;
+    върни p;
 }
 
 void
@@ -1027,7 +1027,7 @@ _PyPegen_Parser_Free(Parser *p)
     Py_XDECREF(p->normalize);
     // Resizes allocate blocks starting at indices 1, 2, 4, and so on.
     PyMem_Free(p->tokens[0]);
-    for (int i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
+    за (цяло i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
         PyMem_Free(p->tokens[i]);
     }
     PyMem_Free(p->tokens);
@@ -1042,7 +1042,7 @@ reset_parser_state_for_error_pass(Parser *p)
     p->last_stmt_location.col_offset = 0;
     p->last_stmt_location.end_lineno = 0;
     p->last_stmt_location.end_col_offset = 0;
-    for (int i = 0; i < p->fill; i++) {
+    за (цяло i = 0; i < p->fill; i++) {
         p->tokens[i]->memo = NULL;
         p->tokens[i]->memo_mask = 0;
     }
@@ -1056,21 +1056,21 @@ reset_parser_state_for_error_pass(Parser *p)
 static void
 _PyPegen_set_syntax_error_metadata(Parser *p) {
     PyObject *exc = PyErr_GetRaisedException();
-    if (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
+    ако (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
         PyErr_SetRaisedException(exc);
-        return;
+        върни;
     }
     const char *source = _PyTokenizer_RetainedSource(p->tok);
     const char *encoding = _PyTokenizer_GetInfo(p->tok).encoding;
     PyObject* the_source = NULL;
-    if (source) {
-        if (encoding == NULL) {
+    ако (source) {
+        ако (encoding == NULL) {
             the_source = PyUnicode_FromString(source);
-        } else {
+        } иначе {
             the_source = PyUnicode_Decode(source, strlen(source), encoding, NULL);
         }
     }
-    if (!the_source) {
+    ако (!the_source) {
         PyErr_Clear();
         the_source = Py_None;
         Py_INCREF(the_source);
@@ -1081,10 +1081,10 @@ _PyPegen_set_syntax_error_metadata(Parser *p) {
         p->last_stmt_location.col_offset,
         the_source // N gives ownership to metadata
     );
-    if (!metadata) {
+    ако (!metadata) {
         PyErr_Clear();
         PyErr_SetRaisedException(exc);
-        return;
+        върни;
     }
     PySyntaxErrorObject *syntax_error = (PySyntaxErrorObject *)exc;
 
@@ -1098,20 +1098,20 @@ _PyPegen_run_parser(Parser *p)
 {
     void *res = _PyPegen_parse(p);
     assert(p->level == 0);
-    if (res != NULL && PyErr_Occurred()) {
+    ако (res != NULL && PyErr_Occurred()) {
         // Discard a result returned with an exception still pending
         // (e.g. a MemoryError from a recovered-from allocation failure).
-        return NULL;
+        върни NULL;
     }
-    if (res == NULL) {
-        if (PyErr_Occurred() &&
+    ако (res == NULL) {
+        ако (PyErr_Occurred() &&
             (PyErr_ExceptionMatches(PyExc_IncompleteInputError) ||
              !PyErr_ExceptionMatches(PyExc_SyntaxError))) {
-            return NULL;
+            върни NULL;
         }
-        if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+        ако ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
             p->input_exhausted && !PyErr_Occurred()) {
-            return _PyPegen_raise_incomplete_input(p);
+            върни _PyPegen_raise_incomplete_input(p);
         }
        // Make a second parser pass. In this pass we activate heavier and slower checks
         // to produce better error messages and more complete diagnostics. Extra "invalid_*"
@@ -1125,47 +1125,47 @@ _PyPegen_run_parser(Parser *p)
         _Pypegen_set_syntax_error(p, last_token);
 
         // Set the metadata in the exception from p->last_stmt_location
-        if (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        ако (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_set_syntax_error_metadata(p);
         }
-       return NULL;
+       върни NULL;
     }
 
-    if (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
-        return RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
+    ако (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
+        върни RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
     }
 
     // test_peg_generator defines _Py_TEST_PEGEN to not call PyAST_Validate()
-#if defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
-    if (p->start_rule == Py_single_input ||
+#ако defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
+    ако (p->start_rule == Py_single_input ||
         p->start_rule == Py_file_input ||
         p->start_rule == Py_eval_input)
     {
-        if (!_PyAST_Validate(res)) {
-            return NULL;
+        ако (!_PyAST_Validate(res)) {
+            върни NULL;
         }
     }
 #endif
-    return res;
+    върни res;
 }
 
 mod_ty
-_PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filename_ob,
+_PyPegen_run_parser_from_file_pointer(FILE *fp, цяло start_rule, PyObject *filename_ob,
                              const char *enc, const char *ps1, const char *ps2,
-                             PyCompilerFlags *flags, int *errcode,
+                             PyCompilerFlags *flags, цяло *errcode,
                              PyObject **interactive_src, PyArena *arena)
 {
-    int parser_flags = compute_parser_flags(flags);
+    цяло parser_flags = compute_parser_flags(flags);
     struct tok_state *tok = _PyTokenizer_FromFile(fp, enc, ps1, ps2);
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    ако (tok == NULL) {
+        ако (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        иначе {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        върни NULL;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
@@ -1173,7 +1173,7 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
     mod_ty result = NULL;
 
     PyObject *module = PyUnicode_FromString("__main__");
-    if (module == NULL) {
+    ако (module == NULL) {
         goto error;
     }
     _PyTokenizer_SetContext(tok, filename_ob, module);
@@ -1181,7 +1181,7 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
 
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, PY_MINOR_VERSION,
                                     errcode, NULL, arena);
-    if (p == NULL) {
+    ако (p == NULL) {
         goto error;
     }
 
@@ -1189,9 +1189,9 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
     _PyPegen_Parser_Free(p);
 
     const char *source = _PyTokenizer_RetainedSource(tok);
-    if (source != NULL && result && interactive_src != NULL) {
+    ако (source != NULL && result && interactive_src != NULL) {
         *interactive_src = PyUnicode_FromString(source);
-        if (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
+        ако (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
             Py_XDECREF(*interactive_src);
             result = NULL;
             goto error;
@@ -1200,36 +1200,36 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    върни result;
 }
 
 mod_ty
-_PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filename_ob,
+_PyPegen_run_parser_from_string(const char *str, цяло start_rule, PyObject *filename_ob,
                        PyCompilerFlags *flags, PyArena *arena, PyObject *module,
                        PyObject **incomplete)
 {
     _PyTokenizer_Newline newline_mode = start_rule == Py_file_input
         ? _PyTokenizer_IMPLY_NEWLINE : _PyTokenizer_KEEP_NEWLINE;
-    int parser_flags = compute_parser_flags(flags);
-    if (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
+    цяло parser_flags = compute_parser_flags(flags);
+    ако (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
         newline_mode = _PyTokenizer_APPEND_NEWLINE;
     }
 
     struct tok_state *tok;
-    if (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    ако (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
         tok = _PyTokenizer_FromUTF8(str, newline_mode, 0);
-    } else {
+    } иначе {
         tok = _PyTokenizer_FromString(str, newline_mode, 0);
     }
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    ако (tok == NULL) {
+        ако (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        иначе {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        върни NULL;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
@@ -1238,27 +1238,27 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
     // We need to clear up from here on
     mod_ty result = NULL;
 
-    int feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
+    цяло feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
         flags->cf_feature_version : PY_MINOR_VERSION;
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, feature_version,
                                     NULL, str, arena);
-    if (p == NULL) {
+    ако (p == NULL) {
         goto error;
     }
 
     result = _PyPegen_run_parser(p);
-    if (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
-        int needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
-        if ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
+    ако (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
+        цяло needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
+        ако ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
             (start_rule != Py_file_input &&
              (needs_newline & _PyTokenizer_NEWLINE_INDENT)) ||
             (start_rule == Py_single_input && p->input_exhausted &&
              (needs_newline & _PyTokenizer_NEWLINE_STATEMENT))) {
             _PyPegen_raise_incomplete_input(p);
-            if (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
+            ако (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
                 *incomplete = PyErr_GetRaisedException();
             }
-            else {
+            иначе {
                 result = NULL;
             }
         }
@@ -1267,5 +1267,5 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    върни result;
 }

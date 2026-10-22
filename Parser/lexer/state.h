@@ -38,35 +38,35 @@ typedef struct _ftstring_state {
     unsigned char quote_size;
     unsigned char debug_expr;
     unsigned char replacement_depth;
-    int paren_level;
+    цяло paren_level;
     _PyTok_Off start;
     _PyTok_Loc start_loc;
     _PyTok_Span expr_span;
     tokenizer_comments *comments;
 } ftstring_state;
 
-static inline int
+static inline цяло
 _PyLexer_IsTString(ftstring_kind kind)
 {
-    return kind == TSTRING || kind == RAW_TSTRING;
+    върни kind == TSTRING || kind == RAW_TSTRING;
 }
 
-static inline int
+static inline цяло
 _PyLexer_IsRawString(ftstring_kind kind)
 {
-    return kind == RAW_FSTRING || kind == RAW_TSTRING;
+    върни kind == RAW_FSTRING || kind == RAW_TSTRING;
 }
 
 typedef struct {
-    int column;
-    int alternate_column;
+    цяло column;
+    цяло alternate_column;
 } indentation_level;
 
 typedef struct {
-    int depth;
-    int pending;
-    int at_bol;
-    int comment_newline;
+    цяло depth;
+    цяло pending;
+    цяло at_bol;
+    цяло comment_newline;
     indentation_level stack[MAXINDENT];
 } lexer_layout_state;
 
@@ -78,33 +78,33 @@ struct tok_state {
     _PyTok_Off start;
     _PyTok_Off line_start;
     _PyTok_SourceText source;
-    int done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
+    цяло done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
     /* NB If done != E_OK, cur must be == inp!!! */
     lexer_layout_state layout;
-    int lineno;         /* Current line number */
+    цяло lineno;         /* Current line number */
     _PyTok_Loc start_loc;
     _PyTokenizer_Diagnostic diagnostic;
-    int level;          /* () [] {} Parentheses nesting level */
+    цяло level;          /* () [] {} Parentheses nesting level */
             /* Used to allow free continuations inside them */
     char parenstack[MAXLEVEL];
-    int parenlinenostack[MAXLEVEL];
-    int parencolstack[MAXLEVEL];
+    цяло parenlinenostack[MAXLEVEL];
+    цяло parencolstack[MAXLEVEL];
     PyObject *filename;
     PyObject *module;
     struct _PyTok_Reader *reader;
 
-    int type_comments;      /* Whether to look for type comments */
+    цяло type_comments;      /* Whether to look for type comments */
 
     ftstring_state *ftstring_stack;
     ftstring_state ftstring_stack_inline[FTSTRING_STACK_INLINE_CAPACITY];
-    int ftstring_depth;
-    int ftstring_capacity;
-    int tok_extra_tokens;
-    int implicit_newline;
+    цяло ftstring_depth;
+    цяло ftstring_capacity;
+    цяло tok_extra_tokens;
+    цяло implicit_newline;
 #ifdef Py_DEBUG
-    int debug;
+    цяло debug;
 #endif
-    int barry_as_bdfl;
+    цяло barry_as_bdfl;
     unsigned char allow_incomplete_input;
     unsigned char needs_newline;
 };
@@ -114,36 +114,36 @@ _PyLexer_CurrentFTString(struct tok_state *tok)
 {
     assert(tok->ftstring_stack != NULL);
     assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    if (tok->ftstring_depth == 0) {
-        return NULL;
+    ако (tok->ftstring_depth == 0) {
+        върни NULL;
     }
-    return &tok->ftstring_stack[tok->ftstring_depth - 1];
+    върни &tok->ftstring_stack[tok->ftstring_depth - 1];
 }
 
 static inline char
 _PyLexer_StringPrefix(ftstring_kind kind)
 {
-    return _PyLexer_IsTString(kind) ? 't' : 'f';
+    върни _PyLexer_IsTString(kind) ? 't' : 'f';
 }
 
-static inline int
+static inline цяло
 _PyLexer_FTStringBracketDepth(const struct tok_state *tok,
                               const ftstring_state *state)
 {
-    return tok->level - state->paren_level;
+    върни tok->level - state->paren_level;
 }
 
-static inline int
+static inline цяло
 _PyLexer_ByteColumn(const struct tok_state *tok)
 {
     assert(tok->line_start >= 0);
     assert(tok->cur >= tok->line_start);
     Py_ssize_t column = tok->cur - tok->line_start;
     assert(column <= INT_MAX);
-    return (int)column;
+    върни (цяло)column;
 }
 
-int _PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end);
+цяло _PyLexer_token_setup(struct tok_state *tok, struct token *token, цяло type, _PyTok_Off start, _PyTok_Off end);
 
 void _PyLexer_ImplyDedents(struct tok_state *);
 
