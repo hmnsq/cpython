@@ -80,131 +80,131 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+整数
+_PyToken_OneChar(整数 c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    case '!': 戻る EXCLAMATION;
+    case '%': 戻る PERCENT;
+    case '&': 戻る AMPER;
+    case '(': 戻る LPAR;
+    case ')': 戻る RPAR;
+    case '*': 戻る STAR;
+    case '+': 戻る PLUS;
+    case ',': 戻る COMMA;
+    case '-': 戻る MINUS;
+    case '.': 戻る DOT;
+    case '/': 戻る SLASH;
+    case ':': 戻る COLON;
+    case ';': 戻る SEMI;
+    case '<': 戻る LESS;
+    case '=': 戻る EQUAL;
+    case '>': 戻る GREATER;
+    case '@': 戻る AT;
+    case '[': 戻る LSQB;
+    case ']': 戻る RSQB;
+    case '^': 戻る CIRCUMFLEX;
+    case '{': 戻る LBRACE;
+    case '|': 戻る VBAR;
+    case '}': 戻る RBRACE;
+    case '~': 戻る TILDE;
     }
-    return OP;
+    戻る OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+整数
+_PyToken_TwoChars(整数 c1, 整数 c2, 整数 BARRY_AS_BDFL)
 {
     switch (c1) {
     case '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        case '=': 戻る NOTEQUAL;
         }
         break;
     case '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        case '=': 戻る PERCENTEQUAL;
         }
         break;
     case '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        case '=': 戻る AMPEREQUAL;
         }
         break;
     case '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        case '*': 戻る DOUBLESTAR;
+        case '=': 戻る STAREQUAL;
         }
         break;
     case '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        case '=': 戻る PLUSEQUAL;
         }
         break;
     case '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        case '=': 戻る MINEQUAL;
+        case '>': 戻る RARROW;
         }
         break;
     case '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        case '/': 戻る DOUBLESLASH;
+        case '=': 戻る SLASHEQUAL;
         }
         break;
     case ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        case '=': 戻る COLONEQUAL;
         }
         break;
     case '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        case '<': 戻る LEFTSHIFT;
+        case '=': 戻る LESSEQUAL;
+        case '>': 戻る BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
         break;
     case '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        case '=': 戻る EQEQUAL;
         }
         break;
     case '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        case '=': 戻る GREATEREQUAL;
+        case '>': 戻る RIGHTSHIFT;
         }
         break;
     case '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        case '=': 戻る ATEQUAL;
         }
         break;
     case '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        case '=': 戻る CIRCUMFLEXEQUAL;
         }
         break;
     case '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        case '=': 戻る VBAREQUAL;
         }
         break;
     }
-    return OP;
+    戻る OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+整数
+_PyToken_ThreeChars(整数 c1, 整数 c2, 整数 c3)
 {
     switch (c1) {
     case '*':
         switch (c2) {
         case '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            case '=': 戻る DOUBLESTAREQUAL;
             }
             break;
         }
@@ -213,7 +213,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            case '.': 戻る ELLIPSIS;
             }
             break;
         }
@@ -222,7 +222,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            case '=': 戻る DOUBLESLASHEQUAL;
             }
             break;
         }
@@ -231,7 +231,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            case '=': 戻る LEFTSHIFTEQUAL;
             }
             break;
         }
@@ -240,11 +240,11 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            case '=': 戻る RIGHTSHIFTEQUAL;
             }
             break;
         }
         break;
     }
-    return OP;
+    戻る OP;
 }
