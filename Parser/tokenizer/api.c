@@ -7,27 +7,27 @@
 #include "reader_internal.h"
 #include "../lexer/state.h"
 
-int
-_PyTokenizer_GetStatus(const struct tok_state *tok)
+ចំនួនគត់
+_PyTokenizer_GetStatus(const sa_nracanaa tok_state *tok)
 {
-    return tok->done;
+    ត្រឡប់ tok->done;
 }
 
-int
-_PyTokenizer_GetNewlineRequirements(const struct tok_state *tok)
+ចំនួនគត់
+_PyTokenizer_GetNewlineRequirements(const sa_nracanaa tok_state *tok)
 {
-    return tok->needs_newline;
+    ត្រឡប់ tok->needs_newline;
 }
 
 _PyTokenizer_Info
-_PyTokenizer_GetInfo(const struct tok_state *tok)
+_PyTokenizer_GetInfo(const sa_nracanaa tok_state *tok)
 {
     _PyTokenizer_Info info = {
         .status = tok->done,
         .implicit_newline = tok->implicit_newline,
         .diagnostic = tok->diagnostic,
         .location = {tok->lineno, tok->line_start < 0
-            ? -1 : (int)(tok->cur - tok->line_start)},
+            ? -1 : (ចំនួនគត់)(tok->cur - tok->line_start)},
         .cursor = tok->cur,
         .input_span = {tok->buf_offset, tok->inp},
         .line_span = {tok->line_start, tok->inp},
@@ -40,37 +40,37 @@ _PyTokenizer_GetInfo(const struct tok_state *tok)
         .module = tok->module,
         .encoding = tok->reader->encoding,
     };
-    if (tok->level > 0) {
-        int level = tok->level - 1;
+    ប្រសិនបើ (tok->level > 0) {
+        ចំនួនគត់ level = tok->level - 1;
         info.delimiter = tok->parenstack[level];
         info.delimiter_loc = (_PyTok_Loc){
             tok->parenlinenostack[level], tok->parencolstack[level]};
     }
-    return info;
+    ត្រឡប់ info;
 }
 
-const char *
-_PyToken_TextView(const struct tok_state *tok, const struct token *token,
+const var_na *
+_PyToken_TextView(const sa_nracanaa tok_state *tok, const sa_nracanaa token *token,
                   Py_ssize_t *length)
 {
     assert(length != NULL);
-    if (token->span.start < 0) {
+    ប្រសិនបើ (token->span.start < 0) {
         assert(token->span.start == -1 && token->span.end == -1);
         *length = 0;
-        return "";
+        ត្រឡប់ "";
     }
-    return _PyTok_SourceSpanView(&tok->source, token->span, length);
+    ត្រឡប់ _PyTok_SourceSpanView(&tok->source, token->span, length);
 }
 
-const char *
-_PyTokenizer_SpanView(const struct tok_state *tok, _PyTok_Span span,
+const var_na *
+_PyTokenizer_SpanView(const sa_nracanaa tok_state *tok, _PyTok_Span span,
                       Py_ssize_t *length)
 {
-    return _PyTok_SourceSpanView(&tok->source, span, length);
+    ត្រឡប់ _PyTok_SourceSpanView(&tok->source, span, length);
 }
 
 void
-_PyToken_GetView(const struct tok_state *tok, const struct token *token,
+_PyToken_GetView(const sa_nracanaa tok_state *tok, const sa_nracanaa token *token,
                  _PyToken_View *view)
 {
     assert(view != NULL);
@@ -85,15 +85,15 @@ _PyToken_GetView(const struct tok_state *tok, const struct token *token,
     view->at_eof = tok->done == E_EOF;
 }
 
-const char *
-_PyTokenizer_LineView(const struct tok_state *tok, Py_ssize_t lineno,
+const var_na *
+_PyTokenizer_LineView(const sa_nracanaa tok_state *tok, Py_ssize_t lineno,
                       Py_ssize_t *length)
 {
-    return _PyTok_SourceLineView(&tok->source, lineno, length);
+    ត្រឡប់ _PyTok_SourceLineView(&tok->source, lineno, length);
 }
 
 void
-_PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
+_PyTokenizer_SetContext(sa_nracanaa tok_state *tok, PyObject *filename,
                         PyObject *module)
 {
     Py_XINCREF(filename);
@@ -103,60 +103,60 @@ _PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
 }
 
 void
-_PyTokenizer_SetOptions(struct tok_state *tok, int extra_tokens,
-                        int type_comments)
+_PyTokenizer_SetOptions(sa_nracanaa tok_state *tok, ចំនួនគត់ extra_tokens,
+                        ចំនួនគត់ type_comments)
 {
     tok->tok_extra_tokens = extra_tokens;
     tok->type_comments = type_comments;
 }
 
 void
-_PyTokenizer_ImplyDedents(struct tok_state *tok)
+_PyTokenizer_ImplyDedents(sa_nracanaa tok_state *tok)
 {
     _PyLexer_ImplyDedents(tok);
 }
 
 void
-_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, int allow)
+_PyTokenizer_AllowIncompleteInput(sa_nracanaa tok_state *tok, ចំនួនគត់ allow)
 {
     tok->allow_incomplete_input = allow != 0;
 }
 
-int
-_PyTokenizer_HasTrailingStatement(const struct tok_state *tok)
+ចំនួនគត់
+_PyTokenizer_HasTrailingStatement(const sa_nracanaa tok_state *tok)
 {
     _PyTok_Off cur = tok->cur;
     _PyTok_Off end = tok->source.base_offset + tok->source.len;
-    while (cur < end) {
-        int c = _PyTok_SourceByte(&tok->source, cur++);
-        if (c == '\0') {
-            return 0;
+    ខណៈពេល (cur < end) {
+        ចំនួនគត់ c = _PyTok_SourceByte(&tok->source, cur++);
+        ប្រសិនបើ (c == '\0') {
+            ត្រឡប់ 0;
         }
-        if (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
+        ប្រសិនបើ (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
             continue;
         }
-        if (c != '#') {
-            return 1;
+        ប្រសិនបើ (c != '#') {
+            ត្រឡប់ 1;
         }
-        while (cur < end) {
+        ខណៈពេល (cur < end) {
             c = _PyTok_SourceByte(&tok->source, cur);
-            if (c == '\0' || c == '\n') {
-                break;
+            ប្រសិនបើ (c == '\0' || c == '\n') {
+                bha_nga;
             }
             cur++;
         }
     }
-    return 0;
+    ត្រឡប់ 0;
 }
 
-int
-_PyTokenizer_IsInteractive(const struct tok_state *tok)
+ចំនួនគត់
+_PyTokenizer_IsInteractive(const sa_nracanaa tok_state *tok)
 {
-    return _PyTok_ReaderIsInteractive(tok);
+    ត្រឡប់ _PyTok_ReaderIsInteractive(tok);
 }
 
 void
-_PyTokenizer_StopInteractive(struct tok_state *tok)
+_PyTokenizer_StopInteractive(sa_nracanaa tok_state *tok)
 {
     _PyTok_ReaderStopInteractive(tok);
 }
