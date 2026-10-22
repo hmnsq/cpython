@@ -1,79 +1,79 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#അന്തര്ഭാവ "Python.h"
+#അന്തര്ഭാവ "pycore_token.h"
+#അന്തര്ഭാവ "errcode.h"
 
-#include "state.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#അന്തര്ഭാവ "state.h"
+#അന്തര്ഭാവ "../tokenizer/helpers.h"
+#അന്തര്ഭാവ "../tokenizer/reader.h"
 
 ftstring_state *
-_PyLexer_PushFTString(struct tok_state *tok)
+Py_Lexer_തള്ളുക_FTString(ഘടന tok_state *tok)
 {
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    int next_depth = tok->ftstring_depth + 1;
-    if (next_depth >= MAXFTSTRINGLEVEL) {
+    പ്രതിജ്ഞാ(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
+    പൂർണ്ണസംഖ്യ next_depth = tok->ftstring_depth + 1;
+    എങ്കിൽ (next_depth >= MAXFTSTRINGLEVEL) {
         _PyTokenizer_syntaxerror(
             tok, "too many nested f-strings or t-strings");
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
-    if (tok->ftstring_depth == tok->ftstring_capacity) {
-        int capacity = Py_MIN(Py_MAX(tok->ftstring_capacity * 2, 4),
+    എങ്കിൽ (tok->ftstring_depth == tok->ftstring_capacity) {
+        പൂർണ്ണസംഖ്യ capacity = Py_MIN(Py_MAX(tok->ftstring_capacity * 2, 4),
                               MAXFTSTRINGLEVEL);
-        size_t size = (size_t)capacity * sizeof(*tok->ftstring_stack);
-        ftstring_state *stack;
-        if (tok->ftstring_stack == tok->ftstring_stack_inline) {
-            stack = PyMem_Malloc(size);
-            if (stack != NULL) {
-                memcpy(stack, tok->ftstring_stack,
-                       (size_t)tok->ftstring_depth * sizeof(*stack));
+        size_t size = (size_t)capacity * വലുപ്പം(*tok->ftstring_അട്ടി);
+        ftstring_state *അട്ടി;
+        എങ്കിൽ (tok->ftstring_അട്ടി == tok->ftstring_അട്ടി_inline) {
+            അട്ടി = PyMem_Malloc(size);
+            എങ്കിൽ (അട്ടി != ശൂന്യ) {
+                memcpy(അട്ടി, tok->ftstring_അട്ടി,
+                       (size_t)tok->ftstring_depth * വലുപ്പം(*അട്ടി));
             }
         }
-        else {
-            stack = PyMem_Realloc(tok->ftstring_stack, size);
+        അല്ലെങ്കിൽ {
+            അട്ടി = PyMem_Realloc(tok->ftstring_അട്ടി, size);
         }
-        if (stack == NULL) {
+        എങ്കിൽ (അട്ടി == ശൂന്യ) {
             PyErr_NoMemory();
             tok->done = E_NOMEM;
-            return NULL;
+            തിരികെ ശൂന്യ;
         }
-        tok->ftstring_stack = stack;
+        tok->ftstring_അട്ടി = അട്ടി;
         tok->ftstring_capacity = capacity;
     }
-    ftstring_state *state = &tok->ftstring_stack[tok->ftstring_depth];
+    ftstring_state *state = &tok->ftstring_അട്ടി[tok->ftstring_depth];
     tok->ftstring_depth = next_depth;
     *state = (ftstring_state){0};
-    return state;
+    തിരികെ state;
 }
 
-void
-_PyLexer_PopFTString(struct tok_state *tok)
+ശൂന്യം
+Py_Lexer_എടുക്കുക_FTString(ഘടന tok_state *tok)
 {
     ftstring_state *state = _PyLexer_CurrentFTString(tok);
-    assert(state != NULL);
+    പ്രതിജ്ഞാ(state != ശൂന്യ);
     PyMem_Free(state->comments);
     tok->ftstring_depth--;
 }
 
 /* Free a tok_state structure */
-void
-_PyTokenizer_Free(struct tok_state *tok)
+ശൂന്യം
+_PyTokenizer_Free(ഘടന tok_state *tok)
 {
     Py_XDECREF(tok->filename);
     Py_XDECREF(tok->module);
     _PyTok_ReaderFree(tok);
     _PyTok_SourceClear(&tok->source);
-    for (int i = 0; i < tok->ftstring_depth; i++) {
-        PyMem_Free(tok->ftstring_stack[i].comments);
+    വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; i < tok->ftstring_depth; i++) {
+        PyMem_Free(tok->ftstring_അട്ടി[i].comments);
     }
-    if (tok->ftstring_stack != tok->ftstring_stack_inline) {
-        PyMem_Free(tok->ftstring_stack);
+    എങ്കിൽ (tok->ftstring_അട്ടി != tok->ftstring_അട്ടി_inline) {
+        PyMem_Free(tok->ftstring_അട്ടി);
     }
     PyMem_Free(tok);
 }
 
-void
-_PyToken_Init(struct token *token) {
-    *token = (struct token){
+ശൂന്യം
+_PyToken_Init(ഘടന token *token) {
+    *token = (ഘടന token){
         .type = -1,
         .span = {-1, -1},
         .start_loc = {-1, -1},
@@ -81,19 +81,19 @@ _PyToken_Init(struct token *token) {
     };
 }
 
-int
-_PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end)
+പൂർണ്ണസംഖ്യ
+_PyLexer_token_setup(ഘടന tok_state *tok, ഘടന token *token, പൂർണ്ണസംഖ്യ type, _PyTok_Off start, _PyTok_Off end)
 {
     token->level = tok->level;
     token->is_raw = 0;
-    assert((start == -1 && end == -1) || (start >= 0 && end >= start));
+    പ്രതിജ്ഞാ((start == -1 && end == -1) || (start >= 0 && end >= start));
     token->span = (_PyTok_Span){start, end};
-    if (start >= 0) {
+    എങ്കിൽ (start >= 0) {
         token->start_loc = tok->start_loc;
         token->end_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
     }
-    else {
+    അല്ലെങ്കിൽ {
         token->start_loc = token->end_loc = (_PyTok_Loc){tok->lineno, -1};
     }
-    return type;
+    തിരികെ type;
 }

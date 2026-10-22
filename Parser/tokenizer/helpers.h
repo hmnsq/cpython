@@ -1,28 +1,28 @@
 #ifndef _PY_TOKENIZER_HELPERS_H_
 #define _PY_TOKENIZER_HELPERS_H_
 
-#include "Python.h"
+#അന്തര്ഭാവ "Python.h"
 
-#include "../lexer/state.h"
+#അന്തര്ഭാവ "../lexer/state.h"
 
-int _PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...);
+പൂർണ്ണസംഖ്യ _PyTokenizer_syntaxerror(ഘടന tok_state *tok, സ്ഥിരം അക്ഷരം *format, ...);
 /* Positive range columns are 1-based byte columns. A start column of -1
    derives the character column from the reporting cursor; an end column of
    -1 uses the start column. */
-int _PyTokenizer_syntaxerror_known_range(struct tok_state *tok, int col_offset, int end_col_offset, const char *format, ...);
-int _PyTokenizer_syntaxerror_at(
-    struct tok_state *tok, const char *line_start, Py_ssize_t cursor_offset,
-    int lineno, int col_offset, int end_col_offset, const char *format, ...);
-int _PyTokenizer_indenterror(struct tok_state *tok);
-int _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char);
-int _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *format, ...);
+പൂർണ്ണസംഖ്യ _PyTokenizer_syntaxerror_known_range(ഘടന tok_state *tok, പൂർണ്ണസംഖ്യ col_offset, പൂർണ്ണസംഖ്യ end_col_offset, സ്ഥിരം അക്ഷരം *format, ...);
+പൂർണ്ണസംഖ്യ _PyTokenizer_syntaxerror_at(
+    ഘടന tok_state *tok, സ്ഥിരം അക്ഷരം *വരി_start, Py_ssize_t cursor_offset,
+    പൂർണ്ണസംഖ്യ lineno, പൂർണ്ണസംഖ്യ col_offset, പൂർണ്ണസംഖ്യ end_col_offset, സ്ഥിരം അക്ഷരം *format, ...);
+പൂർണ്ണസംഖ്യ _PyTokenizer_indenterror(ഘടന tok_state *tok);
+പൂർണ്ണസംഖ്യ _PyTokenizer_warn_invalid_escape_sequence(ഘടന tok_state *tok, പൂർണ്ണസംഖ്യ first_invalid_escape_char);
+പൂർണ്ണസംഖ്യ _PyTokenizer_parser_warn(ഘടന tok_state *tok, PyObject *category, സ്ഥിരം അക്ഷരം *format, ...);
 
-void _PyTokenizer_raise_init_error(PyObject *filename);
+ശൂന്യം _PyTokenizer_raise_init_error(PyObject *filename);
 
-int _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno);
+പൂർണ്ണസംഖ്യ _PyTokenizer_ensure_utf8(സ്ഥിരം അക്ഷരം *വരി, ഘടന tok_state *tok, പൂർണ്ണസംഖ്യ lineno);
 
 #ifdef Py_DEBUG
-void _PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size);
+ശൂന്യം _PyTokenizer_print_escape(FILE *f, സ്ഥിരം അക്ഷരം *s, Py_ssize_t size);
 #endif
 
 

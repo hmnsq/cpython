@@ -1,141 +1,141 @@
-#include <Python.h>
-#include <errcode.h>
+#അന്തര്ഭാവ <Python.h>
+#അന്തര്ഭാവ <errcode.h>
 
-#include "pycore_pyerrors.h"      // _PyErr_ProgramDecodedTextObject()
-#include "pycore_runtime.h"       // _Py_ID()
-#include "pycore_tuple.h"         // _PyTuple_FromPair
-#include "pegen.h"
-#include "tokenizer/tokenizer.h"
+#അന്തര്ഭാവ "pycore_pyerrors.h"      // _PyErr_ProgramDecodedTextObject()
+#അന്തര്ഭാവ "pycore_runtime.h"       // _Py_ID()
+#അന്തര്ഭാവ "pycore_tuple.h"         // _PyTuple_FromPair
+#അന്തര്ഭാവ "pegen.h"
+#അന്തര്ഭാവ "tokenizer/tokenizer.h"
 
 // TOKENIZER ERRORS
 
-void *
-_PyPegen_raise_incomplete_input(Parser *p)
+ശൂന്യം *
+Py_Pegen_raise_incomplete_നിവേശം(Parser *p)
 {
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) && !PyErr_Occurred()) {
-        return _PyPegen_raise_error(p, PyExc_IncompleteInputError, 0,
+    എങ്കിൽ ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_നിവേശം) && !PyErr_Occurred()) {
+        തിരികെ _PyPegen_raise_error(p, Py_Exc_Incomplete_നിവേശം_Error, 0,
                                     "incomplete input");
     }
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-static inline void
+സ്ഥിതം വരിയിൽ ശൂന്യം
 raise_unclosed_parentheses_error(Parser *p) {
        _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-       int error_lineno = info.delimiter_loc.lineno;
-       int error_col = info.delimiter_loc.byte_col;
+       പൂർണ്ണസംഖ്യ error_lineno = info.delimiter_loc.lineno;
+       പൂർണ്ണസംഖ്യ error_col = info.delimiter_loc.byte_col;
        RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError,
                                   error_lineno, error_col, error_lineno, -1,
                                   "'%c' was never closed",
                                   info.delimiter);
 }
 
-int
+പൂർണ്ണസംഖ്യ
 _Pypegen_tokenizer_error(Parser *p)
 {
-    if (PyErr_Occurred()) {
-        return -1;
+    എങ്കിൽ (PyErr_Occurred()) {
+        തിരികെ -1;
     }
 
-    const char *msg = NULL;
+    സ്ഥിരം അക്ഷരം *സന്ദേശം = ശൂന്യ;
     PyObject* errtype = PyExc_SyntaxError;
     Py_ssize_t col_offset = -1;
     p->error_indicator = 1;
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+    എങ്കിൽ ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_നിവേശം) &&
         (info.status == E_EOF || info.status == E_INCOMPLETE))
     {
-        _PyPegen_raise_incomplete_input(p);
-        return -1;
+        Py_Pegen_raise_incomplete_നിവേശം(p);
+        തിരികെ -1;
     }
-    switch (info.status) {
-        case E_INCOMPLETE:
+    തിരഞ്ഞെടുപ്പ് (info.status) {
+        അവസ്ഥ E_INCOMPLETE:
             // The diagnostic pass rejected this unfinished token. Let the
             // parser report the syntax error at its original failure point.
-            return -1;
-        case E_TOKEN:
-            msg = "invalid token";
-            break;
-        case E_EOF:
-            if (info.level) {
+            തിരികെ -1;
+        അവസ്ഥ E_TOKEN:
+            സന്ദേശം = "invalid token";
+            നിർത്തുക;
+        അവസ്ഥ E_EOF:
+            എങ്കിൽ (info.level) {
                 raise_unclosed_parentheses_error(p);
-            } else {
+            } അല്ലെങ്കിൽ {
                 RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
             }
-            return -1;
-        case E_DEDENT:
+            തിരികെ -1;
+        അവസ്ഥ E_DEDENT:
             RAISE_INDENTATION_ERROR("unindent does not match any outer indentation level");
-            return -1;
-        case E_INTR:
-            if (!PyErr_Occurred()) {
+            തിരികെ -1;
+        അവസ്ഥ E_INTR:
+            എങ്കിൽ (!PyErr_Occurred()) {
                 PyErr_SetNone(PyExc_KeyboardInterrupt);
             }
-            return -1;
-        case E_NOMEM:
+            തിരികെ -1;
+        അവസ്ഥ E_NOMEM:
             PyErr_NoMemory();
-            return -1;
-        case E_TABSPACE:
+            തിരികെ -1;
+        അവസ്ഥ E_TABSPACE:
             errtype = PyExc_TabError;
-            msg = "inconsistent use of tabs and spaces in indentation";
-            break;
-        case E_TOODEEP:
+            സന്ദേശം = "inconsistent use of tabs and spaces in indentation";
+            നിർത്തുക;
+        അവസ്ഥ E_TOODEEP:
             errtype = PyExc_IndentationError;
-            msg = "too many levels of indentation";
-            break;
-        case E_LINECONT: {
-            col_offset = info.cursor - info.line_span.start - 1;
-            msg = "unexpected character after line continuation character";
-            break;
+            സന്ദേശം = "too many levels of indentation";
+            നിർത്തുക;
+        അവസ്ഥ E_LINECONT: {
+            col_offset = info.cursor - info.വരി_span.start - 1;
+            സന്ദേശം = "unexpected character after line continuation character";
+            നിർത്തുക;
         }
-        case E_COLUMNOVERFLOW:
+        അവസ്ഥ E_COLUMNOVERFLOW:
             PyErr_SetString(PyExc_OverflowError,
                     "Parser column offset overflow - source line is too big");
-            return -1;
-        default:
-            msg = "unknown parsing error";
+            തിരികെ -1;
+        സ്ഥിരസ്ഥിതി:
+            സന്ദേശം = "unknown parsing error";
     }
 
     RAISE_ERROR_KNOWN_LOCATION(p, errtype, info.location.lineno,
                                col_offset >= 0 ? col_offset : 0,
-                               info.location.lineno, -1, msg);
-    return -1;
+                               info.location.lineno, -1, സന്ദേശം);
+    തിരികെ -1;
 }
 
-int
+പൂർണ്ണസംഖ്യ
 _Pypegen_raise_decode_error(Parser *p)
 {
-    assert(PyErr_Occurred());
-    const char *errtype = NULL;
-    if (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
+    പ്രതിജ്ഞാ(PyErr_Occurred());
+    സ്ഥിരം അക്ഷരം *errtype = ശൂന്യ;
+    എങ്കിൽ (PyErr_ExceptionMatches(PyExc_UnicodeError)) {
         errtype = "unicode error";
     }
-    else if (PyErr_ExceptionMatches(PyExc_ValueError)) {
+    അല്ലെങ്കിൽ എങ്കിൽ (PyErr_ExceptionMatches(Py_Exc_മൂല്യം_Error)) {
         errtype = "value error";
     }
-    if (errtype) {
+    എങ്കിൽ (errtype) {
         PyObject *type;
-        PyObject *value;
+        PyObject *മൂല്യം;
         PyObject *tback;
         PyObject *errstr;
-        PyErr_Fetch(&type, &value, &tback);
-        errstr = PyObject_Str(value);
-        if (errstr) {
+        PyErr_Fetch(&type, &മൂല്യം, &tback);
+        errstr = PyObject_Str(മൂല്യം);
+        എങ്കിൽ (errstr) {
             RAISE_SYNTAX_ERROR("(%s) %U", errtype, errstr);
             Py_DECREF(errstr);
         }
-        else {
+        അല്ലെങ്കിൽ {
             PyErr_Clear();
             RAISE_SYNTAX_ERROR("(%s) unknown error", errtype);
         }
         Py_XDECREF(type);
-        Py_XDECREF(value);
+        Py_XDECREF(മൂല്യം);
         Py_XDECREF(tback);
     }
 
-    return -1;
+    തിരികെ -1;
 }
 
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // Tokenize the whole input to see if there are any tokenization
     // errors such as mismatching parentheses. These will get priority
@@ -143,45 +143,45 @@ _PyPegen_tokenize_full_source_to_check_for_errors(Parser *p) {
     // before the one that we had for the generic error.
 
     // We don't want to tokenize to the end for interactive input
-    if (_PyTokenizer_IsInteractive(p->tok)) {
-        return 0;
+    എങ്കിൽ (_PyTokenizer_IsInteractive(p->tok)) {
+        തിരികെ 0;
     }
 
-    PyObject *type, *value, *traceback;
-    PyErr_Fetch(&type, &value, &traceback);
+    PyObject *type, *മൂല്യം, *traceback;
+    PyErr_Fetch(&type, &മൂല്യം, &traceback);
 
-    Token *current_token = p->known_err_token != NULL ? p->known_err_token : p->tokens[p->fill - 1];
-    Py_ssize_t current_err_line = current_token->lineno;
+    Token *current_token = p->known_err_token != ശൂന്യ ? p->known_err_token : p->tokens[p->fill - 1];
+    Py_ssize_t current_err_വരി = current_token->lineno;
 
-    int ret = 0;
-    struct token new_token;
+    പൂർണ്ണസംഖ്യ ret = 0;
+    ഘടന token new_token;
     _PyToken_Init(&new_token);
 
-    for (;;) {
+    വേണ്ടി (;;) {
         _PyTokenizer_Get(p->tok, &new_token);
-        switch (new_token.type) {
-            case ERRORTOKEN: {
-                if (PyErr_Occurred()) {
+        തിരഞ്ഞെടുപ്പ് (new_token.type) {
+            അവസ്ഥ ERRORTOKEN: {
+                എങ്കിൽ (PyErr_Occurred()) {
                     ret = -1;
-                    goto exit;
+                    പോകുക exit;
                 }
                 _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-                if (info.level != 0) {
-                    int error_lineno = info.delimiter_loc.lineno;
-                    if (current_err_line > error_lineno) {
+                എങ്കിൽ (info.level != 0) {
+                    പൂർണ്ണസംഖ്യ error_lineno = info.delimiter_loc.lineno;
+                    എങ്കിൽ (current_err_വരി > error_lineno) {
                         raise_unclosed_parentheses_error(p);
                         ret = -1;
-                        goto exit;
+                        പോകുക exit;
                     }
                 }
-                break;
+                നിർത്തുക;
             }
-            case ENDMARKER:
-                break;
-            default:
-                continue;
+            അവസ്ഥ ENDMARKER:
+                നിർത്തുക;
+            സ്ഥിരസ്ഥിതി:
+                തുടരുക;
         }
-        break;
+        നിർത്തുക;
     }
 
 
@@ -189,56 +189,56 @@ exit:
     _PyToken_Free(&new_token);
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Preserve expression errors over later formatted-string errors.
-    if (PyErr_Occurred() && !info.in_formatted_string) {
-        Py_XDECREF(value);
+    എങ്കിൽ (PyErr_Occurred() && !info.in_formatted_string) {
+        Py_XDECREF(മൂല്യം);
         Py_XDECREF(type);
         Py_XDECREF(traceback);
-    } else {
-        PyErr_Restore(type, value, traceback);
+    } അല്ലെങ്കിൽ {
+        PyErr_Restore(type, മൂല്യം, traceback);
     }
-    return ret;
+    തിരികെ ret;
 }
 
 // PARSER ERRORS
 
-void *
-_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...)
+ശൂന്യം *
+_PyPegen_raise_error(Parser *p, PyObject *errtype, പൂർണ്ണസംഖ്യ use_mark, സ്ഥിരം അക്ഷരം *errmsg, ...)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    എങ്കിൽ (p->error_indicator && PyErr_Occurred()) {
+        തിരികെ ശൂന്യ;
     }
-    if (p->fill == 0) {
+    എങ്കിൽ (p->fill == 0) {
         va_list va;
         va_start(va, errmsg);
         _PyPegen_raise_error_known_location(p, errtype, 0, 0, 0, -1, errmsg, va);
         va_end(va);
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
-    if (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
+    എങ്കിൽ (use_mark && p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        തിരികെ ശൂന്യ;
     }
-    Token *t = p->known_err_token != NULL
+    Token *t = p->known_err_token != ശൂന്യ
                    ? p->known_err_token
                    : p->tokens[use_mark ? p->mark : p->fill - 1];
     Py_ssize_t col_offset;
     Py_ssize_t end_col_offset = -1;
-    if (t->col_offset == -1) {
+    എങ്കിൽ (t->col_offset == -1) {
         _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-        if (info.diagnostic.location.lineno != 0) {
+        എങ്കിൽ (info.diagnostic.location.lineno != 0) {
             col_offset = info.diagnostic.location.byte_col;
-        } else if (info.cursor == info.input_span.start) {
+        } അല്ലെങ്കിൽ എങ്കിൽ (info.cursor == info.നിവേശം_span.start) {
             col_offset = 0;
-        } else {
+        } അല്ലെങ്കിൽ {
             col_offset = Py_SAFE_DOWNCAST(
-                info.cursor - info.line_span.start, intptr_t, int);
+                info.cursor - info.വരി_span.start, intptr_t, പൂർണ്ണസംഖ്യ);
         }
-    } else {
+    } അല്ലെങ്കിൽ {
         col_offset = t->col_offset + 1;
     }
 
-    if (t->end_col_offset != -1) {
+    എങ്കിൽ (t->end_col_offset != -1) {
         end_col_offset = t->end_col_offset + 1;
     }
 
@@ -247,63 +247,63 @@ _PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *err
     _PyPegen_raise_error_known_location(p, errtype, t->lineno, col_offset, t->end_lineno, end_col_offset, errmsg, va);
     va_end(va);
 
-    return NULL;
+    തിരികെ ശൂന്യ;
 }
 
-static PyObject *
-get_error_line_from_source(Parser *p, Py_ssize_t lineno)
+സ്ഥിതം PyObject *
+get_error_വരി_from_source(Parser *p, Py_ssize_t lineno)
 {
-    if (_PyTokenizer_RetainedSource(p->tok) == NULL) {
-        return Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+    എങ്കിൽ (_PyTokenizer_RetainedSource(p->tok) == ശൂന്യ) {
+        തിരികെ Py_GetConstant(Py_CONSTANT_EMPTY_STR);
     }
     Py_ssize_t relative_lineno = p->starting_lineno ? lineno - p->starting_lineno + 1 : lineno;
     Py_ssize_t len;
-    const char *line = _PyTokenizer_LineView(p->tok, relative_lineno, &len);
-    return PyUnicode_DecodeUTF8(line, len, "replace");
+    സ്ഥിരം അക്ഷരം *വരി = Py_Tokenizer_വരി_View(p->tok, relative_lineno, &len);
+    തിരികെ PyUnicode_DecodeUTF8(വരി, len, "replace");
 }
 
-void *
+ശൂന്യം *
 _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
                                     Py_ssize_t lineno, Py_ssize_t col_offset,
                                     Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                                    const char *errmsg, va_list va)
+                                    സ്ഥിരം അക്ഷരം *errmsg, va_list va)
 {
     // Bail out if we already have an error set.
-    if (p->error_indicator && PyErr_Occurred()) {
-        return NULL;
+    എങ്കിൽ (p->error_indicator && PyErr_Occurred()) {
+        തിരികെ ശൂന്യ;
     }
-    PyObject *value = NULL;
-    PyObject *errstr = NULL;
-    PyObject *error_line = NULL;
-    PyObject *tmp = NULL;
+    PyObject *മൂല്യം = ശൂന്യ;
+    PyObject *errstr = ശൂന്യ;
+    PyObject *error_വരി = ശൂന്യ;
+    PyObject *tmp = ശൂന്യ;
     p->error_indicator = 1;
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     _PyTok_Loc location = info.diagnostic.location.lineno != 0
         ? info.diagnostic.location : info.location;
     _PyTok_Span text_span = info.diagnostic.location.lineno != 0
-        ? info.diagnostic.text_span : info.line_span;
+        ? info.diagnostic.text_span : info.വരി_span;
 
-    if (end_lineno == CURRENT_POS) {
+    എങ്കിൽ (end_lineno == CURRENT_POS) {
         end_lineno = location.lineno;
     }
-    if (end_col_offset == CURRENT_POS) {
+    എങ്കിൽ (end_col_offset == CURRENT_POS) {
         end_col_offset = location.byte_col;
     }
 
     errstr = PyUnicode_FromFormatV(errmsg, va);
-    if (!errstr) {
-        goto error;
+    എങ്കിൽ (!errstr) {
+        പോകുക error;
     }
 
-    if (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != NULL) {
-        error_line = get_error_line_from_source(p, lineno);
+    എങ്കിൽ (info.is_interactive && _PyTokenizer_RetainedSource(p->tok) != ശൂന്യ) {
+        error_വരി = get_error_വരി_from_source(p, lineno);
     }
-    else if (p->start_rule == Py_file_input) {
-        error_line = _PyErr_ProgramDecodedTextObject(info.filename,
-                                                     (int) lineno, info.encoding);
+    അല്ലെങ്കിൽ എങ്കിൽ (p->start_rule == Py_file_നിവേശം) {
+        error_വരി = _PyErr_ProgramDecodedTextObject(info.filename,
+                                                     (പൂർണ്ണസംഖ്യ) lineno, info.encoding);
     }
 
-    if (!error_line) {
+    എങ്കിൽ (!error_വരി) {
         /* PyErr_ProgramTextObject was not called or returned NULL. If it was not called,
            then we need to find the error line from some other source, because
            p->start_rule != Py_file_input. If it returned NULL, then it either unexpectedly
@@ -311,100 +311,100 @@ _PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
            we're actually parsing from a file, which has an E_EOF SyntaxError and in that case
            `PyErr_ProgramTextObject` fails because lineno points to last_file_line + 1, which
            does not physically exist */
-        assert(!info.is_file || info.status == E_EOF);
+        പ്രതിജ്ഞാ(!info.is_file || info.status == E_EOF);
 
-        if (location.lineno <= lineno &&
-                info.input_span.end > info.input_span.start) {
+        എങ്കിൽ (location.lineno <= lineno &&
+                info.നിവേശം_span.end > info.നിവേശം_span.start) {
             Py_ssize_t size;
-            const char *line = _PyTokenizer_SpanView(
+            സ്ഥിരം അക്ഷരം *വരി = _PyTokenizer_SpanView(
                 p->tok, text_span, &size);
-            if (errtype == PyExc_IncompleteInputError && size > 0 &&
+            എങ്കിൽ (errtype == Py_Exc_Incomplete_നിവേശം_Error && size > 0 &&
                 (info.implicit_newline == _PyTokenizer_APPEND_NEWLINE ||
                  (info.implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-                  p->start_rule != Py_file_input))) {
+                  p->start_rule != Py_file_നിവേശം))) {
                 size--;
             }
-            error_line = PyUnicode_DecodeUTF8(line, size, "replace");
+            error_വരി = PyUnicode_DecodeUTF8(വരി, size, "replace");
         }
-        else if (!info.is_file) {
-            error_line = get_error_line_from_source(p, lineno);
+        അല്ലെങ്കിൽ എങ്കിൽ (!info.is_file) {
+            error_വരി = get_error_വരി_from_source(p, lineno);
         }
-        else {
-            error_line = Py_GetConstant(Py_CONSTANT_EMPTY_STR);
+        അല്ലെങ്കിൽ {
+            error_വരി = Py_GetConstant(Py_CONSTANT_EMPTY_STR);
         }
-        if (!error_line) {
-            goto error;
-        }
-    }
-
-    Py_ssize_t col_number = col_offset;
-    Py_ssize_t end_col_number = end_col_offset;
-
-    col_number = _PyPegen_byte_offset_to_character_offset(error_line, col_offset);
-    if (col_number < 0) {
-        goto error;
-    }
-
-    if (end_col_offset > 0) {
-        end_col_number = _PyPegen_byte_offset_to_character_offset(error_line, end_col_offset);
-        if (end_col_number < 0) {
-            goto error;
+        എങ്കിൽ (!error_വരി) {
+            പോകുക error;
         }
     }
 
-    tmp = Py_BuildValue("(OnnNnn)", info.filename, lineno, col_number, error_line, end_lineno, end_col_number);
-    error_line = NULL;
-    if (!tmp) {
-        goto error;
+    Py_ssize_t col_സംഖ്യ = col_offset;
+    Py_ssize_t end_col_സംഖ്യ = end_col_offset;
+
+    col_സംഖ്യ = _PyPegen_byte_offset_to_character_offset(error_വരി, col_offset);
+    എങ്കിൽ (col_സംഖ്യ < 0) {
+        പോകുക error;
     }
-    value = _PyTuple_FromPair(errstr, tmp);
+
+    എങ്കിൽ (end_col_offset > 0) {
+        end_col_സംഖ്യ = _PyPegen_byte_offset_to_character_offset(error_വരി, end_col_offset);
+        എങ്കിൽ (end_col_സംഖ്യ < 0) {
+            പോകുക error;
+        }
+    }
+
+    tmp = Py_Build_മൂല്യം("(OnnNnn)", info.filename, lineno, col_സംഖ്യ, error_വരി, end_lineno, end_col_സംഖ്യ);
+    error_വരി = ശൂന്യ;
+    എങ്കിൽ (!tmp) {
+        പോകുക error;
+    }
+    മൂല്യം = _PyTuple_FromPair(errstr, tmp);
     Py_DECREF(tmp);
-    if (!value) {
-        goto error;
+    എങ്കിൽ (!മൂല്യം) {
+        പോകുക error;
     }
-    PyErr_SetObject(errtype, value);
+    PyErr_SetObject(errtype, മൂല്യം);
 
     Py_DECREF(errstr);
-    Py_DECREF(value);
-    return NULL;
+    Py_DECREF(മൂല്യം);
+    തിരികെ ശൂന്യ;
 
 error:
     Py_XDECREF(errstr);
-    Py_XDECREF(error_line);
-    return NULL;
+    Py_XDECREF(error_വരി);
+    തിരികെ ശൂന്യ;
 }
 
-void
+ശൂന്യം
 _Pypegen_set_syntax_error(Parser* p, Token* last_token) {
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
     // Existing syntax error
-    if (PyErr_Occurred()) {
+    എങ്കിൽ (PyErr_Occurred()) {
         // Prioritize tokenizer errors to custom syntax errors raised
         // on the second phase only if the errors come from the parser.
-        int is_tok_ok = (info.status == E_DONE || info.status == E_OK);
-        if (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        പൂർണ്ണസംഖ്യ is_tok_ok = (info.status == E_DONE || info.status == E_OK);
+        എങ്കിൽ (is_tok_ok && PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_tokenize_full_source_to_check_for_errors(p);
         }
         // Propagate the existing syntax error.
-        return;
+        തിരികെ;
     }
     // Initialization error
-    if (p->fill == 0) {
+    എങ്കിൽ (p->fill == 0) {
         RAISE_SYNTAX_ERROR("error at start before reading any input");
     }
     // Parser encountered EOF (End of File) unexpectedtly
-    if (last_token->type == ERRORTOKEN && info.status == E_EOF) {
-        if (info.level) {
+    എങ്കിൽ (last_token->type == ERRORTOKEN && info.status == E_EOF) {
+        എങ്കിൽ (info.level) {
             raise_unclosed_parentheses_error(p);
-        } else {
+        } അല്ലെങ്കിൽ {
             RAISE_SYNTAX_ERROR("unexpected EOF while parsing");
         }
-        return;
+        തിരികെ;
     }
     // Indentation error in the tokenizer
-    if (last_token->type == INDENT || last_token->type == DEDENT) {
+    എങ്കിൽ (last_token->type == INDENT || last_token->type == DEDENT) {
         RAISE_INDENTATION_ERROR(last_token->type == INDENT ? "unexpected indent" : "unexpected unindent");
-        return;
+        തിരികെ;
     }
     // Unknown error (generic case)
 
@@ -418,8 +418,8 @@ _Pypegen_set_syntax_error(Parser* p, Token* last_token) {
     _PyPegen_tokenize_full_source_to_check_for_errors(p);
 }
 
-void
-_Pypegen_stack_overflow(Parser *p)
+ശൂന്യം
+Pypegen_അട്ടി_overflow(Parser *p)
 {
     p->error_indicator = 1;
     PyErr_SetString(PyExc_MemoryError,

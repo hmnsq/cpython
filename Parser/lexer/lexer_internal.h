@@ -1,8 +1,8 @@
 #ifndef _PY_LEXER_INTERNAL_H_
 #define _PY_LEXER_INTERNAL_H_
 
-#include "errcode.h"
-#include "state.h"
+#അന്തര്ഭാവ "errcode.h"
+#അന്തര്ഭാവ "state.h"
 
 #define is_potential_identifier_start(c) (\
               (c >= 'a' && c <= 'z')\
@@ -17,56 +17,56 @@
                || c == '_'\
                || (c >= 128))
 
-#define FTSTRING_MIDDLE(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_MIDDLE : FSTRING_MIDDLE)
+#define FTSTRING_നടുവ്(state) \
+    (_PyLexer_IsTString((state)->kind) ? TSTRING_നടുവ് : FSTRING_നടുവ്)
 #define FTSTRING_END(state) \
     (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
 #define tok_backup _PyLexer_backup
 
-static inline int
-tok_failed(const struct tok_state *tok)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ
+tok_failed(സ്ഥിരം ഘടന tok_state *tok)
 {
-    return tok->done != E_OK && tok->done != E_EOF &&
+    തിരികെ tok->done != E_OK && tok->done != E_EOF &&
            tok->done != E_INTERACT_STOP;
 }
 
-int _PyLexer_refill(struct tok_state *);
+പൂർണ്ണസംഖ്യ _PyLexer_refill(ഘടന tok_state *);
 
-static inline int
-tok_nextc(struct tok_state *tok)
+സ്ഥിതം വരിയിൽ പൂർണ്ണസംഖ്യ
+tok_nextc(ഘടന tok_state *tok)
 {
-    while (tok->cur == tok->inp) {
-        if (!_PyLexer_refill(tok)) {
-            return EOF;
+    ആകുമ്പോൾ (tok->cur == tok->inp) {
+        എങ്കിൽ (!_PyLexer_refill(tok)) {
+            തിരികെ EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
+    എങ്കിൽ (tok->cur - tok->വരി_start >= INT_MAX) {
         tok->done = E_COLUMNOVERFLOW;
-        return EOF;
+        തിരികെ EOF;
     }
-    return _PyTok_SourceByte(&tok->source, tok->cur++);
+    തിരികെ _PyTok_SourceByte(&tok->source, tok->cur++);
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
-int _PyLexer_IndentationToken(struct tok_state *, struct token *);
+പൂർണ്ണസംഖ്യ Py_Lexer_Begin_വരി(ഘടന tok_state *);
+പൂർണ്ണസംഖ്യ Py_Lexer_Continue_വരി(ഘടന tok_state *);
+പൂർണ്ണസംഖ്യ _PyLexer_IndentationToken(ഘടന tok_state *, ഘടന token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
-int _PyLexer_Newline(struct tok_state *, struct token *, int);
-void _PyLexer_backup(struct tok_state *, int);
-int _PyLexer_record_ftstring_comment(
-    struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
-int _PyLexer_ftstring_punctuation(
-    struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
-    struct tok_state *, ftstring_state *, int);
-void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
-int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
-int _PyLexer_scan_fstring_start(
-    struct tok_state *, struct token *, int, ftstring_kind);
-int _PyLexer_scan_string(struct tok_state *, struct token *, int);
-int _PyLexer_get_normal(struct tok_state *, ftstring_state *, struct token *);
-int _PyLexer_get_ftstring(struct tok_state *, ftstring_state *, struct token *);
+പൂർണ്ണസംഖ്യ _PyLexer_Newline(ഘടന tok_state *, ഘടന token *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം _PyLexer_backup(ഘടന tok_state *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ _PyLexer_record_ftstring_comment(
+    ഘടന tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
+പൂർണ്ണസംഖ്യ _PyLexer_ftstring_punctuation(
+    ഘടന tok_state *, ftstring_state *, ഘടന token *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ Py_Lexer_close_ftstring_വ്യഞ്ജകം(
+    ഘടന tok_state *, ftstring_state *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം _PyLexer_mark_ftstring_debug(ഘടന tok_state *, ftstring_state *);
+പൂർണ്ണസംഖ്യ _PyLexer_check_string_prefixes(ഘടന tok_state *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ Py_Lexer_scan_സംഖ്യ(ഘടന tok_state *, ഘടന token *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ _PyLexer_scan_fstring_start(
+    ഘടന tok_state *, ഘടന token *, പൂർണ്ണസംഖ്യ, ftstring_kind);
+പൂർണ്ണസംഖ്യ _PyLexer_scan_string(ഘടന tok_state *, ഘടന token *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ _PyLexer_get_normal(ഘടന tok_state *, ftstring_state *, ഘടന token *);
+പൂർണ്ണസംഖ്യ _PyLexer_get_ftstring(ഘടന tok_state *, ftstring_state *, ഘടന token *);
 
 #endif

@@ -1,40 +1,40 @@
-#include "Python.h"
-#include "pycore_token.h"
+#അന്തര്ഭാവ "Python.h"
+#അന്തര്ഭാവ "pycore_token.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
+#അന്തര്ഭാവ "lexer_internal.h"
+#അന്തര്ഭാവ "../tokenizer/helpers.h"
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
-static int
-lookahead(struct tok_state *tok, const char *test)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+lookahead(ഘടന tok_state *tok, സ്ഥിരം അക്ഷരം *test)
 {
-    const char *s = test;
-    int res = 0;
-    while (1) {
-        int c = tok_nextc(tok);
-        if (*s == 0) {
+    സ്ഥിരം അക്ഷരം *s = test;
+    പൂർണ്ണസംഖ്യ res = 0;
+    ആകുമ്പോൾ (1) {
+        പൂർണ്ണസംഖ്യ c = tok_nextc(tok);
+        എങ്കിൽ (*s == 0) {
             res = !is_potential_identifier_char(c);
         }
-        else if (c == *s) {
+        അല്ലെങ്കിൽ എങ്കിൽ (c == *s) {
             s++;
-            continue;
+            തുടരുക;
         }
 
         tok_backup(tok, c);
-        while (s != test) {
+        ആകുമ്പോൾ (s != test) {
             tok_backup(tok, *--s);
         }
-        return res;
+        തിരികെ res;
     }
 }
 
-static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
-    if (tok->tok_extra_tokens) {
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+verify_end_of_സംഖ്യ(ഘടന tok_state *tok, പൂർണ്ണസംഖ്യ c, സ്ഥിരം അക്ഷരം *kind) {
+    എങ്കിൽ (tok->tok_extra_tokens) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
-        return 1;
+        തിരികെ 1;
     }
     /* Emit a deprecation warning only if the numeric literal is immediately
      * followed by one of keywords which can occur after a numeric literal
@@ -46,268 +46,268 @@ verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
      * "invalid syntax" if the numeric literal is immediately followed by
      * other keyword or identifier.
      */
-    int r = 0;
-    if (c == 'a') {
+    പൂർണ്ണസംഖ്യ r = 0;
+    എങ്കിൽ (c == 'a') {
         r = lookahead(tok, "nd");
     }
-    else if (c == 'e') {
+    അല്ലെങ്കിൽ എങ്കിൽ (c == 'e') {
         r = lookahead(tok, "lse");
     }
-    else if (c == 'f') {
+    അല്ലെങ്കിൽ എങ്കിൽ (c == 'f') {
         r = lookahead(tok, "or");
     }
-    else if (c == 'i') {
-        int c2 = tok_nextc(tok);
-        if (c2 == 'f' || c2 == 'n' || c2 == 's') {
+    അല്ലെങ്കിൽ എങ്കിൽ (c == 'i') {
+        പൂർണ്ണസംഖ്യ c2 = tok_nextc(tok);
+        എങ്കിൽ (c2 == 'f' || c2 == 'n' || c2 == 's') {
             r = 1;
         }
         tok_backup(tok, c2);
     }
-    else if (c == 'o') {
+    അല്ലെങ്കിൽ എങ്കിൽ (c == 'o') {
         r = lookahead(tok, "r");
     }
-    else if (c == 'n') {
+    അല്ലെങ്കിൽ എങ്കിൽ (c == 'n') {
         r = lookahead(tok, "ot");
     }
-    if (r) {
+    എങ്കിൽ (r) {
         tok_backup(tok, c);
-        if (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
+        എങ്കിൽ (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
                 "invalid %s literal", kind))
         {
-            return 0;
+            തിരികെ 0;
         }
         tok_nextc(tok);
     }
-    else /* In future releases, only error will remain. */
-    if (c < 128 && is_potential_identifier_char(c)) {
+    അല്ലെങ്കിൽ /* In future releases, only error will remain. */
+    എങ്കിൽ (c < 128 && is_potential_identifier_char(c)) {
         tok_backup(tok, c);
         _PyTokenizer_syntaxerror(tok, "invalid %s literal", kind);
-        return 0;
+        തിരികെ 0;
     }
-    return 1;
+    തിരികെ 1;
 }
 
-static int
-tok_decimal_tail(struct tok_state *tok)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+tok_decimal_tail(ഘടന tok_state *tok)
 {
-    int c;
+    പൂർണ്ണസംഖ്യ c;
 
-    while (1) {
-        do {
+    ആകുമ്പോൾ (1) {
+        ചെയ്യുക {
             c = tok_nextc(tok);
-        } while (Py_ISDIGIT(c));
-        if (c != '_') {
-            break;
+        } ആകുമ്പോൾ (Py_ISDIGIT(c));
+        എങ്കിൽ (c != '_') {
+            നിർത്തുക;
         }
         c = tok_nextc(tok);
-        if (!Py_ISDIGIT(c)) {
+        എങ്കിൽ (!Py_ISDIGIT(c)) {
             tok_backup(tok, c);
             _PyTokenizer_syntaxerror(tok, "invalid decimal literal");
-            return 0;
+            തിരികെ 0;
         }
     }
-    return c;
+    തിരികെ c;
 }
 
-int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
-                     int leading_dot)
+പൂർണ്ണസംഖ്യ
+Py_Lexer_scan_സംഖ്യ(ഘടന tok_state *tok, ഘടന token *token, പൂർണ്ണസംഖ്യ c,
+                     പൂർണ്ണസംഖ്യ leading_dot)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    if (leading_dot) {
-        goto fraction;
+    എങ്കിൽ (leading_dot) {
+        പോകുക fraction;
     }
-    if (c == '0') {
+    എങ്കിൽ (c == '0') {
         /* Hex, octal or binary -- maybe. */
         c = tok_nextc(tok);
-        if (c == 'x' || c == 'X') {
+        എങ്കിൽ (c == 'x' || c == 'X') {
             /* Hex */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            ചെയ്യുക {
+                എങ്കിൽ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (!Py_ISXDIGIT(c)) {
+                എങ്കിൽ (!Py_ISXDIGIT(c)) {
                     tok_backup(tok, c);
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
+                    തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
                 }
-                do {
+                ചെയ്യുക {
                     c = tok_nextc(tok);
-                } while (Py_ISXDIGIT(c));
-            } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+                } ആകുമ്പോൾ (Py_ISXDIGIT(c));
+            } ആകുമ്പോൾ (c == '_');
+            എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "hexadecimal")) {
+                തിരികെ MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'o' || c == 'O') {
+        അല്ലെങ്കിൽ എങ്കിൽ (c == 'o' || c == 'O') {
             /* Octal */
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            ചെയ്യുക {
+                എങ്കിൽ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c < '0' || c >= '8') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                എങ്കിൽ (c < '0' || c >= '8') {
+                    എങ്കിൽ (Py_ISDIGIT(c)) {
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                                 "invalid digit '%c' in octal literal", c));
                     }
-                    else {
+                    അല്ലെങ്കിൽ {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
                     }
                 }
-                do {
+                ചെയ്യുക {
                     c = tok_nextc(tok);
-                } while ('0' <= c && c < '8');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                } ആകുമ്പോൾ ('0' <= c && c < '8');
+            } ആകുമ്പോൾ (c == '_');
+            എങ്കിൽ (Py_ISDIGIT(c)) {
+                തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "octal")) {
+                തിരികെ MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'b' || c == 'B') {
-            /* Binary */
+        അല്ലെങ്കിൽ എങ്കിൽ (c == 'b' || c == 'B') {
+            /*ദ്വിമാന*/
             c = tok_nextc(tok);
-            do {
-                if (c == '_') {
+            ചെയ്യുക {
+                എങ്കിൽ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c != '0' && c != '1') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                എങ്കിൽ (c != '0' && c != '1') {
+                    എങ്കിൽ (Py_ISDIGIT(c)) {
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
                     }
-                    else {
+                    അല്ലെങ്കിൽ {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
                     }
                 }
-                do {
+                ചെയ്യുക {
                     c = tok_nextc(tok);
-                } while (c == '0' || c == '1');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                } ആകുമ്പോൾ (c == '0' || c == '1');
+            } ആകുമ്പോൾ (c == '_');
+            എങ്കിൽ (Py_ISDIGIT(c)) {
+                തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "binary")) {
+                തിരികെ MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else {
-            int nonzero = 0;
+        അല്ലെങ്കിൽ {
+            പൂർണ്ണസംഖ്യ nonzero = 0;
             /* maybe old-style octal; c is first char of it */
             /* in any case, allow '0' as a literal */
-            while (1) {
-                if (c == '_') {
+            ആകുമ്പോൾ (1) {
+                എങ്കിൽ (c == '_') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    എങ്കിൽ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
                 }
-                if (c != '0') {
-                    break;
+                എങ്കിൽ (c != '0') {
+                    നിർത്തുക;
                 }
                 c = tok_nextc(tok);
             }
             _PyTok_Off zeros_end = tok->cur;
-            if (Py_ISDIGIT(c)) {
+            എങ്കിൽ (Py_ISDIGIT(c)) {
                 nonzero = 1;
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                എങ്കിൽ (c == 0) {
+                    തിരികെ MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == '.') {
+            എങ്കിൽ (c == '.') {
                 c = tok_nextc(tok);
-                goto fraction;
+                പോകുക fraction;
             }
-            else if (c == 'e' || c == 'E') {
-                goto exponent;
+            അല്ലെങ്കിൽ എങ്കിൽ (c == 'e' || c == 'E') {
+                പോകുക exponent;
             }
-            else if (c == 'j' || c == 'J') {
-                goto imaginary;
+            അല്ലെങ്കിൽ എങ്കിൽ (c == 'j' || c == 'J') {
+                പോകുക imaginary;
             }
-            else if (nonzero && !tok->tok_extra_tokens) {
+            അല്ലെങ്കിൽ എങ്കിൽ (nonzero && !tok->tok_extra_tokens) {
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
+                        tok, (പൂർണ്ണസംഖ്യ)(tok->start + 1 - tok->വരി_start),
+                        (പൂർണ്ണസംഖ്യ)(zeros_end - tok->വരി_start),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "decimal")) {
+                തിരികെ MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
-    else {
+    അല്ലെങ്കിൽ {
         /* Decimal */
         c = tok_decimal_tail(tok);
-        if (c == 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        എങ്കിൽ (c == 0) {
+            തിരികെ MAKE_TOKEN(ERRORTOKEN);
         }
         {
             /* Accept floating-point numbers. */
-            if (c == '.') {
+            എങ്കിൽ (c == '.') {
                 c = tok_nextc(tok);
     fraction:
                 /* Fraction */
-                if (Py_ISDIGIT(c)) {
+                എങ്കിൽ (Py_ISDIGIT(c)) {
                     c = tok_decimal_tail(tok);
-                    if (c == 0) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    എങ്കിൽ (c == 0) {
+                        തിരികെ MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
             }
-            if (c == 'e' || c == 'E') {
-                int e;
+            എങ്കിൽ (c == 'e' || c == 'E') {
+                പൂർണ്ണസംഖ്യ e;
               exponent:
                 e = c;
                 /* Exponent part */
                 c = tok_nextc(tok);
-                if (c == '+' || c == '-') {
+                എങ്കിൽ (c == '+' || c == '-') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    എങ്കിൽ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        തിരികെ MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
-                } else if (!Py_ISDIGIT(c)) {
+                } അല്ലെങ്കിൽ എങ്കിൽ (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, e, "decimal")) {
+                        തിരികെ MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
                     p_start = tok->start;
                     p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    തിരികെ MAKE_TOKEN(സംഖ്യ);
                 }
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                എങ്കിൽ (c == 0) {
+                    തിരികെ MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == 'j' || c == 'J') {
+            എങ്കിൽ (c == 'j' || c == 'J') {
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "imaginary")) {
+                    തിരികെ MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            അല്ലെങ്കിൽ എങ്കിൽ (!verify_end_of_സംഖ്യ(tok, c, "decimal")) {
+                തിരികെ MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
     tok_backup(tok, c);
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    തിരികെ MAKE_TOKEN(സംഖ്യ);
 }
