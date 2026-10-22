@@ -11,39 +11,39 @@
 #define UNICODE_BOM 0xFEFF
 #define UTF16_LE_BOM "\xff\xfe"
 #define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
+#define UTF16_BOM_LENGTH ((Py_ssize_t)(parimaa_na(UTF16_LE_BOM) - 1))
 #define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#define UTF8_BOM_LENGTH ((Py_ssize_t)(parimaa_na(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+var_na *
+_PyTok_CopyBytes(const var_na *data, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    གལ་སྲིད (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        ལོག NULL;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
+    var_na *copy = PyMem_Malloc((size_t)len + 1);
+    གལ་སྲིད (copy == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        ལོག NULL;
     }
     memcpy(copy, data, (size_t)len);
     copy[len] = '\0';
-    return copy;
+    ལོག copy;
 }
 
 static void
 chunk_release_data(_PyTok_Chunk *chunk)
 {
     switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
+        pak_sa _PYTOK_CHUNK_BORROWED:
+            bha_nga;
+        pak_sa _PYTOK_CHUNK_PYMEM:
             PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+            bha_nga;
+        pak_sa _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            bha_nga;
     }
 }
 
@@ -54,49 +54,49 @@ _PyTok_ChunkClear(_PyTok_Chunk *chunk)
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+static ཧྲིལ
+chunk_set_unicode(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, ཧྲིལ strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    const var_na *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
+    གལ་སྲིད (utf8 == NULL) {
         Py_DECREF(unicode);
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ལོག -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    གལ་སྲིད (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
         utf8 += UTF8_BOM_LENGTH;
         utf8_len -= UTF8_BOM_LENGTH;
     }
     chunk_release_data(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->data = (var_na *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    ལོག 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
+var_na *
+_PyTok_NormalizeNewlines(const var_na *data, Py_ssize_t len,
                          Py_ssize_t *out_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    གལ་སྲིད (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        ལོག NULL;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
+    var_na *result = PyMem_Malloc((size_t)len + 1);
+    གལ་སྲིད (result == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        ལོག NULL;
     }
     Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
+    དོན་ལུ (Py_ssize_t read = 0; read < len; read++) {
+        var_na c = data[read];
+        གལ་སྲིད (c == '\r') {
+            གལ་སྲིད (read + 1 < len && data[read + 1] == '\n') {
                 read++;
             }
             c = '\n';
@@ -105,137 +105,137 @@ _PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
     }
     result[write] = '\0';
     *out_len = write;
-    return result;
+    ལོག result;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+ཧྲིལ
+_PyTok_SetEncoding(sa_nracanaa tok_state *tok, const var_na *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
+    var_na *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
+    གལ་སྲིད (copy == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        ལོག -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    ལོག 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+static ཧྲིལ
+find_cookie(const var_na *line, Py_ssize_t len, var_na **encoding, ཧྲིལ *scan_next)
 {
     Py_ssize_t i = 0;
     *encoding = NULL;
     *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    དོན་ལུ (; i < len; i++) {
+        གལ་སྲིད (line[i] == '#') {
+            bha_nga;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        གལ་སྲིད (line[i] == '\n' || line[i] == '\r') {
+            ལོག 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
+        གལ་སྲིད (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
             *scan_next = 0;
-            return 0;
+            ལོག 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
+    const Py_ssize_t marker_len = parimaa_na("coding") - 1;
+    དོན་ལུ (; i < len - marker_len; i++) {
+        གལ་སྲིད (memcmp(line + i, "coding", marker_len) != 0) {
             continue;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
+        const var_na *cursor = line + i + marker_len;
+        གལ་སྲིད (*cursor != ':' && *cursor != '=') {
             continue;
         }
         do {
             cursor++;
-        } while (cursor < line + len &&
+        } སྐབས (cursor < line + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        const var_na *start = cursor;
+        སྐབས (cursor < line + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
+        གལ་སྲིད (cursor == start) {
             continue;
         }
         Py_ssize_t encoding_len = cursor - start;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
+        var_na normalized[parimaa_na("iso-latin-1-")];
         const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+            encoding_len, (Py_ssize_t)parimaa_na(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
+        དོན་ལུ (n = 0; n < prefix_len; n++) {
             normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        const var_na *canonical = start;
+        གལ་སྲིད (strcmp(normalized, "utf-8") == 0 ||
+                strncmp(normalized, "utf-8-", parimaa_na("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        དེ་མིན གལ་སྲིད (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 strncmp(normalized, "latin-1-", parimaa_na("latin-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-8859-1-", parimaa_na("iso-8859-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-latin-1-", parimaa_na("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
+        གལ་སྲིད (canonical != start) {
             encoding_len = strlen(canonical);
         }
         *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        གལ་སྲིད (*encoding == NULL) {
+            ལོག -1;
         }
         *scan_next = 0;
-        return 0;
+        ལོག 0;
     }
-    return 0;
+    ལོག 0;
 }
 
 _PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+_PyTok_DetectEncoding(sa_nracanaa tok_state *tok, const _PyTok_Chunk *first,
+                      const _PyTok_Chunk *second, ཧྲིལ final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
+    ཧྲིལ bom = first->len >= UTF8_BOM_LENGTH &&
         memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
     *bom_len = bom ? UTF8_BOM_LENGTH : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
+    var_na *cookie = NULL;
+    ཧྲིལ scan_next = 0;
+    ཧྲིལ cookie_line = 1;
+    const var_na *first_data = first->data + *bom_len;
     Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    གལ་སྲིད (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
+        ལོག _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    གལ་སྲིད (cookie == NULL && scan_next && second != NULL) {
+        གལ་སྲིད (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
+            ལོག _PYTOK_ENCODING_ERROR;
         }
         cookie_line = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    དེ་མིན གལ་སྲིད (cookie == NULL && scan_next && !final) {
+        ལོག _PYTOK_ENCODING_NEED_SECOND_LINE;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    གལ་སྲིད (cookie == NULL) {
+        གལ་སྲིད (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
+            ལོག _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        ལོག _PYTOK_ENCODING_DONE;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
+    གལ་སྲིད (bom && strcmp(cookie, "utf-8") != 0) {
         const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
+        const var_na *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
         Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
+        ཧྲིལ end_col = (ཧྲིལ)Py_MIN(line_len, INT_MAX);
+        གལ་སྲིད (end_col > 0 && (line_data[end_col - 1] == '\n' ||
                             line_data[end_col - 1] == '\r')) {
             end_col--;
         }
@@ -243,117 +243,117 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
             tok, line_data, 0, cookie_line, 0, end_col,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        ལོག _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    ལོག _PYTOK_ENCODING_DONE;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+ཧྲིལ
+_PyTok_DecodeOnce(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk,
+                  const var_na *encoding, const var_na *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
         chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
+    གལ་སྲིད (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ལོག -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    ལོག chunk_set_unicode(tok, chunk, unicode, 0);
 }
 
 static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+raw_line_length(const var_na *data, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    དོན་ལུ (Py_ssize_t i = 0; i < len; i++) {
+        གལ་སྲིད (data[i] == '\n') {
+            ལོག i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        གལ་སྲིད (data[i] == '\r') {
+            ལོག i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    ལོག len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+static ཧྲིལ
+store_prepared_source(sa_nracanaa tok_state *tok, const var_na *data, Py_ssize_t len,
+                      ཧྲིལ preserve_crlf, ཧྲིལ add_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
+    སྐབས (pos < len) {
         Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
+        གལ་སྲིད (preserve_crlf) {
+            const var_na *newline = memchr(data + pos, '\n', len - pos);
             raw_line_len = newline == NULL
                 ? len - pos : newline - data - pos + 1;
         }
-        else {
+        དེ་མིན {
             raw_line_len = raw_line_length(data + pos, len - pos);
         }
-        int terminated = preserve_crlf
+        ཧྲིལ terminated = preserve_crlf
             ? data[pos + raw_line_len - 1] == '\n'
             : data[pos + raw_line_len - 1] == '\n' ||
               data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
+        ཧྲིལ add_newline = add_final_newline &&
             pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        const var_na *line = data + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        གལ་སྲིད (!preserve_crlf) {
+            གལ་སྲིད (line[raw_line_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            དེ་མིན གལ་སྲིད (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
+        གལ་སྲིད (terminator_len || add_newline) {
             appended = _PyTok_SourceAppendLineWithNewline(
                 &tok->source, line, raw_line_len - terminator_len);
         }
-        else {
+        དེ་མིན {
             appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
         }
-        if (appended < 0) {
+        གལ་སྲིད (appended < 0) {
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            ལོག -1;
         }
         tok->reader->prepared_final_newline = add_newline;
         pos += raw_line_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    གལ་སྲིད (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
         (len == 0 || data[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        གལ་སྲིད (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
+            ལོག -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    ལོག 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+ཧྲིལ
+_PyTok_PrepareString(sa_nracanaa tok_state *tok, const var_na *input, ཧྲིལ utf8_only,
+                     ཧྲིལ exec_input, ཧྲིལ preserve_crlf)
 {
     Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    var_na *raw = (var_na *)input;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    གལ་སྲིད (utf8_only) {
+        གལ་སྲིད (_PyTok_SetEncoding(tok, "utf-8") < 0) {
+            ལོག -1;
         }
     }
-    else {
+    དེ་མིན {
         Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
         _PyTok_Chunk first = {
             .data = raw,
@@ -361,8 +361,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
         _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
+        ཧྲིལ have_second = first_original_len < raw_len;
+        གལ་སྲིད (have_second) {
             second.data = raw + first_original_len;
             second.len = raw_line_length(second.data,
                                          raw_len - first_original_len);
@@ -370,8 +370,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         Py_ssize_t bom_len;
         _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
             tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        གལ་སྲིད (detection == _PYTOK_ENCODING_ERROR) {
+            ལོག -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
@@ -382,128 +382,128 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
+    const var_na *encoding = tok->reader->encoding;
+    གལ་སྲིད (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
+        གལ་སྲིད (_PyTok_DecodeOnce(
                 tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+            ལོག -1;
         }
     }
 
-    int stored = store_prepared_source(
+    ཧྲིལ stored = store_prepared_source(
         tok, decoded.data, decoded.len, preserve_crlf, exec_input);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    གལ་སྲིད (stored < 0) {
+        ལོག -1;
     }
-    if (!utf8_only &&
+    གལ་སྲིད (!utf8_only &&
             (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+        ལོག -1;
     }
-    return 0;
+    ལོག 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+ཧྲིལ
+_PyTok_StartDecoder(sa_nracanaa tok_state *tok, const var_na *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    གལ་སྲིད (reader->encoding == NULL || reader->decoder != NULL) {
+        ལོག 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    གལ་སྲིད (reader->kind == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        ལོག 0;
     }
 
     PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    གལ་སྲིད (codec != NULL) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
+    གལ་སྲིད (reader->decoder == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        གལ་སྲིད (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        ལོག -1;
     }
-    return 0;
+    ལོག 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+ཧྲིལ
+_PyTok_DecodeChunk(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk, ཧྲིལ final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    གལ་སྲིད (reader->decoder == NULL) {
+        ལོག 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
+    ཧྲིལ strip_bom = reader->kind == _PYTOK_READER_READLINE &&
         chunk->len >= UTF16_BOM_LENGTH &&
         (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
          memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
     PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+    གལ་སྲིད (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
             PyBytes_Check(chunk->owner) &&
             chunk->data == PyBytes_AS_STRING(chunk->owner)) {
         input = Py_NewRef(chunk->owner);
     }
-    else {
+    དེ་མིན {
         input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
     }
-    if (input == NULL) {
+    གལ་སྲིད (input == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        ལོག -1;
     }
     PyObject *unicode = PyObject_CallMethodObjArgs(
         reader->decoder, &_Py_ID(decode), input,
         final ? Py_True : Py_False, NULL);
     Py_DECREF(input);
-    if (unicode == NULL) {
+    གལ་སྲིད (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        གལ་སྲིད (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        ལོག -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    གལ་སྲིད (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
         tok->done = E_DECODE;
-        return -1;
+        ལོག -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    ལོག chunk_set_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+ཧྲིལ
+_PyTok_DecoderHasBufferedInput(sa_nracanaa tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    གལ་སྲིད (tok->reader->decoder == NULL) {
+        ལོག 0;
     }
     PyObject *state = PyObject_CallMethodNoArgs(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
+    གལ་སྲིད (state == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ལོག -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
+    གལ་སྲིད (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
             !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
             !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
         Py_DECREF(state);
         PyErr_SetString(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
         tok->done = E_DECODE;
-        return -1;
+        ལོག -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    ཧྲིལ pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    ལོག pending;
 }

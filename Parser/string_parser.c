@@ -9,23 +9,23 @@
 
 //// STRING HANDLING FUNCTIONS ////
 
-static int
-warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_invalid_escape, Token *t)
+static ཧྲིལ
+warn_invalid_escape_sequence(Parser *p, const var_na* buffer, const var_na *first_invalid_escape, Token *t)
 {
-    if (p->call_invalid_rules) {
+    གལ་སྲིད (p->call_invalid_rules) {
         // Do not report warnings if we are in the second pass of the parser
         // to avoid showing the warning twice.
-        return 0;
+        ལོག 0;
     }
-    unsigned char c = (unsigned char)*first_invalid_escape;
-    if ((t->type == FSTRING_MIDDLE || t->type == FSTRING_END || t->type == TSTRING_MIDDLE || t->type == TSTRING_END)
+    unsigned var_na c = (unsigned var_na)*first_invalid_escape;
+    གལ་སྲིད ((t->type == FSTRING_MIDDLE || t->type == FSTRING_END || t->type == TSTRING_MIDDLE || t->type == TSTRING_END)
             && (c == '{' || c == '}')) {
         // in this case the tokenizer has already emitted a warning,
         // see Parser/tokenizer/helpers.c:warn_invalid_escape_sequence
-        return 0;
+        ལོག 0;
     }
 
-    int octal = ('4' <= c && c <= '7');
+    ཧྲིལ octal = ('4' <= c && c <= '7');
     PyObject *msg =
         octal
         ? PyUnicode_FromFormat(
@@ -38,48 +38,48 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
               "Such sequences will not work in the future. "
               "Did you mean \"\\\\%c\"? A raw string is also an option.",
               c, c);
-    if (msg == NULL) {
-        return -1;
+    གལ་སྲིད (msg == NULL) {
+        ལོག -1;
     }
     PyObject *category;
-    if (p->feature_version >= 12) {
+    གལ་སྲིད (p->feature_version >= 12) {
         category = PyExc_SyntaxWarning;
     }
-    else {
+    དེ་མིན {
         category = PyExc_DeprecationWarning;
     }
 
     // Calculate the lineno and the col_offset of the invalid escape sequence
-    const char *start = buffer;
-    const char *end = first_invalid_escape;
-    int lineno = t->lineno;
-    int col_offset = t->col_offset;
-    while (start < end) {
-        if (*start == '\n') {
+    const var_na *start = buffer;
+    const var_na *end = first_invalid_escape;
+    ཧྲིལ lineno = t->lineno;
+    ཧྲིལ col_offset = t->col_offset;
+    སྐབས (start < end) {
+        གལ་སྲིད (*start == '\n') {
             lineno++;
             col_offset = 0;
         }
-        else {
+        དེ་མིན {
             col_offset++;
         }
         start++;
     }
 
     // Count the number of quotes in the token
-    char first_quote = 0;
-    if (lineno == t->lineno) {
-        int quote_count = 0;
-        const char* tok = PyBytes_AsString(t->bytes);
-        for (int i = 0; i < PyBytes_Size(t->bytes); i++) {
-            if (tok[i] == '\'' || tok[i] == '\"') {
-                if (quote_count == 0) {
+    var_na first_quote = 0;
+    གལ་སྲིད (lineno == t->lineno) {
+        ཧྲིལ quote_count = 0;
+        const var_na* tok = PyBytes_AsString(t->bytes);
+        དོན་ལུ (ཧྲིལ i = 0; i < PyBytes_Size(t->bytes); i++) {
+            གལ་སྲིད (tok[i] == '\'' || tok[i] == '\"') {
+                གལ་སྲིད (quote_count == 0) {
                     first_quote = tok[i];
                 }
-                if (tok[i] == first_quote) {
+                གལ་སྲིད (tok[i] == first_quote) {
                     quote_count++;
                 }
-            } else {
-                break;
+            } དེ་མིན {
+                bha_nga;
             }
         }
 
@@ -87,9 +87,9 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
     }
 
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if (PyErr_WarnExplicitObject(category, msg, info.filename,
+    གལ་སྲིད (PyErr_WarnExplicitObject(category, msg, info.filename,
                                  lineno, info.module, NULL) < 0) {
-        if (PyErr_ExceptionMatches(category)) {
+        གལ་སྲིད (PyErr_ExceptionMatches(category)) {
             /* Replace the Syntax/DeprecationWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
@@ -98,13 +98,13 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
                since _PyPegen_raise_error uses p->tokens[p->fill - 1] for the
                error location, if p->known_err_token is not set. */
             p->known_err_token = t;
-            if (octal) {
+            གལ་སྲིད (octal) {
                 RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, lineno, col_offset-1, lineno, col_offset+1,
                     "\"\\%.3s\" is an invalid octal escape sequence. "
                     "Did you mean \"\\\\%.3s\"? A raw string is also an option.",
                     first_invalid_escape, first_invalid_escape);
             }
-            else {
+            དེ་མིན {
                 RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, lineno, col_offset-1, lineno, col_offset+1,
                     "\"\\%c\" is an invalid escape sequence. "
                     "Did you mean \"\\\\%c\"? A raw string is also an option.",
@@ -112,71 +112,71 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
             }
         }
         Py_DECREF(msg);
-        return -1;
+        ལོག -1;
     }
     Py_DECREF(msg);
-    return 0;
+    ལོག 0;
 }
 
 static PyObject *
-decode_utf8(const char **sPtr, const char *end)
+decode_utf8(const var_na **sPtr, const var_na *end)
 {
-    const char *s;
-    const char *t;
+    const var_na *s;
+    const var_na *t;
     t = s = *sPtr;
-    while (s < end && (*s & 0x80)) {
+    སྐབས (s < end && (*s & 0x80)) {
         s++;
     }
     *sPtr = s;
-    return PyUnicode_DecodeUTF8(t, s - t, NULL);
+    ལོག PyUnicode_DecodeUTF8(t, s - t, NULL);
 }
 
 static PyObject *
-decode_unicode_with_escapes(Parser *parser, const char *s, size_t len, Token *t)
+decode_unicode_with_escapes(Parser *parser, const var_na *s, size_t len, Token *t)
 {
     PyObject *v;
-    char *p;
-    const char *end;
+    var_na *p;
+    const var_na *end;
 
     /* check for integer overflow */
-    if (len > (size_t)PY_SSIZE_T_MAX / 6) {
-        return NULL;
+    གལ་སྲིད (len > (size_t)PY_SSIZE_T_MAX / 6) {
+        ལོག NULL;
     }
     /* "ä" (2 bytes) may become "\U000000E4" (10 bytes), or 1:5.
      * "\ä" (3 bytes) may become "\u005c\U000000E4" (16 bytes), or ~1:6. */
     Py_ssize_t alloc = (Py_ssize_t)len * 6;
-    char *buf = PyMem_Malloc(alloc);
-    if (buf == NULL) {
-        return PyErr_NoMemory();
+    var_na *buf = PyMem_Malloc(alloc);
+    གལ་སྲིད (buf == NULL) {
+        ལོག PyErr_NoMemory();
     }
     p = buf;
     end = s + len;
-    while (s < end) {
-        if (*s == '\\') {
+    སྐབས (s < end) {
+        གལ་སྲིད (*s == '\\') {
             *p++ = *s++;
-            if (s >= end || *s & 0x80) {
+            གལ་སྲིད (s >= end || *s & 0x80) {
                 memcpy(p, "u005c", 5);
                 p += 5;
-                if (s >= end) {
-                    break;
+                གལ་སྲིད (s >= end) {
+                    bha_nga;
                 }
             }
         }
-        if (*s & 0x80) {
+        གལ་སྲིད (*s & 0x80) {
             PyObject *w;
-            int kind;
+            ཧྲིལ kind;
             const void *data;
             Py_ssize_t w_len;
             Py_ssize_t i;
             w = decode_utf8(&s, end);
-            if (w == NULL) {
+            གལ་སྲིད (w == NULL) {
                 PyMem_Free(buf);
-                return NULL;
+                ལོག NULL;
             }
             kind = PyUnicode_KIND(w);
             data = PyUnicode_DATA(w);
             w_len = PyUnicode_GET_LENGTH(w);
-            for (i = 0; i < w_len; i++) {
+            དོན་ལུ (i = 0; i < w_len; i++) {
                 // sprintf() writes a null byte: the buffer is large enough
                 // for that thanks to the overallocation.
                 assert((p + 11 - buf) <= alloc);
@@ -186,61 +186,61 @@ decode_unicode_with_escapes(Parser *parser, const char *s, size_t len, Token *t)
             }
             Py_DECREF(w);
         }
-        else {
+        དེ་མིན {
             *p++ = *s++;
         }
     }
     len = (size_t)(p - buf);
 
-    int first_invalid_escape_char;
-    const char *first_invalid_escape_ptr;
+    ཧྲིལ first_invalid_escape_char;
+    const var_na *first_invalid_escape_ptr;
     v = _PyUnicode_DecodeUnicodeEscapeInternal2(buf, (Py_ssize_t)len, NULL, NULL,
                                                 &first_invalid_escape_char,
                                                 &first_invalid_escape_ptr);
 
     // HACK: later we can simply pass the line no, since we don't preserve the tokens
     // when we are decoding the string but we preserve the line numbers.
-    if (v != NULL && first_invalid_escape_ptr != NULL && t != NULL) {
-        if (warn_invalid_escape_sequence(parser, buf, first_invalid_escape_ptr, t) < 0) {
+    གལ་སྲིད (v != NULL && first_invalid_escape_ptr != NULL && t != NULL) {
+        གལ་སྲིད (warn_invalid_escape_sequence(parser, buf, first_invalid_escape_ptr, t) < 0) {
             /* We have not deallocated the buffer before because
              * first_invalid_escape_ptr points inside buf. */
             PyMem_Free(buf);
             Py_DECREF(v);
-            return NULL;
+            ལོག NULL;
         }
     }
     PyMem_Free(buf);
-    return v;
+    ལོག v;
 }
 
 static PyObject *
-decode_bytes_with_escapes(Parser *p, const char *s, Py_ssize_t len, Token *t)
+decode_bytes_with_escapes(Parser *p, const var_na *s, Py_ssize_t len, Token *t)
 {
-    int first_invalid_escape_char;
-    const char *first_invalid_escape_ptr;
+    ཧྲིལ first_invalid_escape_char;
+    const var_na *first_invalid_escape_ptr;
     PyObject *result = _PyBytes_DecodeEscape2(s, len, NULL,
                                               &first_invalid_escape_char,
                                               &first_invalid_escape_ptr);
-    if (result == NULL) {
-        return NULL;
+    གལ་སྲིད (result == NULL) {
+        ལོག NULL;
     }
 
-    if (first_invalid_escape_ptr != NULL) {
-        if (warn_invalid_escape_sequence(p, s, first_invalid_escape_ptr, t) < 0) {
+    གལ་སྲིད (first_invalid_escape_ptr != NULL) {
+        གལ་སྲིད (warn_invalid_escape_sequence(p, s, first_invalid_escape_ptr, t) < 0) {
             Py_DECREF(result);
-            return NULL;
+            ལོག NULL;
         }
     }
-    return result;
+    ལོག result;
 }
 
 PyObject *
-_PyPegen_decode_string(Parser *p, int raw, const char *s, size_t len, Token *t)
+_PyPegen_decode_string(Parser *p, ཧྲིལ raw, const var_na *s, size_t len, Token *t)
 {
-    if (raw) {
-        return PyUnicode_DecodeUTF8Stateful(s, (Py_ssize_t)len, NULL, NULL);
+    གལ་སྲིད (raw) {
+        ལོག PyUnicode_DecodeUTF8Stateful(s, (Py_ssize_t)len, NULL, NULL);
     }
-    return decode_unicode_with_escapes(p, s, len, t);
+    ལོག decode_unicode_with_escapes(p, s, len, t);
 }
 
 /* s must include the bracketing quote characters, and r, b &/or f prefixes
@@ -249,38 +249,38 @@ _PyPegen_decode_string(Parser *p, int raw, const char *s, size_t len, Token *t)
 PyObject *
 _PyPegen_parse_string(Parser *p, Token *t)
 {
-    const char *s = PyBytes_AsString(t->bytes);
-    if (s == NULL) {
-        return NULL;
+    const var_na *s = PyBytes_AsString(t->bytes);
+    གལ་སྲིད (s == NULL) {
+        ལོག NULL;
     }
 
     size_t len;
-    int quote = Py_CHARMASK(*s);
-    int bytesmode = 0;
-    int rawmode = 0;
+    ཧྲིལ quote = Py_CHARMASK(*s);
+    ཧྲིལ bytesmode = 0;
+    ཧྲིལ rawmode = 0;
 
-    if (Py_ISALPHA(quote)) {
-        while (!bytesmode || !rawmode) {
-            if (quote == 'b' || quote == 'B') {
-                quote =(unsigned char)*++s;
+    གལ་སྲིད (Py_ISALPHA(quote)) {
+        སྐབས (!bytesmode || !rawmode) {
+            གལ་སྲིད (quote == 'b' || quote == 'B') {
+                quote =(unsigned var_na)*++s;
                 bytesmode = 1;
             }
-            else if (quote == 'u' || quote == 'U') {
-                quote = (unsigned char)*++s;
+            དེ་མིན གལ་སྲིད (quote == 'u' || quote == 'U') {
+                quote = (unsigned var_na)*++s;
             }
-            else if (quote == 'r' || quote == 'R') {
-                quote = (unsigned char)*++s;
+            དེ་མིན གལ་སྲིད (quote == 'r' || quote == 'R') {
+                quote = (unsigned var_na)*++s;
                 rawmode = 1;
             }
-            else {
-                break;
+            དེ་མིན {
+                bha_nga;
             }
         }
     }
 
-    if (quote != '\'' && quote != '\"') {
+    གལ་སྲིད (quote != '\'' && quote != '\"') {
         PyErr_BadInternalCall();
-        return NULL;
+        ལོག NULL;
     }
 
     /* Skip the leading quote char. */
@@ -290,46 +290,46 @@ _PyPegen_parse_string(Parser *p, Token *t)
     // so the code '--len' below is safe.
     assert(len >= 1);
 
-    if (len > INT_MAX) {
+    གལ་སྲིད (len > INT_MAX) {
         PyErr_SetString(PyExc_OverflowError, "string to parse is too long");
-        return NULL;
+        ལོག NULL;
     }
-    if (s[--len] != quote) {
+    གལ་སྲིད (s[--len] != quote) {
         /* Last quote char must match the first. */
         PyErr_BadInternalCall();
-        return NULL;
+        ལོག NULL;
     }
-    if (len >= 4 && s[0] == quote && s[1] == quote) {
+    གལ་སྲིད (len >= 4 && s[0] == quote && s[1] == quote) {
         /* A triple quoted string. We've already skipped one quote at
            the start and one at the end of the string. Now skip the
            two at the start. */
         s += 2;
         len -= 2;
         /* And check that the last two match. */
-        if (s[--len] != quote || s[--len] != quote) {
+        གལ་སྲིད (s[--len] != quote || s[--len] != quote) {
             PyErr_BadInternalCall();
-            return NULL;
+            ལོག NULL;
         }
     }
 
     /* Avoid invoking escape decoding routines if possible. */
     rawmode = rawmode || strchr(s, '\\') == NULL;
-    if (bytesmode) {
+    གལ་སྲིད (bytesmode) {
         /* Disallow non-ASCII characters. */
-        const char *ch;
-        for (ch = s; *ch; ch++) {
-            if (Py_CHARMASK(*ch) >= 0x80) {
+        const var_na *ch;
+        དོན་ལུ (ch = s; *ch; ch++) {
+            གལ་སྲིད (Py_CHARMASK(*ch) >= 0x80) {
                 RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
                                    t,
                                    "bytes can only contain ASCII "
                                    "literal characters");
-                return NULL;
+                ལོག NULL;
             }
         }
-        if (rawmode) {
-            return PyBytes_FromStringAndSize(s, (Py_ssize_t)len);
+        གལ་སྲིད (rawmode) {
+            ལོག PyBytes_FromStringAndSize(s, (Py_ssize_t)len);
         }
-        return decode_bytes_with_escapes(p, s, (Py_ssize_t)len, t);
+        ལོག decode_bytes_with_escapes(p, s, (Py_ssize_t)len, t);
     }
-    return _PyPegen_decode_string(p, rawmode, s, len, t);
+    ལོག _PyPegen_decode_string(p, rawmode, s, len, t);
 }
