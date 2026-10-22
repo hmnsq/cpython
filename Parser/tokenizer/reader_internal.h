@@ -1,87 +1,87 @@
 #ifndef Py_TOKENIZER_READER_INTERNAL_H
 #define Py_TOKENIZER_READER_INTERNAL_H
 
-#include "Python.h"
+#अन्तर्भाव "Python.h"
 
-#define _PYTOK_ENCODING_COOKIE_MAX_LINES 2
+#define PYTOK_ENCODING_COOKIE_MAX_पंक्तियाँ 2
 
-typedef enum {
+प्रकारनिर्देश गणना {
     _PYTOK_READER_PREPARED,
     _PYTOK_READER_FILE,
     _PYTOK_READER_READLINE,
     _PYTOK_READER_INTERACTIVE,
 } _PyTok_ReaderKind;
 
-typedef enum {
-    _PYTOK_READ_LINE,
+प्रकारनिर्देश गणना {
+    PYTOK_READ_पंक्ति,
     _PYTOK_READ_EOF,
     _PYTOK_READ_STOPPED,
     _PYTOK_READ_INTERRUPT,
     _PYTOK_READ_ERROR,
 } _PyTok_ReadResult;
 
-typedef enum {
+प्रकारनिर्देश गणना {
     _PYTOK_ENCODING_ERROR = -1,
     _PYTOK_ENCODING_DONE,
-    _PYTOK_ENCODING_NEED_SECOND_LINE,
+    PYTOK_ENCODING_NEED_SECOND_पंक्ति,
 } _PyTok_EncodingResult;
 
-typedef enum {
+प्रकारनिर्देश गणना {
     _PYTOK_CHUNK_BORROWED,
     _PYTOK_CHUNK_PYMEM,
     _PYTOK_CHUNK_PYOBJECT,
 } _PyTok_ChunkOwnership;
 
-typedef struct {
-    char *data;
+प्रकारनिर्देश संरचना {
+    वर्ण *data;
     PyObject *owner;
     Py_ssize_t len;
     _PyTok_ChunkOwnership ownership;
-    unsigned char implicit_newline;
+    unsigned वर्ण implicit_newline;
 } _PyTok_Chunk;
 
-typedef struct _PyTok_Reader {
+प्रकारनिर्देश संरचना _PyTok_Reader {
     FILE *fp;  // Borrowed input stream; NULL for string and readline input.
-    char *encoding;  // Owned source encoding.
+    वर्ण *encoding;  // Owned source encoding.
     PyObject *readline;
     PyObject *decoder;
-    const char *prompt;
-    const char *nextprompt;
+    ध्रुव वर्ण *prompt;
+    ध्रुव वर्ण *nextprompt;
 
-    char *file_buffer;
+    वर्ण *file_buffer;
     Py_ssize_t file_buffer_cap;
-    _PyTok_Chunk prefetched_lines[_PYTOK_ENCODING_COOKIE_MAX_LINES];
+    _PyTok_Chunk prefetched_पंक्तियाँ[PYTOK_ENCODING_COOKIE_MAX_पंक्तियाँ];
 
-    char *decoded;
+    वर्ण *decoded;
     Py_ssize_t decoded_pos;
     Py_ssize_t decoded_scan;  // First byte not yet scanned for a newline.
     Py_ssize_t decoded_len;
     Py_ssize_t decoded_cap;
     _PyTok_ReaderKind kind;
-    unsigned char prepared_final_newline;  // _PyTokenizer_Newline
-    unsigned char decoded_tail_is_implicit;
-    unsigned char file_initialized;
-    unsigned char file_eof;
-    unsigned char decoder_finalized;
-    unsigned char stop_interactive;
+    unsigned वर्ण prepared_final_newline;  // _PyTokenizer_Newline
+    unsigned वर्ण decoded_tail_is_implicit;
+    unsigned वर्ण file_initialized;
+    unsigned वर्ण file_eof;
+    unsigned वर्ण decoder_finalized;
+    unsigned वर्ण stop_interactive;
 } _PyTok_Reader;
 
-struct tok_state;
+संरचना tok_state;
 
 // On failure, the buffer and capacity are unchanged.
-int _PyTok_ReserveBuffer(char **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
-char *_PyTok_CopyBytes(const char *, Py_ssize_t);
-int _PyTok_DecodeOnce(
-    struct tok_state *, _PyTok_Chunk *, const char *, const char *);
-char *_PyTok_NormalizeNewlines(const char *, Py_ssize_t, Py_ssize_t *);
-void _PyTok_ChunkClear(_PyTok_Chunk *);
-int _PyTok_SetEncoding(struct tok_state *, const char *);
+पूर्णाङ्क _PyTok_ReserveBuffer(वर्ण **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
+वर्ण *_PyTok_CopyBytes(ध्रुव वर्ण *, Py_ssize_t);
+पूर्णाङ्क _PyTok_DecodeOnce(
+    संरचना tok_state *, _PyTok_Chunk *, ध्रुव वर्ण *, ध्रुव वर्ण *);
+वर्ण *_PyTok_NormalizeNewlines(ध्रुव वर्ण *, Py_ssize_t, Py_ssize_t *);
+शून्य _PyTok_ChunkClear(_PyTok_Chunk *);
+पूर्णाङ्क _PyTok_SetEncoding(संरचना tok_state *, ध्रुव वर्ण *);
 _PyTok_EncodingResult _PyTok_DetectEncoding(
-    struct tok_state *, const _PyTok_Chunk *, const _PyTok_Chunk *, int,
+    संरचना tok_state *, ध्रुव _PyTok_Chunk *, ध्रुव _PyTok_Chunk *, पूर्णाङ्क,
     Py_ssize_t *);
-int _PyTok_PrepareString(struct tok_state *, const char *, int, int, int);
-int _PyTok_StartDecoder(struct tok_state *, const char *);
-int _PyTok_DecodeChunk(struct tok_state *, _PyTok_Chunk *, int);
-int _PyTok_DecoderHasBufferedInput(struct tok_state *);
+पूर्णाङ्क _PyTok_PrepareString(संरचना tok_state *, ध्रुव वर्ण *, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क);
+पूर्णाङ्क _PyTok_StartDecoder(संरचना tok_state *, ध्रुव वर्ण *);
+पूर्णाङ्क _PyTok_DecodeChunk(संरचना tok_state *, _PyTok_Chunk *, पूर्णाङ्क);
+पूर्णाङ्क Py_Tok_Decoder_Has_Buffered_निवेश(संरचना tok_state *);
 
 #endif
