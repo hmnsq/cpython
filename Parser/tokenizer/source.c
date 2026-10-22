@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#ضمن "Python.h"
+#ضمن "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#ضمن "source.h"
 
 #define SOURCE_BUFFER_GROWTH_FACTOR 2
 
-void
+فراغ
 _PyTok_SourceInit(_PyTok_SourceText *source)
 {
     *source = (_PyTok_SourceText){0};
 }
 
-void
+فراغ
 _PyTok_SourceClear(_PyTok_SourceText *source)
 {
     PyMem_Free(source->bytes);
     _PyTok_SourceInit(source);
 }
 
-void
+فراغ
 _PyTok_SourceDiscard(_PyTok_SourceText *source)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
+    أكد(source->base_offset <= PY_SSIZE_T_MAX - source->len);
     source->base_offset += source->len;
     source->len = 0;
-    if (source->bytes != NULL) {
+    إذا (source->bytes != عدم) {
         source->bytes[0] = '\0';
     }
     source->nlines = 0;
 }
 
-static int
+ساكن صحيح
 reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    إذا (needed <= source->cap) {
+        أرجع 0;
     }
     Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    طالما (cap < needed) {
+        إذا (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
             cap = needed;
-            break;
+            اكسر;
         }
         cap *= SOURCE_BUFFER_GROWTH_FACTOR;
     }
-    char *bytes;
+    حرف *bytes;
 #ifdef Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
     bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
+    إذا (bytes != عدم && source->len > 0) {
         memcpy(bytes, source->bytes, source->len);
     }
-#else
+#وإلا
     bytes = PyMem_Realloc(source->bytes, cap);
 #endif
-    if (bytes == NULL) {
+    إذا (bytes == عدم) {
         PyErr_NoMemory();
-        return -1;
+        أرجع -1;
     }
 #ifdef Py_DEBUG
-    if (source->bytes != NULL) {
+    إذا (source->bytes != عدم) {
         memset(source->bytes, PYMEM_DEADBYTE, source->cap);
         PyMem_Free(source->bytes);
     }
 #endif
     source->bytes = bytes;
     source->cap = cap;
-    return 0;
+    أرجع 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+ساكن صحيح
+validate_باريس(ثابت _PyTok_SourceText *source, ثابت حرف *bytes,
+              Py_ssize_t len, صحيح append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
+    إذا (len < 0 || (len == 0 && !append_newline) || bytes == عدم ||
             (source->nlines > 0 &&
              (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        أرجع -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
+    ثابت حرف *newline = memchr(bytes, '\n', len);
+    إذا (newline != عدم && (append_newline || newline != bytes + len - 1)) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        أرجع -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
+    إذا (source->nlines == INT_MAX ||
+            (source->nlines == INT_MAX - 1 && (newline != عدم || append_newline))) {
         PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+        أرجع -1;
     }
-    return 0;
+    أرجع 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+ساكن _PyTok_Off
+append_باريس(_PyTok_SourceText *source, ثابت حرف *bytes,
+            Py_ssize_t len, صحيح append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    إذا (validate_باريس(source, bytes, len, append_newline) < 0) {
+        أرجع -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+    إذا (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
             source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
         PyErr_NoMemory();
-        return -1;
+        أرجع -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    إذا (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
+        أرجع -1;
     }
 
     _PyTok_Off start = source->len;
     memcpy(source->bytes + start, bytes, len);
     source->len += len;
-    if (append_newline) {
+    إذا (append_newline) {
         source->bytes[source->len++] = '\n';
     }
     source->bytes[source->len] = '\0';
     source->nlines++;
-    return source->base_offset + start;
+    أرجع source->base_offset + start;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_باريس(_PyTok_SourceText *source, ثابت حرف *bytes,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    أرجع append_باريس(source, bytes, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_باريس_With_Newline(_PyTok_SourceText *source, ثابت حرف *bytes,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    أرجع append_باريس(source, bytes, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+ثابت حرف *
+Py_Tok_Source_باريس_View(ثابت _PyTok_SourceText *source, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    أكد(len != عدم);
+    ثابت حرف *باريس = _PyTok_SourceData(source);
+    ثابت حرف *end = باريس + source->len;
+    طالما (lineno > 1) {
+        ثابت حرف *newline = memchr(باريس, '\n', end - باريس);
+        إذا (newline == عدم) {
+            اكسر;
         }
-        line = newline + 1;
+        باريس = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    ثابت حرف *newline = memchr(باريس, '\n', end - باريس);
+    *len = (newline != عدم ? newline : end) - باريس;
+    أرجع باريس;
 }

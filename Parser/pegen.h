@@ -1,22 +1,22 @@
 #ifndef PEGEN_H
 #define PEGEN_H
 
-#include <Python.h>
-#include <pycore_ast.h>
-#include <pycore_token.h>
-#include <pycore_ceval.h>     // _Py_ReachedRecursionLimitWithMargin()
-#include <pycore_pystate.h>   // _Py_get_machine_stack_pointer()
-#include <pycore_pythonrun.h> // _PyOS_STACK_MARGIN_BYTES
+#ضمن <Python.h>
+#ضمن <pycore_ast.h>
+#ضمن <pycore_token.h>
+#ضمن <pycore_ceval.h>     // _Py_ReachedRecursionLimitWithMargin()
+#ضمن <pycore_pystate.h>   // _Py_get_machine_stack_pointer()
+#ضمن <pycore_pythonrun.h> // _PyOS_STACK_MARGIN_BYTES
 
-#include "tokenizer/tokenizer.h"
+#ضمن "tokenizer/tokenizer.h"
 
-#if 0
+#إذا 0
 #define PyPARSE_YIELD_IS_KEYWORD        0x0001
 #endif
 
 #define PyPARSE_DONT_IMPLY_DEDENT       0x0002
 
-#if 0
+#إذا 0
 #define PyPARSE_WITH_IS_KEYWORD         0x0003
 #define PyPARSE_PRINT_IS_FUNCTION       0x0004
 #define PyPARSE_UNICODE_LITERALS        0x0008
@@ -25,26 +25,26 @@
 #define PyPARSE_IGNORE_COOKIE 0x0010
 #define PyPARSE_BARRY_AS_BDFL 0x0020
 #define PyPARSE_TYPE_COMMENTS 0x0040
-#define PyPARSE_ALLOW_INCOMPLETE_INPUT 0x0100
+#define Py_PARSE_ALLOW_INCOMPLETE_ماسوقن 0x0100
 
 #define CURRENT_POS (-5)
 
-typedef struct _memo {
-    int type;
-    void *node;
-    int mark;
-    struct _memo *next;
+تعريفنوع بنية _memo {
+    صحيح type;
+    فراغ *نود;
+    صحيح mark;
+    بنية _memo *next;
 } Memo;
 
-typedef struct {
-    int type;
+تعريفنوع بنية {
+    صحيح type;
     // Text required by grammar actions or helpers; otherwise NULL.
     // An unfinished string token also has NULL text. Its grammar action
     // requests more input only if the token is valid at that position.
     PyObject *bytes;
-    int level;
-    int is_raw;
-    int lineno, col_offset, end_lineno, end_col_offset;
+    صحيح level;
+    صحيح is_raw;
+    صحيح lineno, col_offset, end_lineno, end_col_offset;
     Memo *memo;
     // Filter over the rule types present in `memo` (bit `type & 63` is set
     // for every entry): lets lookups skip walking the list on definite
@@ -53,156 +53,156 @@ typedef struct {
     PyObject *metadata;
 } Token;
 
-typedef struct {
-    const char *str;
-    int type;
+تعريفنوع بنية {
+    ثابت حرف *str;
+    صحيح type;
 } KeywordToken;
 
 
-typedef struct {
-    struct {
-        int lineno;
-        char *comment;  // The " <tag>" in "# type: ignore <tag>"
-    } *items;
+تعريفنوع بنية {
+    بنية {
+        صحيح lineno;
+        حرف *comment;  // The " <tag>" in "# type: ignore <tag>"
+    } *بارڠن;
     size_t size;
-    size_t num_items;
+    size_t اڠک_بارڠن;
 } growable_comment_array;
 
-typedef struct {
-    int lineno;
-    int col_offset;
-    int end_lineno;
-    int end_col_offset;
+تعريفنوع بنية {
+    صحيح lineno;
+    صحيح col_offset;
+    صحيح end_lineno;
+    صحيح end_col_offset;
 } location;
 
-typedef struct _identifier_cache_entry IdentifierCacheEntry;
+تعريفنوع بنية _identifier_cache_entry IdentifierCacheEntry;
 
-typedef struct {
-    struct tok_state *tok;
+تعريفنوع بنية {
+    بنية tok_state *tok;
     Token **tokens;
-    int mark;
-    int fill, size;
+    صحيح mark;
+    صحيح fill, size;
     PyArena *arena;
     KeywordToken **keywords;
-    char **soft_keywords;
-    int n_keyword_lists;
-    int start_rule;
-    int *errcode;
-    unsigned char parsing_started;
-    unsigned char input_exhausted;
+    حرف **soft_keywords;
+    صحيح n_keyword_lists;
+    صحيح start_rule;
+    صحيح *errcode;
+    unsigned حرف parsing_started;
+    unsigned حرف ماسوقن_exhausted;
     PyObject* normalize;
-    int starting_lineno;
-    int starting_col_offset;
-    int error_indicator;
-    int flags;
-    int feature_version;
+    صحيح starting_lineno;
+    صحيح starting_col_offset;
+    صحيح error_indicator;
+    صحيح flags;
+    صحيح feature_version;
     growable_comment_array type_ignore_comments;
     Token *known_err_token;
-    int level;
-    int call_invalid_rules;
-    int debug;
+    صحيح level;
+    صحيح call_invalid_rules;
+    صحيح debug;
     location last_stmt_location;
     IdentifierCacheEntry *identifier_cache;
     PyThreadState *tstate;
     // Cached copy of tstate->c_stack_soft_limit offset by one margin toward
     // the stack top, so the per-rule stack check is a single inline comparison.
-    uintptr_t stack_soft_limit;
+    uintptr_t تيندنن_soft_limit;
 } Parser;
 
 // C-stack exhaustion check run on every rule entry. The fast path compares
 // the machine stack pointer against the soft limit cached in the Parser;
 // only when the stack is nearly exhausted is the full check called.
-static inline int
-_PyPegen_stack_exhausted(Parser *p)
+ساكن مضمن صحيح
+Py_Pegen_تيندنن_exhausted(Parser *p)
 {
-#if _Py_STACK_GROWS_DOWN
-    if (_Py_get_machine_stack_pointer() > p->stack_soft_limit) {
-#else
-    if (_Py_get_machine_stack_pointer() <= p->stack_soft_limit) {
+#إذا Py_تيندنن_GROWS_DOWN
+    إذا (Py_get_machine_تيندنن_pointer() > p->تيندنن_soft_limit) {
+#وإلا
+    إذا (Py_get_machine_تيندنن_pointer() <= p->تيندنن_soft_limit) {
 #endif
-        assert(!_Py_ReachedRecursionLimitWithMargin(p->tstate, 1));
-        return 0;
+        أكد(!_Py_ReachedRecursionLimitWithMargin(p->tstate, 1));
+        أرجع 0;
     }
-    return _Py_ReachedRecursionLimitWithMargin(p->tstate, 1);
+    أرجع _Py_ReachedRecursionLimitWithMargin(p->tstate, 1);
 }
 
-typedef struct {
+تعريفنوع بنية {
     cmpop_ty cmpop;
-    expr_ty expr;
-} CmpopExprPair;
+    اوڠکاڤن_ty اوڠکاڤن;
+} Cmpop_اوڠکاڤن_Pair;
 
-typedef struct {
-    expr_ty key;
-    expr_ty value;
-} KeyValuePair;
+تعريفنوع بنية {
+    اوڠکاڤن_ty کونچي;
+    اوڠکاڤن_ty نيلاي;
+} کونچي_نيلاي_Pair;
 
-typedef struct {
-    expr_ty key;
+تعريفنوع بنية {
+    اوڠکاڤن_ty کونچي;
     pattern_ty pattern;
-} KeyPatternPair;
+} کونچي_Pattern_Pair;
 
-typedef struct {
+تعريفنوع بنية {
     arg_ty arg;
-    expr_ty value;
+    اوڠکاڤن_ty نيلاي;
 } NameDefaultPair;
 
-typedef struct {
+تعريفنوع بنية {
     asdl_arg_seq *plain_names;
     asdl_seq *names_with_defaults; // asdl_seq* of NameDefaultsPair's
 } SlashWithDefault;
 
-typedef struct {
+تعريفنوع بنية {
     arg_ty vararg;
     asdl_seq *kwonlyargs; // asdl_seq* of NameDefaultsPair's
     arg_ty kwarg;
 } StarEtc;
 
-typedef struct { operator_ty kind; } AugOperator;
-typedef struct {
-    void *element;
-    int is_keyword;
+تعريفنوع بنية { operator_ty kind; } AugOperator;
+تعريفنوع بنية {
+    فراغ *element;
+    صحيح is_keyword;
 } KeywordOrStarred;
 
-typedef struct {
-    void *result;
+تعريفنوع بنية {
+    فراغ *result;
     PyObject *metadata;
 } ResultTokenWithMetadata;
 
 // Internal parser functions
-#if defined(Py_DEBUG)
-void _PyPegen_clear_memo_statistics(void);
-PyObject *_PyPegen_get_memo_statistics(void);
+#إذا defined(Py_DEBUG)
+فراغ _PyPegen_clear_memo_statistics(فراغ);
+PyObject *_PyPegen_get_memo_statistics(فراغ);
 #endif
 
-int _PyPegen_insert_memo(Parser *p, int mark, int type, void *node);
-int _PyPegen_update_memo(Parser *p, int mark, int type, void *node);
-Memo *_PyPegen_insert_memo_direct(Parser *p, int mark, int type);
-int _PyPegen_is_memoized(Parser *p, int type, void *pres);
+صحيح Py_Pegen_سيسيڤ_memo(Parser *p, صحيح mark, صحيح type, فراغ *نود);
+صحيح _PyPegen_update_memo(Parser *p, صحيح mark, صحيح type, فراغ *نود);
+Memo *Py_Pegen_سيسيڤ_memo_direct(Parser *p, صحيح mark, صحيح type);
+صحيح _PyPegen_is_memoized(Parser *p, صحيح type, فراغ *pres);
 
-int _PyPegen_lookahead(int, void *(func)(Parser *), Parser *);
-int _PyPegen_lookahead_for_expr(int, expr_ty (func)(Parser *), Parser *);
-int _PyPegen_lookahead_for_stmt(int, stmt_ty (func)(Parser *), Parser *);
-int _PyPegen_lookahead_with_int(int, Token *(func)(Parser *, int), Parser *, int);
-int _PyPegen_lookahead_with_string(int, expr_ty (func)(Parser *, const char*), Parser *, const char*);
+صحيح _PyPegen_lookahead(صحيح, فراغ *(func)(Parser *), Parser *);
+صحيح Py_Pegen_lookahead_for_اوڠکاڤن(صحيح, اوڠکاڤن_ty (func)(Parser *), Parser *);
+صحيح _PyPegen_lookahead_for_stmt(صحيح, stmt_ty (func)(Parser *), Parser *);
+صحيح _PyPegen_lookahead_with_int(صحيح, Token *(func)(Parser *, صحيح), Parser *, صحيح);
+صحيح _PyPegen_lookahead_with_string(صحيح, اوڠکاڤن_ty (func)(Parser *, ثابت حرف*), Parser *, ثابت حرف*);
 
-Token *_PyPegen_expect_token(Parser *p, int type);
-void* _PyPegen_expect_forced_result(Parser *p, void* result, const char* expected);
-Token *_PyPegen_expect_forced_token(Parser *p, int type, const char* expected);
-expr_ty _PyPegen_expect_soft_keyword(Parser *p, const char *keyword);
-expr_ty _PyPegen_soft_keyword_token(Parser *p);
-expr_ty _PyPegen_fstring_middle_token(Parser* p);
+Token *_PyPegen_expect_token(Parser *p, صحيح type);
+فراغ* _PyPegen_expect_forced_result(Parser *p, فراغ* result, ثابت حرف* expected);
+Token *_PyPegen_expect_forced_token(Parser *p, صحيح type, ثابت حرف* expected);
+اوڠکاڤن_ty _PyPegen_expect_soft_keyword(Parser *p, ثابت حرف *keyword);
+اوڠکاڤن_ty _PyPegen_soft_keyword_token(Parser *p);
+اوڠکاڤن_ty Py_Pegen_fstring_تڠه_token(Parser* p);
 Token *_PyPegen_get_last_nonnwhitespace_token(Parser *);
-int _PyPegen_fill_token(Parser *p);
+صحيح _PyPegen_fill_token(Parser *p);
 // Return -1 on failure, leaving the buffer and capacity unchanged.
-int _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity);
-expr_ty _PyPegen_name_token(Parser *p);
-expr_ty _PyPegen_number_token(Parser *p);
-void *_PyPegen_string_token(Parser *p);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset_raw(const char*, Py_ssize_t col_offset);
+صحيح _PyPegen_grow_loop_buffer(فراغ ***buffer, Py_ssize_t *capacity);
+اوڠکاڤن_ty _PyPegen_name_token(Parser *p);
+اوڠکاڤن_ty Py_Pegen_نومبور_token(Parser *p);
+فراغ *_PyPegen_string_token(Parser *p);
+Py_ssize_t Py_Pegen_byte_offset_to_character_offset_باريس(PyObject *باريس, Py_ssize_t col_offset, Py_ssize_t end_col_offset);
+Py_ssize_t _PyPegen_byte_offset_to_character_offset(PyObject *باريس, Py_ssize_t col_offset);
+Py_ssize_t _PyPegen_byte_offset_to_character_offset_raw(ثابت حرف*, Py_ssize_t col_offset);
 
-typedef enum {
+تعريفنوع تعداد {
     STAR_TARGETS,
     DEL_TARGETS,
     FOR_TARGETS,
@@ -211,22 +211,22 @@ typedef enum {
 } TARGETS_TYPE;
 
 // Error handling functions and APIs
-int _Pypegen_raise_decode_error(Parser *p);
-int _Pypegen_tokenizer_error(Parser *p);
-void *_PyPegen_raise_incomplete_input(Parser *p);
-void *_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...);
-void *_PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
+صحيح _Pypegen_raise_decode_error(Parser *p);
+صحيح _Pypegen_tokenizer_error(Parser *p);
+فراغ *Py_Pegen_raise_incomplete_ماسوقن(Parser *p);
+فراغ *_PyPegen_raise_error(Parser *p, PyObject *errtype, صحيح use_mark, ثابت حرف *errmsg, ...);
+فراغ *_PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
                                           Py_ssize_t lineno, Py_ssize_t col_offset,
                                           Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                                          const char *errmsg, va_list va);
-void _Pypegen_set_syntax_error(Parser* p, Token* last_token);
-void _Pypegen_stack_overflow(Parser *p);
+                                          ثابت حرف *errmsg, va_list va);
+فراغ _Pypegen_set_syntax_error(Parser* p, Token* last_token);
+فراغ Pypegen_تيندنن_overflow(Parser *p);
 
-static inline void *
+ساكن مضمن فراغ *
 RAISE_ERROR_KNOWN_LOCATION(Parser *p, PyObject *errtype,
                            Py_ssize_t lineno, Py_ssize_t col_offset,
                            Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
-                           const char *errmsg, ...)
+                           ثابت حرف *errmsg, ...)
 {
     va_list va;
     va_start(va, errmsg);
@@ -234,202 +234,202 @@ RAISE_ERROR_KNOWN_LOCATION(Parser *p, PyObject *errtype,
     Py_ssize_t _end_col_offset = (end_col_offset == CURRENT_POS ? CURRENT_POS : end_col_offset + 1);
     _PyPegen_raise_error_known_location(p, errtype, lineno, _col_offset, end_lineno, _end_col_offset, errmsg, va);
     va_end(va);
-    return NULL;
+    أرجع عدم;
 }
-#define RAISE_SYNTAX_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, msg, ##__VA_ARGS__)
-#define RAISE_INDENTATION_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_ON_NEXT_TOKEN(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_RANGE(a, b, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (b)->end_lineno, (b)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (a)->end_lineno, (a)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_STARTING_FROM(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, CURRENT_POS, CURRENT_POS, msg, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR(ڤسنن, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, ڤسنن, ##__VA_ARGS__)
+#define RAISE_INDENTATION_ERROR(ڤسنن, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, ڤسنن, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_ON_NEXT_TOKEN(ڤسنن, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, ڤسنن, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_KNOWN_RANGE(a, b, ڤسنن, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (b)->end_lineno, (b)->end_col_offset, ڤسنن, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, ڤسنن, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (a)->end_lineno, (a)->end_col_offset, ڤسنن, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_STARTING_FROM(a, ڤسنن, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, CURRENT_POS, CURRENT_POS, ڤسنن, ##__VA_ARGS__)
 #define RAISE_SYNTAX_ERROR_INVALID_TARGET(type, e) _RAISE_SYNTAX_ERROR_INVALID_TARGET(p, type, e)
 
-Py_LOCAL_INLINE(int)
+Py_LOCAL_INLINE(صحيح)
 _PyPegen_tokens_are_adjacent(Token *a, Token *b)
 {
-    return (a->end_lineno == b->lineno) && (a->end_col_offset == b->col_offset);
+    أرجع (a->end_lineno == b->lineno) && (a->end_col_offset == b->col_offset);
 }
 
-Py_LOCAL_INLINE(void *)
-CHECK_CALL(Parser *p, void *result)
+Py_LOCAL_INLINE(فراغ *)
+CHECK_CALL(Parser *p, فراغ *result)
 {
-    if (result == NULL) {
-        assert(PyErr_Occurred());
+    إذا (result == عدم) {
+        أكد(PyErr_Occurred());
         p->error_indicator = 1;
     }
-    return result;
+    أرجع result;
 }
 
 /* This is needed for helper functions that are allowed to
    return NULL without an error. Example: _PyPegen_seq_extract_starred_exprs */
-Py_LOCAL_INLINE(void *)
-CHECK_CALL_NULL_ALLOWED(Parser *p, void *result)
+Py_LOCAL_INLINE(فراغ *)
+CHECK_CALL_NULL_ALLOWED(Parser *p, فراغ *result)
 {
-    if (result == NULL && PyErr_Occurred()) {
+    إذا (result == عدم && PyErr_Occurred()) {
         p->error_indicator = 1;
     }
-    return result;
+    أرجع result;
 }
 
 #define CHECK(type, result) ((type) CHECK_CALL(p, result))
 #define CHECK_NULL_ALLOWED(type, result) ((type) CHECK_CALL_NULL_ALLOWED(p, result))
 
-expr_ty _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type);
-const char *_PyPegen_get_expr_name(expr_ty);
-Py_LOCAL_INLINE(void *)
-_RAISE_SYNTAX_ERROR_INVALID_TARGET(Parser *p, TARGETS_TYPE type, void *e)
+اوڠکاڤن_ty _PyPegen_get_invalid_target(اوڠکاڤن_ty e, TARGETS_TYPE targets_type);
+ثابت حرف *Py_Pegen_get_اوڠکاڤن_name(اوڠکاڤن_ty);
+Py_LOCAL_INLINE(فراغ *)
+_RAISE_SYNTAX_ERROR_INVALID_TARGET(Parser *p, TARGETS_TYPE type, فراغ *e)
 {
-    expr_ty invalid_target = CHECK_NULL_ALLOWED(expr_ty, _PyPegen_get_invalid_target(e, type));
-    if (invalid_target != NULL) {
-        const char *msg;
-        if (type == STAR_TARGETS || type == FOR_TARGETS) {
-            msg = "cannot assign to %s";
+    اوڠکاڤن_ty invalid_target = CHECK_NULL_ALLOWED(اوڠکاڤن_ty, _PyPegen_get_invalid_target(e, type));
+    إذا (invalid_target != عدم) {
+        ثابت حرف *ڤسنن;
+        إذا (type == STAR_TARGETS || type == FOR_TARGETS) {
+            ڤسنن = "cannot assign to %s";
         }
-        else {
-            msg = "cannot delete %s";
+        وإلا {
+            ڤسنن = "cannot delete %s";
         }
-        return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
+        أرجع RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
             invalid_target,
-            msg,
-            _PyPegen_get_expr_name(invalid_target)
+            ڤسنن,
+            Py_Pegen_get_اوڠکاڤن_name(invalid_target)
         );
-        return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(invalid_target, "invalid syntax");
+        أرجع RAISE_SYNTAX_ERROR_KNOWN_LOCATION(invalid_target, "invalid syntax");
     }
-    return NULL;
+    أرجع عدم;
 }
 
 // Action utility functions
 
-void *_PyPegen_dummy_name(Parser *p, ...);
-void * _PyPegen_seq_last_item(asdl_seq *seq);
+فراغ *_PyPegen_dummy_name(Parser *p, ...);
+فراغ * _PyPegen_seq_last_item(asdl_seq *seq);
 #define PyPegen_last_item(seq, type) ((type)_PyPegen_seq_last_item((asdl_seq*)seq))
-void * _PyPegen_seq_first_item(asdl_seq *seq);
+فراغ * _PyPegen_seq_first_item(asdl_seq *seq);
 #define PyPegen_first_item(seq, type) ((type)_PyPegen_seq_first_item((asdl_seq*)seq))
-#define UNUSED(expr) do { (void)(expr); } while (0)
-#define EXTRA_EXPR(head, tail) head->lineno, (head)->col_offset, (tail)->end_lineno, (tail)->end_col_offset, p->arena
+#define UNUSED(اوڠکاڤن) افعل { (فراغ)(اوڠکاڤن); } طالما (0)
+#define EXTRA_اوڠکاڤن(head, tail) head->lineno, (head)->col_offset, (tail)->end_lineno, (tail)->end_col_offset, p->arena
 #define EXTRA _start_lineno, _start_col_offset, _end_lineno, _end_col_offset, p->arena
-PyObject *_PyPegen_new_type_comment(Parser *, const char *);
+PyObject *_PyPegen_new_type_comment(Parser *, ثابت حرف *);
 
 Py_LOCAL_INLINE(PyObject *)
 NEW_TYPE_COMMENT(Parser *p, Token *tc)
 {
-    if (tc == NULL) {
-        return NULL;
+    إذا (tc == عدم) {
+        أرجع عدم;
     }
-    const char *bytes = PyBytes_AsString(tc->bytes);
-    if (bytes == NULL) {
-        goto error;
+    ثابت حرف *bytes = PyBytes_AsString(tc->bytes);
+    إذا (bytes == عدم) {
+        اذهب error;
     }
     PyObject *tco = _PyPegen_new_type_comment(p, bytes);
-    if (tco == NULL) {
-        goto error;
+    إذا (tco == عدم) {
+        اذهب error;
     }
-    return tco;
+    أرجع tco;
  error:
     p->error_indicator = 1;  // Inline CHECK_CALL
-    return NULL;
+    أرجع عدم;
 }
 
-Py_LOCAL_INLINE(void *)
-INVALID_VERSION_CHECK(Parser *p, int version, char *msg, void *node)
+Py_LOCAL_INLINE(فراغ *)
+INVALID_VERSION_CHECK(Parser *p, صحيح version, حرف *ڤسنن, فراغ *نود)
 {
-    if (node == NULL) {
+    إذا (نود == عدم) {
         p->error_indicator = 1;  // Inline CHECK_CALL
-        return NULL;
+        أرجع عدم;
     }
-    if (p->feature_version < version) {
+    إذا (p->feature_version < version) {
         p->error_indicator = 1;
-        return RAISE_SYNTAX_ERROR("%s only supported in Python 3.%i and greater",
-                                  msg, version);
+        أرجع RAISE_SYNTAX_ERROR("%s only supported in Python 3.%i and greater",
+                                  ڤسنن, version);
     }
-    return node;
+    أرجع نود;
 }
 
-#define CHECK_VERSION(type, version, msg, node) ((type) INVALID_VERSION_CHECK(p, version, msg, node))
+#define CHECK_VERSION(type, version, ڤسنن, نود) ((type) INVALID_VERSION_CHECK(p, version, ڤسنن, نود))
 
 arg_ty _PyPegen_add_type_comment_to_arg(Parser *, arg_ty, Token *);
-PyObject *_PyPegen_new_identifier(Parser *, const char *);
-asdl_seq *_PyPegen_singleton_seq(Parser *, void *);
-asdl_seq *_PyPegen_seq_insert_in_front(Parser *, void *, asdl_seq *);
-asdl_seq *_PyPegen_seq_append_to_end(Parser *, asdl_seq *, void *);
+PyObject *_PyPegen_new_identifier(Parser *, ثابت حرف *);
+asdl_seq *_PyPegen_singleton_seq(Parser *, فراغ *);
+asdl_seq *Py_Pegen_seq_سيسيڤ_in_front(Parser *, فراغ *, asdl_seq *);
+asdl_seq *_PyPegen_seq_append_to_end(Parser *, asdl_seq *, فراغ *);
 asdl_seq *_PyPegen_seq_flatten(Parser *, asdl_seq *);
-expr_ty _PyPegen_join_names_with_dot(Parser *, expr_ty, expr_ty);
-int _PyPegen_seq_count_dots(asdl_seq *);
-alias_ty _PyPegen_alias_for_star(Parser *, int, int, int, int, PyArena *);
-asdl_identifier_seq *_PyPegen_map_names_to_ids(Parser *, asdl_expr_seq *);
-CmpopExprPair *_PyPegen_cmpop_expr_pair(Parser *, cmpop_ty, expr_ty);
+اوڠکاڤن_ty _PyPegen_join_names_with_dot(Parser *, اوڠکاڤن_ty, اوڠکاڤن_ty);
+صحيح Py_Pegen_seq_کيراءن_dots(asdl_seq *);
+alias_ty _PyPegen_alias_for_star(Parser *, صحيح, صحيح, صحيح, صحيح, PyArena *);
+asdl_identifier_seq *_PyPegen_map_names_to_ids(Parser *, asdl_اوڠکاڤن_seq *);
+Cmpop_اوڠکاڤن_Pair *Py_Pegen_cmpop_اوڠکاڤن_pair(Parser *, cmpop_ty, اوڠکاڤن_ty);
 asdl_int_seq *_PyPegen_get_cmpops(Parser *p, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_set_expr_context(Parser *, expr_ty, expr_context_ty);
-expr_ty _PyPegen_make_target(Parser *, expr_ty, TARGETS_TYPE);
-KeyValuePair *_PyPegen_key_value_pair(Parser *, expr_ty, expr_ty);
-asdl_expr_seq *_PyPegen_get_keys(Parser *, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_values(Parser *, asdl_seq *);
-KeyPatternPair *_PyPegen_key_pattern_pair(Parser *, expr_ty, pattern_ty);
-asdl_expr_seq *_PyPegen_get_pattern_keys(Parser *, asdl_seq *);
+asdl_اوڠکاڤن_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
+اوڠکاڤن_ty Py_Pegen_set_اوڠکاڤن_context(Parser *, اوڠکاڤن_ty, اوڠکاڤن_context_ty);
+اوڠکاڤن_ty _PyPegen_make_target(Parser *, اوڠکاڤن_ty, TARGETS_TYPE);
+کونچي_نيلاي_Pair *Py_Pegen_کونچي_نيلاي_pair(Parser *, اوڠکاڤن_ty, اوڠکاڤن_ty);
+asdl_اوڠکاڤن_seq *Py_Pegen_get_کونچي_سموا(Parser *, asdl_seq *);
+asdl_اوڠکاڤن_seq *Py_Pegen_get_نيلاي_سموا(Parser *, asdl_seq *);
+کونچي_Pattern_Pair *Py_Pegen_کونچي_pattern_pair(Parser *, اوڠکاڤن_ty, pattern_ty);
+asdl_اوڠکاڤن_seq *Py_Pegen_get_pattern_کونچي_سموا(Parser *, asdl_seq *);
 asdl_pattern_seq *_PyPegen_get_patterns(Parser *, asdl_seq *);
-NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, expr_ty, Token *);
+NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, اوڠکاڤن_ty, Token *);
 SlashWithDefault *_PyPegen_slash_with_default(Parser *, asdl_arg_seq *, asdl_seq *);
 StarEtc *_PyPegen_star_etc(Parser *, arg_ty, asdl_seq *, arg_ty);
 arguments_ty _PyPegen_make_arguments(Parser *, asdl_arg_seq *, SlashWithDefault *,
                                      asdl_arg_seq *, asdl_seq *, StarEtc *);
 arguments_ty _PyPegen_empty_arguments(Parser *);
-expr_ty _PyPegen_template_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_interpolation(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
-                                 int, int, int, int, PyArena *);
-expr_ty _PyPegen_formatted_value(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
-                                 int, int, int, int, PyArena *);
+اوڠکاڤن_ty _PyPegen_template_str(Parser *p, Token *a, asdl_اوڠکاڤن_seq *raw_expressions, Token *b);
+اوڠکاڤن_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_اوڠکاڤن_seq *raw_expressions, Token *b);
+اوڠکاڤن_ty _PyPegen_interpolation(Parser *, اوڠکاڤن_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
+                                 صحيح, صحيح, صحيح, صحيح, PyArena *);
+اوڠکاڤن_ty Py_Pegen_formatted_نيلاي(Parser *, اوڠکاڤن_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
+                                 صحيح, صحيح, صحيح, صحيح, PyArena *);
 AugOperator *_PyPegen_augoperator(Parser*, operator_ty type);
-stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
-stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
-KeywordOrStarred *_PyPegen_keyword_or_starred(Parser *, void *, int);
-asdl_expr_seq *_PyPegen_seq_extract_starred_exprs(Parser *, asdl_seq *);
+stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_اوڠکاڤن_seq *, stmt_ty);
+stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_اوڠکاڤن_seq *, stmt_ty);
+KeywordOrStarred *_PyPegen_keyword_or_starred(Parser *, فراغ *, صحيح);
+asdl_اوڠکاڤن_seq *_PyPegen_seq_extract_starred_exprs(Parser *, asdl_seq *);
 asdl_keyword_seq *_PyPegen_seq_delete_starred_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_collect_call_seqs(Parser *, asdl_expr_seq *, asdl_seq *,
-                     int lineno, int col_offset, int end_lineno,
-                     int end_col_offset, PyArena *arena);
-expr_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
-expr_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_concatenate_strings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_FetchRawForm(Parser *p, int, int, int, int);
-expr_ty _PyPegen_ensure_imaginary(Parser *p, expr_ty);
-expr_ty _PyPegen_ensure_real(Parser *p, expr_ty);
+اوڠکاڤن_ty _PyPegen_collect_call_seqs(Parser *, asdl_اوڠکاڤن_seq *, asdl_seq *,
+                     صحيح lineno, صحيح col_offset, صحيح end_lineno,
+                     صحيح end_col_offset, PyArena *arena);
+اوڠکاڤن_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
+اوڠکاڤن_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
+اوڠکاڤن_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
+اوڠکاڤن_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_اوڠکاڤن_seq *, صحيح, صحيح, صحيح, صحيح, PyArena *);
+اوڠکاڤن_ty _PyPegen_concatenate_strings(Parser *p, asdl_اوڠکاڤن_seq *, صحيح, صحيح, صحيح, صحيح, PyArena *);
+اوڠکاڤن_ty _PyPegen_FetchRawForm(Parser *p, صحيح, صحيح, صحيح, صحيح);
+اوڠکاڤن_ty _PyPegen_ensure_imaginary(Parser *p, اوڠکاڤن_ty);
+اوڠکاڤن_ty _PyPegen_ensure_real(Parser *p, اوڠکاڤن_ty);
 asdl_seq *_PyPegen_join_sequences(Parser *, asdl_seq *, asdl_seq *);
-int _PyPegen_check_barry_as_flufl(Parser *, Token *);
-int _PyPegen_check_legacy_stmt(Parser *p, expr_ty t);
-void *_PyPegen_raise_error_for_missing_comma(Parser *p, expr_ty a, expr_ty b);
-ResultTokenWithMetadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, expr_ty t);
-ResultTokenWithMetadata *_PyPegen_setup_full_format_spec(Parser *, Token *, asdl_expr_seq *, int, int,
-                                                         int, int, PyArena *);
+صحيح _PyPegen_check_barry_as_flufl(Parser *, Token *);
+صحيح _PyPegen_check_legacy_stmt(Parser *p, اوڠکاڤن_ty t);
+فراغ *_PyPegen_raise_error_for_missing_comma(Parser *p, اوڠکاڤن_ty a, اوڠکاڤن_ty b);
+ResultTokenWithMetadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, اوڠکاڤن_ty t);
+ResultTokenWithMetadata *_PyPegen_setup_full_format_spec(Parser *, Token *, asdl_اوڠکاڤن_seq *, صحيح, صحيح,
+                                                         صحيح, صحيح, PyArena *);
 mod_ty _PyPegen_make_module(Parser *, asdl_stmt_seq *);
-void *_PyPegen_arguments_parsing_error(Parser *, expr_ty);
-expr_ty _PyPegen_get_last_comprehension_item(comprehension_ty comprehension);
-void *_PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq *comprehensions);
-stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, expr_ty module_name,
-                                     asdl_alias_seq *names, expr_ty lazy_token, int lineno,
-                                     int col_offset, int end_lineno, int end_col_offset,
+فراغ *_PyPegen_arguments_parsing_error(Parser *, اوڠکاڤن_ty);
+اوڠکاڤن_ty _PyPegen_get_last_comprehension_item(comprehension_ty comprehension);
+فراغ *_PyPegen_nonparen_genexp_in_call(Parser *p, اوڠکاڤن_ty args, asdl_comprehension_seq *comprehensions);
+stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, اوڠکاڤن_ty module_name,
+                                     asdl_alias_seq *names, اوڠکاڤن_ty lazy_token, صحيح lineno,
+                                     صحيح col_offset, صحيح end_lineno, صحيح end_col_offset,
                                      PyArena *arena);
 asdl_stmt_seq* _PyPegen_register_stmts(Parser *p, asdl_stmt_seq* stmts);
 stmt_ty _PyPegen_register_stmt(Parser *p, stmt_ty s);
 
 // Parser API
 
-Parser *_PyPegen_Parser_New(struct tok_state *, int, int, int, int *, const char*, PyArena *);
-void _PyPegen_Parser_Free(Parser *);
-mod_ty _PyPegen_run_parser_from_file_pointer(FILE *, int, PyObject *, const char *,
-                                    const char *, const char *, PyCompilerFlags *, int *, PyObject **,
+Parser *_PyPegen_Parser_New(بنية tok_state *, صحيح, صحيح, صحيح, صحيح *, ثابت حرف*, PyArena *);
+فراغ _PyPegen_Parser_Free(Parser *);
+mod_ty _PyPegen_run_parser_from_file_pointer(FILE *, صحيح, PyObject *, ثابت حرف *,
+                                    ثابت حرف *, ثابت حرف *, PyCompilerFlags *, صحيح *, PyObject **,
                                     PyArena *);
-void *_PyPegen_run_parser(Parser *);
-mod_ty _PyPegen_run_parser_from_string(const char *, int, PyObject *, PyCompilerFlags *, PyArena *, PyObject *, PyObject **);
+فراغ *_PyPegen_run_parser(Parser *);
+mod_ty _PyPegen_run_parser_from_string(ثابت حرف *, صحيح, PyObject *, PyCompilerFlags *, PyArena *, PyObject *, PyObject **);
 asdl_stmt_seq *_PyPegen_interactive_exit(Parser *);
 
 // Generated function in parse.c - function definition in python.gram
-void *_PyPegen_parse(Parser *);
+فراغ *_PyPegen_parse(Parser *);
 
 #endif
