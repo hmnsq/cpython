@@ -27,10 +27,10 @@ def get_c_type(name):
 
     This function special cases the default types provided by asdl.
     """
-    if name in asdl.builtin_types:
-        return name
-    else:
-        return "%s_ty" % name
+    nếu name in asdl.builtin_types:
+        trả_về name
+    không_thì:
+        trả_về "%s_ty" % name
 
 def reflow_lines(s, depth):
     """Reflow the line s indented depth tabs.
@@ -43,39 +43,39 @@ def reflow_lines(s, depth):
     line.
     """
     size = MAX_COL - depth * TABSIZE
-    if len(s) < size:
-        return [s]
+    nếu len(s) < size:
+        trả_về [s]
 
     lines = []
     cur = s
     padding = ""
-    while len(cur) > size:
+    trong_khi len(cur) > size:
         i = cur.rfind(' ', 0, size)
         # XXX this should be fixed for real
-        if i == -1 and 'GeneratorExp' in cur:
+        nếu i == -1 and 'GeneratorExp' in cur:
             i = size + 3
         assert i != -1, "Impossible line %d to reflow: %r" % (size, s)
         lines.append(padding + cur[:i])
-        if len(lines) == 1:
+        nếu len(lines) == 1:
             # find new size based on brace
             j = cur.find('{', 0, i)
-            if j >= 0:
+            nếu j >= 0:
                 j += 2 # account for the brace and the space after it
                 size -= j
                 padding = " " * j
-            else:
+            không_thì:
                 j = cur.find('(', 0, i)
-                if j >= 0:
+                nếu j >= 0:
                     j += 1 # account for the paren (no space after it)
                     size -= j
                     padding = " " * j
         cur = cur[i+1:]
-    else:
+    không_thì:
         lines.append(padding + cur)
-    return lines
+    trả_về lines
 
 def reflow_c_string(s, depth):
-    return '"%s"' % s.replace('\n', '\\n"\n%s"' % (' ' * depth * TABSIZE))
+    trả_về '"%s"' % s.replace('\n', '\\n"\n%s"' % (' ' * depth * TABSIZE))
 
 def is_simple(sum_type):
     """Return True if a sum is a simple.
@@ -87,26 +87,26 @@ def is_simple(sum_type):
     unaryop = Invert | Not | UAdd | USub
     """
 
-    return not (
+    trả_về not (
         sum_type.attributes or
-        any(constructor.fields for constructor in sum_type.types)
+        any(constructor.fields cho constructor in sum_type.types)
     )
 
 def asdl_of(name, obj):
-    if isinstance(obj, asdl.Product) or isinstance(obj, asdl.Constructor):
+    nếu isinstance(obj, asdl.Product) or isinstance(obj, asdl.Constructor):
         fields = ", ".join(map(str, obj.fields))
-        if fields:
+        nếu fields:
             fields = "({})".format(fields)
-        return "{}{}".format(name, fields)
-    else:
-        if is_simple(obj):
-            types = " | ".join(type.name for type in obj.types)
-        else:
+        trả_về "{}{}".format(name, fields)
+    không_thì:
+        nếu is_simple(obj):
+            types = " | ".join(type.name cho type in obj.types)
+        không_thì:
             sep = "\n{}| ".format(" " * (len(name) + 1))
             types = sep.join(
-                asdl_of(type.name, type) for type in obj.types
+                asdl_of(type.name, type) cho type in obj.types
             )
-        return "{} = {}".format(name, types)
+        trả_về "{} = {}".format(name, types)
 
 class EmitVisitor(asdl.VisitorBase):
     """Visit that emits lines"""
@@ -118,23 +118,23 @@ class EmitVisitor(asdl.VisitorBase):
 
     def emit(self, s, depth, reflow=True):
         # XXX reflow long lines?
-        if reflow:
+        nếu reflow:
             lines = reflow_lines(s, depth)
-        else:
+        không_thì:
             lines = [s]
-        for line in lines:
-            if line:
+        cho line in lines:
+            nếu line:
                 line = (" " * TABSIZE * depth) + line
             self.file.write(line + "\n")
 
     @property
     def metadata(self):
-        if self._metadata is None:
+        nếu self._metadata is None:
             raise ValueError(
                 "%s was expecting to be annotated with metadata"
                 % type(self).__name__
             )
-        return self._metadata
+        trả_về self._metadata
 
     @metadata.setter
     def metadata(self, value):
@@ -164,7 +164,7 @@ class MetadataVisitor(asdl.VisitorBase):
         )
 
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type):
@@ -174,11 +174,11 @@ class MetadataVisitor(asdl.VisitorBase):
         self.metadata.types.add(name)
 
         simple_sum = is_simple(sum)
-        if simple_sum:
+        nếu simple_sum:
             self.metadata.simple_sums.add(name)
 
-        for constructor in sum.types:
-            if simple_sum:
+        cho constructor in sum.types:
+            nếu simple_sum:
                 self.metadata.singletons.add(constructor.name)
             self.visitConstructor(constructor)
         self.visitFields(sum.attributes)
@@ -193,7 +193,7 @@ class MetadataVisitor(asdl.VisitorBase):
         self.visitFields(product.fields)
 
     def visitFields(self, fields):
-        for field in fields:
+        cho field in fields:
             self.visitField(field)
 
     def visitField(self, field):
@@ -202,21 +202,21 @@ class MetadataVisitor(asdl.VisitorBase):
 
 class TypeDefVisitor(EmitVisitor):
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
         self.visit(type.value, type.name, depth)
 
     def visitSum(self, sum, name, depth):
-        if is_simple(sum):
+        nếu is_simple(sum):
             self.simple_sum(sum, name, depth)
-        else:
+        không_thì:
             self.sum_with_constructors(sum, name, depth)
 
     def simple_sum(self, sum, name, depth):
         enum = []
-        for i in range(len(sum.types)):
+        cho i in range(len(sum.types)):
             type = sum.types[i]
             enum.append("%s=%d" % (type.name, i + 1))
         enums = ", ".join(enum)
@@ -239,15 +239,15 @@ class TypeDefVisitor(EmitVisitor):
 
 class SequenceDefVisitor(EmitVisitor):
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
         self.visit(type.value, type.name, depth)
 
     def visitSum(self, sum, name, depth):
-        if is_simple(sum):
-            return
+        nếu is_simple(sum):
+            trả_về
         self.emit_sequence_constructor(name, depth)
 
     def emit_sequence_constructor(self, name,depth):
@@ -268,21 +268,21 @@ class StructVisitor(EmitVisitor):
     """Visitor to generate typedefs for AST."""
 
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
         self.visit(type.value, type.name, depth)
 
     def visitSum(self, sum, name, depth):
-        if not is_simple(sum):
+        nếu not is_simple(sum):
             self.sum_with_constructors(sum, name, depth)
 
     def sum_with_constructors(self, sum, name, depth):
         def emit(s, depth=depth):
             self.emit(s % sys._getframe(1).f_locals, depth)
         enum = []
-        for i in range(len(sum.types)):
+        cho i in range(len(sum.types)):
             type = sum.types[i]
             enum.append("%s_kind=%d" % (type.name, i + 1))
 
@@ -291,10 +291,10 @@ class StructVisitor(EmitVisitor):
         emit("struct _%(name)s {")
         emit("enum _%(name)s_kind kind;", depth + 1)
         emit("union {", depth + 1)
-        for t in sum.types:
+        cho t in sum.types:
             self.visit(t, depth + 2)
         emit("} v;", depth + 1)
-        for field in sum.attributes:
+        cho field in sum.attributes:
             # rudimentary attribute handling
             type = str(field.type)
             assert type in asdl.builtin_types, type
@@ -303,9 +303,9 @@ class StructVisitor(EmitVisitor):
         emit("")
 
     def visitConstructor(self, cons, depth):
-        if cons.fields:
+        nếu cons.fields:
             self.emit("struct {", depth)
-            for f in cons.fields:
+            cho f in cons.fields:
                 self.visit(f, depth + 1)
             self.emit("} %s;" % cons.name, depth)
             self.emit("", depth)
@@ -315,20 +315,20 @@ class StructVisitor(EmitVisitor):
         # like a builtin...
         ctype = get_c_type(field.type)
         name = field.name
-        if field.seq:
-            if field.type in self.metadata.simple_sums:
+        nếu field.seq:
+            nếu field.type in self.metadata.simple_sums:
                 self.emit("asdl_int_seq *%(name)s;" % locals(), depth)
-            else:
+            không_thì:
                 _type = field.type
                 self.emit("asdl_%(_type)s_seq *%(name)s;" % locals(), depth)
-        else:
+        không_thì:
             self.emit("%(ctype)s %(name)s;" % locals(), depth)
 
     def visitProduct(self, product, name, depth):
         self.emit("struct _%(name)s {" % locals(), depth)
-        for f in product.fields:
+        cho f in product.fields:
             self.visit(f, depth + 1)
-        for field in product.attributes:
+        cho field in product.attributes:
             # rudimentary attribute handling
             type = str(field.type)
             assert type in asdl.builtin_types, type
@@ -338,24 +338,24 @@ class StructVisitor(EmitVisitor):
 
 
 def ast_func_name(name):
-    return f"_PyAST_{name}"
+    trả_về f"_PyAST_{name}"
 
 
 class PrototypeVisitor(EmitVisitor):
     """Generate function prototypes for the .h file"""
 
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type):
         self.visit(type.value, type.name)
 
     def visitSum(self, sum, name):
-        if is_simple(sum):
+        nếu is_simple(sum):
             pass # XXX
-        else:
-            for t in sum.types:
+        không_thì:
+            cho t in sum.types:
                 self.visit(t, name, sum.attributes)
 
     def get_args(self, fields):
@@ -366,24 +366,24 @@ class PrototypeVisitor(EmitVisitor):
         """
         args = []
         unnamed = {}
-        for f in fields:
-            if f.name is None:
+        cho f in fields:
+            nếu f.name is None:
                 name = f.type
                 c = unnamed[name] = unnamed.get(name, 0) + 1
-                if c > 1:
+                nếu c > 1:
                     name = "name%d" % (c - 1)
-            else:
+            không_thì:
                 name = f.name
             # XXX should extend get_c_type() to handle this
-            if f.seq:
-                if f.type in self.metadata.simple_sums:
+            nếu f.seq:
+                nếu f.type in self.metadata.simple_sums:
                     ctype = "asdl_int_seq *"
-                else:
+                không_thì:
                     ctype = f"asdl_{f.type}_seq *"
-            else:
+            không_thì:
                 ctype = get_c_type(f.type)
             args.append((ctype, name, f.opt or f.seq))
-        return args
+        trả_về args
 
     def visitConstructor(self, cons, type, attrs):
         args = self.get_args(cons.fields)
@@ -393,11 +393,11 @@ class PrototypeVisitor(EmitVisitor):
 
     def emit_function(self, name, ctype, args, attrs, union=True):
         args = args + attrs
-        if args:
+        nếu args:
             argstr = ", ".join(["%s %s" % (atype, aname)
-                                for atype, aname, opt in args])
+                                cho atype, aname, opt in args])
             argstr += ", PyArena *arena"
-        else:
+        không_thì:
             argstr = "PyArena *arena"
         self.emit("%s %s(%s);" % (ctype, ast_func_name(name), argstr), False)
 
@@ -415,17 +415,17 @@ class FunctionVisitor(PrototypeVisitor):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
         argstr = ", ".join(["%s %s" % (atype, aname)
-                            for atype, aname, opt in args + attrs])
-        if argstr:
+                            cho atype, aname, opt in args + attrs])
+        nếu argstr:
             argstr += ", PyArena *arena"
-        else:
+        không_thì:
             argstr = "PyArena *arena"
         self.emit("%s" % ctype, 0)
         emit("%s(%s)" % (ast_func_name(name), argstr))
         emit("{")
         emit("%s p;" % ctype, 1)
-        for argtype, argname, opt in args:
-            if not opt and argtype != "int":
+        cho argtype, argname, opt in args:
+            nếu not opt and argtype != "int":
                 emit("if (!%s) {" % argname, 1)
                 emit("PyErr_SetString(PyExc_ValueError,", 2)
                 msg = "field '%s' is required for %s" % (argname, name)
@@ -437,9 +437,9 @@ class FunctionVisitor(PrototypeVisitor):
         emit("p = (%s)_PyArena_Malloc(arena, sizeof(*p));" % ctype, 1);
         emit("if (!p)", 1)
         emit("return NULL;", 2)
-        if union:
+        nếu union:
             self.emit_body_union(name, args, attrs)
-        else:
+        không_thì:
             self.emit_body_struct(name, args, attrs)
         emit("return p;", 1)
         emit("}")
@@ -449,24 +449,24 @@ class FunctionVisitor(PrototypeVisitor):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
         emit("p->kind = %s_kind;" % name, 1)
-        for argtype, argname, opt in args:
+        cho argtype, argname, opt in args:
             emit("p->v.%s.%s = %s;" % (name, argname, argname), 1)
-        for argtype, argname, opt in attrs:
+        cho argtype, argname, opt in attrs:
             emit("p->%s = %s;" % (argname, argname), 1)
 
     def emit_body_struct(self, name, args, attrs):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
-        for argtype, argname, opt in args:
+        cho argtype, argname, opt in args:
             emit("p->%s = %s;" % (argname, argname), 1)
-        for argtype, argname, opt in attrs:
+        cho argtype, argname, opt in attrs:
             emit("p->%s = %s;" % (argname, argname), 1)
 
 
 class PickleVisitor(EmitVisitor):
 
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type):
@@ -522,7 +522,7 @@ class Obj2ModVisitor(PickleVisitor):
         error = "expected some sort of %s, but got %%R" % name
         format = "PyErr_Format(PyExc_TypeError, \"%s\", obj);"
         self.emit(format % error, 1, reflow=False)
-        if add_label:
+        nếu add_label:
             self.emit("failed:", 1)
             self.emit("Py_XDECREF(tmp);", 1)
         self.emit("return -1;", 1)
@@ -531,7 +531,7 @@ class Obj2ModVisitor(PickleVisitor):
 
     def simpleSum(self, sum, name):
         self.funcHeader(name)
-        for t in sum.types:
+        cho t in sum.types:
             line = ("isinstance = PyObject_IsInstance(obj, "
                     "state->%s_type);")
             self.emit(line % (t.name,), 1)
@@ -545,7 +545,7 @@ class Obj2ModVisitor(PickleVisitor):
         self.sumTrailer(name)
 
     def buildArgs(self, fields):
-        return ", ".join(fields + ["arena"])
+        trả_về ", ".join(fields + ["arena"])
 
     def typeCheck(self, name):
         self.emit("tp = state->%s_type;" % name, 1)
@@ -563,7 +563,7 @@ class Obj2ModVisitor(PickleVisitor):
         self.funcHeader(name)
         self.emit("PyObject *tmp = NULL;", 1)
         self.emit("PyObject *tp;", 1)
-        for a in sum.attributes:
+        cho a in sum.attributes:
             self.visitAttributeDeclaration(a, name, sum=sum)
         self.emit("", 0)
         # XXX: should we only do this for 'expr'?
@@ -572,21 +572,21 @@ class Obj2ModVisitor(PickleVisitor):
         self.emit("return 0;", 2)
         self.emit("}", 1)
         self.typeCheck(name)
-        for a in sum.attributes:
+        cho a in sum.attributes:
             self.visitField(a, name, sum=sum, depth=1)
-        for t in sum.types:
+        cho t in sum.types:
             self.emit("tp = state->%s_type;" % (t.name,), 1)
             self.emit("isinstance = PyObject_IsInstance(obj, tp);", 1)
             self.emit("if (isinstance == -1) {", 1)
             self.emit("return -1;", 2)
             self.emit("}", 1)
             self.emit("if (isinstance) {", 1)
-            for f in t.fields:
+            cho f in t.fields:
                 self.visitFieldDeclaration(f, t.name, sum=sum, depth=2)
             self.emit("", 0)
-            for f in t.fields:
+            cho f in t.fields:
                 self.visitField(f, t.name, sum=sum, depth=2)
-            args = [f.name for f in t.fields] + [a.name for a in sum.attributes]
+            args = [f.name cho f in t.fields] + [a.name cho a in sum.attributes]
             self.emit("*out = %s(%s);" % (ast_func_name(t.name), self.buildArgs(args)), 2)
             self.emit("if (*out == NULL) goto failed;", 2)
             self.emit("return 0;", 2)
@@ -598,9 +598,9 @@ class Obj2ModVisitor(PickleVisitor):
         self.emit("%s %s;" % (ctype, a.name), 1)
 
     def visitSum(self, sum, name):
-        if is_simple(sum):
+        nếu is_simple(sum):
             self.simpleSum(sum, name)
-        else:
+        không_thì:
             self.complexSum(sum, name)
 
     def visitProduct(self, prod, name):
@@ -609,17 +609,17 @@ class Obj2ModVisitor(PickleVisitor):
         self.emit("obj2ast_%s(struct ast_state *state, PyObject* obj, %s* out, const char* field, PyArena* arena)" % (name, ctype), 0)
         self.emit("{", 0)
         self.emit("PyObject* tmp = NULL;", 1)
-        for f in prod.fields:
+        cho f in prod.fields:
             self.visitFieldDeclaration(f, name, prod=prod, depth=1)
-        for a in prod.attributes:
+        cho a in prod.attributes:
             self.visitFieldDeclaration(a, name, prod=prod, depth=1)
         self.emit("", 0)
-        for f in prod.fields:
+        cho f in prod.fields:
             self.visitField(f, name, prod=prod, depth=1)
-        for a in prod.attributes:
+        cho a in prod.attributes:
             self.visitField(a, name, prod=prod, depth=1)
-        args = [f.name for f in prod.fields]
-        args.extend([a.name for a in prod.attributes])
+        args = [f.name cho f in prod.fields]
+        args.extend([a.name cho a in prod.attributes])
         self.emit("*out = %s(%s);" % (ast_func_name(name), self.buildArgs(args)), 1)
         self.emit("if (*out == NULL) goto failed;", 1)
         self.emit("return 0;", 1)
@@ -631,21 +631,21 @@ class Obj2ModVisitor(PickleVisitor):
 
     def visitFieldDeclaration(self, field, name, sum=None, prod=None, depth=0):
         ctype = get_c_type(field.type)
-        if field.seq:
-            if self.isSimpleType(field):
+        nếu field.seq:
+            nếu self.isSimpleType(field):
                 self.emit("asdl_int_seq* %s;" % field.name, depth)
-            else:
+            không_thì:
                 _type = field.type
                 self.emit(f"asdl_{field.type}_seq* {field.name};", depth)
-        else:
+        không_thì:
             ctype = get_c_type(field.type)
             self.emit("%s %s;" % (ctype, field.name), depth)
 
     def isNumeric(self, field):
-        return get_c_type(field.type) in ("int", "bool")
+        trả_về get_c_type(field.type) in ("int", "bool")
 
     def isSimpleType(self, field):
-        return field.type in self.metadata.simple_sums or self.isNumeric(field)
+        trả_về field.type in self.metadata.simple_sums or self.isNumeric(field)
 
     def visitField(self, field, name, sum=None, prod=None, depth=0):
         ctype = get_c_type(field.type)
@@ -653,7 +653,7 @@ class Obj2ModVisitor(PickleVisitor):
         self.emit(line % field.name, depth)
         self.emit("return -1;", depth+1)
         self.emit("}", depth)
-        if field.seq:
+        nếu field.seq:
             self.emit("if (tmp == NULL) {", depth)
             self.emit("tmp = PyList_New(0);", depth+1)
             self.emit("if (tmp == NULL) {", depth+1)
@@ -661,33 +661,33 @@ class Obj2ModVisitor(PickleVisitor):
             self.emit("}", depth+1)
             self.emit("}", depth)
             self.emit("{", depth)
-        else:
-            if not field.opt:
+        không_thì:
+            nếu not field.opt:
                 self.emit("if (tmp == NULL) {", depth)
                 message = "required field \\\"%s\\\" missing from %s" % (field.name, name)
                 format = "PyErr_SetString(PyExc_TypeError, \"%s\");"
                 self.emit(format % message, depth+1, reflow=False)
                 self.emit("return -1;", depth+1)
-            else:
+            không_thì:
                 self.emit("if (tmp == NULL || tmp == Py_None) {", depth)
                 self.emit("Py_CLEAR(tmp);", depth+1)
-                if self.isNumeric(field):
-                    if field.name in self.attribute_special_defaults:
+                nếu self.isNumeric(field):
+                    nếu field.name in self.attribute_special_defaults:
                         self.emit(
                             "%s = %s;" % (field.name, self.attribute_special_defaults[field.name]),
                             depth+1,
                         )
-                    else:
+                    không_thì:
                         self.emit("%s = 0;" % field.name, depth+1)
                 elif not self.isSimpleType(field):
                     self.emit("%s = NULL;" % field.name, depth+1)
-                else:
+                không_thì:
                     raise TypeError("could not determine the default value for %s" % field.name)
             self.emit("}", depth)
             self.emit("else {", depth)
 
         self.emit("int res;", depth+1)
-        if field.seq:
+        nếu field.seq:
             self.emit("Py_ssize_t len;", depth+1)
             self.emit("Py_ssize_t i;", depth+1)
             self.emit("if (!PyList_Check(tmp)) {", depth+1)
@@ -698,9 +698,9 @@ class Obj2ModVisitor(PickleVisitor):
             self.emit("goto failed;", depth+2)
             self.emit("}", depth+1)
             self.emit("len = PyList_GET_SIZE(tmp);", depth+1)
-            if self.isSimpleType(field):
+            nếu self.isSimpleType(field):
                 self.emit("%s = _Py_asdl_int_seq_new(len, arena);" % field.name, depth+1)
-            else:
+            không_thì:
                 self.emit("%s = _Py_asdl_%s_seq_new(len, arena);" % (field.name, field.type), depth+1)
             self.emit("if (%s == NULL) goto failed;" % field.name, depth+1)
             self.emit("for (i = 0; i < len; i++) {", depth+1)
@@ -720,7 +720,7 @@ class Obj2ModVisitor(PickleVisitor):
             self.emit("}", depth+2)
             self.emit("asdl_seq_SET(%s, i, val);" % field.name, depth+2)
             self.emit("}", depth+1)
-        else:
+        không_thì:
             with self.recursive_call(name, depth+1):
                 self.emit("res = obj2ast_%s(state, tmp, &%s, \"%s\", arena);" %
                           (field.type, field.name, field.name), depth+1)
@@ -732,7 +732,7 @@ class Obj2ModVisitor(PickleVisitor):
 
 class SequenceConstructorVisitor(EmitVisitor):
     def visitModule(self, mod):
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
 
     def visitType(self, type):
@@ -742,7 +742,7 @@ class SequenceConstructorVisitor(EmitVisitor):
         self.emit_sequence_constructor(name, get_c_type(name))
 
     def visitSum(self, sum, name):
-        if not is_simple(sum):
+        nếu not is_simple(sum):
             self.emit_sequence_constructor(name, get_c_type(name))
 
     def emit_sequence_constructor(self, name, type):
@@ -752,34 +752,34 @@ class PyTypesDeclareVisitor(PickleVisitor):
 
     def visitProduct(self, prod, name):
         self.emit("static PyObject* ast2obj_%s(struct ast_state *state, void*);" % name, 0)
-        if prod.attributes:
+        nếu prod.attributes:
             self.emit("static const char * const %s_attributes[] = {" % name, 0)
-            for a in prod.attributes:
+            cho a in prod.attributes:
                 self.emit('"%s",' % a.name, 1)
             self.emit("};", 0)
-        if prod.fields:
+        nếu prod.fields:
             self.emit("static const char * const %s_fields[]={" % name,0)
-            for f in prod.fields:
+            cho f in prod.fields:
                 self.emit('"%s",' % f.name, 1)
             self.emit("};", 0)
 
     def visitSum(self, sum, name):
-        if sum.attributes:
+        nếu sum.attributes:
             self.emit("static const char * const %s_attributes[] = {" % name, 0)
-            for a in sum.attributes:
+            cho a in sum.attributes:
                 self.emit('"%s",' % a.name, 1)
             self.emit("};", 0)
         ptype = "void*"
-        if is_simple(sum):
+        nếu is_simple(sum):
             ptype = get_c_type(name)
         self.emit("static PyObject* ast2obj_%s(struct ast_state *state, %s);" % (name, ptype), 0)
-        for t in sum.types:
+        cho t in sum.types:
             self.visitConstructor(t, name)
 
     def visitConstructor(self, cons, name):
-        if cons.fields:
+        nếu cons.fields:
             self.emit("static const char * const %s_fields[]={" % cons.name, 0)
-            for t in cons.fields:
+            cho t in cons.fields:
                 self.emit('"%s",' % t.name, 1)
             self.emit("};",0)
 
@@ -787,7 +787,7 @@ class PyTypesDeclareVisitor(PickleVisitor):
 class AnnotationsVisitor(PickleVisitor):
     def visitModule(self, mod):
         self.nodes = []
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
         builtins = list(dict.fromkeys(builtin_type_to_c_type.values()))
         self.file.write(textwrap.dedent('''
@@ -801,7 +801,7 @@ class AnnotationsVisitor(PickleVisitor):
                 };
                 PyTypeObject *const builtin_types[] = {
         '''))
-        for c_type in builtins:
+        cho c_type in builtins:
             self.emit(f"&{c_type},", 2)
         self.file.write(textwrap.dedent('''\
             };
@@ -814,18 +814,18 @@ class AnnotationsVisitor(PickleVisitor):
                 uint8_t flags;
             } fields[] = {
         #''').removesuffix('#'))  # Use d-string if it accepted.
-        for name, fields in self.nodes:
-            for field in fields:
+        cho name, fields in self.nodes:
+            cho field in fields:
                 flags = []
-                if field.opt:
+                nếu field.opt:
                     flags.append("FIELD_OPTIONAL")
                 elif field.seq:
                     flags.append("FIELD_SEQUENCE")
-                if field.type in builtin_type_to_c_type:
+                nếu field.type in builtin_type_to_c_type:
                     c_type = builtin_type_to_c_type[field.type]
                     type_offset = str(builtins.index(c_type))
                     flags.append("FIELD_BUILTIN")
-                else:
+                không_thì:
                     type_offset = f"offsetof(struct ast_state, {field.type}_type)"
                 flags = " | ".join(flags) or "0"
                 self.emit(f"{{offsetof(struct ast_state, {field.name}),", 2)
@@ -839,7 +839,7 @@ class AnnotationsVisitor(PickleVisitor):
             } nodes[] = {
         #''').removesuffix('#'))
         start = 0
-        for name, fields in self.nodes:
+        cho name, fields in self.nodes:
             self.emit(f"{{offsetof(struct ast_state, {name}_type), "
                       f"{start}, {len(fields)}}},", 2)
             start += len(fields)
@@ -899,7 +899,7 @@ class AnnotationsVisitor(PickleVisitor):
         self.nodes.append((name, prod.fields))
 
     def visitSum(self, sum, name):
-        for t in sum.types:
+        cho t in sum.types:
             self.visitConstructor(t, name)
 
     def visitConstructor(self, cons, name):
@@ -1877,7 +1877,7 @@ static int add_ast_fields(struct ast_state *state)
                     return -1;
                 }
         '''))
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
         self.file.write(textwrap.dedent('''
                 if (!add_ast_annotations(state)) {
@@ -1888,18 +1888,18 @@ static int add_ast_fields(struct ast_state *state)
         '''))
 
     def visitProduct(self, prod, name):
-        if prod.fields:
+        nếu prod.fields:
             fields = name+"_fields"
-        else:
+        không_thì:
             fields = "NULL"
         self.emit('state->%s_type = make_type(state, "%s", state->AST_type, %s, %d,' %
                         (name, name, fields, len(prod.fields)), 1)
         self.emit('%s);' % reflow_c_string(asdl_of(name, prod), 2), 2, reflow=False)
         self.emit("if (!state->%s_type) return -1;" % name, 1)
-        if prod.attributes:
+        nếu prod.attributes:
             self.emit("if (add_attributes(state, state->%s_type, %s_attributes, %d) < 0) return -1;" %
                             (name, name, len(prod.attributes)), 1)
-        else:
+        không_thì:
             self.emit("if (add_attributes(state, state->%s_type, NULL, 0) < 0) return -1;" % name, 1)
         self.emit_defaults(name, prod.fields, 1)
         self.emit_defaults(name, prod.attributes, 1)
@@ -1909,36 +1909,36 @@ static int add_ast_fields(struct ast_state *state)
                   (name, name), 1)
         self.emit('%s);' % reflow_c_string(asdl_of(name, sum), 2), 2, reflow=False)
         self.emit("if (!state->%s_type) return -1;" % name, 1)
-        if sum.attributes:
+        nếu sum.attributes:
             self.emit("if (add_attributes(state, state->%s_type, %s_attributes, %d) < 0) return -1;" %
                             (name, name, len(sum.attributes)), 1)
-        else:
+        không_thì:
             self.emit("if (add_attributes(state, state->%s_type, NULL, 0) < 0) return -1;" % name, 1)
         self.emit("if (PySet_Add(state->abstract_types, state->%s_type) < 0) return -1;" % name, 1)
         self.emit_defaults(name, sum.attributes, 1)
         simple = is_simple(sum)
-        for t in sum.types:
+        cho t in sum.types:
             self.visitConstructor(t, name, simple)
 
     def visitConstructor(self, cons, name, simple):
-        if cons.fields:
+        nếu cons.fields:
             fields = cons.name+"_fields"
-        else:
+        không_thì:
             fields = "NULL"
         self.emit('state->%s_type = make_type(state, "%s", state->%s_type, %s, %d,' %
                             (cons.name, cons.name, name, fields, len(cons.fields)), 1)
         self.emit('%s);' % reflow_c_string(asdl_of(cons.name, cons), 2), 2, reflow=False)
         self.emit("if (!state->%s_type) return -1;" % cons.name, 1)
         self.emit_defaults(cons.name, cons.fields, 1)
-        if simple:
+        nếu simple:
             self.emit("state->%s_singleton = PyType_GenericNew((PyTypeObject *)"
                       "state->%s_type, NULL, NULL);" %
                              (cons.name, cons.name), 1)
             self.emit("if (!state->%s_singleton) return -1;" % cons.name, 1)
 
     def emit_defaults(self, name, fields, depth):
-        for field in fields:
-            if field.opt:
+        cho field in fields:
+            nếu field.opt:
                 self.emit('if (PyObject_SetAttr(state->%s_type, state->%s, Py_None) == -1)' %
                             (name, field.name), depth)
                 self.emit("return -1;", depth+1)
@@ -1993,7 +1993,7 @@ static struct PyMethodDef astmodule_methods[] = {
         self.emit('if (PyModule_AddIntMacro(m, PyCF_OPTIMIZED_AST) < 0) {', 1)
         self.emit("return -1;", 2)
         self.emit('}', 1)
-        for dfn in mod.dfns:
+        cho dfn in mod.dfns:
             self.visit(dfn)
         self.emit("return 0;", 1)
         self.emit("}", 0)
@@ -2028,7 +2028,7 @@ PyInit__ast(void)
 
     def visitSum(self, sum, name):
         self.addObj(name)
-        for t in sum.types:
+        cho t in sum.types:
             self.visitConstructor(t, name)
 
     def visitConstructor(self, cons, name):
@@ -2077,16 +2077,16 @@ class ObjVisitor(PickleVisitor):
         self.emit("", 0)
 
     def visitSum(self, sum, name):
-        if is_simple(sum):
+        nếu is_simple(sum):
             self.simpleSum(sum, name)
-            return
+            trả_về
         self.func_begin(name)
         self.emit("switch (o->kind) {", 1)
-        for i in range(len(sum.types)):
+        cho i in range(len(sum.types)):
             t = sum.types[i]
             self.visitConstructor(t, i + 1, name)
         self.emit("}", 1)
-        for a in sum.attributes:
+        cho a in sum.attributes:
             self.emit("value = ast2obj_%s(state, o->%s);" % (a.type, a.name), 1)
             self.emit("if (!value) goto failed;", 1)
             self.emit('if (PyObject_SetAttr(result, state->%s, value) < 0)' % a.name, 1)
@@ -2098,7 +2098,7 @@ class ObjVisitor(PickleVisitor):
         self.emit("PyObject* ast2obj_%s(struct ast_state *state, %s_ty o)" % (name, name), 0)
         self.emit("{", 0)
         self.emit("switch(o) {", 1)
-        for t in sum.types:
+        cho t in sum.types:
             self.emit("case %s:" % t.name, 2)
             self.emit("return Py_NewRef(state->%s_singleton);" % t.name, 3)
         self.emit("}", 1)
@@ -2110,9 +2110,9 @@ class ObjVisitor(PickleVisitor):
         self.emit("tp = (PyTypeObject *)state->%s_type;" % name, 1)
         self.emit("result = PyType_GenericNew(tp, NULL, NULL);", 1);
         self.emit("if (!result) return NULL;", 1)
-        for field in prod.fields:
+        cho field in prod.fields:
             self.visitField(field, name, 1, True)
-        for a in prod.attributes:
+        cho a in prod.attributes:
             self.emit("value = ast2obj_%s(state, o->%s);" % (a.type, a.name), 1)
             self.emit("if (!value) goto failed;", 1)
             self.emit("if (PyObject_SetAttr(result, state->%s, value) < 0)" % a.name, 1)
@@ -2125,16 +2125,16 @@ class ObjVisitor(PickleVisitor):
         self.emit("tp = (PyTypeObject *)state->%s_type;" % cons.name, 2)
         self.emit("result = PyType_GenericNew(tp, NULL, NULL);", 2);
         self.emit("if (!result) goto failed;", 2)
-        for f in cons.fields:
+        cho f in cons.fields:
             self.visitField(f, cons.name, 2, False)
         self.emit("break;", 2)
 
     def visitField(self, field, name, depth, product):
         def emit(s, d):
             self.emit(s, depth + d)
-        if product:
+        nếu product:
             value = "o->%s" % field.name
-        else:
+        không_thì:
             value = "o->v.%s.%s" % (name, field.name)
         self.set(field, value, depth)
         emit("if (!value) goto failed;", 0)
@@ -2143,8 +2143,8 @@ class ObjVisitor(PickleVisitor):
         emit("Py_DECREF(value);", 0)
 
     def set(self, field, value, depth):
-        if field.seq:
-            if field.type in self.metadata.simple_sums:
+        nếu field.seq:
+            nếu field.type in self.metadata.simple_sums:
                 # While the sequence elements are stored as void*,
                 # simple sums expects an enum
                 self.emit("{", depth)
@@ -2162,9 +2162,9 @@ class ObjVisitor(PickleVisitor):
                     reflow=False,
                 )
                 self.emit("}", depth)
-            else:
+            không_thì:
                 self.emit("value = ast2obj_list(state, (asdl_seq*)%s, ast2obj_%s);" % (value, field.type), depth)
-        else:
+        không_thì:
             self.emit("value = ast2obj_%s(state, %s);" % (field.type, value), depth, reflow=False)
 
 
@@ -2251,7 +2251,7 @@ class ChainOfVisitors:
         self.metadata = metadata
 
     def visit(self, object):
-        for v in self.visitors:
+        cho v in self.visitors:
             v.metadata = self.metadata
             v.visit(object)
             v.emit("", 0)
@@ -2261,7 +2261,7 @@ def generate_ast_state(module_state, f):
     f.write('struct ast_state {\n')
     f.write('    _PyOnceFlag once;\n')
     f.write('    int finalized;\n')
-    for s in module_state:
+    cho s in module_state:
         f.write('    PyObject *' + s + ';\n')
     f.write('};')
 
@@ -2274,7 +2274,7 @@ def generate_ast_fini(module_state, f):
 
     """))
     f.write("    static const size_t offsets[] = {\n")
-    for s in module_state:
+    cho s in module_state:
         f.write("        offsetof(struct ast_state, " + s + "),\n")
     f.write("    };\n")
     f.write(textwrap.dedent("""
@@ -2305,11 +2305,11 @@ def generate_module_def(mod, metadata, f, internal_h):
     module_state = state_strings.copy()
     module_state.update(
         "%s_singleton" % singleton
-        for singleton in metadata.singletons
+        cho singleton in metadata.singletons
     )
     module_state.update(
         "%s_type" % type
-        for type in metadata.types
+        cho type in metadata.types
     )
     module_state.add("abstract_types")
 
@@ -2353,7 +2353,7 @@ def generate_module_def(mod, metadata, f, internal_h):
 
     f.write('static int init_identifiers(struct ast_state *state)\n')
     f.write('{\n')
-    for identifier in state_strings:
+    cho identifier in state_strings:
         f.write('    if ((state->' + identifier)
         f.write(' = PyUnicode_InternFromString("')
         f.write(identifier + '")) == NULL) return -1;\n')
@@ -2459,10 +2459,10 @@ def write_source(mod, metadata, f, internal_h_file):
 def main(input_filename, c_filename, h_filename, internal_h_filename, dump_module=False):
     auto_gen_msg = AUTOGEN_MESSAGE.format("/".join(Path(__file__).parts[-2:]))
     mod = asdl.parse(input_filename)
-    if dump_module:
+    nếu dump_module:
         print('Parsed Module:')
         print(mod)
-    if not asdl.check(mod):
+    nếu not asdl.check(mod):
         sys.exit(1)
 
     metadata_visitor = MetadataVisitor()
@@ -2483,7 +2483,7 @@ def main(input_filename, c_filename, h_filename, internal_h_filename, dump_modul
 
     print(f"{c_filename}, {h_filename}, {internal_h_filename} regenerated.")
 
-if __name__ == "__main__":
+nếu __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("input_file", type=Path)
     parser.add_argument("-C", "--c-file", type=Path, required=True)

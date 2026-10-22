@@ -7,7 +7,7 @@
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
-static int
+static số_nguyên
 string_error_token(struct tok_state *tok, struct token *token,
                    _PyTok_Off start, _PyTok_Loc location)
 {
@@ -15,49 +15,49 @@ string_error_token(struct tok_state *tok, struct token *token,
         .location = {location.lineno, location.byte_col + 1},
         .text_span = {start - location.byte_col, tok->inp},
     };
-    int type = _PyLexer_token_setup(tok, token, ERRORTOKEN, -1, -1);
+    số_nguyên type = _PyLexer_token_setup(tok, token, ERRORTOKEN, -1, -1);
     token->start_loc = location;
     token->end_loc = (_PyTok_Loc){location.lineno, -1};
-    return type;
+    trả_về type;
 }
 
-static int
+static số_nguyên
 incomplete_string_token(struct tok_state *tok, struct token *token,
-                        int type, _PyTok_Off start, _PyTok_Loc location)
+                        số_nguyên type, _PyTok_Off start, _PyTok_Loc location)
 {
     string_error_token(tok, token, start, location);
     tok->done = E_INCOMPLETE;
-    return type;
+    trả_về type;
 }
 
-int
+số_nguyên
 _PyLexer_record_ftstring_comment(struct tok_state *tok, ftstring_state *state,
                                  _PyTok_Off start, _PyTok_Off end)
 {
     assert(state == _PyLexer_CurrentFTString(tok) && state->mode == FTSTRING_MODE_EXPRESSION);
-    if (state->expr_span.end >= 0) {
-        return 0;
+    nếu (state->expr_span.end >= 0) {
+        trả_về 0;
     }
     assert(state->expr_span.start >= 0);
     tokenizer_comments *comments = state->comments;
-    if (comments == NULL || comments->count == comments->capacity) {
+    nếu (comments == NULL || comments->count == comments->capacity) {
         Py_ssize_t max_capacity = (PY_SSIZE_T_MAX -
             (Py_ssize_t)sizeof(*comments)) /
             (Py_ssize_t)sizeof(*comments->spans);
-        if (comments != NULL && comments->capacity > max_capacity / 2) {
+        nếu (comments != NULL && comments->capacity > max_capacity / 2) {
             PyErr_NoMemory();
-            return -1;
+            trả_về -1;
         }
         Py_ssize_t capacity = comments == NULL ? 4 : comments->capacity * 2;
         size_t size = sizeof(*comments) +
             (size_t)capacity * sizeof(*comments->spans);
         tokenizer_comments *resized = PyMem_Realloc(comments, size);
-        if (resized == NULL) {
+        nếu (resized == NULL) {
             PyErr_NoMemory();
-            return -1;
+            trả_về -1;
         }
         comments = resized;
-        if (state->comments == NULL) {
+        nếu (state->comments == NULL) {
             comments->count = 0;
         }
         comments->capacity = capacity;
@@ -65,38 +65,38 @@ _PyLexer_record_ftstring_comment(struct tok_state *tok, ftstring_state *state,
     }
     comments->spans[comments->count++] =
         (_PyTok_Span){start, end};
-    return 0;
+    trả_về 0;
 }
 
-static int
+static số_nguyên
 finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
                      struct token *token)
 {
     assert(token != NULL && state == _PyLexer_CurrentFTString(tok));
     assert(state->mode == FTSTRING_MODE_EXPRESSION && tok->start >= 0);
 
-    if (state->expr_span.end >= 0) {
-        return 0;
+    nếu (state->expr_span.end >= 0) {
+        trả_về 0;
     }
     assert(state->expr_span.start >= 0);
     state->expr_span.end = tok->start;
-    int tstring_interpolation = _PyLexer_IsTString(state->kind) &&
+    số_nguyên tstring_interpolation = _PyLexer_IsTString(state->kind) &&
         state->replacement_depth == 1;
-    if (!(state->debug_expr || tstring_interpolation) || token->metadata) {
-        return 0;
+    nếu (!(state->debug_expr || tstring_interpolation) || token->metadata) {
+        trả_về 0;
     }
     tokenizer_comments *comments = state->comments;
     PyObject *res;
-    if (comments != NULL && comments->count > 0) {
+    nếu (comments != NULL && comments->count > 0) {
         Py_ssize_t stripped_size =
             state->expr_span.end - state->expr_span.start;
         Py_ssize_t comment_count = 0;
-        for (Py_ssize_t i = 0; i < comments->count; i++) {
+        cho (Py_ssize_t i = 0; i < comments->count; i++) {
             _PyTok_Span comment = comments->spans[i];
             assert(_PyTok_SpanIsValid(comment));
             assert(comment.start >= (i == 0 ? state->expr_span.start
                                            : comments->spans[i - 1].end));
-            if (comment.start >= state->expr_span.end) {
+            nếu (comment.start >= state->expr_span.end) {
                 break;
             }
             assert(comment.end <= state->expr_span.end);
@@ -104,13 +104,13 @@ finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
             comment_count++;
         }
         char *stripped = PyMem_Malloc((size_t)stripped_size);
-        if (stripped == NULL) {
+        nếu (stripped == NULL) {
             PyErr_NoMemory();
-            return -1;
+            trả_về -1;
         }
         _PyTok_Span kept = {state->expr_span.start, state->expr_span.start};
         Py_ssize_t stripped_len = 0;
-        for (Py_ssize_t i = 0; i < comment_count; i++) {
+        cho (Py_ssize_t i = 0; i < comment_count; i++) {
             kept.end = comments->spans[i].start;
             Py_ssize_t length;
             const char *text = _PyTok_SourceSpanView(
@@ -126,173 +126,173 @@ finish_ftstring_expr(struct tok_state *tok, ftstring_state *state,
         res = PyUnicode_DecodeUTF8(stripped, stripped_size, NULL);
         PyMem_Free(stripped);
     }
-    else {
+    không_thì {
         Py_ssize_t expr_len;
         const char *expr = _PyTok_SourceSpanView(
             &tok->source, state->expr_span, &expr_len);
         res = PyUnicode_DecodeUTF8(expr, expr_len, NULL);
     }
 
-    if (!res) {
-        return -1;
+    nếu (!res) {
+        trả_về -1;
     }
     token->metadata = res;
-    return 0;
+    trả_về 0;
 }
 
-static int
+static số_nguyên
 begin_ftstring_expr(struct tok_state *tok, ftstring_state *state,
                     _PyTok_Off expr_start)
 {
     assert(state->mode != FTSTRING_MODE_EXPRESSION);
     state->expr_span = (_PyTok_Span){expr_start, -1};
-    if (state->comments != NULL) {
+    nếu (state->comments != NULL) {
         state->comments->count = 0;
     }
-    if (state->replacement_depth >= MAX_EXPR_NESTING) {
+    nếu (state->replacement_depth >= MAX_EXPR_NESTING) {
         _PyTokenizer_syntaxerror(
             tok, "%c-string: expressions nested too deeply",
             _PyLexer_StringPrefix(state->kind));
-        return -1;
+        trả_về -1;
     }
     state->replacement_depth++;
     state->mode = FTSTRING_MODE_EXPRESSION;
     state->debug_expr = 0;
-    return 0;
+    trả_về 0;
 }
 
-int
+số_nguyên
 _PyLexer_ftstring_punctuation(struct tok_state *tok, ftstring_state *state,
-                              struct token *token, int c)
+                              struct token *token, số_nguyên c)
 {
     assert(state->mode == FTSTRING_MODE_EXPRESSION);
     assert(c == ':' || c == '}' || c == '!');
-    if (_PyLexer_FTStringBracketDepth(tok, state) != state->replacement_depth) {
-        return 0;
+    nếu (_PyLexer_FTStringBracketDepth(tok, state) != state->replacement_depth) {
+        trả_về 0;
     }
-    if (c == '!') {
-        int next = tok_nextc(tok);
+    nếu (c == '!') {
+        số_nguyên next = tok_nextc(tok);
         tok_backup(tok, next);
-        if (next == '=') {
-            return 0;
+        nếu (next == '=') {
+            trả_về 0;
         }
     }
-    if (finish_ftstring_expr(tok, state, token) < 0) {
-        return -1;
+    nếu (finish_ftstring_expr(tok, state, token) < 0) {
+        trả_về -1;
     }
-    if (c == ':') {
+    nếu (c == ':') {
         state->mode = FTSTRING_MODE_FORMAT_SPEC;
-        return COLON;
+        trả_về COLON;
     }
-    return 0;
+    trả_về 0;
 }
 
-int
+số_nguyên
 _PyLexer_close_ftstring_expr(struct tok_state *tok, ftstring_state *state,
-                             int c)
+                             số_nguyên c)
 {
     assert(state->mode == FTSTRING_MODE_EXPRESSION);
     assert(c == ')' || c == ']' || c == '}');
-    int depth = _PyLexer_FTStringBracketDepth(tok, state);
-    if (depth < 0) {
+    số_nguyên depth = _PyLexer_FTStringBracketDepth(tok, state);
+    nếu (depth < 0) {
         _PyTokenizer_syntaxerror(tok, "%c-string: unmatched '%c'",
                                 _PyLexer_StringPrefix(state->kind), c);
-        return -1;
+        trả_về -1;
     }
-    if (c == '}' && depth == state->replacement_depth - 1) {
+    nếu (c == '}' && depth == state->replacement_depth - 1) {
         state->replacement_depth--;
         state->mode = FTSTRING_MODE_MIDDLE;
         state->debug_expr = 0;
     }
-    return 0;
+    trả_về 0;
 }
 
 void
 _PyLexer_mark_ftstring_debug(struct tok_state *tok, ftstring_state *state)
 {
     assert(state->mode == FTSTRING_MODE_EXPRESSION);
-    if (_PyLexer_FTStringBracketDepth(tok, state) == state->replacement_depth) {
+    nếu (_PyLexer_FTStringBracketDepth(tok, state) == state->replacement_depth) {
         state->debug_expr = 1;
     }
 }
 
-int
+số_nguyên
 _PyLexer_check_string_prefixes(struct tok_state *tok,
-                                             int saw_b, int saw_r, int saw_u,
-                                             int saw_f, int saw_t) {
+                                             số_nguyên saw_b, số_nguyên saw_r, số_nguyên saw_u,
+                                             số_nguyên saw_f, số_nguyên saw_t) {
     // Supported: rb, rf, rt (in any order)
     // Unsupported: ub, ur, uf, ut, bf, bt, ft (in any order)
 
 #define RETURN_SYNTAX_ERROR(PREFIX1, PREFIX2)                             \
     do {                                                                  \
         (void)_PyTokenizer_syntaxerror_known_range(                       \
-            tok, (int)(tok->start + 1 - tok->line_start),                 \
-            (int)(tok->cur - tok->line_start),                            \
+            tok, (số_nguyên)(tok->start + 1 - tok->line_start),                 \
+            (số_nguyên)(tok->cur - tok->line_start),                            \
             "'" PREFIX1 "' and '" PREFIX2 "' prefixes are incompatible"); \
-        return -1;                                                        \
-    } while (0)
+        trả_về -1;                                                        \
+    } trong_khi (0)
 
-    if (saw_u && saw_b) {
+    nếu (saw_u && saw_b) {
         RETURN_SYNTAX_ERROR("u", "b");
     }
-    if (saw_u && saw_r) {
+    nếu (saw_u && saw_r) {
         RETURN_SYNTAX_ERROR("u", "r");
     }
-    if (saw_u && saw_f) {
+    nếu (saw_u && saw_f) {
         RETURN_SYNTAX_ERROR("u", "f");
     }
-    if (saw_u && saw_t) {
+    nếu (saw_u && saw_t) {
         RETURN_SYNTAX_ERROR("u", "t");
     }
 
-    if (saw_b && saw_f) {
+    nếu (saw_b && saw_f) {
         RETURN_SYNTAX_ERROR("b", "f");
     }
-    if (saw_b && saw_t) {
+    nếu (saw_b && saw_t) {
         RETURN_SYNTAX_ERROR("b", "t");
     }
 
-    if (saw_f && saw_t) {
+    nếu (saw_f && saw_t) {
         RETURN_SYNTAX_ERROR("f", "t");
     }
 
 #undef RETURN_SYNTAX_ERROR
 
-    return 0;
+    trả_về 0;
 }
 
-int
+số_nguyên
 _PyLexer_scan_fstring_start(struct tok_state *tok, struct token *token,
-                            int c, ftstring_kind kind)
+                            số_nguyên c, ftstring_kind kind)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
+    số_nguyên quote = c;
+    số_nguyên quote_size = 1;             /* 1 or 3 */
 
     /* Find the quote size and start of string */
-    int after_quote = tok_nextc(tok);
-    if (after_quote == quote) {
-        int after_after_quote = tok_nextc(tok);
-        if (after_after_quote == quote) {
+    số_nguyên after_quote = tok_nextc(tok);
+    nếu (after_quote == quote) {
+        số_nguyên after_after_quote = tok_nextc(tok);
+        nếu (after_after_quote == quote) {
             quote_size = 3;
         }
-        else {
+        không_thì {
             // TODO: Check this
             tok_backup(tok, after_after_quote);
             tok_backup(tok, after_quote);
         }
     }
-    if (after_quote != quote) {
+    nếu (after_quote != quote) {
         tok_backup(tok, after_quote);
     }
 
     p_start = tok->start;
     p_end = tok->cur;
     ftstring_state *state = _PyLexer_PushFTString(tok);
-    if (state == NULL) {
-        return MAKE_TOKEN(ERRORTOKEN);
+    nếu (state == NULL) {
+        trả_về MAKE_TOKEN(ERRORTOKEN);
     }
     state->mode = FTSTRING_MODE_MIDDLE;
     state->quote = quote;
@@ -303,126 +303,126 @@ _PyLexer_scan_fstring_start(struct tok_state *tok, struct token *token,
     state->expr_span = (_PyTok_Span){-1, -1};
 
     state->kind = kind;
-    return _PyLexer_IsTString(kind)
+    trả_về _PyLexer_IsTString(kind)
         ? MAKE_TOKEN(TSTRING_START) : MAKE_TOKEN(FSTRING_START);
 }
 
-int
-_PyLexer_scan_string(struct tok_state *tok, struct token *token, int c)
+số_nguyên
+_PyLexer_scan_string(struct tok_state *tok, struct token *token, số_nguyên c)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    int quote = c;
-    int quote_size = 1;             /* 1 or 3 */
-    int end_quote_size = 0;
-    int has_escaped_quote = 0;
+    số_nguyên quote = c;
+    số_nguyên quote_size = 1;             /* 1 or 3 */
+    số_nguyên end_quote_size = 0;
+    số_nguyên has_escaped_quote = 0;
 
     /* Find the quote size and start of string */
     c = tok_nextc(tok);
-    if (c == quote) {
+    nếu (c == quote) {
         c = tok_nextc(tok);
-        if (c == quote) {
+        nếu (c == quote) {
             quote_size = 3;
         }
-        else {
+        không_thì {
             end_quote_size = 1;     /* empty string found */
         }
     }
-    if (c != quote) {
+    nếu (c != quote) {
         tok_backup(tok, c);
     }
 
     /* Get rest of string */
-    while (end_quote_size != quote_size) {
+    trong_khi (end_quote_size != quote_size) {
         c = tok_nextc(tok);
-        if (tok->done == E_ERROR) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        nếu (tok->done == E_ERROR) {
+            trả_về MAKE_TOKEN(ERRORTOKEN);
         }
-        if (tok->done == E_DECODE) {
+        nếu (tok->done == E_DECODE) {
             break;
         }
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        nếu (c == EOF || (quote_size == 1 && c == '\n')) {
+            nếu (tok_failed(tok)) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token, STRING,
+            nếu (c == EOF && tok->allow_incomplete_input) {
+                trả_về incomplete_string_token(tok, token, STRING,
                                                tok->start, tok->start_loc);
             }
-            int end_lineno = tok->lineno;
+            số_nguyên end_lineno = tok->lineno;
             _PyTok_Loc location = tok->start_loc;
             const char *line = _PyTok_SourcePointer(
                 &tok->source, tok->start - location.byte_col);
             Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
 
             const ftstring_state *state = _PyLexer_CurrentFTString(tok);
-            if (state != NULL) {
+            nếu (state != NULL) {
                 /* A matching quote may have been intended to close the
                  * surrounding formatted string instead of opening a string
                  * inside a replacement field. */
-                if (state->quote == quote && state->quote_size == quote_size) {
-                    int level = state->paren_level + state->replacement_depth - 1;
+                nếu (state->quote == quote && state->quote_size == quote_size) {
+                    số_nguyên level = state->paren_level + state->replacement_depth - 1;
                     assert(level >= 0 && level < tok->level);
                     assert(tok->parenstack[level] == '{');
-                    int lineno = tok->parenlinenostack[level];
-                    if (lineno != location.lineno) {
+                    số_nguyên lineno = tok->parenlinenostack[level];
+                    nếu (lineno != location.lineno) {
                         _PyTokenizer_syntaxerror_at(
                             tok, line, cursor_offset, location.lineno, -1, -1,
                             "%c-string: expecting '}' to close '{' on line %d",
                             _PyLexer_StringPrefix(state->kind), lineno);
                     }
-                    else {
+                    không_thì {
                         _PyTokenizer_syntaxerror_at(
                             tok, line, cursor_offset, location.lineno, -1, -1,
                             "%c-string: expecting '}'",
                             _PyLexer_StringPrefix(state->kind));
                     }
-                    return string_error_token(tok, token, tok->start, location);
+                    trả_về string_error_token(tok, token, tok->start, location);
                 }
             }
 
-            if (quote_size == 3) {
+            nếu (quote_size == 3) {
                 _PyTokenizer_syntaxerror_at(
                     tok, line, cursor_offset, location.lineno, -1, -1,
                     "unterminated triple-quoted string literal"
                     " (detected at line %d)", end_lineno);
-                if (c != '\n') {
+                nếu (c != '\n') {
                     tok->done = E_EOFS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                trả_về string_error_token(tok, token, tok->start, location);
             }
-            else {
-                if (has_escaped_quote) {
+            không_thì {
+                nếu (has_escaped_quote) {
                     _PyTokenizer_syntaxerror_at(
                         tok, line, cursor_offset, location.lineno, -1, -1,
                         "unterminated string literal (detected at line %d); "
                         "perhaps you escaped the end quote?",
                         end_lineno
                     );
-                } else {
+                } không_thì {
                     _PyTokenizer_syntaxerror_at(
                         tok, line, cursor_offset, location.lineno, -1, -1,
                         "unterminated string literal (detected at line %d)", end_lineno
                     );
                 }
-                if (c != '\n') {
+                nếu (c != '\n') {
                     tok->done = E_EOLS;
                 }
-                return string_error_token(tok, token, tok->start, location);
+                trả_về string_error_token(tok, token, tok->start, location);
             }
         }
-        if (c == quote) {
+        nếu (c == quote) {
             end_quote_size += 1;
         }
-        else {
+        không_thì {
             end_quote_size = 0;
-            if (c == '\\') {
+            nếu (c == '\\') {
                 c = tok_nextc(tok);  /* skip escaped char */
-                if (c == quote) {  /* but record whether the escaped char was a quote */
+                nếu (c == quote) {  /* but record whether the escaped char was a quote */
                     has_escaped_quote = 1;
                 }
-                if (c == '\r') {
+                nếu (c == '\r') {
                     c = tok_nextc(tok);
                 }
             }
@@ -431,10 +431,10 @@ _PyLexer_scan_string(struct tok_state *tok, struct token *token, int c)
 
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(STRING);
+    trả_về MAKE_TOKEN(STRING);
 }
 
-int
+số_nguyên
 _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct token *token)
 {
     assert(current == _PyLexer_CurrentFTString(tok) && current->mode != FTSTRING_MODE_EXPRESSION);
@@ -442,112 +442,112 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
            current->replacement_depth <= MAX_EXPR_NESTING);
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
-    int token_type;
-    int end_quote_size = 0;
-    int unicode_escape = 0;
-    int quote = current->quote;
-    int quote_size = current->quote_size;
-    int in_format_spec = current->mode == FTSTRING_MODE_FORMAT_SPEC;
-    int raw = _PyLexer_IsRawString(current->kind);
+    số_nguyên token_type;
+    số_nguyên end_quote_size = 0;
+    số_nguyên unicode_escape = 0;
+    số_nguyên quote = current->quote;
+    số_nguyên quote_size = current->quote_size;
+    số_nguyên in_format_spec = current->mode == FTSTRING_MODE_FORMAT_SPEC;
+    số_nguyên raw = _PyLexer_IsRawString(current->kind);
 
     tok->start = tok->cur;
     tok->start_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
 
-    while (end_quote_size != quote_size) {
-        int c = tok_nextc(tok);
-        if (tok->done == E_ERROR || tok->done == E_DECODE) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    trong_khi (end_quote_size != quote_size) {
+        số_nguyên c = tok_nextc(tok);
+        nếu (tok->done == E_ERROR || tok->done == E_DECODE) {
+            trả_về MAKE_TOKEN(ERRORTOKEN);
         }
 
-        if (c == EOF || (quote_size == 1 && c == '\n')) {
-            if (tok_failed(tok)) {
-                return MAKE_TOKEN(ERRORTOKEN);
+        nếu (c == EOF || (quote_size == 1 && c == '\n')) {
+            nếu (tok_failed(tok)) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
-            if (c == EOF && tok->allow_incomplete_input) {
-                return incomplete_string_token(tok, token,
+            nếu (c == EOF && tok->allow_incomplete_input) {
+                trả_về incomplete_string_token(tok, token,
                     FTSTRING_MIDDLE(current), current->start, current->start_loc);
             }
 
-            if (in_format_spec && c == '\n') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            nếu (in_format_spec && c == '\n') {
+                trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(
                     tok,
                     "%c-string: newlines are not allowed in format specifiers for single quoted %c-strings",
                     _PyLexer_StringPrefix(current->kind),
                     _PyLexer_StringPrefix(current->kind)));
             }
 
-            int end_lineno = tok->lineno;
+            số_nguyên end_lineno = tok->lineno;
             _PyTok_Loc location = current->start_loc;
             const char *line = _PyTok_SourcePointer(
                 &tok->source, current->start - location.byte_col);
             Py_ssize_t cursor_offset = (Py_ssize_t)location.byte_col + 1;
 
-            if (quote_size == 3) {
+            nếu (quote_size == 3) {
                 _PyTokenizer_syntaxerror_at(
                     tok, line, cursor_offset, location.lineno, -1, -1,
                     "unterminated triple-quoted %c-string literal"
                     " (detected at line %d)",
                     _PyLexer_StringPrefix(current->kind), end_lineno);
-                if (c != '\n') {
+                nếu (c != '\n') {
                     tok->done = E_EOFS;
                 }
-                return string_error_token(tok, token,
+                trả_về string_error_token(tok, token,
                     current->start, location);
             }
-            else {
+            không_thì {
                 _PyTokenizer_syntaxerror_at(
                     tok, line, cursor_offset, location.lineno, -1, -1,
                     "unterminated %c-string literal (detected at line %d)",
                     _PyLexer_StringPrefix(current->kind), end_lineno);
-                return string_error_token(tok, token,
+                trả_về string_error_token(tok, token,
                     current->start, location);
             }
         }
 
-        if (c == quote) {
+        nếu (c == quote) {
             end_quote_size += 1;
             continue;
-        } else {
+        } không_thì {
             end_quote_size = 0;
         }
 
-        if (c == '{') {
-            int peek = tok_nextc(tok);
-            if (peek != '{' || in_format_spec) {
+        nếu (c == '{') {
+            số_nguyên peek = tok_nextc(tok);
+            nếu (peek != '{' || in_format_spec) {
                 tok_backup(tok, peek);
                 _PyTok_Off expr_start = tok->cur;
                 tok_backup(tok, c);
-                if (begin_ftstring_expr(tok, current, expr_start) < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                nếu (begin_ftstring_expr(tok, current, expr_start) < 0) {
+                    trả_về MAKE_TOKEN(ERRORTOKEN);
                 }
                 p_start = tok->start;
                 p_end = tok->cur;
-                if (p_start == p_end) {
-                    return _PyLexer_get_normal(tok, current, token);
+                nếu (p_start == p_end) {
+                    trả_về _PyLexer_get_normal(tok, current, token);
                 }
-            } else {
+            } không_thì {
                 p_start = tok->start;
                 p_end = tok->cur - 1;
             }
             goto emit_middle;
-        } else if (c == '}') {
-            if (unicode_escape) {
+        } không_thì nếu (c == '}') {
+            nếu (unicode_escape) {
                 p_start = tok->start;
                 p_end = tok->cur;
                 goto emit_middle;
             }
-            int peek = tok_nextc(tok);
+            số_nguyên peek = tok_nextc(tok);
 
-            int bracket_depth = _PyLexer_FTStringBracketDepth(tok, current);
-            if (peek == '}' && !in_format_spec && bracket_depth == 0) {
+            số_nguyên bracket_depth = _PyLexer_FTStringBracketDepth(tok, current);
+            nếu (peek == '}' && !in_format_spec && bracket_depth == 0) {
                 p_start = tok->start;
                 p_end = tok->cur - 1;
             }
-            else {
+            không_thì {
                 tok_backup(tok, peek);
-                if (!in_format_spec && bracket_depth == 0) {
-                    if (tok->start == tok->cur - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+                nếu (!in_format_spec && bracket_depth == 0) {
+                    nếu (tok->start == tok->cur - 1) {
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(
                             tok, "%c-string: single '}' is not allowed",
                             _PyLexer_StringPrefix(current->kind)));
                     }
@@ -562,28 +562,28 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
                 p_end = tok->cur;
             }
             goto emit_middle;
-        } else if (c == '\\') {
-            int peek = tok_nextc(tok);
-            if (peek == '\r') {
+        } không_thì nếu (c == '\\') {
+            số_nguyên peek = tok_nextc(tok);
+            nếu (peek == '\r') {
                 peek = tok_nextc(tok);
             }
-            if (peek == '{' || peek == '}') {
-                if (!raw) {
-                    if (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+            nếu (peek == '{' || peek == '}') {
+                nếu (!raw) {
+                    nếu (_PyTokenizer_warn_invalid_escape_sequence(tok, peek)) {
+                        trả_về MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
                 tok_backup(tok, peek);
                 continue;
             }
 
-            if (!raw) {
-                if (peek == 'N') {
+            nếu (!raw) {
+                nếu (peek == 'N') {
                     /* Handle named unicode escapes (\N{BULLET}) */
                     peek = tok_nextc(tok);
-                    if (peek == '{') {
+                    nếu (peek == '{') {
                         unicode_escape = 1;
-                    } else {
+                    } không_thì {
                         tok_backup(tok, peek);
                     }
                 }
@@ -593,17 +593,17 @@ _PyLexer_get_ftstring(struct tok_state *tok, ftstring_state *current, struct tok
 
     p_start = tok->start;
     p_end = tok->cur;
-    if (p_end - quote_size == p_start) {
-        int end_token = FTSTRING_END(current);
+    nếu (p_end - quote_size == p_start) {
+        số_nguyên end_token = FTSTRING_END(current);
         _PyLexer_PopFTString(tok);
-        return MAKE_TOKEN(end_token);
+        trả_về MAKE_TOKEN(end_token);
     }
-    for (int i = 0; i < quote_size; i++) {
+    cho (số_nguyên i = 0; i < quote_size; i++) {
         tok_backup(tok, quote);
     }
     p_end = tok->cur;
 emit_middle:
     token_type = MAKE_TOKEN(FTSTRING_MIDDLE(current));
     token->is_raw = raw;
-    return token_type;
+    trả_về token_type;
 }

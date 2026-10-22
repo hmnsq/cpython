@@ -6,35 +6,35 @@
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
-static int
+static số_nguyên
 lookahead(struct tok_state *tok, const char *test)
 {
     const char *s = test;
-    int res = 0;
-    while (1) {
-        int c = tok_nextc(tok);
-        if (*s == 0) {
+    số_nguyên res = 0;
+    trong_khi (1) {
+        số_nguyên c = tok_nextc(tok);
+        nếu (*s == 0) {
             res = !is_potential_identifier_char(c);
         }
-        else if (c == *s) {
+        không_thì nếu (c == *s) {
             s++;
             continue;
         }
 
         tok_backup(tok, c);
-        while (s != test) {
+        trong_khi (s != test) {
             tok_backup(tok, *--s);
         }
-        return res;
+        trả_về res;
     }
 }
 
-static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
-    if (tok->tok_extra_tokens) {
+static số_nguyên
+verify_end_of_number(struct tok_state *tok, số_nguyên c, const char *kind) {
+    nếu (tok->tok_extra_tokens) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
-        return 1;
+        trả_về 1;
     }
     /* Emit a deprecation warning only if the numeric literal is immediately
      * followed by one of keywords which can occur after a numeric literal
@@ -46,268 +46,268 @@ verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
      * "invalid syntax" if the numeric literal is immediately followed by
      * other keyword or identifier.
      */
-    int r = 0;
-    if (c == 'a') {
+    số_nguyên r = 0;
+    nếu (c == 'a') {
         r = lookahead(tok, "nd");
     }
-    else if (c == 'e') {
+    không_thì nếu (c == 'e') {
         r = lookahead(tok, "lse");
     }
-    else if (c == 'f') {
+    không_thì nếu (c == 'f') {
         r = lookahead(tok, "or");
     }
-    else if (c == 'i') {
-        int c2 = tok_nextc(tok);
-        if (c2 == 'f' || c2 == 'n' || c2 == 's') {
+    không_thì nếu (c == 'i') {
+        số_nguyên c2 = tok_nextc(tok);
+        nếu (c2 == 'f' || c2 == 'n' || c2 == 's') {
             r = 1;
         }
         tok_backup(tok, c2);
     }
-    else if (c == 'o') {
+    không_thì nếu (c == 'o') {
         r = lookahead(tok, "r");
     }
-    else if (c == 'n') {
+    không_thì nếu (c == 'n') {
         r = lookahead(tok, "ot");
     }
-    if (r) {
+    nếu (r) {
         tok_backup(tok, c);
-        if (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
+        nếu (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
                 "invalid %s literal", kind))
         {
-            return 0;
+            trả_về 0;
         }
         tok_nextc(tok);
     }
-    else /* In future releases, only error will remain. */
-    if (c < 128 && is_potential_identifier_char(c)) {
+    không_thì /* In future releases, only error will remain. */
+    nếu (c < 128 && is_potential_identifier_char(c)) {
         tok_backup(tok, c);
         _PyTokenizer_syntaxerror(tok, "invalid %s literal", kind);
-        return 0;
+        trả_về 0;
     }
-    return 1;
+    trả_về 1;
 }
 
-static int
+static số_nguyên
 tok_decimal_tail(struct tok_state *tok)
 {
-    int c;
+    số_nguyên c;
 
-    while (1) {
+    trong_khi (1) {
         do {
             c = tok_nextc(tok);
-        } while (Py_ISDIGIT(c));
-        if (c != '_') {
+        } trong_khi (Py_ISDIGIT(c));
+        nếu (c != '_') {
             break;
         }
         c = tok_nextc(tok);
-        if (!Py_ISDIGIT(c)) {
+        nếu (!Py_ISDIGIT(c)) {
             tok_backup(tok, c);
             _PyTokenizer_syntaxerror(tok, "invalid decimal literal");
-            return 0;
+            trả_về 0;
         }
     }
-    return c;
+    trả_về c;
 }
 
-int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
-                     int leading_dot)
+số_nguyên
+_PyLexer_scan_number(struct tok_state *tok, struct token *token, số_nguyên c,
+                     số_nguyên leading_dot)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    if (leading_dot) {
+    nếu (leading_dot) {
         goto fraction;
     }
-    if (c == '0') {
+    nếu (c == '0') {
         /* Hex, octal or binary -- maybe. */
         c = tok_nextc(tok);
-        if (c == 'x' || c == 'X') {
+        nếu (c == 'x' || c == 'X') {
             /* Hex */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                nếu (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (!Py_ISXDIGIT(c)) {
+                nếu (!Py_ISXDIGIT(c)) {
                     tok_backup(tok, c);
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
+                    trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
                 }
                 do {
                     c = tok_nextc(tok);
-                } while (Py_ISXDIGIT(c));
-            } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+                } trong_khi (Py_ISXDIGIT(c));
+            } trong_khi (c == '_');
+            nếu (!verify_end_of_number(tok, c, "hexadecimal")) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'o' || c == 'O') {
+        không_thì nếu (c == 'o' || c == 'O') {
             /* Octal */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                nếu (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c < '0' || c >= '8') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                nếu (c < '0' || c >= '8') {
+                    nếu (Py_ISDIGIT(c)) {
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                                 "invalid digit '%c' in octal literal", c));
                     }
-                    else {
+                    không_thì {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
                     }
                 }
                 do {
                     c = tok_nextc(tok);
-                } while ('0' <= c && c < '8');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                } trong_khi ('0' <= c && c < '8');
+            } trong_khi (c == '_');
+            nếu (Py_ISDIGIT(c)) {
+                trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            nếu (!verify_end_of_number(tok, c, "octal")) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'b' || c == 'B') {
+        không_thì nếu (c == 'b' || c == 'B') {
             /* Binary */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                nếu (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c != '0' && c != '1') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                nếu (c != '0' && c != '1') {
+                    nếu (Py_ISDIGIT(c)) {
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
                     }
-                    else {
+                    không_thì {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
                     }
                 }
                 do {
                     c = tok_nextc(tok);
-                } while (c == '0' || c == '1');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                } trong_khi (c == '0' || c == '1');
+            } trong_khi (c == '_');
+            nếu (Py_ISDIGIT(c)) {
+                trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            nếu (!verify_end_of_number(tok, c, "binary")) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else {
-            int nonzero = 0;
+        không_thì {
+            số_nguyên nonzero = 0;
             /* maybe old-style octal; c is first char of it */
             /* in any case, allow '0' as a literal */
-            while (1) {
-                if (c == '_') {
+            trong_khi (1) {
+                nếu (c == '_') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    nếu (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
                 }
-                if (c != '0') {
+                nếu (c != '0') {
                     break;
                 }
                 c = tok_nextc(tok);
             }
             _PyTok_Off zeros_end = tok->cur;
-            if (Py_ISDIGIT(c)) {
+            nếu (Py_ISDIGIT(c)) {
                 nonzero = 1;
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                nếu (c == 0) {
+                    trả_về MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == '.') {
+            nếu (c == '.') {
                 c = tok_nextc(tok);
                 goto fraction;
             }
-            else if (c == 'e' || c == 'E') {
+            không_thì nếu (c == 'e' || c == 'E') {
                 goto exponent;
             }
-            else if (c == 'j' || c == 'J') {
+            không_thì nếu (c == 'j' || c == 'J') {
                 goto imaginary;
             }
-            else if (nonzero && !tok->tok_extra_tokens) {
+            không_thì nếu (nonzero && !tok->tok_extra_tokens) {
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
+                        tok, (số_nguyên)(tok->start + 1 - tok->line_start),
+                        (số_nguyên)(zeros_end - tok->line_start),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            nếu (!verify_end_of_number(tok, c, "decimal")) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
-    else {
+    không_thì {
         /* Decimal */
         c = tok_decimal_tail(tok);
-        if (c == 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        nếu (c == 0) {
+            trả_về MAKE_TOKEN(ERRORTOKEN);
         }
         {
             /* Accept floating-point numbers. */
-            if (c == '.') {
+            nếu (c == '.') {
                 c = tok_nextc(tok);
     fraction:
                 /* Fraction */
-                if (Py_ISDIGIT(c)) {
+                nếu (Py_ISDIGIT(c)) {
                     c = tok_decimal_tail(tok);
-                    if (c == 0) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    nếu (c == 0) {
+                        trả_về MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
             }
-            if (c == 'e' || c == 'E') {
-                int e;
+            nếu (c == 'e' || c == 'E') {
+                số_nguyên e;
               exponent:
                 e = c;
                 /* Exponent part */
                 c = tok_nextc(tok);
-                if (c == '+' || c == '-') {
+                nếu (c == '+' || c == '-') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    nếu (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        trả_về MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
-                } else if (!Py_ISDIGIT(c)) {
+                } không_thì nếu (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    nếu (!verify_end_of_number(tok, e, "decimal")) {
+                        trả_về MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
                     p_start = tok->start;
                     p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    trả_về MAKE_TOKEN(NUMBER);
                 }
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                nếu (c == 0) {
+                    trả_về MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == 'j' || c == 'J') {
+            nếu (c == 'j' || c == 'J') {
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                nếu (!verify_end_of_number(tok, c, "imaginary")) {
+                    trả_về MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            không_thì nếu (!verify_end_of_number(tok, c, "decimal")) {
+                trả_về MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
     tok_backup(tok, c);
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    trả_về MAKE_TOKEN(NUMBER);
 }

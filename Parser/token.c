@@ -80,131 +80,131 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+số_nguyên
+_PyToken_OneChar(số_nguyên c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    case '!': trả_về EXCLAMATION;
+    case '%': trả_về PERCENT;
+    case '&': trả_về AMPER;
+    case '(': trả_về LPAR;
+    case ')': trả_về RPAR;
+    case '*': trả_về STAR;
+    case '+': trả_về PLUS;
+    case ',': trả_về COMMA;
+    case '-': trả_về MINUS;
+    case '.': trả_về DOT;
+    case '/': trả_về SLASH;
+    case ':': trả_về COLON;
+    case ';': trả_về SEMI;
+    case '<': trả_về LESS;
+    case '=': trả_về EQUAL;
+    case '>': trả_về GREATER;
+    case '@': trả_về AT;
+    case '[': trả_về LSQB;
+    case ']': trả_về RSQB;
+    case '^': trả_về CIRCUMFLEX;
+    case '{': trả_về LBRACE;
+    case '|': trả_về VBAR;
+    case '}': trả_về RBRACE;
+    case '~': trả_về TILDE;
     }
-    return OP;
+    trả_về OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+số_nguyên
+_PyToken_TwoChars(số_nguyên c1, số_nguyên c2, số_nguyên BARRY_AS_BDFL)
 {
     switch (c1) {
     case '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        case '=': trả_về NOTEQUAL;
         }
         break;
     case '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        case '=': trả_về PERCENTEQUAL;
         }
         break;
     case '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        case '=': trả_về AMPEREQUAL;
         }
         break;
     case '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        case '*': trả_về DOUBLESTAR;
+        case '=': trả_về STAREQUAL;
         }
         break;
     case '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        case '=': trả_về PLUSEQUAL;
         }
         break;
     case '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        case '=': trả_về MINEQUAL;
+        case '>': trả_về RARROW;
         }
         break;
     case '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        case '/': trả_về DOUBLESLASH;
+        case '=': trả_về SLASHEQUAL;
         }
         break;
     case ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        case '=': trả_về COLONEQUAL;
         }
         break;
     case '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        case '<': trả_về LEFTSHIFT;
+        case '=': trả_về LESSEQUAL;
+        case '>': trả_về BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
         break;
     case '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        case '=': trả_về EQEQUAL;
         }
         break;
     case '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        case '=': trả_về GREATEREQUAL;
+        case '>': trả_về RIGHTSHIFT;
         }
         break;
     case '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        case '=': trả_về ATEQUAL;
         }
         break;
     case '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        case '=': trả_về CIRCUMFLEXEQUAL;
         }
         break;
     case '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        case '=': trả_về VBAREQUAL;
         }
         break;
     }
-    return OP;
+    trả_về OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+số_nguyên
+_PyToken_ThreeChars(số_nguyên c1, số_nguyên c2, số_nguyên c3)
 {
     switch (c1) {
     case '*':
         switch (c2) {
         case '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            case '=': trả_về DOUBLESTAREQUAL;
             }
             break;
         }
@@ -213,7 +213,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            case '.': trả_về ELLIPSIS;
             }
             break;
         }
@@ -222,7 +222,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            case '=': trả_về DOUBLESLASHEQUAL;
             }
             break;
         }
@@ -231,7 +231,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            case '=': trả_về LEFTSHIFTEQUAL;
             }
             break;
         }
@@ -240,11 +240,11 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            case '=': trả_về RIGHTSHIFTEQUAL;
             }
             break;
         }
         break;
     }
-    return OP;
+    trả_về OP;
 }
