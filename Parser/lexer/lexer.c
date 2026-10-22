@@ -1,57 +1,57 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "pycore_unicodeobject.h"
-#include "errcode.h"
+#ضمن "Python.h"
+#ضمن "pycore_token.h"
+#ضمن "pycore_unicodeobject.h"
+#ضمن "errcode.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#ضمن "lexer_internal.h"
+#ضمن "../tokenizer/helpers.h"
+#ضمن "../tokenizer/reader.h"
 
-#define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
+#تعریف_کن MAKE_TOKEN(token_type) Py_Lexer_token_راهاندازی(tok, token, token_type, p_شروع, p_انتها)
 
 /* Spaces in this constant are treated as "zero or more spaces or tabs" when
    tokenizing. */
-static const char* type_comment_prefix = "# type: ";
+ساكن ثابت حرف* type_comment_پیشوند = "# type: ";
 
-int
-_PyLexer_refill(struct tok_state *tok)
+صحيح
+_PyLexer_refill(بنية tok_state *tok)
 {
-    if (tok->done != E_OK) {
-        return 0;
+    إذا (tok->انجامشده != E_OK) {
+        أرجع 0;
     }
-    int rc = _PyTok_ReaderUnderflow(tok);
-#if defined(Py_DEBUG)
-    if (tok->debug) {
+    صحيح rc = _PyTok_ReaderUnderflow(tok);
+#إذا defined(Py_DEBUG)
+    إذا (tok->debug) {
         fprintf(stderr, "line[%d] = ", tok->lineno);
         _PyTokenizer_print_escape(
-            stderr, _PyTok_SourcePointer(&tok->source, tok->cur),
+            stderr, Py_Tok_منبع_اشاره_گر(&tok->منبع, tok->cur),
             tok->inp - tok->cur);
-        fprintf(stderr, "  tok->done = %d\n", tok->done);
+        fprintf(stderr, "  tok->done = %d\n", tok->انجامشده);
     }
-#endif
-    if (!rc) {
+#پایان_اگر
+    إذا (!rc) {
         tok->cur = tok->inp;
-        return 0;
+        أرجع 0;
     }
-    tok->line_start = tok->cur;
-    _PyTok_Span line = {tok->line_start, tok->inp};
-    if (_PyTok_SourceFindByte(&tok->source, line, '\0') >= 0) {
+    tok->سطر_شروع = tok->cur;
+    Py_Tok_بازه سطر = {tok->سطر_شروع, tok->inp};
+    إذا (Py_Tok_منبع_پیدا_کن_Byte(&tok->منبع, سطر, '\0') >= 0) {
         _PyTokenizer_syntaxerror(tok, "source code cannot contain null bytes");
         tok->cur = tok->inp;
-        return 0;
+        أرجع 0;
     }
-    return 1;
+    أرجع 1;
 }
 
 /* Back-up one character */
-void
-_PyLexer_backup(struct tok_state *tok, int c)
+فراغ
+_PyLexer_backup(بنية tok_state *tok, صحيح c)
 {
-    if (c != EOF) {
-        if (--tok->cur < tok->buf_offset) {
+    إذا (c != EOF) {
+        إذا (--tok->cur < tok->buf_جابه_جایی) {
             Py_FatalError("tokenizer beginning of buffer");
         }
-        if (_PyTok_SourceByte(&tok->source, tok->cur) != Py_CHARMASK(c)) {
+        إذا (Py_Tok_منبع_Byte(&tok->منبع, tok->cur) != Py_CHARMASK(c)) {
             Py_FatalError("tok_backup: wrong character");
         }
     }
@@ -60,93 +60,93 @@ _PyLexer_backup(struct tok_state *tok, int c)
 
 
 /* Verify that the identifier follows PEP 3131. */
-static int
-verify_identifier(struct tok_state *tok)
+ساكن صحيح
+verify_identifier(بنية tok_state *tok)
 {
-    if (tok->tok_extra_tokens) {
-        return 1;
+    إذا (tok->tok_extra_نشانهها) {
+        أرجع 1;
     }
     PyObject *s;
-    if (tok_failed(tok))
-        return 0;
-    s = PyUnicode_DecodeUTF8(_PyTok_SourcePointer(&tok->source, tok->start),
-                             tok->cur - tok->start, NULL);
-    if (s == NULL) {
-        if (PyErr_ExceptionMatches(PyExc_UnicodeDecodeError)) {
-            tok->done = E_DECODE;
+    إذا (tok_failed(tok))
+        أرجع 0;
+    s = PyUnicode_DecodeUTF8(Py_Tok_منبع_اشاره_گر(&tok->منبع, tok->شروع),
+                             tok->cur - tok->شروع, عدم);
+    إذا (s == عدم) {
+        إذا (PyErr_ExceptionMatches(PyExc_UnicodeDecodeError)) {
+            tok->انجامشده = E_DECODE;
         }
-        else {
-            tok->done = E_ERROR;
+        وإلا {
+            tok->انجامشده = E_ERROR;
         }
-        return 0;
+        أرجع 0;
     }
-    Py_ssize_t invalid = _PyUnicode_ScanIdentifier(s);
-    assert(invalid >= 0);
-    assert(PyUnicode_GET_LENGTH(s) > 0);
-    if (invalid < PyUnicode_GET_LENGTH(s)) {
+    Py_ssize_t invalid = Py_Unicode_پیمایش_Identifier(s);
+    أكد(invalid >= 0);
+    أكد(Py_Unicode_GET_درازی(s) > 0);
+    إذا (invalid < Py_Unicode_GET_درازی(s)) {
         Py_UCS4 ch = PyUnicode_READ_CHAR(s, invalid);
         _PyTok_Off error_cursor = tok->cur;
-        if (invalid + 1 < PyUnicode_GET_LENGTH(s)) {
+        إذا (invalid + 1 < Py_Unicode_GET_درازی(s)) {
             /* Determine the offset in UTF-8 encoded input */
             Py_SETREF(s, PyUnicode_Substring(s, 0, invalid + 1));
-            if (s != NULL) {
+            إذا (s != عدم) {
                 Py_SETREF(s, PyUnicode_AsUTF8String(s));
             }
-            if (s == NULL) {
-                tok->done = E_ERROR;
-                return 0;
+            إذا (s == عدم) {
+                tok->انجامشده = E_ERROR;
+                أرجع 0;
             }
-            error_cursor = tok->start + PyBytes_GET_SIZE(s);
+            error_cursor = tok->شروع + Py_بایتها_GET_اندازه(s);
         }
         Py_DECREF(s);
-        if (Py_UNICODE_ISPRINTABLE(ch)) {
+        إذا (Py_UNICODE_ISPRINTABLE(ch)) {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, Py_Tok_منبع_اشاره_گر(&tok->منبع, tok->سطر_شروع),
+                error_cursor - tok->سطر_شروع, tok->lineno, -1, -1,
                 "invalid character '%c' (U+%04X)", ch, ch);
         }
-        else {
+        وإلا {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, Py_Tok_منبع_اشاره_گر(&tok->منبع, tok->سطر_شروع),
+                error_cursor - tok->سطر_شروع, tok->lineno, -1, -1,
                 "invalid non-printable character U+%04X", ch);
         }
-        return 0;
+        أرجع 0;
     }
     Py_DECREF(s);
-    return 1;
+    أرجع 1;
 }
 
-int
-_PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token *token)
+صحيح
+Py_Lexer_get_نرمال(بنية tok_state *tok, ftstring_state *current, بنية token *token)
 {
-    assert(current == NULL ||
-           (current->mode == FTSTRING_MODE_EXPRESSION &&
-            current->replacement_depth > 0));
-    int c;
-    int blankline, nonascii;
+    أكد(current == عدم ||
+           (current->نما == FTSTRING_نما_عبارت &&
+            current->replacement_عمق > 0));
+    صحيح c;
+    صحيح blankline, nonascii;
 
-    _PyTok_Off p_start = -1;
-    _PyTok_Off p_end = -1;
+    _PyTok_Off p_شروع = -1;
+    _PyTok_Off p_انتها = -1;
   nextline:
-    tok->start = -1;
-    tok->start_loc = (_PyTok_Loc){tok->lineno, -1};
+    tok->شروع = -1;
+    tok->شروع_loc = (_PyTok_Loc){tok->lineno, -1};
     blankline = 0;
 
 
-    if (tok->layout.at_bol) {
-        blankline = _PyLexer_BeginLine(tok);
-        if (blankline < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    إذا (tok->layout.at_bol) {
+        blankline = Py_Lexer_Begin_سطر(tok);
+        إذا (blankline < 0) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
     }
 
-    tok->start = tok->cur;
-    tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) : -1};
+    tok->شروع = tok->cur;
+    tok->شروع_loc = (_PyTok_Loc){
+        tok->lineno, tok->سطر_شروع >= 0 ? Py_Lexer_Byte_ستونی(tok) : -1};
 
-    if (tok->layout.pending != 0) {
-        return _PyLexer_IndentationToken(tok, token);
+    إذا (tok->layout.pending != 0) {
+        أرجع _PyLexer_IndentationToken(tok, token);
     }
 
     /* Peek ahead at the next character */
@@ -154,375 +154,375 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
     tok_backup(tok, c);
 
  again:
-    tok->start = -1;
+    tok->شروع = -1;
     /* Skip spaces */
-    do {
+    افعل {
         c = tok_nextc(tok);
-    } while (c == ' ' || c == '\t' || c == '\014');
+    } طالما (c == ' ' || c == '\t' || c == '\014');
 
     /* Set start of current token */
-    tok->start = tok->cur - 1;
-    tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) - 1 : -1};
+    tok->شروع = tok->cur - 1;
+    tok->شروع_loc = (_PyTok_Loc){
+        tok->lineno, tok->سطر_شروع >= 0 ? Py_Lexer_Byte_ستونی(tok) - 1 : -1};
 
     /* Skip comment, unless it's a type comment */
-    if (c == '#') {
+    إذا (c == '#') {
 
-        while (c != EOF && c != '\n' && c != '\r') {
+        طالما (c != EOF && c != '\n' && c != '\r') {
             c = tok_nextc(tok);
         }
 
-        if (current != NULL) {
-            _PyTok_Off comment_end = tok->cur;
-            if (c == '\n' || c == '\r') {
-                comment_end--;
+        إذا (current != عدم) {
+            _PyTok_Off comment_انتها = tok->cur;
+            إذا (c == '\n' || c == '\r') {
+                comment_انتها--;
             }
-            if (_PyLexer_record_ftstring_comment(
-                    tok, current, tok->start, comment_end) < 0) {
-                tok->done = E_NOMEM;
-                return MAKE_TOKEN(ERRORTOKEN);
+            إذا (Py_Lexer_رکورد_ftstring_comment(
+                    tok, current, tok->شروع, comment_انتها) < 0) {
+                tok->انجامشده = E_NOMEM;
+                أرجع MAKE_TOKEN(ERRORTOKEN);
             }
         }
 
-        _PyTok_Off comment = tok->start;
-        if (tok->type_comments) {
-            const char *prefix = type_comment_prefix;
-            while (*prefix && comment < tok->cur) {
-                if (*prefix == ' ') {
-                    while (comment < tok->cur) {
-                        int ch = _PyTok_SourceByte(&tok->source, comment);
-                        if (ch != ' ' && ch != '\t') {
-                            break;
+        _PyTok_Off comment = tok->شروع;
+        إذا (tok->type_comments) {
+            ثابت حرف *پیشوند = type_comment_پیشوند;
+            طالما (*پیشوند && comment < tok->cur) {
+                إذا (*پیشوند == ' ') {
+                    طالما (comment < tok->cur) {
+                        صحيح ch = Py_Tok_منبع_Byte(&tok->منبع, comment);
+                        إذا (ch != ' ' && ch != '\t') {
+                            اكسر;
                         }
                         comment++;
                     }
-                } else if (*prefix == _PyTok_SourceByte(&tok->source, comment)) {
+                } وإلا إذا (*پیشوند == Py_Tok_منبع_Byte(&tok->منبع, comment)) {
                     comment++;
-                } else {
-                    break;
+                } وإلا {
+                    اكسر;
                 }
 
-                prefix++;
+                پیشوند++;
             }
 
             /* This is a type comment if we matched all of type_comment_prefix. */
-            if (!*prefix) {
+            إذا (!*پیشوند) {
                 tok_backup(tok, c);  /* don't eat the newline or EOF */
                 /* A TYPE_IGNORE is "type: ignore" followed by the end of the token
                  * or anything ASCII and non-alphanumeric. */
-                int is_type_ignore = tok->cur - comment >= 6 &&
-                    memcmp(_PyTok_SourcePointer(&tok->source, comment),
+                صحيح is_type_ignore = tok->cur - comment >= 6 &&
+                    memcmp(Py_Tok_منبع_اشاره_گر(&tok->منبع, comment),
                            "ignore", 6) == 0;
-                if (is_type_ignore && comment + 6 < tok->cur) {
-                    int ch = _PyTok_SourceByte(&tok->source, comment + 6);
+                إذا (is_type_ignore && comment + 6 < tok->cur) {
+                    صحيح ch = Py_Tok_منبع_Byte(&tok->منبع, comment + 6);
                     is_type_ignore = ch < 128 && !Py_ISALNUM(ch);
                 }
 
-                int type = is_type_ignore ? TYPE_IGNORE : TYPE_COMMENT;
-                p_start = comment + (is_type_ignore ? 6 : 0);
-                p_end = tok->cur;
-                int start_col_offset = tok->start_loc.byte_col +
-                    (int)(p_start - tok->start);
+                صحيح type = is_type_ignore ? TYPE_IGNORE : TYPE_COMMENT;
+                p_شروع = comment + (is_type_ignore ? 6 : 0);
+                p_انتها = tok->cur;
+                صحيح شروع_ستون_جابه_جایی = tok->شروع_loc.byte_ستون +
+                    (صحيح)(p_شروع - tok->شروع);
                 /* Consume the newline after a standalone type ignore. */
-                if (is_type_ignore && blankline) {
+                إذا (is_type_ignore && blankline) {
                     tok_nextc(tok);
                     tok->layout.at_bol = 1;
                 }
-                _PyLexer_token_setup(tok, token, type, p_start, p_end);
-                token->start_loc = (_PyTok_Loc){tok->lineno, start_col_offset};
-                token->end_loc = (_PyTok_Loc){tok->lineno,
-                                              _PyLexer_ByteColumn(tok)};
-                return type;
+                Py_Lexer_token_راهاندازی(tok, token, type, p_شروع, p_انتها);
+                token->شروع_loc = (_PyTok_Loc){tok->lineno, شروع_ستون_جابه_جایی};
+                token->انتها_loc = (_PyTok_Loc){tok->lineno,
+                                              Py_Lexer_Byte_ستونی(tok)};
+                أرجع type;
             }
         }
-        if (tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-            tok->layout.depth > 0) {
+        إذا (tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
+            tok->layout.عمق > 0) {
             // Ending this comment lets the next line dedent the suite.
             tok->needs_newline |= _PyTokenizer_NEWLINE_STATEMENT;
         }
-        if (tok->tok_extra_tokens) {
+        إذا (tok->tok_extra_نشانهها) {
             tok_backup(tok, c);  /* don't eat the newline or EOF */
-            p_start = comment;
-            p_end = tok->cur;
+            p_شروع = comment;
+            p_انتها = tok->cur;
             tok->layout.comment_newline = blankline;
-            return MAKE_TOKEN(COMMENT);
+            أرجع MAKE_TOKEN(COMMENT);
         }
     }
 
-    if (tok->done == E_INTERACT_STOP) {
-        return MAKE_TOKEN(ENDMARKER);
+    إذا (tok->انجامشده == E_INTERACT_STOP) {
+        أرجع MAKE_TOKEN(ENDMARKER);
     }
 
     /* Check for EOF and errors now */
-    if (c == EOF) {
-        if (tok->level) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    إذا (c == EOF) {
+        إذا (tok->level) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
-        return MAKE_TOKEN(tok->done == E_EOF ? ENDMARKER : ERRORTOKEN);
+        أرجع MAKE_TOKEN(tok->انجامشده == E_EOF ? ENDMARKER : ERRORTOKEN);
     }
 
     /* Identifier (most frequent token!) */
     nonascii = 0;
-    if (is_potential_identifier_start(c)) {
+    إذا (is_potential_identifier_شروع(c)) {
         /* Process the various legal combinations of b"", r"", u"", and f"". */
-        int saw_b = 0, saw_r = 0, saw_u = 0, saw_f = 0, saw_t = 0;
-        while (1) {
-            if (!saw_b && (c == 'b' || c == 'B')) {
+        صحيح saw_b = 0, saw_r = 0, saw_u = 0, saw_f = 0, saw_t = 0;
+        طالما (1) {
+            إذا (!saw_b && (c == 'b' || c == 'B')) {
                 saw_b = 1;
             }
             /* Since this is a backwards compatibility support literal we don't
                want to support it in arbitrary order like byte literals. */
-            else if (!saw_u && (c == 'u'|| c == 'U')) {
+            وإلا إذا (!saw_u && (c == 'u'|| c == 'U')) {
                 saw_u = 1;
             }
             /* ur"" and ru"" are not supported */
-            else if (!saw_r && (c == 'r' || c == 'R')) {
+            وإلا إذا (!saw_r && (c == 'r' || c == 'R')) {
                 saw_r = 1;
             }
-            else if (!saw_f && (c == 'f' || c == 'F')) {
+            وإلا إذا (!saw_f && (c == 'f' || c == 'F')) {
                 saw_f = 1;
             }
-            else if (!saw_t && (c == 't' || c == 'T')) {
+            وإلا إذا (!saw_t && (c == 't' || c == 'T')) {
                 saw_t = 1;
             }
-            else {
-                break;
+            وإلا {
+                اكسر;
             }
             c = tok_nextc(tok);
-            if (c == '"' || c == '\'') {
+            إذا (c == '"' || c == '\'') {
                 // Raise error on incompatible string prefixes:
-                int status = _PyLexer_check_string_prefixes(
+                صحيح وضعیت = _PyLexer_check_string_prefixes(
                     tok, saw_b, saw_r, saw_u, saw_f, saw_t);
-                if (status < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                إذا (وضعیت < 0) {
+                    أرجع MAKE_TOKEN(ERRORTOKEN);
                 }
 
                 // Handle valid f or t string creation:
-                if (saw_f || saw_t) {
-                    ftstring_kind kind = saw_t
+                إذا (saw_f || saw_t) {
+                    ftstring_نوع نوع = saw_t
                         ? (saw_r ? RAW_TSTRING : TSTRING)
                         : (saw_r ? RAW_FSTRING : FSTRING);
-                    return _PyLexer_scan_fstring_start(tok, token, c, kind);
+                    أرجع Py_Lexer_پیمایش_fstring_شروع(tok, token, c, نوع);
                 }
-                return _PyLexer_scan_string(tok, token, c);
+                أرجع Py_Lexer_پیمایش_string(tok, token, c);
             }
         }
-        while (is_potential_identifier_char(c)) {
-            if (c >= 128) {
+        طالما (is_potential_identifier_char(c)) {
+            إذا (c >= 128) {
                 nonascii = 1;
             }
             c = tok_nextc(tok);
         }
         tok_backup(tok, c);
-        if (nonascii && !verify_identifier(tok)) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        إذا (nonascii && !verify_identifier(tok)) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
 
-        p_start = tok->start;
-        p_end = tok->cur;
+        p_شروع = tok->شروع;
+        p_انتها = tok->cur;
 
-        return MAKE_TOKEN(NAME);
+        أرجع MAKE_TOKEN(NAME);
     }
 
-    if (c == '\r') {
+    إذا (c == '\r') {
         c = tok_nextc(tok);
     }
 
-    if (c == '\n') {
-        int type = _PyLexer_Newline(tok, token, blankline);
-        if (type == 0) {
-            goto nextline;
+    إذا (c == '\n') {
+        صحيح type = _PyLexer_Newline(tok, token, blankline);
+        إذا (type == 0) {
+            اذهب nextline;
         }
-        return type;
+        أرجع type;
     }
 
     /* Period or number starting with period? */
-    if (c == '.') {
+    إذا (c == '.') {
         c = tok_nextc(tok);
-        if (Py_ISDIGIT(c)) {
-            return _PyLexer_scan_number(tok, token, c, 1);
-        } else if (c == '.') {
+        إذا (Py_ISDIGIT(c)) {
+            أرجع Py_Lexer_پیمایش_عدد(tok, token, c, 1);
+        } وإلا إذا (c == '.') {
             c = tok_nextc(tok);
-            if (c == '.') {
-                p_start = tok->start;
-                p_end = tok->cur;
-                return MAKE_TOKEN(ELLIPSIS);
+            إذا (c == '.') {
+                p_شروع = tok->شروع;
+                p_انتها = tok->cur;
+                أرجع MAKE_TOKEN(ELLIPSIS);
             }
-            else {
+            وإلا {
                 tok_backup(tok, c);
             }
             tok_backup(tok, '.');
         }
-        else {
+        وإلا {
             tok_backup(tok, c);
         }
-        p_start = tok->start;
-        p_end = tok->cur;
-        return MAKE_TOKEN(DOT);
+        p_شروع = tok->شروع;
+        p_انتها = tok->cur;
+        أرجع MAKE_TOKEN(DOT);
     }
 
 
-    /* Number */
-    if (Py_ISDIGIT(c)) {
-        return _PyLexer_scan_number(tok, token, c, 0);
+    /*عدد*/
+    إذا (Py_ISDIGIT(c)) {
+        أرجع Py_Lexer_پیمایش_عدد(tok, token, c, 0);
     }
 
     /* String */
-    if (c == '\'' || c == '"') {
-        return _PyLexer_scan_string(tok, token, c);
+    إذا (c == '\'' || c == '"') {
+        أرجع Py_Lexer_پیمایش_string(tok, token, c);
     }
 
     /* Line continuation */
-    if (c == '\\') {
-        if ((c = _PyLexer_ContinueLine(tok)) == -1) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    إذا (c == '\\') {
+        إذا ((c = Py_Lexer_Continue_سطر(tok)) == -1) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
-        goto again; /* Read next line */
+        اذهب again; /* Read next line */
     }
 
     /* Punctuation character */
-    int is_punctuation = (c == ':' || c == '}' || c == '!');
-    if (is_punctuation && current != NULL) {
-        int type = _PyLexer_ftstring_punctuation(tok, current, token, c);
-        if (type < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    صحيح is_punctuation = (c == ':' || c == '}' || c == '!');
+    إذا (is_punctuation && current != عدم) {
+        صحيح type = _PyLexer_ftstring_punctuation(tok, current, token, c);
+        إذا (type < 0) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
-        if (type != 0) {
-            p_start = tok->start;
-            p_end = tok->cur;
-            return MAKE_TOKEN(type);
+        إذا (type != 0) {
+            p_شروع = tok->شروع;
+            p_انتها = tok->cur;
+            أرجع MAKE_TOKEN(type);
         }
     }
 
     /* Check for two-character token */
     {
-        int c2 = tok_nextc(tok);
-        int current_token = _PyToken_TwoChars(c, c2, tok->barry_as_bdfl);
-        if (current_token != OP) {
-            int c3 = tok_nextc(tok);
-            int current_token3 = _PyToken_ThreeChars(c, c2, c3);
-            if (current_token3 != OP) {
+        صحيح c2 = tok_nextc(tok);
+        صحيح current_token = _PyToken_TwoChars(c, c2, tok->barry_as_bdfl);
+        إذا (current_token != OP) {
+            صحيح c3 = tok_nextc(tok);
+            صحيح current_token3 = _PyToken_ThreeChars(c, c2, c3);
+            إذا (current_token3 != OP) {
                 current_token = current_token3;
             }
-            else {
+            وإلا {
                 tok_backup(tok, c3);
             }
-            p_start = tok->start;
-            p_end = tok->cur;
-            return MAKE_TOKEN(current_token);
+            p_شروع = tok->شروع;
+            p_انتها = tok->cur;
+            أرجع MAKE_TOKEN(current_token);
         }
         tok_backup(tok, c2);
     }
 
     /* Keep track of parentheses nesting level */
-    switch (c) {
-    case '(':
-    case '[':
-    case '{':
-        if (tok->level >= MAXLEVEL) {
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "too many nested parentheses"));
+    بدل (c) {
+    حالة '(':
+    حالة '[':
+    حالة '{':
+        إذا (tok->level >= MAXLEVEL) {
+            أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "too many nested parentheses"));
         }
         tok->parenstack[tok->level] = c;
         tok->parenlinenostack[tok->level] = tok->lineno;
-        tok->parencolstack[tok->level] = (int)(tok->start - tok->line_start);
+        tok->parencolstack[tok->level] = (صحيح)(tok->شروع - tok->سطر_شروع);
         tok->level++;
-        break;
-    case ')':
-    case ']':
-    case '}':
-        if (current != NULL &&
-                _PyLexer_FTStringBracketDepth(tok, current) == 0) {
-            if (c == '}') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+        اكسر;
+    حالة ')':
+    حالة ']':
+    حالة '}':
+        إذا (current != عدم &&
+                Py_Lexer_FTString_Bracket_عمق(tok, current) == 0) {
+            إذا (c == '}') {
+                أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                     "%c-string: single '}' is not allowed",
-                    _PyLexer_StringPrefix(current->kind)));
+                    Py_Lexer_String_پیشوند(current->نوع)));
             }
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(
                 tok, "%c-string: unmatched '%c'",
-                _PyLexer_StringPrefix(current->kind), c));
+                Py_Lexer_String_پیشوند(current->نوع), c));
         }
-        if (!tok->tok_extra_tokens && !tok->level) {
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "unmatched '%c'", c));
+        إذا (!tok->tok_extra_نشانهها && !tok->level) {
+            أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "unmatched '%c'", c));
         }
-        if (tok->level > 0) {
+        إذا (tok->level > 0) {
             tok->level--;
-            int opening = tok->parenstack[tok->level];
-            if (!tok->tok_extra_tokens && !((opening == '(' && c == ')') ||
+            صحيح opening = tok->parenstack[tok->level];
+            إذا (!tok->tok_extra_نشانهها && !((opening == '(' && c == ')') ||
                                             (opening == '[' && c == ']') ||
                                             (opening == '{' && c == '}'))) {
                 /* Do not match a closer against the brace that opened the
                  * current replacement field. */
-                if (current != NULL && opening == '{') {
-                    int bracket_depth =
-                        _PyLexer_FTStringBracketDepth(tok, current);
-                    if (bracket_depth == current->replacement_depth - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                إذا (current != عدم && opening == '{') {
+                    صحيح bracket_عمق =
+                        Py_Lexer_FTString_Bracket_عمق(tok, current);
+                    إذا (bracket_عمق == current->replacement_عمق - 1) {
+                        أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "%c-string: unmatched '%c'",
-                            _PyLexer_StringPrefix(current->kind), c));
+                            Py_Lexer_String_پیشوند(current->نوع), c));
                     }
                 }
-                if (tok->parenlinenostack[tok->level] != tok->lineno) {
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                إذا (tok->parenlinenostack[tok->level] != tok->lineno) {
+                    أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "closing parenthesis '%c' does not match "
                             "opening parenthesis '%c' on line %d",
                             c, opening, tok->parenlinenostack[tok->level]));
                 }
-                else {
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                وإلا {
+                    أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "closing parenthesis '%c' does not match "
                             "opening parenthesis '%c'",
                             c, opening));
                 }
             }
         }
-        if (current != NULL &&
-                _PyLexer_close_ftstring_expr(tok, current, c) < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        إذا (current != عدم &&
+                Py_Lexer_close_ftstring_عبارت(tok, current, c) < 0) {
+            أرجع MAKE_TOKEN(ERRORTOKEN);
         }
-        break;
-    default:
-        break;
+        اكسر;
+    افتراضي:
+        اكسر;
     }
 
-    if (!Py_UNICODE_ISPRINTABLE(c)) {
-        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid non-printable character U+%04X", c));
+    إذا (!Py_UNICODE_ISPRINTABLE(c)) {
+        أرجع MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid non-printable character U+%04X", c));
     }
 
-    if (c == '=' && current != NULL) {
+    إذا (c == '=' && current != عدم) {
         _PyLexer_mark_ftstring_debug(tok, current);
     }
 
     /* Punctuation character */
-    p_start = tok->start;
-    p_end = tok->cur;
-    return MAKE_TOKEN(_PyToken_OneChar(c));
+    p_شروع = tok->شروع;
+    p_انتها = tok->cur;
+    أرجع MAKE_TOKEN(_PyToken_OneChar(c));
 }
 
 
-void
-_PyTokenizer_Get(struct tok_state *tok, struct token *token)
+فراغ
+_PyTokenizer_Get(بنية tok_state *tok, بنية token *token)
 {
     _PyToken_Free(token);
     ftstring_state *current = _PyLexer_CurrentFTString(tok);
-    int result;
-    if (current == NULL) {
-        result = _PyLexer_get_normal(tok, NULL, token);
+    صحيح نتیجه;
+    إذا (current == عدم) {
+        نتیجه = Py_Lexer_get_نرمال(tok, عدم, token);
     }
-    else {
-        switch (current->mode) {
-        case FTSTRING_MODE_EXPRESSION:
-            result = _PyLexer_get_normal(tok, current, token);
-            break;
-        case FTSTRING_MODE_MIDDLE:
-        case FTSTRING_MODE_FORMAT_SPEC:
-            result = _PyLexer_get_ftstring(tok, current, token);
-            break;
-        default:
+    وإلا {
+        بدل (current->نما) {
+        حالة FTSTRING_نما_عبارت:
+            نتیجه = Py_Lexer_get_نرمال(tok, current, token);
+            اكسر;
+        حالة FTSTRING_نما_میانه:
+        حالة FTSTRING_نما_FORMAT_SPEC:
+            نتیجه = _PyLexer_get_ftstring(tok, current, token);
+            اكسر;
+        افتراضي:
             Py_UNREACHABLE();
         }
     }
-    if (tok_failed(tok) && tok->done != E_INCOMPLETE) {
-        result = ERRORTOKEN;
+    إذا (tok_failed(tok) && tok->انجامشده != E_INCOMPLETE) {
+        نتیجه = ERRORTOKEN;
     }
-    token->type = result;
+    token->type = نتیجه;
 }
