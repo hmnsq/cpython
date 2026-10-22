@@ -69,19 +69,19 @@ typedef struct _PyTok_Reader {
 struct tok_state;
 
 // On failure, the buffer and capacity are unchanged.
-int _PyTok_ReserveBuffer(char **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
+정수 _PyTok_ReserveBuffer(char **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
 char *_PyTok_CopyBytes(const char *, Py_ssize_t);
-int _PyTok_DecodeOnce(
+정수 _PyTok_DecodeOnce(
     struct tok_state *, _PyTok_Chunk *, const char *, const char *);
 char *_PyTok_NormalizeNewlines(const char *, Py_ssize_t, Py_ssize_t *);
 void _PyTok_ChunkClear(_PyTok_Chunk *);
-int _PyTok_SetEncoding(struct tok_state *, const char *);
+정수 _PyTok_SetEncoding(struct tok_state *, const char *);
 _PyTok_EncodingResult _PyTok_DetectEncoding(
-    struct tok_state *, const _PyTok_Chunk *, const _PyTok_Chunk *, int,
+    struct tok_state *, const _PyTok_Chunk *, const _PyTok_Chunk *, 정수,
     Py_ssize_t *);
-int _PyTok_PrepareString(struct tok_state *, const char *, int, int, int);
-int _PyTok_StartDecoder(struct tok_state *, const char *);
-int _PyTok_DecodeChunk(struct tok_state *, _PyTok_Chunk *, int);
-int _PyTok_DecoderHasBufferedInput(struct tok_state *);
+정수 _PyTok_PrepareString(struct tok_state *, const char *, 정수, 정수, 정수);
+정수 _PyTok_StartDecoder(struct tok_state *, const char *);
+정수 _PyTok_DecodeChunk(struct tok_state *, _PyTok_Chunk *, 정수);
+정수 _PyTok_DecoderHasBufferedInput(struct tok_state *);
 
 #endif

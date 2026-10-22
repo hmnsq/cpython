@@ -28,76 +28,76 @@ struct _identifier_cache_entry {
 asdl_stmt_seq*
 _PyPegen_interactive_exit(Parser *p)
 {
-    if (p->errcode) {
+    만약 (p->errcode) {
         *(p->errcode) = E_EOF;
     }
-    return NULL;
+    반환 NULL;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
 {
     const unsigned char *data = (const unsigned char*)PyUnicode_AsUTF8(line);
-    if (data == NULL) {
-        return -1;
+    만약 (data == NULL) {
+        반환 -1;
     }
 
     Py_ssize_t len = 0;
-    while (col_offset < end_col_offset) {
+    동안 (col_offset < end_col_offset) {
         Py_UCS4 ch = data[col_offset];
-        if (ch < 0x80) {
+        만약 (ch < 0x80) {
             col_offset += 1;
-        } else if ((ch & 0xe0) == 0xc0) {
+        } 아니면 만약 ((ch & 0xe0) == 0xc0) {
             col_offset += 2;
-        } else if ((ch & 0xf0) == 0xe0) {
+        } 아니면 만약 ((ch & 0xf0) == 0xe0) {
             col_offset += 3;
-        } else if ((ch & 0xf8) == 0xf0) {
+        } 아니면 만약 ((ch & 0xf8) == 0xf0) {
             col_offset += 4;
-        } else {
+        } 아니면 {
             PyErr_SetString(PyExc_ValueError, "Invalid UTF-8 sequence");
-            return -1;
+            반환 -1;
         }
         len++;
     }
-    return len;
+    반환 len;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset_raw(const char* str, Py_ssize_t col_offset)
 {
     Py_ssize_t len = (Py_ssize_t)strlen(str);
-    if (col_offset > len + 1) {
+    만약 (col_offset > len + 1) {
         col_offset = len + 1;
     }
     assert(col_offset >= 0);
     PyObject *text = PyUnicode_DecodeUTF8(str, col_offset, "replace");
-    if (!text) {
-        return -1;
+    만약 (!text) {
+        반환 -1;
     }
     Py_ssize_t size = PyUnicode_GET_LENGTH(text);
     Py_DECREF(text);
-    return size;
+    반환 size;
 }
 
 Py_ssize_t
 _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset)
 {
     const char *str = PyUnicode_AsUTF8(line);
-    if (!str) {
-        return -1;
+    만약 (!str) {
+        반환 -1;
     }
-    return _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
+    반환 _PyPegen_byte_offset_to_character_offset_raw(str, col_offset);
 }
 
 // Here, mark is the start of the node, while p->mark is the end.
 // If node==NULL, they should be the same.
-int
-_PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
+정수
+_PyPegen_insert_memo(Parser *p, 정수 mark, 정수 type, void *node)
 {
     // Insert in front
     Memo *m = _PyArena_Malloc(p->arena, sizeof(Memo));
-    if (m == NULL) {
-        return -1;
+    만약 (m == NULL) {
+        반환 -1;
     }
     m->type = type;
     m->node = node;
@@ -105,83 +105,83 @@ _PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
     m->next = p->tokens[mark]->memo;
     p->tokens[mark]->memo = m;
     p->tokens[mark]->memo_mask |= 1ULL << (type & 63);
-    return 0;
+    반환 0;
 }
 
 // Like _PyPegen_insert_memo(), but returns the inserted Memo so callers
 // can update it in place without re-walking the token's memo list.
 Memo *
-_PyPegen_insert_memo_direct(Parser *p, int mark, int type)
+_PyPegen_insert_memo_direct(Parser *p, 정수 mark, 정수 type)
 {
-    if (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
-        return NULL;
+    만약 (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
+        반환 NULL;
     }
-    return p->tokens[mark]->memo;
+    반환 p->tokens[mark]->memo;
 }
 
 // Like _PyPegen_insert_memo(), but updates an existing node if found.
-int
-_PyPegen_update_memo(Parser *p, int mark, int type, void *node)
+정수
+_PyPegen_update_memo(Parser *p, 정수 mark, 정수 type, void *node)
 {
-    for (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
+    위해 (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
+        만약 (m->type == type) {
             // Update existing node.
             m->node = node;
             m->mark = p->mark;
-            return 0;
+            반환 0;
         }
     }
     // Insert new node.
-    return _PyPegen_insert_memo(p, mark, type, node);
+    반환 _PyPegen_insert_memo(p, mark, type, node);
 }
 
-static int
+static 정수
 init_normalization(Parser *p)
 {
-    if (p->normalize) {
-        return 1;
+    만약 (p->normalize) {
+        반환 1;
     }
     p->normalize = PyImport_ImportModuleAttrString("unicodedata", "normalize");
-    if (!p->normalize)
+    만약 (!p->normalize)
     {
-        return 0;
+        반환 0;
     }
-    return 1;
+    반환 1;
 }
 
-int
+정수
 _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity)
 {
-    if ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
+    만약 ((size_t)*capacity > (size_t)PY_SSIZE_T_MAX /
             (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(**buffer))) {
-        return -1;
+        반환 -1;
     }
     Py_ssize_t new_capacity = *capacity == 0
         ? 1 : *capacity * PEGEN_ARRAY_GROWTH_FACTOR;
     void **new_buffer = PyMem_Realloc(*buffer, new_capacity * sizeof(**buffer));
-    if (new_buffer == NULL) {
-        return -1;
+    만약 (new_buffer == NULL) {
+        반환 -1;
     }
     *buffer = new_buffer;
     *capacity = new_capacity;
-    return 0;
+    반환 0;
 }
 
-static int
-growable_comment_array_add(growable_comment_array *arr, int lineno, char *comment)
+static 정수
+growable_comment_array_add(growable_comment_array *arr, 정수 lineno, char *comment)
 {
-    if (arr->num_items >= arr->size) {
-        if (arr->size > (size_t)PY_SSIZE_T_MAX /
+    만약 (arr->num_items >= arr->size) {
+        만약 (arr->size > (size_t)PY_SSIZE_T_MAX /
                 (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*arr->items))) {
-            return 0;
+            반환 0;
         }
         size_t new_size = arr->size == 0
             ? TYPE_IGNORE_INITIAL_CAPACITY
             : arr->size * PEGEN_ARRAY_GROWTH_FACTOR;
         void *new_items_array = PyMem_Realloc(
             arr->items, new_size * sizeof(*arr->items));
-        if (!new_items_array) {
-            return 0;
+        만약 (!new_items_array) {
+            반환 0;
         }
         arr->items = new_items_array;
         arr->size = new_size;
@@ -190,40 +190,40 @@ growable_comment_array_add(growable_comment_array *arr, int lineno, char *commen
     arr->items[arr->num_items].lineno = lineno;
     arr->items[arr->num_items].comment = comment;  // Take ownership
     arr->num_items++;
-    return 1;
+    반환 1;
 }
 
 static void
 growable_comment_array_deallocate(growable_comment_array *arr)
 {
-    for (size_t i = 0; i < arr->num_items; i++) {
+    위해 (size_t i = 0; i < arr->num_items; i++) {
         PyMem_Free(arr->items[i].comment);
     }
     PyMem_Free(arr->items);
 }
 
-static int
+static 정수
 _get_keyword_or_name_type(Parser *p, const char *text, Py_ssize_t length)
 {
     assert(length > 0);
 
-    if (length >= p->n_keyword_lists ||
+    만약 (length >= p->n_keyword_lists ||
         p->keywords[length] == NULL ||
         p->keywords[length]->type == -1) {
-        return NAME;
+        반환 NAME;
     }
-    for (KeywordToken *k = p->keywords[length]; k != NULL && k->type != -1; k++) {
-        if (memcmp(k->str, text, (size_t)length) == 0) {
-            return k->type;
+    위해 (KeywordToken *k = p->keywords[length]; k != NULL && k->type != -1; k++) {
+        만약 (memcmp(k->str, text, (size_t)length) == 0) {
+            반환 k->type;
         }
     }
-    return NAME;
+    반환 NAME;
 }
 
 // Keep text only where grammar actions or helpers read it. Keyword error
 // actions use fixed spellings, so keywords do not need their text.
-static inline int
-token_needs_text(int type)
+static inline 정수
+token_needs_text(정수 type)
 {
     switch (type) {
         case NAME:
@@ -237,41 +237,41 @@ token_needs_text(int type)
         case TSTRING_END:
         case TYPE_COMMENT:
         case NOTEQUAL:  // _PyPegen_check_barry_as_flufl() distinguishes != and <>.
-            return 1;
+            반환 1;
         default:
-            return 0;
+            반환 0;
     }
 }
 
-static int
-initialize_token(Parser *p, Token *parser_token, struct token *new_token, int token_type) {
+static 정수
+initialize_token(Parser *p, Token *parser_token, struct token *new_token, 정수 token_type) {
     assert(parser_token != NULL);
 
     parser_token->type = token_type;
     parser_token->bytes = NULL;
-    if (token_needs_text(token_type) && new_token->span.start >= 0) {
+    만약 (token_needs_text(token_type) && new_token->span.start >= 0) {
         Py_ssize_t length;
         const char *text = _PyToken_TextView(p->tok, new_token, &length);
-        if (token_type == NAME) {
+        만약 (token_type == NAME) {
             parser_token->type = _get_keyword_or_name_type(p, text, length);
         }
         // A name reclassified as a keyword does not need its text.
-        if (parser_token->type == token_type) {
+        만약 (parser_token->type == token_type) {
             parser_token->bytes = PyBytes_FromStringAndSize(text, length);
-            if (parser_token->bytes == NULL) {
-                return -1;
+            만약 (parser_token->bytes == NULL) {
+                반환 -1;
             }
-            if (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
+            만약 (_PyArena_AddPyObject(p->arena, parser_token->bytes) < 0) {
                 Py_DECREF(parser_token->bytes);
-                return -1;
+                반환 -1;
             }
         }
     }
 
     parser_token->metadata = NULL;
-    if (new_token->metadata != NULL) {
-        if (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
-            return -1;
+    만약 (new_token->metadata != NULL) {
+        만약 (_PyArena_AddPyObject(p->arena, new_token->metadata) < 0) {
+            반환 -1;
         }
         parser_token->metadata = new_token->metadata;
         new_token->metadata = NULL;
@@ -290,44 +290,44 @@ initialize_token(Parser *p, Token *parser_token, struct token *new_token, int to
 
     p->fill += 1;
 
-    if (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
-        return _Pypegen_raise_decode_error(p);
+    만약 (token_type == ERRORTOKEN && _PyTokenizer_GetStatus(p->tok) == E_DECODE) {
+        반환 _Pypegen_raise_decode_error(p);
     }
 
-    return (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
+    반환 (token_type == ERRORTOKEN ? _Pypegen_tokenizer_error(p) : 0);
 }
 
-static int
+static 정수
 _resize_tokens_array(Parser *p) {
-    if (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
+    만약 (p->size > INT_MAX / PEGEN_ARRAY_GROWTH_FACTOR ||
             (size_t)p->size > PY_SSIZE_T_MAX /
                 (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*p->tokens))) {
         PyErr_NoMemory();
-        return -1;
+        반환 -1;
     }
-    int newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
+    정수 newsize = p->size * PEGEN_ARRAY_GROWTH_FACTOR;
     Token **new_tokens = PyMem_Realloc(p->tokens, (size_t)newsize * sizeof(Token *));
-    if (new_tokens == NULL) {
+    만약 (new_tokens == NULL) {
         PyErr_NoMemory();
-        return -1;
+        반환 -1;
     }
     p->tokens = new_tokens;
 
     // Allocate new tokens together without moving existing ones: parser rules
     // may still hold pointers into earlier blocks. Parser_Free frees each block.
     Token *chunk = PyMem_Calloc((size_t)(newsize - p->size), sizeof(Token));
-    if (chunk == NULL) {
+    만약 (chunk == NULL) {
         PyErr_NoMemory();
-        return -1;
+        반환 -1;
     }
-    for (int i = p->size; i < newsize; i++) {
+    위해 (정수 i = p->size; i < newsize; i++) {
         p->tokens[i] = &chunk[i - p->size];
     }
     p->size = newsize;
-    return 0;
+    반환 0;
 }
 
-int
+정수
 _PyPegen_fill_token(Parser *p)
 {
     struct token new_token;
@@ -335,18 +335,18 @@ _PyPegen_fill_token(Parser *p)
     _PyTokenizer_Get(p->tok, &new_token);
 
     // Record and skip '# type: ignore' comments
-    while (new_token.type == TYPE_IGNORE) {
+    동안 (new_token.type == TYPE_IGNORE) {
         Py_ssize_t len;
         const char *text = _PyToken_TextView(p->tok, &new_token, &len);
         char *tag = PyMem_Malloc((size_t)len + 1);
-        if (tag == NULL) {
+        만약 (tag == NULL) {
             PyErr_NoMemory();
             goto error;
         }
         memcpy(tag, text, (size_t)len);
         tag[len] = '\0';
         // Ownership of tag passes to the growable array
-        if (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
+        만약 (!growable_comment_array_add(&p->type_ignore_comments, new_token.end_loc.lineno, tag)) {
             PyMem_Free(tag);
             PyErr_NoMemory();
             goto error;
@@ -354,43 +354,43 @@ _PyPegen_fill_token(Parser *p)
         _PyTokenizer_Get(p->tok, &new_token);
     }
 
-    int type = new_token.type;
+    정수 type = new_token.type;
     // EOF can finish an ordinary token. Only a boundary token means that
     // the grammar requested input beyond the last physical line.
-    if (type == ENDMARKER ||
+    만약 (type == ENDMARKER ||
         (type == DEDENT && (p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
          _PyTokenizer_GetStatus(p->tok) == E_EOF)) {
         p->input_exhausted = 1;
     }
 
     // If we have reached the end and we are in single input mode we need to insert a newline and reset the parsing
-    if (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
+    만약 (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
         type = NEWLINE; /* Add an extra newline */
         p->parsing_started = 0;
 
-        if (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
+        만약 (!(p->flags & PyPARSE_DONT_IMPLY_DEDENT)) {
             _PyTokenizer_ImplyDedents(p->tok);
         }
     }
-    else {
+    아니면 {
         p->parsing_started = 1;
     }
 
     // Check if we are at the limit of the token array capacity and resize if needed
-    if ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
+    만약 ((p->fill == p->size) && (_resize_tokens_array(p) != 0)) {
         goto error;
     }
 
     Token *t = p->tokens[p->fill];
-    int result = initialize_token(p, t, &new_token, type);
+    정수 result = initialize_token(p, t, &new_token, type);
     _PyToken_Free(&new_token);
-    return result;
+    반환 result;
 error:
     _PyToken_Free(&new_token);
-    return -1;
+    반환 -1;
 }
 
-#if defined(Py_DEBUG)
+#만약 defined(Py_DEBUG)
 // Instrumentation to count the effectiveness of memoization.
 // The array counts the number of tokens skipped by memoization,
 // indexed by type.
@@ -402,7 +402,7 @@ void
 _PyPegen_clear_memo_statistics(void)
 {
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
+    위해 (정수 i = 0; i < NSTATISTICS; i++) {
         memo_statistics[i] = 0;
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
@@ -412,53 +412,53 @@ PyObject *
 _PyPegen_get_memo_statistics(void)
 {
     PyObject *ret = PyList_New(NSTATISTICS);
-    if (ret == NULL) {
-        return NULL;
+    만약 (ret == NULL) {
+        반환 NULL;
     }
 
     PyMutex_Lock(&_PyRuntime.parser.mutex);
-    for (int i = 0; i < NSTATISTICS; i++) {
+    위해 (정수 i = 0; i < NSTATISTICS; i++) {
         PyObject *value = PyLong_FromLong(memo_statistics[i]);
-        if (value == NULL) {
+        만약 (value == NULL) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            반환 NULL;
         }
         // PyList_SetItem borrows a reference to value.
-        if (PyList_SetItem(ret, i, value) < 0) {
+        만약 (PyList_SetItem(ret, i, value) < 0) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
-            return NULL;
+            반환 NULL;
         }
     }
     PyMutex_Unlock(&_PyRuntime.parser.mutex);
-    return ret;
+    반환 ret;
 }
 #endif
 
-int  // bool
-_PyPegen_is_memoized(Parser *p, int type, void *pres)
+정수  // bool
+_PyPegen_is_memoized(Parser *p, 정수 type, void *pres)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    만약 (p->mark == p->fill) {
+        만약 (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return -1;
+            반환 -1;
         }
     }
 
     Token *t = p->tokens[p->mark];
 
-    if (!(t->memo_mask & (1ULL << (type & 63)))) {
-        return 0;
+    만약 (!(t->memo_mask & (1ULL << (type & 63)))) {
+        반환 0;
     }
 
-    for (Memo *m = t->memo; m != NULL; m = m->next) {
-        if (m->type == type) {
-#if defined(Py_DEBUG)
-            if (0 <= type && type < NSTATISTICS) {
+    위해 (Memo *m = t->memo; m != NULL; m = m->next) {
+        만약 (m->type == type) {
+#만약 defined(Py_DEBUG)
+            만약 (0 <= type && type < NSTATISTICS) {
                 long count = m->mark - p->mark;
                 // A memoized negative result counts for one.
-                if (count <= 0) {
+                만약 (count <= 0) {
                     count = 1;
                 }
                 PyMutex_Lock(&_PyRuntime.parser.mutex);
@@ -468,20 +468,20 @@ _PyPegen_is_memoized(Parser *p, int type, void *pres)
 #endif
             p->mark = m->mark;
             *(void **)(pres) = m->node;
-            return 1;
+            반환 1;
         }
     }
-    return 0;
+    반환 0;
 }
 
 #define LOOKAHEAD1(NAME, RES_TYPE)                                  \
-    int                                                             \
-    NAME (int positive, RES_TYPE (func)(Parser *), Parser *p)       \
+    정수                                                             \
+    NAME (정수 positive, RES_TYPE (func)(Parser *), Parser *p)       \
     {                                                               \
-        int mark = p->mark;                                         \
+        정수 mark = p->mark;                                         \
         void *res = func(p);                                        \
         p->mark = mark;                                             \
-        return (res != NULL) == positive;                           \
+        반환 (res != NULL) == positive;                           \
     }
 
 LOOKAHEAD1(_PyPegen_lookahead, void *)
@@ -490,93 +490,93 @@ LOOKAHEAD1(_PyPegen_lookahead_for_stmt, stmt_ty)
 #undef LOOKAHEAD1
 
 #define LOOKAHEAD2(NAME, RES_TYPE, T)                                   \
-    int                                                                 \
-    NAME (int positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
+    정수                                                                 \
+    NAME (정수 positive, RES_TYPE (func)(Parser *, T), Parser *p, T arg) \
     {                                                                   \
-        int mark = p->mark;                                             \
+        정수 mark = p->mark;                                             \
         void *res = func(p, arg);                                       \
         p->mark = mark;                                                 \
-        return (res != NULL) == positive;                               \
+        반환 (res != NULL) == positive;                               \
     }
 
-LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, int)
+LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, 정수)
 LOOKAHEAD2(_PyPegen_lookahead_with_string, expr_ty, const char *)
 #undef LOOKAHEAD2
 
 Token *
-_PyPegen_expect_token(Parser *p, int type)
+_PyPegen_expect_token(Parser *p, 정수 type)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    만약 (p->mark == p->fill) {
+        만약 (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            반환 NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
-       return NULL;
+    만약 (t->type != type) {
+       반환 NULL;
     }
     p->mark += 1;
-    return t;
+    반환 t;
 }
 
 void*
 _PyPegen_expect_forced_result(Parser *p, void* result, const char* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    만약 (p->error_indicator == 1) {
+        반환 NULL;
     }
-    if (result == NULL) {
+    만약 (result == NULL) {
         RAISE_SYNTAX_ERROR("expected (%s)", expected);
-        return NULL;
+        반환 NULL;
     }
-    return result;
+    반환 result;
 }
 
 Token *
-_PyPegen_expect_forced_token(Parser *p, int type, const char* expected) {
+_PyPegen_expect_forced_token(Parser *p, 정수 type, const char* expected) {
 
-    if (p->error_indicator == 1) {
-        return NULL;
+    만약 (p->error_indicator == 1) {
+        반환 NULL;
     }
 
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    만약 (p->mark == p->fill) {
+        만약 (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            반환 NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != type) {
+    만약 (t->type != type) {
         RAISE_SYNTAX_ERROR_KNOWN_LOCATION(t, "expected '%s'", expected);
-        return NULL;
+        반환 NULL;
     }
     p->mark += 1;
-    return t;
+    반환 t;
 }
 
 expr_ty
 _PyPegen_expect_soft_keyword(Parser *p, const char *keyword)
 {
-    if (p->mark == p->fill) {
-        if (_PyPegen_fill_token(p) < 0) {
+    만약 (p->mark == p->fill) {
+        만약 (_PyPegen_fill_token(p) < 0) {
             p->error_indicator = 1;
-            return NULL;
+            반환 NULL;
         }
     }
     Token *t = p->tokens[p->mark];
-    if (t->type != NAME) {
-        return NULL;
+    만약 (t->type != NAME) {
+        반환 NULL;
     }
     const char *s = PyBytes_AsString(t->bytes);
-    if (!s) {
+    만약 (!s) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
-    if (strcmp(s, keyword) != 0) {
-        return NULL;
+    만약 (strcmp(s, keyword) != 0) {
+        반환 NULL;
     }
-    return _PyPegen_name_token(p);
+    반환 _PyPegen_name_token(p);
 }
 
 Token *
@@ -584,33 +584,33 @@ _PyPegen_get_last_nonnwhitespace_token(Parser *p)
 {
     assert(p->mark >= 0);
     Token *token = NULL;
-    for (int m = p->mark - 1; m >= 0; m--) {
+    위해 (정수 m = p->mark - 1; m >= 0; m--) {
         token = p->tokens[m];
-        if (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
+        만약 (token->type != ENDMARKER && (token->type < NEWLINE || token->type > DEDENT)) {
             break;
         }
     }
-    return token;
+    반환 token;
 }
 
 PyObject *
 _PyPegen_new_identifier(Parser *p, const char *n)
 {
     PyObject *id = PyUnicode_DecodeUTF8(n, (Py_ssize_t)strlen(n), NULL);
-    if (!id) {
+    만약 (!id) {
         goto error;
     }
     /* Check whether there are non-ASCII characters in the
        identifier; if so, normalize to NFKC. */
-    if (!PyUnicode_IS_ASCII(id))
+    만약 (!PyUnicode_IS_ASCII(id))
     {
-        if (!init_normalization(p))
+        만약 (!init_normalization(p))
         {
             Py_DECREF(id);
             goto error;
         }
         PyObject *form = PyUnicode_InternFromString("NFKC");
-        if (form == NULL)
+        만약 (form == NULL)
         {
             Py_DECREF(id);
             goto error;
@@ -619,11 +619,11 @@ _PyPegen_new_identifier(Parser *p, const char *n)
         PyObject *id2 = PyObject_Vectorcall(p->normalize, args, 2, NULL);
         Py_DECREF(id);
         Py_DECREF(form);
-        if (!id2) {
+        만약 (!id2) {
             goto error;
         }
 
-        if (!PyUnicode_Check(id2))
+        만약 (!PyUnicode_Check(id2))
         {
             PyErr_Format(PyExc_TypeError,
                          "unicodedata.normalize() must return a string, not "
@@ -640,8 +640,8 @@ _PyPegen_new_identifier(Parser *p, const char *n)
         "False",
         NULL
     };
-    for (int i = 0; forbidden[i] != NULL; i++) {
-        if (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
+    위해 (정수 i = 0; forbidden[i] != NULL; i++) {
+        만약 (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
             PyErr_Format(PyExc_ValueError,
                          "identifier field can't represent '%s' constant",
                          forbidden[i]);
@@ -651,16 +651,16 @@ _PyPegen_new_identifier(Parser *p, const char *n)
     }
     PyInterpreterState *interp = _PyInterpreterState_GET();
     _PyUnicode_InternImmortal(interp, &id);
-    if (_PyArena_AddPyObject(p->arena, id) < 0)
+    만약 (_PyArena_AddPyObject(p->arena, id) < 0)
     {
         Py_DECREF(id);
         goto error;
     }
-    return id;
+    반환 id;
 
 error:
     p->error_indicator = 1;
-    return NULL;
+    반환 NULL;
 }
 
 // Return an arena-owned identifier; callers borrow the reference.
@@ -668,9 +668,9 @@ static PyObject *
 get_cached_identifier(Parser *p, PyObject *bytes)
 {
     const char *s = PyBytes_AsString(bytes);
-    if (!s) {
+    만약 (!s) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
     // Identifiers repeat constantly; a small span-keyed cache skips the
     // UTF-8 decode + intern for repeated occurrences. Keys point into
@@ -679,105 +679,105 @@ get_cached_identifier(Parser *p, PyObject *bytes)
     // (including the second error pass, which reuses parser and arena).
     Py_ssize_t len = PyBytes_GET_SIZE(bytes);
     Py_hash_t hash = PyObject_Hash(bytes);
-    if (hash == -1) {
+    만약 (hash == -1) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
     // Parses without identifiers do not need this cache.
-    if (p->identifier_cache == NULL) {
+    만약 (p->identifier_cache == NULL) {
         p->identifier_cache = PyMem_Calloc(
             IDENTIFIER_CACHE_SIZE, sizeof(*p->identifier_cache));
-        if (p->identifier_cache == NULL) {
+        만약 (p->identifier_cache == NULL) {
             p->error_indicator = 1;
-            return PyErr_NoMemory();
+            반환 PyErr_NoMemory();
         }
     }
     IdentifierCacheEntry *free_slot = NULL;
     size_t idx = (size_t)hash & (IDENTIFIER_CACHE_SIZE - 1);
-    for (int probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
+    위해 (정수 probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
         IdentifierCacheEntry *entry = &p->identifier_cache[
             (idx + probe) & (IDENTIFIER_CACHE_SIZE - 1)];
-        if (entry->key == NULL) {
+        만약 (entry->key == NULL) {
             free_slot = entry;
             break;
         }
-        if (entry->hash == hash && entry->len == len &&
+        만약 (entry->hash == hash && entry->len == len &&
             memcmp(entry->key, s, len) == 0)
         {
-            return entry->value;
+            반환 entry->value;
         }
     }
     PyObject *id = _PyPegen_new_identifier(p, s);
-    if (id == NULL) {
+    만약 (id == NULL) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
-    if (free_slot != NULL) {
+    만약 (free_slot != NULL) {
         free_slot->key = s;
         free_slot->len = len;
         free_slot->hash = hash;
         free_slot->value = id;
     }
-    return id;
+    반환 id;
 }
 
 static expr_ty
 _PyPegen_name_from_token(Parser *p, Token* t)
 {
-    if (t == NULL) {
-        return NULL;
+    만약 (t == NULL) {
+        반환 NULL;
     }
     // Reuse the AST node when backtracking revisits this token. Memo lookup
     // starts before the token and restores the position after it on a hit.
     // Token kinds can be memo keys: generated grammar rule IDs start at 1000.
-    int mark = p->mark - 1;
+    정수 mark = p->mark - 1;
     p->mark = mark;
     expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NAME, &cached)) {
-        return cached;
+    만약 (_PyPegen_is_memoized(p, NAME, &cached)) {
+        반환 cached;
     }
     p->mark = mark + 1;
     PyObject *id = get_cached_identifier(p, t->bytes);
-    if (id == NULL) {
-        return NULL;
+    만약 (id == NULL) {
+        반환 NULL;
     }
     expr_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
                                 t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
+    만약 (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
-    return result;
+    반환 result;
 }
 
 expr_ty
 _PyPegen_name_token(Parser *p)
 {
     Token *t = _PyPegen_expect_token(p, NAME);
-    return _PyPegen_name_from_token(p, t);
+    반환 _PyPegen_name_from_token(p, t);
 }
 
 void *
 _PyPegen_string_token(Parser *p)
 {
-    return _PyPegen_expect_token(p, STRING);
+    반환 _PyPegen_expect_token(p, STRING);
 }
 
 expr_ty _PyPegen_soft_keyword_token(Parser *p) {
     Token *t = _PyPegen_expect_token(p, NAME);
-    if (t == NULL) {
-        return NULL;
+    만약 (t == NULL) {
+        반환 NULL;
     }
     char *the_token;
     Py_ssize_t size;
     PyBytes_AsStringAndSize(t->bytes, &the_token, &size);
-    for (char **keyword = p->soft_keywords; *keyword != NULL; keyword++) {
-        if (strlen(*keyword) == (size_t)size &&
+    위해 (char **keyword = p->soft_keywords; *keyword != NULL; keyword++) {
+        만약 (strlen(*keyword) == (size_t)size &&
             strncmp(*keyword, the_token, (size_t)size) == 0) {
-            return _PyPegen_name_from_token(p, t);
+            반환 _PyPegen_name_from_token(p, t);
         }
     }
-    return NULL;
+    반환 NULL;
 }
 
 static PyObject *
@@ -787,41 +787,41 @@ parsenumber_raw(const char *s)
     long x;
     double dx;
     Py_complex compl;
-    int imflag;
+    정수 imflag;
 
     assert(s != NULL);
     errno = 0;
     end = s + strlen(s) - 1;
     imflag = *end == 'j' || *end == 'J';
-    if (s[0] == '0') {
+    만약 (s[0] == '0') {
         x = (long)PyOS_strtoul(s, (char **)&end, 0);
-        if (x < 0 && errno == 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+        만약 (x < 0 && errno == 0) {
+            반환 PyLong_FromString(s, (char **)0, 0);
         }
     }
-    else {
+    아니면 {
         x = PyOS_strtol(s, (char **)&end, 0);
     }
-    if (*end == '\0') {
-        if (errno != 0) {
-            return PyLong_FromString(s, (char **)0, 0);
+    만약 (*end == '\0') {
+        만약 (errno != 0) {
+            반환 PyLong_FromString(s, (char **)0, 0);
         }
-        return PyLong_FromLong(x);
+        반환 PyLong_FromLong(x);
     }
     /* XXX Huge floats may silently fail */
-    if (imflag) {
+    만약 (imflag) {
         compl.real = 0.;
         compl.imag = PyOS_string_to_double(s, (char **)&end, NULL);
-        if (compl.imag == -1.0 && PyErr_Occurred()) {
-            return NULL;
+        만약 (compl.imag == -1.0 && PyErr_Occurred()) {
+            반환 NULL;
         }
-        return PyComplex_FromCComplex(compl);
+        반환 PyComplex_FromCComplex(compl);
     }
     dx = PyOS_string_to_double(s, NULL, NULL);
-    if (dx == -1.0 && PyErr_Occurred()) {
-        return NULL;
+    만약 (dx == -1.0 && PyErr_Occurred()) {
+        반환 NULL;
     }
-    return PyFloat_FromDouble(dx);
+    반환 PyFloat_FromDouble(dx);
 }
 
 static PyObject *
@@ -833,64 +833,64 @@ parsenumber(const char *s)
 
     assert(s != NULL);
 
-    if (strchr(s, '_') == NULL) {
-        return parsenumber_raw(s);
+    만약 (strchr(s, '_') == NULL) {
+        반환 parsenumber_raw(s);
     }
     /* Create a duplicate without underscores. */
     dup = PyMem_Malloc(strlen(s) + 1);
-    if (dup == NULL) {
-        return PyErr_NoMemory();
+    만약 (dup == NULL) {
+        반환 PyErr_NoMemory();
     }
     end = dup;
-    for (; *s; s++) {
-        if (*s != '_') {
+    위해 (; *s; s++) {
+        만약 (*s != '_') {
             *end++ = *s;
         }
     }
     *end = '\0';
     res = parsenumber_raw(dup);
     PyMem_Free(dup);
-    return res;
+    반환 res;
 }
 
 expr_ty
 _PyPegen_number_token(Parser *p)
 {
-    int mark = p->mark;
+    정수 mark = p->mark;
     Token *t = _PyPegen_expect_token(p, NUMBER);
-    if (t == NULL) {
-        return NULL;
+    만약 (t == NULL) {
+        반환 NULL;
     }
 
     // Look up the node at the token's start, as for NAME tokens. A memo hit
     // advances the mark; on a miss, restore the position after the token.
     p->mark = mark;
     expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NUMBER, &cached)) {
-        return cached;
+    만약 (_PyPegen_is_memoized(p, NUMBER, &cached)) {
+        반환 cached;
     }
     p->mark = mark + 1;
 
     const char *num_raw = PyBytes_AsString(t->bytes);
-    if (num_raw == NULL) {
+    만약 (num_raw == NULL) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
 
-    if (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
+    만약 (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
         p->error_indicator = 1;
-        return RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
+        반환 RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
                                   "in Python 3.6 and greater");
     }
 
     PyObject *c = parsenumber(num_raw);
 
-    if (c == NULL) {
+    만약 (c == NULL) {
         p->error_indicator = 1;
         PyThreadState *tstate = _PyThreadState_GET();
         // The only way a ValueError should happen in _this_ code is via
         // PyLong_FromString hitting a length limit.
-        if (tstate->current_exception != NULL &&
+        만약 (tstate->current_exception != NULL &&
             Py_TYPE(tstate->current_exception) == (PyTypeObject *)PyExc_ValueError
         ) {
             PyObject *exc = PyErr_GetRaisedException();
@@ -906,60 +906,60 @@ _PyPegen_number_token(Parser *p)
                 exc);
             Py_DECREF(exc);
         }
-        return NULL;
+        반환 NULL;
     }
 
-    if (_PyArena_AddPyObject(p->arena, c) < 0) {
+    만약 (_PyArena_AddPyObject(p->arena, c) < 0) {
         Py_DECREF(c);
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
 
     expr_ty result = _PyAST_Constant(c, NULL, t->lineno, t->col_offset,
                                     t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
+    만약 (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
         p->error_indicator = 1;
-        return NULL;
+        반환 NULL;
     }
-    return result;
+    반환 result;
 }
 
 
 
-static int
+static 정수
 compute_parser_flags(PyCompilerFlags *flags)
 {
-    int parser_flags = 0;
-    if (!flags) {
-        return 0;
+    정수 parser_flags = 0;
+    만약 (!flags) {
+        반환 0;
     }
-    if (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
+    만약 (flags->cf_flags & PyCF_DONT_IMPLY_DEDENT) {
         parser_flags |= PyPARSE_DONT_IMPLY_DEDENT;
     }
-    if (flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    만약 (flags->cf_flags & PyCF_IGNORE_COOKIE) {
         parser_flags |= PyPARSE_IGNORE_COOKIE;
     }
-    if (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
+    만약 (flags->cf_flags & CO_FUTURE_BARRY_AS_BDFL) {
         parser_flags |= PyPARSE_BARRY_AS_BDFL;
     }
-    if (flags->cf_flags & PyCF_TYPE_COMMENTS) {
+    만약 (flags->cf_flags & PyCF_TYPE_COMMENTS) {
         parser_flags |= PyPARSE_TYPE_COMMENTS;
     }
-    if (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
+    만약 (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
         parser_flags |= PyPARSE_ALLOW_INCOMPLETE_INPUT;
     }
-    return parser_flags;
+    반환 parser_flags;
 }
 
 // Parser API
 
 Parser *
-_PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
-                    int feature_version, int *errcode, const char* source, PyArena *arena)
+_PyPegen_Parser_New(struct tok_state *tok, 정수 start_rule, 정수 flags,
+                    정수 feature_version, 정수 *errcode, const char* source, PyArena *arena)
 {
     Parser *p = PyMem_Malloc(sizeof(Parser));
-    if (p == NULL) {
-        return (Parser *) PyErr_NoMemory();
+    만약 (p == NULL) {
+        반환 (Parser *) PyErr_NoMemory();
     }
     assert(tok != NULL);
     _PyTokenizer_SetOptions(tok, 0, (flags & PyPARSE_TYPE_COMMENTS) > 0);
@@ -969,15 +969,15 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     p->n_keyword_lists = -1;
     p->soft_keywords = NULL;
     p->tokens = PyMem_Malloc(sizeof(Token *));
-    if (!p->tokens) {
+    만약 (!p->tokens) {
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        반환 (Parser *) PyErr_NoMemory();
     }
     p->tokens[0] = PyMem_Calloc(1, sizeof(Token));
-    if (!p->tokens[0]) {
+    만약 (!p->tokens[0]) {
         PyMem_Free(p->tokens);
         PyMem_Free(p);
-        return (Parser *) PyErr_NoMemory();
+        반환 (Parser *) PyErr_NoMemory();
     }
     p->type_ignore_comments = (growable_comment_array){0};
 
@@ -1002,9 +1002,9 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     // Stack limits are initialized when the thread state is attached.
     assert(((_PyThreadStateImpl *)p->tstate)->c_stack_hard_limit != 0);
     p->stack_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_stack_soft_limit;
-#if _Py_STACK_GROWS_DOWN
+#만약 _Py_STACK_GROWS_DOWN
     p->stack_soft_limit += _PyOS_STACK_MARGIN_BYTES;
-#else
+#아니면
     p->stack_soft_limit -= _PyOS_STACK_MARGIN_BYTES;
 #endif
     p->level = 0;
@@ -1017,7 +1017,7 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
 #ifdef Py_DEBUG
     p->debug = _Py_GetConfig()->parser_debug;
 #endif
-    return p;
+    반환 p;
 }
 
 void
@@ -1027,7 +1027,7 @@ _PyPegen_Parser_Free(Parser *p)
     Py_XDECREF(p->normalize);
     // Resizes allocate blocks starting at indices 1, 2, 4, and so on.
     PyMem_Free(p->tokens[0]);
-    for (int i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
+    위해 (정수 i = 1; i < p->size; i *= PEGEN_ARRAY_GROWTH_FACTOR) {
         PyMem_Free(p->tokens[i]);
     }
     PyMem_Free(p->tokens);
@@ -1042,7 +1042,7 @@ reset_parser_state_for_error_pass(Parser *p)
     p->last_stmt_location.col_offset = 0;
     p->last_stmt_location.end_lineno = 0;
     p->last_stmt_location.end_col_offset = 0;
-    for (int i = 0; i < p->fill; i++) {
+    위해 (정수 i = 0; i < p->fill; i++) {
         p->tokens[i]->memo = NULL;
         p->tokens[i]->memo_mask = 0;
     }
@@ -1056,21 +1056,21 @@ reset_parser_state_for_error_pass(Parser *p)
 static void
 _PyPegen_set_syntax_error_metadata(Parser *p) {
     PyObject *exc = PyErr_GetRaisedException();
-    if (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
+    만약 (!exc || !PyObject_TypeCheck(exc, (PyTypeObject *)PyExc_SyntaxError)) {
         PyErr_SetRaisedException(exc);
-        return;
+        반환;
     }
     const char *source = _PyTokenizer_RetainedSource(p->tok);
     const char *encoding = _PyTokenizer_GetInfo(p->tok).encoding;
     PyObject* the_source = NULL;
-    if (source) {
-        if (encoding == NULL) {
+    만약 (source) {
+        만약 (encoding == NULL) {
             the_source = PyUnicode_FromString(source);
-        } else {
+        } 아니면 {
             the_source = PyUnicode_Decode(source, strlen(source), encoding, NULL);
         }
     }
-    if (!the_source) {
+    만약 (!the_source) {
         PyErr_Clear();
         the_source = Py_None;
         Py_INCREF(the_source);
@@ -1081,10 +1081,10 @@ _PyPegen_set_syntax_error_metadata(Parser *p) {
         p->last_stmt_location.col_offset,
         the_source // N gives ownership to metadata
     );
-    if (!metadata) {
+    만약 (!metadata) {
         PyErr_Clear();
         PyErr_SetRaisedException(exc);
-        return;
+        반환;
     }
     PySyntaxErrorObject *syntax_error = (PySyntaxErrorObject *)exc;
 
@@ -1098,20 +1098,20 @@ _PyPegen_run_parser(Parser *p)
 {
     void *res = _PyPegen_parse(p);
     assert(p->level == 0);
-    if (res != NULL && PyErr_Occurred()) {
+    만약 (res != NULL && PyErr_Occurred()) {
         // Discard a result returned with an exception still pending
         // (e.g. a MemoryError from a recovered-from allocation failure).
-        return NULL;
+        반환 NULL;
     }
-    if (res == NULL) {
-        if (PyErr_Occurred() &&
+    만약 (res == NULL) {
+        만약 (PyErr_Occurred() &&
             (PyErr_ExceptionMatches(PyExc_IncompleteInputError) ||
              !PyErr_ExceptionMatches(PyExc_SyntaxError))) {
-            return NULL;
+            반환 NULL;
         }
-        if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+        만약 ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
             p->input_exhausted && !PyErr_Occurred()) {
-            return _PyPegen_raise_incomplete_input(p);
+            반환 _PyPegen_raise_incomplete_input(p);
         }
        // Make a second parser pass. In this pass we activate heavier and slower checks
         // to produce better error messages and more complete diagnostics. Extra "invalid_*"
@@ -1125,47 +1125,47 @@ _PyPegen_run_parser(Parser *p)
         _Pypegen_set_syntax_error(p, last_token);
 
         // Set the metadata in the exception from p->last_stmt_location
-        if (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
+        만약 (PyErr_ExceptionMatches(PyExc_SyntaxError)) {
             _PyPegen_set_syntax_error_metadata(p);
         }
-       return NULL;
+       반환 NULL;
     }
 
-    if (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
-        return RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
+    만약 (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
+        반환 RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
     }
 
     // test_peg_generator defines _Py_TEST_PEGEN to not call PyAST_Validate()
-#if defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
-    if (p->start_rule == Py_single_input ||
+#만약 defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
+    만약 (p->start_rule == Py_single_input ||
         p->start_rule == Py_file_input ||
         p->start_rule == Py_eval_input)
     {
-        if (!_PyAST_Validate(res)) {
-            return NULL;
+        만약 (!_PyAST_Validate(res)) {
+            반환 NULL;
         }
     }
 #endif
-    return res;
+    반환 res;
 }
 
 mod_ty
-_PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filename_ob,
+_PyPegen_run_parser_from_file_pointer(FILE *fp, 정수 start_rule, PyObject *filename_ob,
                              const char *enc, const char *ps1, const char *ps2,
-                             PyCompilerFlags *flags, int *errcode,
+                             PyCompilerFlags *flags, 정수 *errcode,
                              PyObject **interactive_src, PyArena *arena)
 {
-    int parser_flags = compute_parser_flags(flags);
+    정수 parser_flags = compute_parser_flags(flags);
     struct tok_state *tok = _PyTokenizer_FromFile(fp, enc, ps1, ps2);
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    만약 (tok == NULL) {
+        만약 (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        아니면 {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        반환 NULL;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
@@ -1173,7 +1173,7 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
     mod_ty result = NULL;
 
     PyObject *module = PyUnicode_FromString("__main__");
-    if (module == NULL) {
+    만약 (module == NULL) {
         goto error;
     }
     _PyTokenizer_SetContext(tok, filename_ob, module);
@@ -1181,7 +1181,7 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
 
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, PY_MINOR_VERSION,
                                     errcode, NULL, arena);
-    if (p == NULL) {
+    만약 (p == NULL) {
         goto error;
     }
 
@@ -1189,9 +1189,9 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
     _PyPegen_Parser_Free(p);
 
     const char *source = _PyTokenizer_RetainedSource(tok);
-    if (source != NULL && result && interactive_src != NULL) {
+    만약 (source != NULL && result && interactive_src != NULL) {
         *interactive_src = PyUnicode_FromString(source);
-        if (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
+        만약 (!*interactive_src || _PyArena_AddPyObject(arena, *interactive_src) < 0) {
             Py_XDECREF(*interactive_src);
             result = NULL;
             goto error;
@@ -1200,36 +1200,36 @@ _PyPegen_run_parser_from_file_pointer(FILE *fp, int start_rule, PyObject *filena
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    반환 result;
 }
 
 mod_ty
-_PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filename_ob,
+_PyPegen_run_parser_from_string(const char *str, 정수 start_rule, PyObject *filename_ob,
                        PyCompilerFlags *flags, PyArena *arena, PyObject *module,
                        PyObject **incomplete)
 {
     _PyTokenizer_Newline newline_mode = start_rule == Py_file_input
         ? _PyTokenizer_IMPLY_NEWLINE : _PyTokenizer_KEEP_NEWLINE;
-    int parser_flags = compute_parser_flags(flags);
-    if (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
+    정수 parser_flags = compute_parser_flags(flags);
+    만약 (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
         newline_mode = _PyTokenizer_APPEND_NEWLINE;
     }
 
     struct tok_state *tok;
-    if (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
+    만약 (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
         tok = _PyTokenizer_FromUTF8(str, newline_mode, 0);
-    } else {
+    } 아니면 {
         tok = _PyTokenizer_FromString(str, newline_mode, 0);
     }
-    if (tok == NULL) {
-        if (PyErr_Occurred()) {
+    만약 (tok == NULL) {
+        만약 (PyErr_Occurred()) {
             _PyTokenizer_raise_init_error(filename_ob);
         }
-        else {
+        아니면 {
             // The only silent tokenizer init failure is a failed allocation.
             PyErr_NoMemory();
         }
-        return NULL;
+        반환 NULL;
     }
     tok->barry_as_bdfl = parser_flags & PyPARSE_BARRY_AS_BDFL;
 
@@ -1238,27 +1238,27 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
     // We need to clear up from here on
     mod_ty result = NULL;
 
-    int feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
+    정수 feature_version = flags && (flags->cf_flags & PyCF_ONLY_AST) ?
         flags->cf_feature_version : PY_MINOR_VERSION;
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, feature_version,
                                     NULL, str, arena);
-    if (p == NULL) {
+    만약 (p == NULL) {
         goto error;
     }
 
     result = _PyPegen_run_parser(p);
-    if (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
-        int needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
-        if ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
+    만약 (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
+        정수 needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
+        만약 ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
             (start_rule != Py_file_input &&
              (needs_newline & _PyTokenizer_NEWLINE_INDENT)) ||
             (start_rule == Py_single_input && p->input_exhausted &&
              (needs_newline & _PyTokenizer_NEWLINE_STATEMENT))) {
             _PyPegen_raise_incomplete_input(p);
-            if (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
+            만약 (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
                 *incomplete = PyErr_GetRaisedException();
             }
-            else {
+            아니면 {
                 result = NULL;
             }
         }
@@ -1267,5 +1267,5 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
 
 error:
     _PyTokenizer_Free(tok);
-    return result;
+    반환 result;
 }

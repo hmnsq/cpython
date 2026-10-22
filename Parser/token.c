@@ -80,131 +80,131 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+정수
+_PyToken_OneChar(정수 c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    case '!': 반환 EXCLAMATION;
+    case '%': 반환 PERCENT;
+    case '&': 반환 AMPER;
+    case '(': 반환 LPAR;
+    case ')': 반환 RPAR;
+    case '*': 반환 STAR;
+    case '+': 반환 PLUS;
+    case ',': 반환 COMMA;
+    case '-': 반환 MINUS;
+    case '.': 반환 DOT;
+    case '/': 반환 SLASH;
+    case ':': 반환 COLON;
+    case ';': 반환 SEMI;
+    case '<': 반환 LESS;
+    case '=': 반환 EQUAL;
+    case '>': 반환 GREATER;
+    case '@': 반환 AT;
+    case '[': 반환 LSQB;
+    case ']': 반환 RSQB;
+    case '^': 반환 CIRCUMFLEX;
+    case '{': 반환 LBRACE;
+    case '|': 반환 VBAR;
+    case '}': 반환 RBRACE;
+    case '~': 반환 TILDE;
     }
-    return OP;
+    반환 OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+정수
+_PyToken_TwoChars(정수 c1, 정수 c2, 정수 BARRY_AS_BDFL)
 {
     switch (c1) {
     case '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        case '=': 반환 NOTEQUAL;
         }
         break;
     case '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        case '=': 반환 PERCENTEQUAL;
         }
         break;
     case '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        case '=': 반환 AMPEREQUAL;
         }
         break;
     case '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        case '*': 반환 DOUBLESTAR;
+        case '=': 반환 STAREQUAL;
         }
         break;
     case '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        case '=': 반환 PLUSEQUAL;
         }
         break;
     case '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        case '=': 반환 MINEQUAL;
+        case '>': 반환 RARROW;
         }
         break;
     case '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        case '/': 반환 DOUBLESLASH;
+        case '=': 반환 SLASHEQUAL;
         }
         break;
     case ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        case '=': 반환 COLONEQUAL;
         }
         break;
     case '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        case '<': 반환 LEFTSHIFT;
+        case '=': 반환 LESSEQUAL;
+        case '>': 반환 BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
         break;
     case '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        case '=': 반환 EQEQUAL;
         }
         break;
     case '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        case '=': 반환 GREATEREQUAL;
+        case '>': 반환 RIGHTSHIFT;
         }
         break;
     case '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        case '=': 반환 ATEQUAL;
         }
         break;
     case '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        case '=': 반환 CIRCUMFLEXEQUAL;
         }
         break;
     case '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        case '=': 반환 VBAREQUAL;
         }
         break;
     }
-    return OP;
+    반환 OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+정수
+_PyToken_ThreeChars(정수 c1, 정수 c2, 정수 c3)
 {
     switch (c1) {
     case '*':
         switch (c2) {
         case '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            case '=': 반환 DOUBLESTAREQUAL;
             }
             break;
         }
@@ -213,7 +213,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            case '.': 반환 ELLIPSIS;
             }
             break;
         }
@@ -222,7 +222,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            case '=': 반환 DOUBLESLASHEQUAL;
             }
             break;
         }
@@ -231,7 +231,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            case '=': 반환 LEFTSHIFTEQUAL;
             }
             break;
         }
@@ -240,11 +240,11 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            case '=': 반환 RIGHTSHIFTEQUAL;
             }
             break;
         }
         break;
     }
-    return OP;
+    반환 OP;
 }
