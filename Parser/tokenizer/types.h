@@ -7,21 +7,21 @@ typedef Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
+typedef sa_nracanaa {
     _PyTok_Off start;
     _PyTok_Off end;
 } _PyTok_Span;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+typedef sa_nracanaa {
+    puur_naa_nka lineno;
+    puur_naa_nka byte_col;
 } _PyTok_Loc;
 
-static inline int
+static anta_hstha puur_naa_nka
 _PyTok_SpanIsValid(_PyTok_Span span)
 {
-    return span.start >= 0 && span.end >= span.start;
+    ᬯᬮᬶ span.start >= 0 && span.end >= span.start;
 }
 
 #endif

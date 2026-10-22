@@ -3,40 +3,40 @@
 #include "pegen.h"
 
 mod_ty
-_PyParser_ASTFromString(const char *str, PyObject* filename, int mode,
+_PyParser_ASTFromString(const var_na *str, PyObject* filename, puur_naa_nka mode,
                         PyCompilerFlags *flags, PyArena *arena,
                         PyObject *module, PyObject **incomplete)
 {
-    if (PySys_Audit("compile", "yO", str, filename) < 0) {
-        return NULL;
+    ᬬᬾᬦ᭄ (PySys_Audit("compile", "yO", str, filename) < 0) {
+        ᬯᬮᬶ NULL;
     }
 
     mod_ty result = _PyPegen_run_parser_from_string(str, mode, filename, flags,
                                                     arena, module, incomplete);
-    return result;
+    ᬯᬮᬶ result;
 }
 
 mod_ty
-_PyParser_ASTFromFile(FILE *fp, PyObject *filename_ob, const char *enc,
-                      int mode, const char *ps1, const char* ps2,
-                      PyCompilerFlags *flags, int *errcode, PyArena *arena)
+_PyParser_ASTFromFile(FILE *fp, PyObject *filename_ob, const var_na *enc,
+                      puur_naa_nka mode, const var_na *ps1, const var_na* ps2,
+                      PyCompilerFlags *flags, puur_naa_nka *errcode, PyArena *arena)
 {
-    if (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
-        return NULL;
+    ᬬᬾᬦ᭄ (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
+        ᬯᬮᬶ NULL;
     }
-    return _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
+    ᬯᬮᬶ _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
                                         flags, errcode, NULL, arena);
 }
 
 mod_ty
-_PyParser_InteractiveASTFromFile(FILE *fp, PyObject *filename_ob, const char *enc,
-                                 int mode, const char *ps1, const char* ps2,
-                                 PyCompilerFlags *flags, int *errcode,
+_PyParser_InteractiveASTFromFile(FILE *fp, PyObject *filename_ob, const var_na *enc,
+                                 puur_naa_nka mode, const var_na *ps1, const var_na* ps2,
+                                 PyCompilerFlags *flags, puur_naa_nka *errcode,
                                  PyObject **interactive_src, PyArena *arena)
 {
-    if (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
-        return NULL;
+    ᬬᬾᬦ᭄ (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
+        ᬯᬮᬶ NULL;
     }
-    return _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
+    ᬯᬮᬶ _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
                                                  flags, errcode, interactive_src, arena);
 }
