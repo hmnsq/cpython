@@ -1,155 +1,155 @@
 #ifndef _PY_LEXER_H_
 #define _PY_LEXER_H_
 
-#include "object.h"
-#include "../tokenizer/source.h"
-#include "../tokenizer/tokenizer.h"
+#شامل "object.h"
+#شامل "../tokenizer/source.h"
+#شامل "../tokenizer/tokenizer.h"
 
 #define MAXINDENT 100       /* Max indentation level */
 #define MAXLEVEL 200        /* Max parentheses level */
 #define MAXFTSTRINGLEVEL 150
-#define FTSTRING_STACK_INLINE_CAPACITY 1
+#define FTSTRING_پشته_INLINE_CAPACITY 1
 
-typedef enum {
-    FTSTRING_MODE_MIDDLE,
+تعریفنوع شمارش {
+    FTSTRING_MODE_میانه,
     FTSTRING_MODE_EXPRESSION,
     FTSTRING_MODE_FORMAT_SPEC,
 } ftstring_mode;
 
-typedef enum {
+تعریفنوع شمارش {
     FSTRING,
     RAW_FSTRING,
     TSTRING,
     RAW_TSTRING,
 } ftstring_kind;
 
-#define MAX_EXPR_NESTING 3
+#define MAX_عبارت_NESTING 3
 
-typedef struct _tokenizer_comments {
-    Py_ssize_t count;
+تعریفنوع ساختار _tokenizer_comments {
+    Py_ssize_t شمار;
     Py_ssize_t capacity;
     _PyTok_Span spans[];
 } tokenizer_comments;
 
-typedef struct _ftstring_state {
+تعریفنوع ساختار _ftstring_state {
     ftstring_mode mode;
     ftstring_kind kind;
-    char quote;
-    unsigned char quote_size;
-    unsigned char debug_expr;
-    unsigned char replacement_depth;
-    int paren_level;
+    نویسه quote;
+    unsigned نویسه quote_size;
+    unsigned نویسه debug_عبارت;
+    unsigned نویسه replacement_depth;
+    صحیح paren_level;
     _PyTok_Off start;
     _PyTok_Loc start_loc;
-    _PyTok_Span expr_span;
+    _PyTok_Span عبارت_span;
     tokenizer_comments *comments;
 } ftstring_state;
 
-static inline int
+ایستا درونخطی صحیح
 _PyLexer_IsTString(ftstring_kind kind)
 {
-    return kind == TSTRING || kind == RAW_TSTRING;
+    بازگشت kind == TSTRING || kind == RAW_TSTRING;
 }
 
-static inline int
+ایستا درونخطی صحیح
 _PyLexer_IsRawString(ftstring_kind kind)
 {
-    return kind == RAW_FSTRING || kind == RAW_TSTRING;
+    بازگشت kind == RAW_FSTRING || kind == RAW_TSTRING;
 }
 
-typedef struct {
-    int column;
-    int alternate_column;
+تعریفنوع ساختار {
+    صحیح column;
+    صحیح alternate_column;
 } indentation_level;
 
-typedef struct {
-    int depth;
-    int pending;
-    int at_bol;
-    int comment_newline;
-    indentation_level stack[MAXINDENT];
+تعریفنوع ساختار {
+    صحیح depth;
+    صحیح pending;
+    صحیح at_bol;
+    صحیح comment_newline;
+    indentation_level پشته[MAXINDENT];
 } lexer_layout_state;
 
 /* Tokenizer state */
-struct tok_state {
+ساختار tok_state {
     _PyTok_Off buf_offset;
     _PyTok_Off cur;
     _PyTok_Off inp;
     _PyTok_Off start;
-    _PyTok_Off line_start;
+    _PyTok_Off سطر_start;
     _PyTok_SourceText source;
-    int done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
+    صحیح done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
     /* NB If done != E_OK, cur must be == inp!!! */
     lexer_layout_state layout;
-    int lineno;         /* Current line number */
+    صحیح lineno;         /* Current line number */
     _PyTok_Loc start_loc;
     _PyTokenizer_Diagnostic diagnostic;
-    int level;          /* () [] {} Parentheses nesting level */
+    صحیح level;          /* () [] {} Parentheses nesting level */
             /* Used to allow free continuations inside them */
-    char parenstack[MAXLEVEL];
-    int parenlinenostack[MAXLEVEL];
-    int parencolstack[MAXLEVEL];
+    نویسه parenstack[MAXLEVEL];
+    صحیح parenlinenostack[MAXLEVEL];
+    صحیح parencolstack[MAXLEVEL];
     PyObject *filename;
     PyObject *module;
-    struct _PyTok_Reader *reader;
+    ساختار _PyTok_Reader *reader;
 
-    int type_comments;      /* Whether to look for type comments */
+    صحیح type_comments;      /* Whether to look for type comments */
 
-    ftstring_state *ftstring_stack;
-    ftstring_state ftstring_stack_inline[FTSTRING_STACK_INLINE_CAPACITY];
-    int ftstring_depth;
-    int ftstring_capacity;
-    int tok_extra_tokens;
-    int implicit_newline;
+    ftstring_state *ftstring_پشته;
+    ftstring_state ftstring_پشته_inline[FTSTRING_پشته_INLINE_CAPACITY];
+    صحیح ftstring_depth;
+    صحیح ftstring_capacity;
+    صحیح tok_extra_tokens;
+    صحیح implicit_newline;
 #ifdef Py_DEBUG
-    int debug;
+    صحیح debug;
 #endif
-    int barry_as_bdfl;
-    unsigned char allow_incomplete_input;
-    unsigned char needs_newline;
+    صحیح barry_as_bdfl;
+    unsigned نویسه allow_incomplete_درون_داد;
+    unsigned نویسه needs_newline;
 };
 
-static inline ftstring_state *
-_PyLexer_CurrentFTString(struct tok_state *tok)
+ایستا درونخطی ftstring_state *
+_PyLexer_CurrentFTString(ساختار tok_state *tok)
 {
-    assert(tok->ftstring_stack != NULL);
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    if (tok->ftstring_depth == 0) {
-        return NULL;
+    أكد(tok->ftstring_پشته != پوچ);
+    أكد(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
+    اگر (tok->ftstring_depth == 0) {
+        بازگشت پوچ;
     }
-    return &tok->ftstring_stack[tok->ftstring_depth - 1];
+    بازگشت &tok->ftstring_پشته[tok->ftstring_depth - 1];
 }
 
-static inline char
+ایستا درونخطی نویسه
 _PyLexer_StringPrefix(ftstring_kind kind)
 {
-    return _PyLexer_IsTString(kind) ? 't' : 'f';
+    بازگشت _PyLexer_IsTString(kind) ? 't' : 'f';
 }
 
-static inline int
-_PyLexer_FTStringBracketDepth(const struct tok_state *tok,
-                              const ftstring_state *state)
+ایستا درونخطی صحیح
+_PyLexer_FTStringBracketDepth(ثابت ساختار tok_state *tok,
+                              ثابت ftstring_state *state)
 {
-    return tok->level - state->paren_level;
+    بازگشت tok->level - state->paren_level;
 }
 
-static inline int
-_PyLexer_ByteColumn(const struct tok_state *tok)
+ایستا درونخطی صحیح
+_PyLexer_ByteColumn(ثابت ساختار tok_state *tok)
 {
-    assert(tok->line_start >= 0);
-    assert(tok->cur >= tok->line_start);
-    Py_ssize_t column = tok->cur - tok->line_start;
-    assert(column <= INT_MAX);
-    return (int)column;
+    أكد(tok->سطر_start >= 0);
+    أكد(tok->cur >= tok->سطر_start);
+    Py_ssize_t column = tok->cur - tok->سطر_start;
+    أكد(column <= INT_MAX);
+    بازگشت (صحیح)column;
 }
 
-int _PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end);
+صحیح _PyLexer_token_setup(ساختار tok_state *tok, ساختار token *token, صحیح type, _PyTok_Off start, _PyTok_Off end);
 
-void _PyLexer_ImplyDedents(struct tok_state *);
+تهی _PyLexer_ImplyDedents(ساختار tok_state *);
 
-void _PyTokenizer_Free(struct tok_state *);
-ftstring_state *_PyLexer_PushFTString(struct tok_state *);
-void _PyLexer_PopFTString(struct tok_state *);
+تهی _PyTokenizer_Free(ساختار tok_state *);
+ftstring_state *Py_Lexer_افزودن_FTString(ساختار tok_state *);
+تهی Py_Lexer_برداشت_FTString(ساختار tok_state *);
 
 
 #endif
