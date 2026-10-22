@@ -1,32 +1,32 @@
-#include <Python.h>
-#include "pycore_bytesobject.h"   // _PyBytes_DecodeEscape()
-#include "pycore_unicodeobject.h" // _PyUnicode_DecodeUnicodeEscapeInternal()
+#अन्तर्भाव <Python.h>
+#अन्तर्भाव "pycore_bytesobject.h"   // _PyBytes_DecodeEscape()
+#अन्तर्भाव "pycore_unicodeobject.h" // _PyUnicode_DecodeUnicodeEscapeInternal()
 
-#include "pegen.h"
-#include "string_parser.h"
+#अन्तर्भाव "pegen.h"
+#अन्तर्भाव "string_parser.h"
 
-#include <stdbool.h>
+#अन्तर्भाव <stdbool.h>
 
 //// STRING HANDLING FUNCTIONS ////
 
-static int
-warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_invalid_escape, Token *t)
+स्थिर पूर्णाङ्क
+warn_invalid_escape_sequence(Parser *p, ध्रुव वर्ण* बफर, ध्रुव वर्ण *first_invalid_escape, Token *t)
 {
-    if (p->call_invalid_rules) {
+    यदि (p->call_invalid_नियमाः) {
         // Do not report warnings if we are in the second pass of the parser
         // to avoid showing the warning twice.
-        return 0;
+        प्रत्यागम 0;
     }
-    unsigned char c = (unsigned char)*first_invalid_escape;
-    if ((t->type == FSTRING_MIDDLE || t->type == FSTRING_END || t->type == TSTRING_MIDDLE || t->type == TSTRING_END)
+    अचिह्नित वर्ण c = (अचिह्नित वर्ण)*first_invalid_escape;
+    यदि ((t->type == FSTRING_मध्यः || t->type == FSTRING_अन्तः || t->type == TSTRING_मध्यः || t->type == TSTRING_अन्तः)
             && (c == '{' || c == '}')) {
         // in this case the tokenizer has already emitted a warning,
         // see Parser/tokenizer/helpers.c:warn_invalid_escape_sequence
-        return 0;
+        प्रत्यागम 0;
     }
 
-    int octal = ('4' <= c && c <= '7');
-    PyObject *msg =
+    पूर्णाङ्क octal = ('4' <= c && c <= '7');
+    PyObject *सन्देशः =
         octal
         ? PyUnicode_FromFormat(
               "\"\\%.3s\" is an invalid octal escape sequence. "
@@ -38,58 +38,58 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
               "Such sequences will not work in the future. "
               "Did you mean \"\\\\%c\"? A raw string is also an option.",
               c, c);
-    if (msg == NULL) {
-        return -1;
+    यदि (सन्देशः == रिक्त) {
+        प्रत्यागम -1;
     }
     PyObject *category;
-    if (p->feature_version >= 12) {
+    यदि (p->feature_संस्करणम् >= 12) {
         category = PyExc_SyntaxWarning;
     }
-    else {
+    अन्यथा {
         category = PyExc_DeprecationWarning;
     }
 
     // Calculate the lineno and the col_offset of the invalid escape sequence
-    const char *start = buffer;
-    const char *end = first_invalid_escape;
-    int lineno = t->lineno;
-    int col_offset = t->col_offset;
-    while (start < end) {
-        if (*start == '\n') {
+    ध्रुव वर्ण *start = बफर;
+    ध्रुव वर्ण *अन्तः_2 = first_invalid_escape;
+    पूर्णाङ्क lineno = t->lineno;
+    पूर्णाङ्क col_विस्थापनम् = t->col_विस्थापनम्;
+    यावत् (start < अन्तः_2) {
+        यदि (*start == '\n') {
             lineno++;
-            col_offset = 0;
+            col_विस्थापनम् = 0;
         }
-        else {
-            col_offset++;
+        अन्यथा {
+            col_विस्थापनम्++;
         }
         start++;
     }
 
     // Count the number of quotes in the token
-    char first_quote = 0;
-    if (lineno == t->lineno) {
-        int quote_count = 0;
-        const char* tok = PyBytes_AsString(t->bytes);
-        for (int i = 0; i < PyBytes_Size(t->bytes); i++) {
-            if (tok[i] == '\'' || tok[i] == '\"') {
-                if (quote_count == 0) {
+    वर्ण first_quote = 0;
+    यदि (lineno == t->lineno) {
+        पूर्णाङ्क quote_गणनम् = 0;
+        ध्रुव वर्ण* tok = Py_अष्टकानि_As_String(t->अष्टकानि);
+        प्रति (पूर्णाङ्क i = 0; i < Py_अष्टकानि_आकार(t->अष्टकानि); i++) {
+            यदि (tok[i] == '\'' || tok[i] == '\"') {
+                यदि (quote_गणनम् == 0) {
                     first_quote = tok[i];
                 }
-                if (tok[i] == first_quote) {
-                    quote_count++;
+                यदि (tok[i] == first_quote) {
+                    quote_गणनम्++;
                 }
-            } else {
-                break;
+            } अन्यथा {
+                भङ्ग;
             }
         }
 
-        col_offset += quote_count;
+        col_विस्थापनम् += quote_गणनम्;
     }
 
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if (PyErr_WarnExplicitObject(category, msg, info.filename,
-                                 lineno, info.module, NULL) < 0) {
-        if (PyErr_ExceptionMatches(category)) {
+    यदि (PyErr_WarnExplicitObject(category, सन्देशः, info.filename,
+                                 lineno, info.module, रिक्त) < 0) {
+        यदि (PyErr_ExceptionMatches(category)) {
             /* Replace the Syntax/DeprecationWarning exception with a SyntaxError
                to get a more accurate error report */
             PyErr_Clear();
@@ -97,150 +97,150 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
             /* This is needed, in order for the SyntaxError to point to the token t,
                since _PyPegen_raise_error uses p->tokens[p->fill - 1] for the
                error location, if p->known_err_token is not set. */
-            p->known_err_token = t;
-            if (octal) {
-                RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, lineno, col_offset-1, lineno, col_offset+1,
+            p->ज्ञातम्_err_token = t;
+            यदि (octal) {
+                RAISE_ERROR_ज्ञातम्_LOCATION(p, PyExc_SyntaxError, lineno, col_विस्थापनम्-1, lineno, col_विस्थापनम्+1,
                     "\"\\%.3s\" is an invalid octal escape sequence. "
                     "Did you mean \"\\\\%.3s\"? A raw string is also an option.",
                     first_invalid_escape, first_invalid_escape);
             }
-            else {
-                RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, lineno, col_offset-1, lineno, col_offset+1,
+            अन्यथा {
+                RAISE_ERROR_ज्ञातम्_LOCATION(p, PyExc_SyntaxError, lineno, col_विस्थापनम्-1, lineno, col_विस्थापनम्+1,
                     "\"\\%c\" is an invalid escape sequence. "
                     "Did you mean \"\\\\%c\"? A raw string is also an option.",
                     c, c);
             }
         }
-        Py_DECREF(msg);
-        return -1;
+        Py_DECREF(सन्देशः);
+        प्रत्यागम -1;
     }
-    Py_DECREF(msg);
-    return 0;
+    Py_DECREF(सन्देशः);
+    प्रत्यागम 0;
 }
 
-static PyObject *
-decode_utf8(const char **sPtr, const char *end)
+स्थिर PyObject *
+decode_utf8(ध्रुव वर्ण **sPtr, ध्रुव वर्ण *अन्तः_2)
 {
-    const char *s;
-    const char *t;
+    ध्रुव वर्ण *s;
+    ध्रुव वर्ण *t;
     t = s = *sPtr;
-    while (s < end && (*s & 0x80)) {
+    यावत् (s < अन्तः_2 && (*s & 0x80)) {
         s++;
     }
     *sPtr = s;
-    return PyUnicode_DecodeUTF8(t, s - t, NULL);
+    प्रत्यागम PyUnicode_DecodeUTF8(t, s - t, रिक्त);
 }
 
-static PyObject *
-decode_unicode_with_escapes(Parser *parser, const char *s, size_t len, Token *t)
+स्थिर PyObject *
+decode_unicode_with_escapes(Parser *parser, ध्रुव वर्ण *s, आकार_t len, Token *t)
 {
     PyObject *v;
-    char *p;
-    const char *end;
+    वर्ण *p;
+    ध्रुव वर्ण *अन्तः_2;
 
     /* check for integer overflow */
-    if (len > (size_t)PY_SSIZE_T_MAX / 6) {
-        return NULL;
+    यदि (len > (आकार_t)PY_SSIZE_T_MAX / 6) {
+        प्रत्यागम रिक्त;
     }
     /* "ä" (2 bytes) may become "\U000000E4" (10 bytes), or 1:5.
      * "\ä" (3 bytes) may become "\u005c\U000000E4" (16 bytes), or ~1:6. */
     Py_ssize_t alloc = (Py_ssize_t)len * 6;
-    char *buf = PyMem_Malloc(alloc);
-    if (buf == NULL) {
-        return PyErr_NoMemory();
+    वर्ण *buf = PyMem_Malloc(alloc);
+    यदि (buf == रिक्त) {
+        प्रत्यागम Py_Err_No_स्मृतिः();
     }
     p = buf;
-    end = s + len;
-    while (s < end) {
-        if (*s == '\\') {
+    अन्तः_2 = s + len;
+    यावत् (s < अन्तः_2) {
+        यदि (*s == '\\') {
             *p++ = *s++;
-            if (s >= end || *s & 0x80) {
-                memcpy(p, "u005c", 5);
+            यदि (s >= अन्तः_2 || *s & 0x80) {
+                स्मृतिं_प्रतिलिख(p, "u005c", 5);
                 p += 5;
-                if (s >= end) {
-                    break;
+                यदि (s >= अन्तः_2) {
+                    भङ्ग;
                 }
             }
         }
-        if (*s & 0x80) {
+        यदि (*s & 0x80) {
             PyObject *w;
-            int kind;
-            const void *data;
+            पूर्णाङ्क विधा;
+            ध्रुव शून्य *दत्त;
             Py_ssize_t w_len;
             Py_ssize_t i;
-            w = decode_utf8(&s, end);
-            if (w == NULL) {
+            w = decode_utf8(&s, अन्तः_2);
+            यदि (w == रिक्त) {
                 PyMem_Free(buf);
-                return NULL;
+                प्रत्यागम रिक्त;
             }
-            kind = PyUnicode_KIND(w);
-            data = PyUnicode_DATA(w);
-            w_len = PyUnicode_GET_LENGTH(w);
-            for (i = 0; i < w_len; i++) {
+            विधा = Py_Unicode_विधा(w);
+            दत्त = Py_Unicode_दत्त(w);
+            w_len = Py_Unicode_GET_दीर्घता(w);
+            प्रति (i = 0; i < w_len; i++) {
                 // sprintf() writes a null byte: the buffer is large enough
                 // for that thanks to the overallocation.
-                assert((p + 11 - buf) <= alloc);
-                Py_UCS4 chr = PyUnicode_READ(kind, data, i);
+                प्रतिज्ञा((p + 11 - buf) <= alloc);
+                Py_UCS4 chr = PyUnicode_READ(विधा, दत्त, i);
                 sprintf(p, "\\U%08x", chr);
                 p += 10;
             }
             Py_DECREF(w);
         }
-        else {
+        अन्यथा {
             *p++ = *s++;
         }
     }
-    len = (size_t)(p - buf);
+    len = (आकार_t)(p - buf);
 
-    int first_invalid_escape_char;
-    const char *first_invalid_escape_ptr;
-    v = _PyUnicode_DecodeUnicodeEscapeInternal2(buf, (Py_ssize_t)len, NULL, NULL,
+    पूर्णाङ्क first_invalid_escape_char;
+    ध्रुव वर्ण *first_invalid_escape_ptr;
+    v = _PyUnicode_DecodeUnicodeEscapeInternal2(buf, (Py_ssize_t)len, रिक्त, रिक्त,
                                                 &first_invalid_escape_char,
                                                 &first_invalid_escape_ptr);
 
     // HACK: later we can simply pass the line no, since we don't preserve the tokens
     // when we are decoding the string but we preserve the line numbers.
-    if (v != NULL && first_invalid_escape_ptr != NULL && t != NULL) {
-        if (warn_invalid_escape_sequence(parser, buf, first_invalid_escape_ptr, t) < 0) {
+    यदि (v != रिक्त && first_invalid_escape_ptr != रिक्त && t != रिक्त) {
+        यदि (warn_invalid_escape_sequence(parser, buf, first_invalid_escape_ptr, t) < 0) {
             /* We have not deallocated the buffer before because
              * first_invalid_escape_ptr points inside buf. */
             PyMem_Free(buf);
             Py_DECREF(v);
-            return NULL;
+            प्रत्यागम रिक्त;
         }
     }
     PyMem_Free(buf);
-    return v;
+    प्रत्यागम v;
 }
 
-static PyObject *
-decode_bytes_with_escapes(Parser *p, const char *s, Py_ssize_t len, Token *t)
+स्थिर PyObject *
+decode_अष्टकानि_with_escapes(Parser *p, ध्रुव वर्ण *s, Py_ssize_t len, Token *t)
 {
-    int first_invalid_escape_char;
-    const char *first_invalid_escape_ptr;
-    PyObject *result = _PyBytes_DecodeEscape2(s, len, NULL,
+    पूर्णाङ्क first_invalid_escape_char;
+    ध्रुव वर्ण *first_invalid_escape_ptr;
+    PyObject *परिणाम = Py_अष्टकानि_Decode_Escape2(s, len, रिक्त,
                                               &first_invalid_escape_char,
                                               &first_invalid_escape_ptr);
-    if (result == NULL) {
-        return NULL;
+    यदि (परिणाम == रिक्त) {
+        प्रत्यागम रिक्त;
     }
 
-    if (first_invalid_escape_ptr != NULL) {
-        if (warn_invalid_escape_sequence(p, s, first_invalid_escape_ptr, t) < 0) {
-            Py_DECREF(result);
-            return NULL;
+    यदि (first_invalid_escape_ptr != रिक्त) {
+        यदि (warn_invalid_escape_sequence(p, s, first_invalid_escape_ptr, t) < 0) {
+            Py_DECREF(परिणाम);
+            प्रत्यागम रिक्त;
         }
     }
-    return result;
+    प्रत्यागम परिणाम;
 }
 
 PyObject *
-_PyPegen_decode_string(Parser *p, int raw, const char *s, size_t len, Token *t)
+_PyPegen_decode_string(Parser *p, पूर्णाङ्क raw, ध्रुव वर्ण *s, आकार_t len, Token *t)
 {
-    if (raw) {
-        return PyUnicode_DecodeUTF8Stateful(s, (Py_ssize_t)len, NULL, NULL);
+    यदि (raw) {
+        प्रत्यागम PyUnicode_DecodeUTF8Stateful(s, (Py_ssize_t)len, रिक्त, रिक्त);
     }
-    return decode_unicode_with_escapes(p, s, len, t);
+    प्रत्यागम decode_unicode_with_escapes(p, s, len, t);
 }
 
 /* s must include the bracketing quote characters, and r, b &/or f prefixes
@@ -249,87 +249,87 @@ _PyPegen_decode_string(Parser *p, int raw, const char *s, size_t len, Token *t)
 PyObject *
 _PyPegen_parse_string(Parser *p, Token *t)
 {
-    const char *s = PyBytes_AsString(t->bytes);
-    if (s == NULL) {
-        return NULL;
+    ध्रुव वर्ण *s = Py_अष्टकानि_As_String(t->अष्टकानि);
+    यदि (s == रिक्त) {
+        प्रत्यागम रिक्त;
     }
 
-    size_t len;
-    int quote = Py_CHARMASK(*s);
-    int bytesmode = 0;
-    int rawmode = 0;
+    आकार_t len;
+    पूर्णाङ्क quote = Py_CHARMASK(*s);
+    पूर्णाङ्क bytesmode = 0;
+    पूर्णाङ्क rawmode = 0;
 
-    if (Py_ISALPHA(quote)) {
-        while (!bytesmode || !rawmode) {
-            if (quote == 'b' || quote == 'B') {
-                quote =(unsigned char)*++s;
+    यदि (Py_ISALPHA(quote)) {
+        यावत् (!bytesmode || !rawmode) {
+            यदि (quote == 'b' || quote == 'B') {
+                quote =(अचिह्नित वर्ण)*++s;
                 bytesmode = 1;
             }
-            else if (quote == 'u' || quote == 'U') {
-                quote = (unsigned char)*++s;
+            अन्यथा यदि (quote == 'u' || quote == 'U') {
+                quote = (अचिह्नित वर्ण)*++s;
             }
-            else if (quote == 'r' || quote == 'R') {
-                quote = (unsigned char)*++s;
+            अन्यथा यदि (quote == 'r' || quote == 'R') {
+                quote = (अचिह्नित वर्ण)*++s;
                 rawmode = 1;
             }
-            else {
-                break;
+            अन्यथा {
+                भङ्ग;
             }
         }
     }
 
-    if (quote != '\'' && quote != '\"') {
-        PyErr_BadInternalCall();
-        return NULL;
+    यदि (quote != '\'' && quote != '\"') {
+        Py_Err_Bad_आन्तरिकम्_Call();
+        प्रत्यागम रिक्त;
     }
 
     /* Skip the leading quote char. */
     s++;
-    len = strlen(s);
+    len = वाक्यदैर्घ्यम्(s);
     // gh-120155: 's' contains at least the trailing quote,
     // so the code '--len' below is safe.
-    assert(len >= 1);
+    प्रतिज्ञा(len >= 1);
 
-    if (len > INT_MAX) {
-        PyErr_SetString(PyExc_OverflowError, "string to parse is too long");
-        return NULL;
+    यदि (len > अधिकतम_पूर्णाङ्कः) {
+        Py_Err_समुच्चयः_String(Py_Exc_अतिप्रवाहः_Error, "string to parse is too long");
+        प्रत्यागम रिक्त;
     }
-    if (s[--len] != quote) {
+    यदि (s[--len] != quote) {
         /* Last quote char must match the first. */
-        PyErr_BadInternalCall();
-        return NULL;
+        Py_Err_Bad_आन्तरिकम्_Call();
+        प्रत्यागम रिक्त;
     }
-    if (len >= 4 && s[0] == quote && s[1] == quote) {
+    यदि (len >= 4 && s[0] == quote && s[1] == quote) {
         /* A triple quoted string. We've already skipped one quote at
            the start and one at the end of the string. Now skip the
            two at the start. */
         s += 2;
         len -= 2;
         /* And check that the last two match. */
-        if (s[--len] != quote || s[--len] != quote) {
-            PyErr_BadInternalCall();
-            return NULL;
+        यदि (s[--len] != quote || s[--len] != quote) {
+            Py_Err_Bad_आन्तरिकम्_Call();
+            प्रत्यागम रिक्त;
         }
     }
 
     /* Avoid invoking escape decoding routines if possible. */
-    rawmode = rawmode || strchr(s, '\\') == NULL;
-    if (bytesmode) {
+    rawmode = rawmode || strchr(s, '\\') == रिक्त;
+    यदि (bytesmode) {
         /* Disallow non-ASCII characters. */
-        const char *ch;
-        for (ch = s; *ch; ch++) {
-            if (Py_CHARMASK(*ch) >= 0x80) {
-                RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
+        ध्रुव वर्ण *ch;
+        प्रति (ch = s; *ch; ch++) {
+            यदि (Py_CHARMASK(*ch) >= 0x80) {
+                RAISE_SYNTAX_ERROR_ज्ञातम्_LOCATION(
                                    t,
                                    "bytes can only contain ASCII "
                                    "literal characters");
-                return NULL;
+                प्रत्यागम रिक्त;
             }
         }
-        if (rawmode) {
-            return PyBytes_FromStringAndSize(s, (Py_ssize_t)len);
+        यदि (rawmode) {
+            प्रत्यागम Py_अष्टकानि_From_String_And_आकार(s, (Py_ssize_t)len);
         }
-        return decode_bytes_with_escapes(p, s, (Py_ssize_t)len, t);
+        प्रत्यागम decode_अष्टकानि_with_escapes(p, s, (Py_ssize_t)len, t);
     }
-    return _PyPegen_decode_string(p, rawmode, s, len, t);
+    प्रत्यागम _PyPegen_decode_string(p, rawmode, s, len, t);
 }
