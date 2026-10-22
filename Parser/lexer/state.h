@@ -1,155 +1,155 @@
 #ifndef _PY_LEXER_H_
 #define _PY_LEXER_H_
 
-#include "object.h"
-#include "../tokenizer/source.h"
-#include "../tokenizer/tokenizer.h"
+#অন্তর্ভাৱ "object.h"
+#অন্তর্ভাৱ "../tokenizer/source.h"
+#অন্তর্ভাৱ "../tokenizer/tokenizer.h"
 
 #define MAXINDENT 100       /* Max indentation level */
 #define MAXLEVEL 200        /* Max parentheses level */
 #define MAXFTSTRINGLEVEL 150
-#define FTSTRING_STACK_INLINE_CAPACITY 1
+#define FTSTRING_স্তূপ_INLINE_CAPACITY 1
 
-typedef enum {
-    FTSTRING_MODE_MIDDLE,
+প্রকারনির্দেশ গণনা {
+    FTSTRING_MODE_মধ্য,
     FTSTRING_MODE_EXPRESSION,
     FTSTRING_MODE_FORMAT_SPEC,
 } ftstring_mode;
 
-typedef enum {
+প্রকারনির্দেশ গণনা {
     FSTRING,
     RAW_FSTRING,
     TSTRING,
     RAW_TSTRING,
 } ftstring_kind;
 
-#define MAX_EXPR_NESTING 3
+#define MAX_ৰাশিমালা_NESTING 3
 
-typedef struct _tokenizer_comments {
-    Py_ssize_t count;
+প্রকারনির্দেশ সংরচনা _tokenizer_comments {
+    Py_ssize_t গুনতি;
     Py_ssize_t capacity;
     _PyTok_Span spans[];
 } tokenizer_comments;
 
-typedef struct _ftstring_state {
+প্রকারনির্দেশ সংরচনা _ftstring_state {
     ftstring_mode mode;
     ftstring_kind kind;
-    char quote;
-    unsigned char quote_size;
-    unsigned char debug_expr;
-    unsigned char replacement_depth;
-    int paren_level;
+    ৱর্ণ quote;
+    unsigned ৱর্ণ quote_size;
+    unsigned ৱর্ণ debug_ৰাশিমালা;
+    unsigned ৱর্ণ replacement_depth;
+    পূর্ণাঙ্ক paren_level;
     _PyTok_Off start;
     _PyTok_Loc start_loc;
-    _PyTok_Span expr_span;
+    _PyTok_Span ৰাশিমালা_span;
     tokenizer_comments *comments;
 } ftstring_state;
 
-static inline int
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
 _PyLexer_IsTString(ftstring_kind kind)
 {
-    return kind == TSTRING || kind == RAW_TSTRING;
+    ঘূৰাই kind == TSTRING || kind == RAW_TSTRING;
 }
 
-static inline int
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
 _PyLexer_IsRawString(ftstring_kind kind)
 {
-    return kind == RAW_FSTRING || kind == RAW_TSTRING;
+    ঘূৰাই kind == RAW_FSTRING || kind == RAW_TSTRING;
 }
 
-typedef struct {
-    int column;
-    int alternate_column;
+প্রকারনির্দেশ সংরচনা {
+    পূর্ণাঙ্ক column;
+    পূর্ণাঙ্ক alternate_column;
 } indentation_level;
 
-typedef struct {
-    int depth;
-    int pending;
-    int at_bol;
-    int comment_newline;
-    indentation_level stack[MAXINDENT];
+প্রকারনির্দেশ সংরচনা {
+    পূর্ণাঙ্ক depth;
+    পূর্ণাঙ্ক pending;
+    পূর্ণাঙ্ক at_bol;
+    পূর্ণাঙ্ক comment_newline;
+    indentation_level স্তূপ[MAXINDENT];
 } lexer_layout_state;
 
 /* Tokenizer state */
-struct tok_state {
+সংরচনা tok_state {
     _PyTok_Off buf_offset;
     _PyTok_Off cur;
     _PyTok_Off inp;
     _PyTok_Off start;
-    _PyTok_Off line_start;
+    _PyTok_Off সাৰি_start;
     _PyTok_SourceText source;
-    int done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
+    পূর্ণাঙ্ক done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
     /* NB If done != E_OK, cur must be == inp!!! */
     lexer_layout_state layout;
-    int lineno;         /* Current line number */
+    পূর্ণাঙ্ক lineno;         /* Current line number */
     _PyTok_Loc start_loc;
     _PyTokenizer_Diagnostic diagnostic;
-    int level;          /* () [] {} Parentheses nesting level */
+    পূর্ণাঙ্ক level;          /* () [] {} Parentheses nesting level */
             /* Used to allow free continuations inside them */
-    char parenstack[MAXLEVEL];
-    int parenlinenostack[MAXLEVEL];
-    int parencolstack[MAXLEVEL];
+    ৱর্ণ parenstack[MAXLEVEL];
+    পূর্ণাঙ্ক parenlinenostack[MAXLEVEL];
+    পূর্ণাঙ্ক parencolstack[MAXLEVEL];
     PyObject *filename;
     PyObject *module;
-    struct _PyTok_Reader *reader;
+    সংরচনা _PyTok_Reader *reader;
 
-    int type_comments;      /* Whether to look for type comments */
+    পূর্ণাঙ্ক type_comments;      /* Whether to look for type comments */
 
-    ftstring_state *ftstring_stack;
-    ftstring_state ftstring_stack_inline[FTSTRING_STACK_INLINE_CAPACITY];
-    int ftstring_depth;
-    int ftstring_capacity;
-    int tok_extra_tokens;
-    int implicit_newline;
+    ftstring_state *ftstring_স্তূপ;
+    ftstring_state ftstring_স্তূপ_inline[FTSTRING_স্তূপ_INLINE_CAPACITY];
+    পূর্ণাঙ্ক ftstring_depth;
+    পূর্ণাঙ্ক ftstring_capacity;
+    পূর্ণাঙ্ক tok_extra_tokens;
+    পূর্ণাঙ্ক implicit_newline;
 #ifdef Py_DEBUG
-    int debug;
+    পূর্ণাঙ্ক debug;
 #endif
-    int barry_as_bdfl;
-    unsigned char allow_incomplete_input;
-    unsigned char needs_newline;
+    পূর্ণাঙ্ক barry_as_bdfl;
+    unsigned ৱর্ণ allow_incomplete_প্ৰবেশ;
+    unsigned ৱর্ণ needs_newline;
 };
 
-static inline ftstring_state *
-_PyLexer_CurrentFTString(struct tok_state *tok)
+স্থির অন্তঃস্থ ftstring_state *
+_PyLexer_CurrentFTString(সংরচনা tok_state *tok)
 {
-    assert(tok->ftstring_stack != NULL);
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    if (tok->ftstring_depth == 0) {
-        return NULL;
+    প্রতিজ্ঞা(tok->ftstring_স্তূপ != রিক্ত);
+    প্রতিজ্ঞা(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
+    যদি (tok->ftstring_depth == 0) {
+        ঘূৰাই রিক্ত;
     }
-    return &tok->ftstring_stack[tok->ftstring_depth - 1];
+    ঘূৰাই &tok->ftstring_স্তূপ[tok->ftstring_depth - 1];
 }
 
-static inline char
+স্থির অন্তঃস্থ ৱর্ণ
 _PyLexer_StringPrefix(ftstring_kind kind)
 {
-    return _PyLexer_IsTString(kind) ? 't' : 'f';
+    ঘূৰাই _PyLexer_IsTString(kind) ? 't' : 'f';
 }
 
-static inline int
-_PyLexer_FTStringBracketDepth(const struct tok_state *tok,
-                              const ftstring_state *state)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
+_PyLexer_FTStringBracketDepth(ধ্রুৱ সংরচনা tok_state *tok,
+                              ধ্রুৱ ftstring_state *state)
 {
-    return tok->level - state->paren_level;
+    ঘূৰাই tok->level - state->paren_level;
 }
 
-static inline int
-_PyLexer_ByteColumn(const struct tok_state *tok)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
+_PyLexer_ByteColumn(ধ্রুৱ সংরচনা tok_state *tok)
 {
-    assert(tok->line_start >= 0);
-    assert(tok->cur >= tok->line_start);
-    Py_ssize_t column = tok->cur - tok->line_start;
-    assert(column <= INT_MAX);
-    return (int)column;
+    প্রতিজ্ঞা(tok->সাৰি_start >= 0);
+    প্রতিজ্ঞা(tok->cur >= tok->সাৰি_start);
+    Py_ssize_t column = tok->cur - tok->সাৰি_start;
+    প্রতিজ্ঞা(column <= INT_MAX);
+    ঘূৰাই (পূর্ণাঙ্ক)column;
 }
 
-int _PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end);
+পূর্ণাঙ্ক _PyLexer_token_setup(সংরচনা tok_state *tok, সংরচনা token *token, পূর্ণাঙ্ক type, _PyTok_Off start, _PyTok_Off end);
 
-void _PyLexer_ImplyDedents(struct tok_state *);
+শূন্য _PyLexer_ImplyDedents(সংরচনা tok_state *);
 
-void _PyTokenizer_Free(struct tok_state *);
-ftstring_state *_PyLexer_PushFTString(struct tok_state *);
-void _PyLexer_PopFTString(struct tok_state *);
+শূন্য _PyTokenizer_Free(সংরচনা tok_state *);
+ftstring_state *Py_Lexer_ঠেলো_FTString(সংরচনা tok_state *);
+শূন্য Py_Lexer_বেৰ_কৰো_FTString(সংরচনা tok_state *);
 
 
 #endif
