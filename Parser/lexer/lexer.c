@@ -1,57 +1,57 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "pycore_unicodeobject.h"
-#include "errcode.h"
+#अन्तर्भाव "Python.h"
+#अन्तर्भाव "pycore_token.h"
+#अन्तर्भाव "pycore_unicodeobject.h"
+#अन्तर्भाव "errcode.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#अन्तर्भाव "lexer_internal.h"
+#अन्तर्भाव "../tokenizer/helpers.h"
+#अन्तर्भाव "../tokenizer/reader.h"
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
 /* Spaces in this constant are treated as "zero or more spaces or tabs" when
    tokenizing. */
-static const char* type_comment_prefix = "# type: ";
+स्थिर स्थिरांक अक्षर* type_comment_prefix = "# type: ";
 
-int
-_PyLexer_refill(struct tok_state *tok)
+पूर्णांक
+_PyLexer_refill(संरचना tok_state *tok)
 {
-    if (tok->done != E_OK) {
-        return 0;
+    जर (tok->done != E_OK) {
+        परत 0;
     }
-    int rc = _PyTok_ReaderUnderflow(tok);
-#if defined(Py_DEBUG)
-    if (tok->debug) {
-        fprintf(stderr, "line[%d] = ", tok->lineno);
+    पूर्णांक rc = _PyTok_ReaderUnderflow(tok);
+#जर defined(Py_DEBUG)
+    जर (tok->debug) {
+        ख_लिखो(मानक_त्रुटि, "line[%d] = ", tok->lineno);
         _PyTokenizer_print_escape(
-            stderr, _PyTok_SourcePointer(&tok->source, tok->cur),
+            मानक_त्रुटि, _PyTok_SourcePointer(&tok->source, tok->cur),
             tok->inp - tok->cur);
-        fprintf(stderr, "  tok->done = %d\n", tok->done);
+        ख_लिखो(मानक_त्रुटि, "  tok->done = %d\n", tok->done);
     }
 #endif
-    if (!rc) {
+    जर (!rc) {
         tok->cur = tok->inp;
-        return 0;
+        परत 0;
     }
-    tok->line_start = tok->cur;
-    _PyTok_Span line = {tok->line_start, tok->inp};
-    if (_PyTok_SourceFindByte(&tok->source, line, '\0') >= 0) {
+    tok->ओळ_start = tok->cur;
+    _PyTok_Span ओळ = {tok->ओळ_start, tok->inp};
+    जर (_PyTok_SourceFindByte(&tok->source, ओळ, '\0') >= 0) {
         _PyTokenizer_syntaxerror(tok, "source code cannot contain null bytes");
         tok->cur = tok->inp;
-        return 0;
+        परत 0;
     }
-    return 1;
+    परत 1;
 }
 
 /* Back-up one character */
-void
-_PyLexer_backup(struct tok_state *tok, int c)
+शून्य
+_PyLexer_backup(संरचना tok_state *tok, पूर्णांक c)
 {
-    if (c != EOF) {
-        if (--tok->cur < tok->buf_offset) {
+    जर (c != खातापूर्ण) {
+        जर (--tok->cur < tok->buf_offset) {
             Py_FatalError("tokenizer beginning of buffer");
         }
-        if (_PyTok_SourceByte(&tok->source, tok->cur) != Py_CHARMASK(c)) {
+        जर (_PyTok_SourceByte(&tok->source, tok->cur) != Py_CHARMASK(c)) {
             Py_FatalError("tok_backup: wrong character");
         }
     }
@@ -60,71 +60,71 @@ _PyLexer_backup(struct tok_state *tok, int c)
 
 
 /* Verify that the identifier follows PEP 3131. */
-static int
-verify_identifier(struct tok_state *tok)
+स्थिर पूर्णांक
+verify_identifier(संरचना tok_state *tok)
 {
-    if (tok->tok_extra_tokens) {
-        return 1;
+    जर (tok->tok_extra_tokens) {
+        परत 1;
     }
     PyObject *s;
-    if (tok_failed(tok))
-        return 0;
+    जर (tok_failed(tok))
+        परत 0;
     s = PyUnicode_DecodeUTF8(_PyTok_SourcePointer(&tok->source, tok->start),
-                             tok->cur - tok->start, NULL);
-    if (s == NULL) {
-        if (PyErr_ExceptionMatches(PyExc_UnicodeDecodeError)) {
+                             tok->cur - tok->start, रिक्त);
+    जर (s == रिक्त) {
+        जर (PyErr_ExceptionMatches(PyExc_UnicodeDecodeError)) {
             tok->done = E_DECODE;
         }
-        else {
+        अन्यथा {
             tok->done = E_ERROR;
         }
-        return 0;
+        परत 0;
     }
     Py_ssize_t invalid = _PyUnicode_ScanIdentifier(s);
-    assert(invalid >= 0);
-    assert(PyUnicode_GET_LENGTH(s) > 0);
-    if (invalid < PyUnicode_GET_LENGTH(s)) {
+    प्रतिज्ञा(invalid >= 0);
+    प्रतिज्ञा(PyUnicode_GET_LENGTH(s) > 0);
+    जर (invalid < PyUnicode_GET_LENGTH(s)) {
         Py_UCS4 ch = PyUnicode_READ_CHAR(s, invalid);
         _PyTok_Off error_cursor = tok->cur;
-        if (invalid + 1 < PyUnicode_GET_LENGTH(s)) {
+        जर (invalid + 1 < PyUnicode_GET_LENGTH(s)) {
             /* Determine the offset in UTF-8 encoded input */
             Py_SETREF(s, PyUnicode_Substring(s, 0, invalid + 1));
-            if (s != NULL) {
+            जर (s != रिक्त) {
                 Py_SETREF(s, PyUnicode_AsUTF8String(s));
             }
-            if (s == NULL) {
+            जर (s == रिक्त) {
                 tok->done = E_ERROR;
-                return 0;
+                परत 0;
             }
             error_cursor = tok->start + PyBytes_GET_SIZE(s);
         }
         Py_DECREF(s);
-        if (Py_UNICODE_ISPRINTABLE(ch)) {
+        जर (Py_UNICODE_ISPRINTABLE(ch)) {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, _PyTok_SourcePointer(&tok->source, tok->ओळ_start),
+                error_cursor - tok->ओळ_start, tok->lineno, -1, -1,
                 "invalid character '%c' (U+%04X)", ch, ch);
         }
-        else {
+        अन्यथा {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, _PyTok_SourcePointer(&tok->source, tok->ओळ_start),
+                error_cursor - tok->ओळ_start, tok->lineno, -1, -1,
                 "invalid non-printable character U+%04X", ch);
         }
-        return 0;
+        परत 0;
     }
     Py_DECREF(s);
-    return 1;
+    परत 1;
 }
 
-int
-_PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token *token)
+पूर्णांक
+_PyLexer_get_normal(संरचना tok_state *tok, ftstring_state *current, संरचना token *token)
 {
-    assert(current == NULL ||
+    प्रतिज्ञा(current == रिक्त ||
            (current->mode == FTSTRING_MODE_EXPRESSION &&
             current->replacement_depth > 0));
-    int c;
-    int blankline, nonascii;
+    पूर्णांक c;
+    पूर्णांक blankline, nonascii;
 
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
@@ -134,19 +134,19 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
     blankline = 0;
 
 
-    if (tok->layout.at_bol) {
-        blankline = _PyLexer_BeginLine(tok);
-        if (blankline < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    जर (tok->layout.at_bol) {
+        blankline = Py_Lexer_Begin_ओळ(tok);
+        जर (blankline < 0) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
     }
 
     tok->start = tok->cur;
     tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) : -1};
+        tok->lineno, tok->ओळ_start >= 0 ? _PyLexer_ByteColumn(tok) : -1};
 
-    if (tok->layout.pending != 0) {
-        return _PyLexer_IndentationToken(tok, token);
+    जर (tok->layout.pending != 0) {
+        परत _PyLexer_IndentationToken(tok, token);
     }
 
     /* Peek ahead at the next character */
@@ -156,75 +156,75 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
  again:
     tok->start = -1;
     /* Skip spaces */
-    do {
+    करा {
         c = tok_nextc(tok);
-    } while (c == ' ' || c == '\t' || c == '\014');
+    } पर्यंत (c == ' ' || c == '\t' || c == '\014');
 
     /* Set start of current token */
     tok->start = tok->cur - 1;
     tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) - 1 : -1};
+        tok->lineno, tok->ओळ_start >= 0 ? _PyLexer_ByteColumn(tok) - 1 : -1};
 
     /* Skip comment, unless it's a type comment */
-    if (c == '#') {
+    जर (c == '#') {
 
-        while (c != EOF && c != '\n' && c != '\r') {
+        पर्यंत (c != खातापूर्ण && c != '\n' && c != '\r') {
             c = tok_nextc(tok);
         }
 
-        if (current != NULL) {
+        जर (current != रिक्त) {
             _PyTok_Off comment_end = tok->cur;
-            if (c == '\n' || c == '\r') {
+            जर (c == '\n' || c == '\r') {
                 comment_end--;
             }
-            if (_PyLexer_record_ftstring_comment(
+            जर (_PyLexer_record_ftstring_comment(
                     tok, current, tok->start, comment_end) < 0) {
                 tok->done = E_NOMEM;
-                return MAKE_TOKEN(ERRORTOKEN);
+                परत MAKE_TOKEN(ERRORTOKEN);
             }
         }
 
         _PyTok_Off comment = tok->start;
-        if (tok->type_comments) {
-            const char *prefix = type_comment_prefix;
-            while (*prefix && comment < tok->cur) {
-                if (*prefix == ' ') {
-                    while (comment < tok->cur) {
-                        int ch = _PyTok_SourceByte(&tok->source, comment);
-                        if (ch != ' ' && ch != '\t') {
-                            break;
+        जर (tok->type_comments) {
+            स्थिरांक अक्षर *prefix = type_comment_prefix;
+            पर्यंत (*prefix && comment < tok->cur) {
+                जर (*prefix == ' ') {
+                    पर्यंत (comment < tok->cur) {
+                        पूर्णांक ch = _PyTok_SourceByte(&tok->source, comment);
+                        जर (ch != ' ' && ch != '\t') {
+                            थांबा;
                         }
                         comment++;
                     }
-                } else if (*prefix == _PyTok_SourceByte(&tok->source, comment)) {
+                } अन्यथा जर (*prefix == _PyTok_SourceByte(&tok->source, comment)) {
                     comment++;
-                } else {
-                    break;
+                } अन्यथा {
+                    थांबा;
                 }
 
                 prefix++;
             }
 
             /* This is a type comment if we matched all of type_comment_prefix. */
-            if (!*prefix) {
+            जर (!*prefix) {
                 tok_backup(tok, c);  /* don't eat the newline or EOF */
                 /* A TYPE_IGNORE is "type: ignore" followed by the end of the token
                  * or anything ASCII and non-alphanumeric. */
-                int is_type_ignore = tok->cur - comment >= 6 &&
-                    memcmp(_PyTok_SourcePointer(&tok->source, comment),
+                पूर्णांक is_type_ignore = tok->cur - comment >= 6 &&
+                    स_भेद(_PyTok_SourcePointer(&tok->source, comment),
                            "ignore", 6) == 0;
-                if (is_type_ignore && comment + 6 < tok->cur) {
-                    int ch = _PyTok_SourceByte(&tok->source, comment + 6);
+                जर (is_type_ignore && comment + 6 < tok->cur) {
+                    पूर्णांक ch = _PyTok_SourceByte(&tok->source, comment + 6);
                     is_type_ignore = ch < 128 && !Py_ISALNUM(ch);
                 }
 
-                int type = is_type_ignore ? TYPE_IGNORE : TYPE_COMMENT;
+                पूर्णांक type = is_type_ignore ? TYPE_IGNORE : TYPE_COMMENT;
                 p_start = comment + (is_type_ignore ? 6 : 0);
                 p_end = tok->cur;
-                int start_col_offset = tok->start_loc.byte_col +
-                    (int)(p_start - tok->start);
+                पूर्णांक start_col_offset = tok->start_loc.byte_col +
+                    (पूर्णांक)(p_start - tok->start);
                 /* Consume the newline after a standalone type ignore. */
-                if (is_type_ignore && blankline) {
+                जर (is_type_ignore && blankline) {
                     tok_nextc(tok);
                     tok->layout.at_bol = 1;
                 }
@@ -232,296 +232,296 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
                 token->start_loc = (_PyTok_Loc){tok->lineno, start_col_offset};
                 token->end_loc = (_PyTok_Loc){tok->lineno,
                                               _PyLexer_ByteColumn(tok)};
-                return type;
+                परत type;
             }
         }
-        if (tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
+        जर (tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
             tok->layout.depth > 0) {
             // Ending this comment lets the next line dedent the suite.
             tok->needs_newline |= _PyTokenizer_NEWLINE_STATEMENT;
         }
-        if (tok->tok_extra_tokens) {
+        जर (tok->tok_extra_tokens) {
             tok_backup(tok, c);  /* don't eat the newline or EOF */
             p_start = comment;
             p_end = tok->cur;
             tok->layout.comment_newline = blankline;
-            return MAKE_TOKEN(COMMENT);
+            परत MAKE_TOKEN(COMMENT);
         }
     }
 
-    if (tok->done == E_INTERACT_STOP) {
-        return MAKE_TOKEN(ENDMARKER);
+    जर (tok->done == E_INTERACT_STOP) {
+        परत MAKE_TOKEN(ENDMARKER);
     }
 
     /* Check for EOF and errors now */
-    if (c == EOF) {
-        if (tok->level) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    जर (c == खातापूर्ण) {
+        जर (tok->level) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
-        return MAKE_TOKEN(tok->done == E_EOF ? ENDMARKER : ERRORTOKEN);
+        परत MAKE_TOKEN(tok->done == E_EOF ? ENDMARKER : ERRORTOKEN);
     }
 
     /* Identifier (most frequent token!) */
     nonascii = 0;
-    if (is_potential_identifier_start(c)) {
+    जर (is_potential_identifier_start(c)) {
         /* Process the various legal combinations of b"", r"", u"", and f"". */
-        int saw_b = 0, saw_r = 0, saw_u = 0, saw_f = 0, saw_t = 0;
-        while (1) {
-            if (!saw_b && (c == 'b' || c == 'B')) {
+        पूर्णांक saw_b = 0, saw_r = 0, saw_u = 0, saw_f = 0, saw_t = 0;
+        पर्यंत (1) {
+            जर (!saw_b && (c == 'b' || c == 'B')) {
                 saw_b = 1;
             }
             /* Since this is a backwards compatibility support literal we don't
                want to support it in arbitrary order like byte literals. */
-            else if (!saw_u && (c == 'u'|| c == 'U')) {
+            अन्यथा जर (!saw_u && (c == 'u'|| c == 'U')) {
                 saw_u = 1;
             }
             /* ur"" and ru"" are not supported */
-            else if (!saw_r && (c == 'r' || c == 'R')) {
+            अन्यथा जर (!saw_r && (c == 'r' || c == 'R')) {
                 saw_r = 1;
             }
-            else if (!saw_f && (c == 'f' || c == 'F')) {
+            अन्यथा जर (!saw_f && (c == 'f' || c == 'F')) {
                 saw_f = 1;
             }
-            else if (!saw_t && (c == 't' || c == 'T')) {
+            अन्यथा जर (!saw_t && (c == 't' || c == 'T')) {
                 saw_t = 1;
             }
-            else {
-                break;
+            अन्यथा {
+                थांबा;
             }
             c = tok_nextc(tok);
-            if (c == '"' || c == '\'') {
+            जर (c == '"' || c == '\'') {
                 // Raise error on incompatible string prefixes:
-                int status = _PyLexer_check_string_prefixes(
+                पूर्णांक status = _PyLexer_check_string_prefixes(
                     tok, saw_b, saw_r, saw_u, saw_f, saw_t);
-                if (status < 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                जर (status < 0) {
+                    परत MAKE_TOKEN(ERRORTOKEN);
                 }
 
                 // Handle valid f or t string creation:
-                if (saw_f || saw_t) {
+                जर (saw_f || saw_t) {
                     ftstring_kind kind = saw_t
                         ? (saw_r ? RAW_TSTRING : TSTRING)
                         : (saw_r ? RAW_FSTRING : FSTRING);
-                    return _PyLexer_scan_fstring_start(tok, token, c, kind);
+                    परत _PyLexer_scan_fstring_start(tok, token, c, kind);
                 }
-                return _PyLexer_scan_string(tok, token, c);
+                परत _PyLexer_scan_string(tok, token, c);
             }
         }
-        while (is_potential_identifier_char(c)) {
-            if (c >= 128) {
+        पर्यंत (is_potential_identifier_char(c)) {
+            जर (c >= 128) {
                 nonascii = 1;
             }
             c = tok_nextc(tok);
         }
         tok_backup(tok, c);
-        if (nonascii && !verify_identifier(tok)) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        जर (nonascii && !verify_identifier(tok)) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
 
         p_start = tok->start;
         p_end = tok->cur;
 
-        return MAKE_TOKEN(NAME);
+        परत MAKE_TOKEN(NAME);
     }
 
-    if (c == '\r') {
+    जर (c == '\r') {
         c = tok_nextc(tok);
     }
 
-    if (c == '\n') {
-        int type = _PyLexer_Newline(tok, token, blankline);
-        if (type == 0) {
-            goto nextline;
+    जर (c == '\n') {
+        पूर्णांक type = _PyLexer_Newline(tok, token, blankline);
+        जर (type == 0) {
+            जा nextline;
         }
-        return type;
+        परत type;
     }
 
     /* Period or number starting with period? */
-    if (c == '.') {
+    जर (c == '.') {
         c = tok_nextc(tok);
-        if (Py_ISDIGIT(c)) {
-            return _PyLexer_scan_number(tok, token, c, 1);
-        } else if (c == '.') {
+        जर (Py_ISDIGIT(c)) {
+            परत Py_Lexer_scan_संख्या(tok, token, c, 1);
+        } अन्यथा जर (c == '.') {
             c = tok_nextc(tok);
-            if (c == '.') {
+            जर (c == '.') {
                 p_start = tok->start;
                 p_end = tok->cur;
-                return MAKE_TOKEN(ELLIPSIS);
+                परत MAKE_TOKEN(ELLIPSIS);
             }
-            else {
+            अन्यथा {
                 tok_backup(tok, c);
             }
             tok_backup(tok, '.');
         }
-        else {
+        अन्यथा {
             tok_backup(tok, c);
         }
         p_start = tok->start;
         p_end = tok->cur;
-        return MAKE_TOKEN(DOT);
+        परत MAKE_TOKEN(DOT);
     }
 
 
-    /* Number */
-    if (Py_ISDIGIT(c)) {
-        return _PyLexer_scan_number(tok, token, c, 0);
+    /*संख्या*/
+    जर (Py_ISDIGIT(c)) {
+        परत Py_Lexer_scan_संख्या(tok, token, c, 0);
     }
 
     /* String */
-    if (c == '\'' || c == '"') {
-        return _PyLexer_scan_string(tok, token, c);
+    जर (c == '\'' || c == '"') {
+        परत _PyLexer_scan_string(tok, token, c);
     }
 
     /* Line continuation */
-    if (c == '\\') {
-        if ((c = _PyLexer_ContinueLine(tok)) == -1) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    जर (c == '\\') {
+        जर ((c = Py_Lexer_Continue_ओळ(tok)) == -1) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
-        goto again; /* Read next line */
+        जा again; /* Read next line */
     }
 
     /* Punctuation character */
-    int is_punctuation = (c == ':' || c == '}' || c == '!');
-    if (is_punctuation && current != NULL) {
-        int type = _PyLexer_ftstring_punctuation(tok, current, token, c);
-        if (type < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+    पूर्णांक is_punctuation = (c == ':' || c == '}' || c == '!');
+    जर (is_punctuation && current != रिक्त) {
+        पूर्णांक type = _PyLexer_ftstring_punctuation(tok, current, token, c);
+        जर (type < 0) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
-        if (type != 0) {
+        जर (type != 0) {
             p_start = tok->start;
             p_end = tok->cur;
-            return MAKE_TOKEN(type);
+            परत MAKE_TOKEN(type);
         }
     }
 
     /* Check for two-character token */
     {
-        int c2 = tok_nextc(tok);
-        int current_token = _PyToken_TwoChars(c, c2, tok->barry_as_bdfl);
-        if (current_token != OP) {
-            int c3 = tok_nextc(tok);
-            int current_token3 = _PyToken_ThreeChars(c, c2, c3);
-            if (current_token3 != OP) {
+        पूर्णांक c2 = tok_nextc(tok);
+        पूर्णांक current_token = _PyToken_TwoChars(c, c2, tok->barry_as_bdfl);
+        जर (current_token != OP) {
+            पूर्णांक c3 = tok_nextc(tok);
+            पूर्णांक current_token3 = _PyToken_ThreeChars(c, c2, c3);
+            जर (current_token3 != OP) {
                 current_token = current_token3;
             }
-            else {
+            अन्यथा {
                 tok_backup(tok, c3);
             }
             p_start = tok->start;
             p_end = tok->cur;
-            return MAKE_TOKEN(current_token);
+            परत MAKE_TOKEN(current_token);
         }
         tok_backup(tok, c2);
     }
 
     /* Keep track of parentheses nesting level */
-    switch (c) {
-    case '(':
-    case '[':
-    case '{':
-        if (tok->level >= MAXLEVEL) {
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "too many nested parentheses"));
+    निवड (c) {
+    स्थिती '(':
+    स्थिती '[':
+    स्थिती '{':
+        जर (tok->level >= MAXLEVEL) {
+            परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "too many nested parentheses"));
         }
         tok->parenstack[tok->level] = c;
         tok->parenlinenostack[tok->level] = tok->lineno;
-        tok->parencolstack[tok->level] = (int)(tok->start - tok->line_start);
+        tok->parencolstack[tok->level] = (पूर्णांक)(tok->start - tok->ओळ_start);
         tok->level++;
-        break;
-    case ')':
-    case ']':
-    case '}':
-        if (current != NULL &&
+        थांबा;
+    स्थिती ')':
+    स्थिती ']':
+    स्थिती '}':
+        जर (current != रिक्त &&
                 _PyLexer_FTStringBracketDepth(tok, current) == 0) {
-            if (c == '}') {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+            जर (c == '}') {
+                परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                     "%c-string: single '}' is not allowed",
                     _PyLexer_StringPrefix(current->kind)));
             }
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(
+            परत MAKE_TOKEN(_PyTokenizer_syntaxerror(
                 tok, "%c-string: unmatched '%c'",
                 _PyLexer_StringPrefix(current->kind), c));
         }
-        if (!tok->tok_extra_tokens && !tok->level) {
-            return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "unmatched '%c'", c));
+        जर (!tok->tok_extra_tokens && !tok->level) {
+            परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "unmatched '%c'", c));
         }
-        if (tok->level > 0) {
+        जर (tok->level > 0) {
             tok->level--;
-            int opening = tok->parenstack[tok->level];
-            if (!tok->tok_extra_tokens && !((opening == '(' && c == ')') ||
+            पूर्णांक opening = tok->parenstack[tok->level];
+            जर (!tok->tok_extra_tokens && !((opening == '(' && c == ')') ||
                                             (opening == '[' && c == ']') ||
                                             (opening == '{' && c == '}'))) {
                 /* Do not match a closer against the brace that opened the
                  * current replacement field. */
-                if (current != NULL && opening == '{') {
-                    int bracket_depth =
+                जर (current != रिक्त && opening == '{') {
+                    पूर्णांक bracket_depth =
                         _PyLexer_FTStringBracketDepth(tok, current);
-                    if (bracket_depth == current->replacement_depth - 1) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                    जर (bracket_depth == current->replacement_depth - 1) {
+                        परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "%c-string: unmatched '%c'",
                             _PyLexer_StringPrefix(current->kind), c));
                     }
                 }
-                if (tok->parenlinenostack[tok->level] != tok->lineno) {
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                जर (tok->parenlinenostack[tok->level] != tok->lineno) {
+                    परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "closing parenthesis '%c' does not match "
                             "opening parenthesis '%c' on line %d",
                             c, opening, tok->parenlinenostack[tok->level]));
                 }
-                else {
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                अन्यथा {
+                    परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                             "closing parenthesis '%c' does not match "
                             "opening parenthesis '%c'",
                             c, opening));
                 }
             }
         }
-        if (current != NULL &&
-                _PyLexer_close_ftstring_expr(tok, current, c) < 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        जर (current != रिक्त &&
+                Py_Lexer_close_ftstring_अभिव्यक्ती(tok, current, c) < 0) {
+            परत MAKE_TOKEN(ERRORTOKEN);
         }
-        break;
-    default:
-        break;
+        थांबा;
+    पूर्वनिर्धारित:
+        थांबा;
     }
 
-    if (!Py_UNICODE_ISPRINTABLE(c)) {
-        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid non-printable character U+%04X", c));
+    जर (!Py_UNICODE_ISPRINTABLE(c)) {
+        परत MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid non-printable character U+%04X", c));
     }
 
-    if (c == '=' && current != NULL) {
+    जर (c == '=' && current != रिक्त) {
         _PyLexer_mark_ftstring_debug(tok, current);
     }
 
     /* Punctuation character */
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(_PyToken_OneChar(c));
+    परत MAKE_TOKEN(_PyToken_OneChar(c));
 }
 
 
-void
-_PyTokenizer_Get(struct tok_state *tok, struct token *token)
+शून्य
+_PyTokenizer_Get(संरचना tok_state *tok, संरचना token *token)
 {
     _PyToken_Free(token);
     ftstring_state *current = _PyLexer_CurrentFTString(tok);
-    int result;
-    if (current == NULL) {
-        result = _PyLexer_get_normal(tok, NULL, token);
+    पूर्णांक result;
+    जर (current == रिक्त) {
+        result = _PyLexer_get_normal(tok, रिक्त, token);
     }
-    else {
-        switch (current->mode) {
-        case FTSTRING_MODE_EXPRESSION:
+    अन्यथा {
+        निवड (current->mode) {
+        स्थिती FTSTRING_MODE_EXPRESSION:
             result = _PyLexer_get_normal(tok, current, token);
-            break;
-        case FTSTRING_MODE_MIDDLE:
-        case FTSTRING_MODE_FORMAT_SPEC:
+            थांबा;
+        स्थिती FTSTRING_MODE_मधला:
+        स्थिती FTSTRING_MODE_FORMAT_SPEC:
             result = _PyLexer_get_ftstring(tok, current, token);
-            break;
-        default:
+            थांबा;
+        पूर्वनिर्धारित:
             Py_UNREACHABLE();
         }
     }
-    if (tok_failed(tok) && tok->done != E_INCOMPLETE) {
+    जर (tok_failed(tok) && tok->done != E_INCOMPLETE) {
         result = ERRORTOKEN;
     }
     token->type = result;

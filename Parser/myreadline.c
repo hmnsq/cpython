@@ -9,11 +9,11 @@
    - a malloc'ed string ending in \n normally
 */
 
-#include "Python.h"
-#include "pycore_fileutils.h"     // _Py_BEGIN_SUPPRESS_IPH
-#include "pycore_interp.h"        // _PyInterpreterState_GetConfig()
-#include "pycore_pystate.h"       // _PyThreadState_GET()
-#include "pycore_signal.h"        // _PyOS_SigintEvent()
+#अन्तर्भाव "Python.h"
+#अन्तर्भाव "pycore_fileutils.h"     // _Py_BEGIN_SUPPRESS_IPH
+#अन्तर्भाव "pycore_interp.h"        // _PyInterpreterState_GetConfig()
+#अन्तर्भाव "pycore_pystate.h"       // _PyThreadState_GET()
+#अन्तर्भाव "pycore_signal.h"        // _PyOS_SigintEvent()
 #ifdef MS_WINDOWS
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN
@@ -28,17 +28,17 @@
 
 // Export the symbol since it's used by the readline shared extension
 PyAPI_DATA(PyThreadState*) _PyOS_ReadlineTState;
-PyThreadState *_PyOS_ReadlineTState = NULL;
+PyThreadState *_PyOS_ReadlineTState = रिक्त;
 
-static PyMutex _PyOS_ReadlineLock;
+स्थिर PyMutex _PyOS_ReadlineLock;
 
-int (*PyOS_InputHook)(void) = NULL;
+पूर्णांक (*Py_OS_आदान_Hook)(शून्य) = रिक्त;
 
 /* This function restarts a fgets() after an EINTR error occurred
    except if _PyOS_InterruptOccurred() returns true. */
 
-static int
-my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
+स्थिर पूर्णांक
+my_fgets(PyThreadState* tstate, अक्षर *buf, पूर्णांक len, खाता *fp)
 {
 #ifdef MS_WINDOWS
     HANDLE handle;
@@ -47,26 +47,26 @@ my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
     _Py_END_SUPPRESS_IPH
 
     /* bpo-40826: fgets(fp) does crash if fileno(fp) is closed */
-    if (handle == INVALID_HANDLE_VALUE) {
-        return -1; /* EOF */
+    जर (handle == INVALID_HANDLE_मूल्य) {
+        परत -1; /* EOF */
     }
 #endif
 
-    while (1) {
-        if (PyOS_InputHook != NULL &&
+    पर्यंत (1) {
+        जर (Py_OS_आदान_Hook != रिक्त &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (शून्य)(Py_OS_आदान_Hook)();
         }
 
-        errno = 0;
-        clearerr(fp);
-        char *p = fgets(buf, len, fp);
-        if (p != NULL) {
-            return 0; /* No error */
+        त्रुटि_सं = 0;
+        साफ_त्रुटि(fp);
+        अक्षर *p = ख_माला_लो(buf, len, fp);
+        जर (p != रिक्त) {
+            परत 0; /* No error */
         }
-        int err = errno;
+        पूर्णांक err = त्रुटि_सं;
 
 #ifdef MS_WINDOWS
         /* Ctrl-C anywhere on the line or Ctrl-Z if the only character
@@ -82,41 +82,41 @@ my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
            isn't set assume that this is a Ctrl-Z on its own and drop
            through to check for EOF.
         */
-        if (GetLastError()==ERROR_OPERATION_ABORTED) {
+        जर (GetLastError()==ERROR_OPERATION_ABORTED) {
             HANDLE hInterruptEvent = _PyOS_SigintEvent();
-            switch (WaitForSingleObjectEx(hInterruptEvent, 10, FALSE)) {
-            case WAIT_OBJECT_0:
+            निवड (WaitForSingleObjectEx(hInterruptEvent, 10, FALSE)) {
+            स्थिती WAIT_OBJECT_0:
                 ResetEvent(hInterruptEvent);
-                return 1; /* Interrupt */
-            case WAIT_FAILED:
-                return -2; /* Error */
+                परत 1; /* Interrupt */
+            स्थिती WAIT_FAILED:
+                परत -2; /* Error */
             }
         }
 #endif /* MS_WINDOWS */
 
-        if (feof(fp)) {
-            clearerr(fp);
-            return -1; /* EOF */
+        जर (ख_पूर्ण(fp)) {
+            साफ_त्रुटि(fp);
+            परत -1; /* EOF */
         }
 
 #ifdef EINTR
-        if (err == EINTR) {
+        जर (err == EINTR) {
             PyEval_RestoreThread(tstate);
-            int s = PyErr_CheckSignals();
+            पूर्णांक s = PyErr_CheckSignals();
             PyEval_SaveThread();
 
-            if (s < 0) {
-                return 1;
+            जर (s < 0) {
+                परत 1;
             }
             /* try again */
-            continue;
+            सुरूठेवा;
         }
 #endif
 
-        if (_PyOS_InterruptOccurred(tstate)) {
-            return 1; /* Interrupt */
+        जर (_PyOS_InterruptOccurred(tstate)) {
+            परत 1; /* Interrupt */
         }
-        return -2; /* Error */
+        परत -2; /* Error */
     }
     /* NOTREACHED */
 }
@@ -124,135 +124,135 @@ my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
 #ifdef HAVE_WINDOWS_CONSOLE_IO
 /* Readline implementation using ReadConsoleW */
 
-extern char _get_console_type(HANDLE handle);
+बाह्य अक्षर _get_console_type(HANDLE handle);
 
-char *
+अक्षर *
 _PyOS_WindowsConsoleReadline(PyThreadState *tstate, HANDLE hStdIn)
 {
-    static wchar_t wbuf_local[1024 * 16];
-    const DWORD chunk_size = 1024;
+    स्थिर ब_अक्षर_प्रकार wbuf_local[1024 * 16];
+    स्थिरांक DWORD chunk_size = 1024;
 
     DWORD n_read, total_read, wbuflen, u8len;
-    wchar_t *wbuf;
-    char *buf = NULL;
-    int err = 0;
+    ब_अक्षर_प्रकार *wbuf;
+    अक्षर *buf = रिक्त;
+    पूर्णांक err = 0;
 
     n_read = (DWORD)-1;
     total_read = 0;
     wbuf = wbuf_local;
-    wbuflen = sizeof(wbuf_local) / sizeof(wbuf_local[0]) - 1;
-    while (1) {
-        if (PyOS_InputHook != NULL &&
+    wbuflen = आकार(wbuf_local) / आकार(wbuf_local[0]) - 1;
+    पर्यंत (1) {
+        जर (Py_OS_आदान_Hook != रिक्त &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (शून्य)(Py_OS_आदान_Hook)();
         }
-        if (!ReadConsoleW(hStdIn, &wbuf[total_read], wbuflen - total_read, &n_read, NULL)) {
+        जर (!ReadConsoleW(hStdIn, &wbuf[total_read], wbuflen - total_read, &n_read, रिक्त)) {
             err = GetLastError();
-            goto exit;
+            जा निकास;
         }
-        if (n_read == (DWORD)-1 && (err = GetLastError()) == ERROR_OPERATION_ABORTED) {
-            break;
+        जर (n_read == (DWORD)-1 && (err = GetLastError()) == ERROR_OPERATION_ABORTED) {
+            थांबा;
         }
-        if (n_read == 0) {
-            int s;
+        जर (n_read == 0) {
+            पूर्णांक s;
             err = GetLastError();
-            if (err != ERROR_OPERATION_ABORTED)
-                goto exit;
+            जर (err != ERROR_OPERATION_ABORTED)
+                जा निकास;
             err = 0;
             HANDLE hInterruptEvent = _PyOS_SigintEvent();
             DWORD state = WaitForSingleObjectEx(hInterruptEvent, 100, FALSE);
-            if (state == WAIT_OBJECT_0) {
+            जर (state == WAIT_OBJECT_0) {
                 ResetEvent(hInterruptEvent);
                 PyEval_RestoreThread(tstate);
                 s = PyErr_CheckSignals();
                 PyEval_SaveThread();
-                if (s < 0) {
-                    goto exit;
+                जर (s < 0) {
+                    जा निकास;
                 }
             }
-            else if (state != WAIT_TIMEOUT) {
+            अन्यथा जर (state != WAIT_TIMEOUT) {
                 err = GetLastError();
-                goto exit;
+                जा निकास;
             }
             /* The console cancelled the read and flushed its input buffer,
                but no exception was raised.  Start the read over. */
-            continue;
+            सुरूठेवा;
         }
 
         total_read += n_read;
-        if (total_read == 0 || wbuf[total_read - 1] == L'\n') {
-            break;
+        जर (total_read == 0 || wbuf[total_read - 1] == L'\n') {
+            थांबा;
         }
         wbuflen += chunk_size;
-        if (wbuf == wbuf_local) {
+        जर (wbuf == wbuf_local) {
             wbuf[total_read] = '\0';
-            wbuf = (wchar_t*)PyMem_RawMalloc(wbuflen * sizeof(wchar_t));
-            if (wbuf) {
+            wbuf = (ब_अक्षर_प्रकार*)PyMem_RawMalloc(wbuflen * आकार(ब_अक्षर_प्रकार));
+            जर (wbuf) {
                 wcscpy_s(wbuf, wbuflen, wbuf_local);
             }
-            else {
+            अन्यथा {
                 PyEval_RestoreThread(tstate);
                 PyErr_NoMemory();
                 PyEval_SaveThread();
-                goto exit;
+                जा निकास;
             }
         }
-        else {
-            wchar_t *tmp = PyMem_RawRealloc(wbuf, wbuflen * sizeof(wchar_t));
-            if (tmp == NULL) {
+        अन्यथा {
+            ब_अक्षर_प्रकार *tmp = PyMem_RawRealloc(wbuf, wbuflen * आकार(ब_अक्षर_प्रकार));
+            जर (tmp == रिक्त) {
                 PyEval_RestoreThread(tstate);
                 PyErr_NoMemory();
                 PyEval_SaveThread();
-                goto exit;
+                जा निकास;
             }
             wbuf = tmp;
         }
     }
 
-    if (wbuf[0] == '\x1a') {
+    जर (wbuf[0] == '\x1a') {
         buf = PyMem_RawMalloc(1);
-        if (buf) {
+        जर (buf) {
             buf[0] = '\0';
         }
-        else {
+        अन्यथा {
             PyEval_RestoreThread(tstate);
             PyErr_NoMemory();
             PyEval_SaveThread();
         }
-        goto exit;
+        जा निकास;
     }
 
     u8len = WideCharToMultiByte(CP_UTF8, 0,
                                 wbuf, total_read,
-                                NULL, 0,
-                                NULL, NULL);
+                                रिक्त, 0,
+                                रिक्त, रिक्त);
     buf = PyMem_RawMalloc(u8len + 1);
-    if (buf == NULL) {
+    जर (buf == रिक्त) {
         PyEval_RestoreThread(tstate);
         PyErr_NoMemory();
         PyEval_SaveThread();
-        goto exit;
+        जा निकास;
     }
 
     u8len = WideCharToMultiByte(CP_UTF8, 0,
                                 wbuf, total_read,
                                 buf, u8len,
-                                NULL, NULL);
+                                रिक्त, रिक्त);
     buf[u8len] = '\0';
 
-exit:
-    if (wbuf != wbuf_local) {
+निकास:
+    जर (wbuf != wbuf_local) {
         PyMem_RawFree(wbuf);
     }
 
-    if (err) {
+    जर (err) {
         PyEval_RestoreThread(tstate);
         PyErr_SetFromWindowsErr(err);
         PyEval_SaveThread();
     }
-    return buf;
+    परत buf;
 }
 
 #endif /* HAVE_WINDOWS_CONSOLE_IO */
@@ -260,107 +260,107 @@ exit:
 
 /* Readline implementation using fgets() */
 
-char *
-PyOS_StdioReadline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
+अक्षर *
+PyOS_StdioReadline(खाता *sys_stdin, खाता *sys_stdout, स्थिरांक अक्षर *prompt)
 {
-    size_t n;
-    char *p, *pr;
+    माप_प्रकार n;
+    अक्षर *p, *pr;
     PyThreadState *tstate = _PyOS_ReadlineTState;
-    assert(tstate != NULL);
+    प्रतिज्ञा(tstate != रिक्त);
 
 #ifdef HAVE_WINDOWS_CONSOLE_IO
-    const PyConfig *config = _PyInterpreterState_GetConfig(tstate->interp);
-    if (!config->legacy_windows_stdio && sys_stdin == stdin) {
+    स्थिरांक PyConfig *config = _PyInterpreterState_GetConfig(tstate->interp);
+    जर (!config->legacy_windows_stdio && sys_stdin == मानक_निवेश) {
         HANDLE hStdIn, hStdErr;
 
         hStdIn = _Py_get_osfhandle_noraise(fileno(sys_stdin));
-        hStdErr = _Py_get_osfhandle_noraise(fileno(stderr));
+        hStdErr = _Py_get_osfhandle_noraise(fileno(मानक_त्रुटि));
 
-        if (_get_console_type(hStdIn) == 'r') {
-            fflush(sys_stdout);
-            if (prompt) {
-                if (_get_console_type(hStdErr) == 'w') {
-                    wchar_t *wbuf;
-                    int wlen;
+        जर (_get_console_type(hStdIn) == 'r') {
+            ख_साफ(sys_stdout);
+            जर (prompt) {
+                जर (_get_console_type(hStdErr) == 'w') {
+                    ब_अक्षर_प्रकार *wbuf;
+                    पूर्णांक wlen;
                     wlen = MultiByteToWideChar(CP_UTF8, 0, prompt, -1,
-                            NULL, 0);
-                    if (wlen) {
-                        wbuf = PyMem_RawMalloc(wlen * sizeof(wchar_t));
-                        if (wbuf == NULL) {
+                            रिक्त, 0);
+                    जर (wlen) {
+                        wbuf = PyMem_RawMalloc(wlen * आकार(ब_अक्षर_प्रकार));
+                        जर (wbuf == रिक्त) {
                             PyEval_RestoreThread(tstate);
                             PyErr_NoMemory();
                             PyEval_SaveThread();
-                            return NULL;
+                            परत रिक्त;
                         }
                         wlen = MultiByteToWideChar(CP_UTF8, 0, prompt, -1,
                                 wbuf, wlen);
-                        if (wlen) {
+                        जर (wlen) {
                             DWORD n;
-                            fflush(stderr);
+                            ख_साफ(मानक_त्रुटि);
                             /* wlen includes null terminator, so subtract 1 */
-                            WriteConsoleW(hStdErr, wbuf, wlen - 1, &n, NULL);
+                            WriteConsoleW(hStdErr, wbuf, wlen - 1, &n, रिक्त);
                         }
                         PyMem_RawFree(wbuf);
                     }
-                } else {
-                    fprintf(stderr, "%s", prompt);
-                    fflush(stderr);
+                } अन्यथा {
+                    ख_लिखो(मानक_त्रुटि, "%s", prompt);
+                    ख_साफ(मानक_त्रुटि);
                 }
             }
-            clearerr(sys_stdin);
-            return _PyOS_WindowsConsoleReadline(tstate, hStdIn);
+            साफ_त्रुटि(sys_stdin);
+            परत _PyOS_WindowsConsoleReadline(tstate, hStdIn);
         }
     }
 #endif
 
-    fflush(sys_stdout);
-    if (prompt) {
-        fprintf(stderr, "%s", prompt);
+    ख_साफ(sys_stdout);
+    जर (prompt) {
+        ख_लिखो(मानक_त्रुटि, "%s", prompt);
     }
-    fflush(stderr);
+    ख_साफ(मानक_त्रुटि);
 
     n = 0;
-    p = NULL;
-    do {
-        size_t incr = (n > 0) ? n + 2 : 100;
-        if (incr > INT_MAX) {
+    p = रिक्त;
+    करा {
+        माप_प्रकार incr = (n > 0) ? n + 2 : 100;
+        जर (incr > पूर्णांक_उच्च) {
             PyMem_RawFree(p);
             PyEval_RestoreThread(tstate);
             PyErr_SetString(PyExc_OverflowError, "input line too long");
             PyEval_SaveThread();
-            return NULL;
+            परत रिक्त;
         }
-        pr = (char *)PyMem_RawRealloc(p, n + incr);
-        if (pr == NULL) {
+        pr = (अक्षर *)PyMem_RawRealloc(p, n + incr);
+        जर (pr == रिक्त) {
             PyMem_RawFree(p);
             PyEval_RestoreThread(tstate);
             PyErr_NoMemory();
             PyEval_SaveThread();
-            return NULL;
+            परत रिक्त;
         }
         p = pr;
-        int err = my_fgets(tstate, p + n, (int)incr, sys_stdin);
-        if (err == 1) {
+        पूर्णांक err = my_fgets(tstate, p + n, (पूर्णांक)incr, sys_stdin);
+        जर (err == 1) {
             // Interrupt
             PyMem_RawFree(p);
-            return NULL;
-        } else if (err != 0) {
+            परत रिक्त;
+        } अन्यथा जर (err != 0) {
             // EOF or error
             p[n] = '\0';
-            break;
+            थांबा;
         }
-        n += strlen(p + n);
-    } while (n == 0 || p[n-1] != '\n');
+        n += म_माप(p + n);
+    } पर्यंत (n == 0 || p[n-1] != '\n');
 
-    pr = (char *)PyMem_RawRealloc(p, n+1);
-    if (pr == NULL) {
+    pr = (अक्षर *)PyMem_RawRealloc(p, n+1);
+    जर (pr == रिक्त) {
         PyMem_RawFree(p);
         PyEval_RestoreThread(tstate);
         PyErr_NoMemory();
         PyEval_SaveThread();
-        return NULL;
+        परत रिक्त;
     }
-    return pr;
+    परत pr;
 }
 
 
@@ -369,20 +369,20 @@ PyOS_StdioReadline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
 
    Note: Python expects in return a buffer allocated with PyMem_Malloc. */
 
-char *(*PyOS_ReadlineFunctionPointer)(FILE *, FILE *, const char *) = NULL;
+अक्षर *(*PyOS_ReadlineFunctionPointer)(खाता *, खाता *, स्थिरांक अक्षर *) = रिक्त;
 
 
-char *
-PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
+अक्षर *
+PyOS_Readline(खाता *sys_stdin, खाता *sys_stdout, स्थिरांक अक्षर *prompt)
 {
-    char *rv, *res;
-    size_t len;
+    अक्षर *rv, *res;
+    माप_प्रकार len;
 
     PyThreadState *tstate = _PyThreadState_GET();
-    if (_Py_atomic_load_ptr_relaxed(&_PyOS_ReadlineTState) == tstate) {
+    जर (_Py_atomic_load_ptr_relaxed(&_PyOS_ReadlineTState) == tstate) {
         PyErr_SetString(PyExc_RuntimeError,
                         "can't re-enter readline");
-        return NULL;
+        परत रिक्त;
     }
 
     // GH-123321: We need to acquire the lock before setting
@@ -391,7 +391,7 @@ PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
     Py_BEGIN_ALLOW_THREADS
     PyMutex_Lock(&_PyOS_ReadlineLock);
     _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, tstate);
-    if (PyOS_ReadlineFunctionPointer == NULL) {
+    जर (PyOS_ReadlineFunctionPointer == रिक्त) {
         PyOS_ReadlineFunctionPointer = PyOS_StdioReadline;
     }
 
@@ -400,7 +400,7 @@ PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
      * a tty.  This can happen, for example if python is run like
      * this: python -i < test1.py
      */
-    if (!isatty(fileno(sys_stdin)) || !isatty(fileno(sys_stdout)) ||
+    जर (!isatty(fileno(sys_stdin)) || !isatty(fileno(sys_stdout)) ||
         // GH-104668: Don't call global callbacks like PyOS_InputHook or
         // PyOS_ReadlineFunctionPointer from subinterpreters, since it seems
         // like there's no good way for users (like readline and tkinter) to
@@ -414,28 +414,28 @@ PyOS_Readline(FILE *sys_stdin, FILE *sys_stdout, const char *prompt)
     {
         rv = PyOS_StdioReadline(sys_stdin, sys_stdout, prompt);
     }
-    else {
+    अन्यथा {
         rv = (*PyOS_ReadlineFunctionPointer)(sys_stdin, sys_stdout, prompt);
     }
 
     // gh-123321: Must set the variable and then release the lock before
     // taking the GIL. Otherwise a deadlock or segfault may occur.
-    _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, NULL);
+    _Py_atomic_store_ptr_relaxed(&_PyOS_ReadlineTState, रिक्त);
     PyMutex_Unlock(&_PyOS_ReadlineLock);
     Py_END_ALLOW_THREADS
 
-    if (rv == NULL)
-        return NULL;
+    जर (rv == रिक्त)
+        परत रिक्त;
 
-    len = strlen(rv) + 1;
+    len = म_माप(rv) + 1;
     res = PyMem_Malloc(len);
-    if (res != NULL) {
-        memcpy(res, rv, len);
+    जर (res != रिक्त) {
+        स_नकल(res, rv, len);
     }
-    else {
+    अन्यथा {
         PyErr_NoMemory();
     }
     PyMem_RawFree(rv);
 
-    return res;
+    परत res;
 }
