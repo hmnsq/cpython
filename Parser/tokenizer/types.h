@@ -1,27 +1,27 @@
 #ifndef Py_TOKENIZER_TYPES_H
 #define Py_TOKENIZER_TYPES_H
 
-#include "Python.h"
+#অন্তর্ভাব "Python.h"
 
-typedef Py_ssize_t _PyTok_Off;
+প্রকারলেখ Py_ssize_t _PyTok_Off;
 
 /* Spans use half-open logical byte offsets into decoded input. Their backing
    storage may retain only the current input window. */
-typedef struct {
+প্রকারলেখ কাঠামো {
     _PyTok_Off start;
     _PyTok_Off end;
 } _PyTok_Span;
 
 /* Lines are 1-based and byte columns are 0-based. */
-typedef struct {
-    int lineno;
-    int byte_col;
+প্রকারলেখ কাঠামো {
+    পূর্ণসংখ্যা lineno;
+    পূর্ণসংখ্যা byte_col;
 } _PyTok_Loc;
 
-static inline int
+স্থির অন্তঃরেখ পূর্ণসংখ্যা
 _PyTok_SpanIsValid(_PyTok_Span span)
 {
-    return span.start >= 0 && span.end >= span.start;
+    ফেরত span.start >= 0 && span.end >= span.start;
 }
 
 #endif
