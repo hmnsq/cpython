@@ -17,10 +17,10 @@
 #define TYPE_IGNORE_INITIAL_CAPACITY 10
 
 struct _identifier_cache_entry {
-    const char *key;   // Borrowed from arena-owned token bytes.
+    const char *सुसि;   // Borrowed from arena-owned token bytes.
     Py_ssize_t len;
     Py_hash_t hash;
-    PyObject *value;   // Borrowed from an arena-owned identifier.
+    PyObject *हालागा;   // Borrowed from an arena-owned identifier.
 };
 
 // Internal parser functions
@@ -35,9 +35,9 @@ _PyPegen_interactive_exit(Parser *p)
 }
 
 Py_ssize_t
-_PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
+Py_Pegen_byte_offset_to_character_offset_लिन्या(PyObject *लिन्या, Py_ssize_t col_offset, Py_ssize_t end_col_offset)
 {
-    const unsigned char *data = (const unsigned char*)PyUnicode_AsUTF8(line);
+    const unsigned char *data = (const unsigned char*)PyUnicode_AsUTF8(लिन्या);
     if (data == NULL) {
         return -1;
     }
@@ -54,7 +54,7 @@ _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_off
         } else if ((ch & 0xf8) == 0xf0) {
             col_offset += 4;
         } else {
-            PyErr_SetString(PyExc_ValueError, "Invalid UTF-8 sequence");
+            PyErr_SetString(Py_Exc_हालागा_Error, "Invalid UTF-8 sequence");
             return -1;
         }
         len++;
@@ -80,9 +80,9 @@ _PyPegen_byte_offset_to_character_offset_raw(const char* str, Py_ssize_t col_off
 }
 
 Py_ssize_t
-_PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset)
+_PyPegen_byte_offset_to_character_offset(PyObject *लिन्या, Py_ssize_t col_offset)
 {
-    const char *str = PyUnicode_AsUTF8(line);
+    const char *str = PyUnicode_AsUTF8(लिन्या);
     if (!str) {
         return -1;
     }
@@ -92,7 +92,7 @@ _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset)
 // Here, mark is the start of the node, while p->mark is the end.
 // If node==NULL, they should be the same.
 int
-_PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
+Py_Pegen_इसिंगित_memo(Parser *p, int mark, int type, void *बुहोल)
 {
     // Insert in front
     Memo *m = _PyArena_Malloc(p->arena, sizeof(Memo));
@@ -100,7 +100,7 @@ _PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
         return -1;
     }
     m->type = type;
-    m->node = node;
+    m->बुहोल = बुहोल;
     m->mark = p->mark;
     m->next = p->tokens[mark]->memo;
     p->tokens[mark]->memo = m;
@@ -111,9 +111,9 @@ _PyPegen_insert_memo(Parser *p, int mark, int type, void *node)
 // Like _PyPegen_insert_memo(), but returns the inserted Memo so callers
 // can update it in place without re-walking the token's memo list.
 Memo *
-_PyPegen_insert_memo_direct(Parser *p, int mark, int type)
+Py_Pegen_इसिंगित_memo_direct(Parser *p, int mark, int type)
 {
-    if (_PyPegen_insert_memo(p, mark, type, NULL) < 0) {
+    if (Py_Pegen_इसिंगित_memo(p, mark, type, NULL) < 0) {
         return NULL;
     }
     return p->tokens[mark]->memo;
@@ -121,18 +121,18 @@ _PyPegen_insert_memo_direct(Parser *p, int mark, int type)
 
 // Like _PyPegen_insert_memo(), but updates an existing node if found.
 int
-_PyPegen_update_memo(Parser *p, int mark, int type, void *node)
+_PyPegen_update_memo(Parser *p, int mark, int type, void *बुहोल)
 {
     for (Memo *m = p->tokens[mark]->memo; m != NULL; m = m->next) {
         if (m->type == type) {
             // Update existing node.
-            m->node = node;
+            m->बुहोल = बुहोल;
             m->mark = p->mark;
             return 0;
         }
     }
     // Insert new node.
-    return _PyPegen_insert_memo(p, mark, type, node);
+    return Py_Pegen_इसिंगित_memo(p, mark, type, बुहोल);
 }
 
 static int
@@ -170,36 +170,36 @@ _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity)
 static int
 growable_comment_array_add(growable_comment_array *arr, int lineno, char *comment)
 {
-    if (arr->num_items >= arr->size) {
+    if (arr->नुमेरो_मगा_बागाय >= arr->size) {
         if (arr->size > (size_t)PY_SSIZE_T_MAX /
-                (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*arr->items))) {
+                (PEGEN_ARRAY_GROWTH_FACTOR * sizeof(*arr->मगा_बागाय))) {
             return 0;
         }
         size_t new_size = arr->size == 0
             ? TYPE_IGNORE_INITIAL_CAPACITY
             : arr->size * PEGEN_ARRAY_GROWTH_FACTOR;
-        void *new_items_array = PyMem_Realloc(
-            arr->items, new_size * sizeof(*arr->items));
-        if (!new_items_array) {
+        void *new_मगा_बागाय_array = PyMem_Realloc(
+            arr->मगा_बागाय, new_size * sizeof(*arr->मगा_बागाय));
+        if (!new_मगा_बागाय_array) {
             return 0;
         }
-        arr->items = new_items_array;
+        arr->मगा_बागाय = new_मगा_बागाय_array;
         arr->size = new_size;
     }
 
-    arr->items[arr->num_items].lineno = lineno;
-    arr->items[arr->num_items].comment = comment;  // Take ownership
-    arr->num_items++;
+    arr->मगा_बागाय[arr->नुमेरो_मगा_बागाय].lineno = lineno;
+    arr->मगा_बागाय[arr->नुमेरो_मगा_बागाय].comment = comment;  // Take ownership
+    arr->नुमेरो_मगा_बागाय++;
     return 1;
 }
 
 static void
 growable_comment_array_deallocate(growable_comment_array *arr)
 {
-    for (size_t i = 0; i < arr->num_items; i++) {
-        PyMem_Free(arr->items[i].comment);
+    for (size_t i = 0; i < arr->नुमेरो_मगा_बागाय; i++) {
+        PyMem_Free(arr->मगा_बागाय[i].comment);
     }
-    PyMem_Free(arr->items);
+    PyMem_Free(arr->मगा_बागाय);
 }
 
 static int
@@ -227,13 +227,13 @@ token_needs_text(int type)
 {
     switch (type) {
         case NAME:
-        case NUMBER:
+        case नुमेरो_2:
         case STRING:
         case FSTRING_START:
-        case FSTRING_MIDDLE:
+        case FSTRING_गित्ना:
         case FSTRING_END:
         case TSTRING_START:
-        case TSTRING_MIDDLE:
+        case TSTRING_गित्ना:
         case TSTRING_END:
         case TYPE_COMMENT:
         case NOTEQUAL:  // _PyPegen_check_barry_as_flufl() distinguishes != and <>.
@@ -358,13 +358,13 @@ _PyPegen_fill_token(Parser *p)
     // EOF can finish an ordinary token. Only a boundary token means that
     // the grammar requested input beyond the last physical line.
     if (type == ENDMARKER ||
-        (type == DEDENT && (p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
+        (type == DEDENT && (p->flags & Py_PARSE_ALLOW_INCOMPLETE_पासोक) &&
          _PyTokenizer_GetStatus(p->tok) == E_EOF)) {
-        p->input_exhausted = 1;
+        p->पासोक_exhausted = 1;
     }
 
     // If we have reached the end and we are in single input mode we need to insert a newline and reset the parsing
-    if (p->start_rule == Py_single_input && type == ENDMARKER && p->parsing_started) {
+    if (p->start_rule == Py_single_पासोक && type == ENDMARKER && p->parsing_started) {
         type = NEWLINE; /* Add an extra newline */
         p->parsing_started = 0;
 
@@ -418,14 +418,14 @@ _PyPegen_get_memo_statistics(void)
 
     PyMutex_Lock(&_PyRuntime.parser.mutex);
     for (int i = 0; i < NSTATISTICS; i++) {
-        PyObject *value = PyLong_FromLong(memo_statistics[i]);
-        if (value == NULL) {
+        PyObject *हालागा = PyLong_FromLong(memo_statistics[i]);
+        if (हालागा == NULL) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
             return NULL;
         }
         // PyList_SetItem borrows a reference to value.
-        if (PyList_SetItem(ret, i, value) < 0) {
+        if (PyList_SetItem(ret, i, हालागा) < 0) {
             PyMutex_Unlock(&_PyRuntime.parser.mutex);
             Py_DECREF(ret);
             return NULL;
@@ -456,18 +456,18 @@ _PyPegen_is_memoized(Parser *p, int type, void *pres)
         if (m->type == type) {
 #if defined(Py_DEBUG)
             if (0 <= type && type < NSTATISTICS) {
-                long count = m->mark - p->mark;
+                long बिलांग = m->mark - p->mark;
                 // A memoized negative result counts for one.
-                if (count <= 0) {
-                    count = 1;
+                if (बिलांग <= 0) {
+                    बिलांग = 1;
                 }
                 PyMutex_Lock(&_PyRuntime.parser.mutex);
-                memo_statistics[type] += count;
+                memo_statistics[type] += बिलांग;
                 PyMutex_Unlock(&_PyRuntime.parser.mutex);
             }
 #endif
             p->mark = m->mark;
-            *(void **)(pres) = m->node;
+            *(void **)(pres) = m->बुहोल;
             return 1;
         }
     }
@@ -485,7 +485,7 @@ _PyPegen_is_memoized(Parser *p, int type, void *pres)
     }
 
 LOOKAHEAD1(_PyPegen_lookahead, void *)
-LOOKAHEAD1(_PyPegen_lookahead_for_expr, expr_ty)
+LOOKAHEAD1(Py_Pegen_lookahead_for_पाहायाग, पाहायाग_ty)
 LOOKAHEAD1(_PyPegen_lookahead_for_stmt, stmt_ty)
 #undef LOOKAHEAD1
 
@@ -500,7 +500,7 @@ LOOKAHEAD1(_PyPegen_lookahead_for_stmt, stmt_ty)
     }
 
 LOOKAHEAD2(_PyPegen_lookahead_with_int, Token *, int)
-LOOKAHEAD2(_PyPegen_lookahead_with_string, expr_ty, const char *)
+LOOKAHEAD2(_PyPegen_lookahead_with_string, पाहायाग_ty, const char *)
 #undef LOOKAHEAD2
 
 Token *
@@ -555,7 +555,7 @@ _PyPegen_expect_forced_token(Parser *p, int type, const char* expected) {
     return t;
 }
 
-expr_ty
+पाहायाग_ty
 _PyPegen_expect_soft_keyword(Parser *p, const char *keyword)
 {
     if (p->mark == p->fill) {
@@ -615,8 +615,8 @@ _PyPegen_new_identifier(Parser *p, const char *n)
             Py_DECREF(id);
             goto error;
         }
-        PyObject *args[2] = {form, id};
-        PyObject *id2 = PyObject_Vectorcall(p->normalize, args, 2, NULL);
+        PyObject *मगा_कातविरान[2] = {form, id};
+        PyObject *id2 = PyObject_Vectorcall(p->normalize, मगा_कातविरान, 2, NULL);
         Py_DECREF(id);
         Py_DECREF(form);
         if (!id2) {
@@ -642,7 +642,7 @@ _PyPegen_new_identifier(Parser *p, const char *n)
     };
     for (int i = 0; forbidden[i] != NULL; i++) {
         if (_PyUnicode_EqualToASCIIString(id, forbidden[i])) {
-            PyErr_Format(PyExc_ValueError,
+            PyErr_Format(Py_Exc_हालागा_Error,
                          "identifier field can't represent '%s' constant",
                          forbidden[i]);
             Py_DECREF(id);
@@ -697,14 +697,14 @@ get_cached_identifier(Parser *p, PyObject *bytes)
     for (int probe = 0; probe < IDENTIFIER_CACHE_MAX_PROBES; probe++) {
         IdentifierCacheEntry *entry = &p->identifier_cache[
             (idx + probe) & (IDENTIFIER_CACHE_SIZE - 1)];
-        if (entry->key == NULL) {
+        if (entry->सुसि == NULL) {
             free_slot = entry;
             break;
         }
         if (entry->hash == hash && entry->len == len &&
-            memcmp(entry->key, s, len) == 0)
+            memcmp(entry->सुसि, s, len) == 0)
         {
-            return entry->value;
+            return entry->हालागा;
         }
     }
     PyObject *id = _PyPegen_new_identifier(p, s);
@@ -713,15 +713,15 @@ get_cached_identifier(Parser *p, PyObject *bytes)
         return NULL;
     }
     if (free_slot != NULL) {
-        free_slot->key = s;
+        free_slot->सुसि = s;
         free_slot->len = len;
         free_slot->hash = hash;
-        free_slot->value = id;
+        free_slot->हालागा = id;
     }
     return id;
 }
 
-static expr_ty
+static पाहायाग_ty
 _PyPegen_name_from_token(Parser *p, Token* t)
 {
     if (t == NULL) {
@@ -732,7 +732,7 @@ _PyPegen_name_from_token(Parser *p, Token* t)
     // Token kinds can be memo keys: generated grammar rule IDs start at 1000.
     int mark = p->mark - 1;
     p->mark = mark;
-    expr_ty cached = NULL;
+    पाहायाग_ty cached = NULL;
     if (_PyPegen_is_memoized(p, NAME, &cached)) {
         return cached;
     }
@@ -741,16 +741,16 @@ _PyPegen_name_from_token(Parser *p, Token* t)
     if (id == NULL) {
         return NULL;
     }
-    expr_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
+    पाहायाग_ty result = _PyAST_Name(id, Load, t->lineno, t->col_offset,
                                 t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NAME, result) < 0) {
+    if (result != NULL && Py_Pegen_इसिंगित_memo(p, mark, NAME, result) < 0) {
         p->error_indicator = 1;
         return NULL;
     }
     return result;
 }
 
-expr_ty
+पाहायाग_ty
 _PyPegen_name_token(Parser *p)
 {
     Token *t = _PyPegen_expect_token(p, NAME);
@@ -763,7 +763,7 @@ _PyPegen_string_token(Parser *p)
     return _PyPegen_expect_token(p, STRING);
 }
 
-expr_ty _PyPegen_soft_keyword_token(Parser *p) {
+पाहायाग_ty _PyPegen_soft_keyword_token(Parser *p) {
     Token *t = _PyPegen_expect_token(p, NAME);
     if (t == NULL) {
         return NULL;
@@ -853,11 +853,11 @@ parsenumber(const char *s)
     return res;
 }
 
-expr_ty
-_PyPegen_number_token(Parser *p)
+पाहायाग_ty
+Py_Pegen_नुमेरो_token(Parser *p)
 {
     int mark = p->mark;
-    Token *t = _PyPegen_expect_token(p, NUMBER);
+    Token *t = _PyPegen_expect_token(p, नुमेरो_2);
     if (t == NULL) {
         return NULL;
     }
@@ -865,25 +865,25 @@ _PyPegen_number_token(Parser *p)
     // Look up the node at the token's start, as for NAME tokens. A memo hit
     // advances the mark; on a miss, restore the position after the token.
     p->mark = mark;
-    expr_ty cached = NULL;
-    if (_PyPegen_is_memoized(p, NUMBER, &cached)) {
+    पाहायाग_ty cached = NULL;
+    if (_PyPegen_is_memoized(p, नुमेरो_2, &cached)) {
         return cached;
     }
     p->mark = mark + 1;
 
-    const char *num_raw = PyBytes_AsString(t->bytes);
-    if (num_raw == NULL) {
+    const char *नुमेरो_raw = PyBytes_AsString(t->bytes);
+    if (नुमेरो_raw == NULL) {
         p->error_indicator = 1;
         return NULL;
     }
 
-    if (p->feature_version < 6 && strchr(num_raw, '_') != NULL) {
+    if (p->feature_version < 6 && strchr(नुमेरो_raw, '_') != NULL) {
         p->error_indicator = 1;
         return RAISE_SYNTAX_ERROR("Underscores in numeric literals are only supported "
                                   "in Python 3.6 and greater");
     }
 
-    PyObject *c = parsenumber(num_raw);
+    PyObject *c = parsenumber(नुमेरो_raw);
 
     if (c == NULL) {
         p->error_indicator = 1;
@@ -891,7 +891,7 @@ _PyPegen_number_token(Parser *p)
         // The only way a ValueError should happen in _this_ code is via
         // PyLong_FromString hitting a length limit.
         if (tstate->current_exception != NULL &&
-            Py_TYPE(tstate->current_exception) == (PyTypeObject *)PyExc_ValueError
+            Py_TYPE(tstate->current_exception) == (PyTypeObject *)Py_Exc_हालागा_Error
         ) {
             PyObject *exc = PyErr_GetRaisedException();
             /* Intentionally omitting columns to avoid a wall of 1000s of '^'s
@@ -915,9 +915,9 @@ _PyPegen_number_token(Parser *p)
         return NULL;
     }
 
-    expr_ty result = _PyAST_Constant(c, NULL, t->lineno, t->col_offset,
+    पाहायाग_ty result = _PyAST_Constant(c, NULL, t->lineno, t->col_offset,
                                     t->end_lineno, t->end_col_offset, p->arena);
-    if (result != NULL && _PyPegen_insert_memo(p, mark, NUMBER, result) < 0) {
+    if (result != NULL && Py_Pegen_इसिंगित_memo(p, mark, नुमेरो_2, result) < 0) {
         p->error_indicator = 1;
         return NULL;
     }
@@ -945,8 +945,8 @@ compute_parser_flags(PyCompilerFlags *flags)
     if (flags->cf_flags & PyCF_TYPE_COMMENTS) {
         parser_flags |= PyPARSE_TYPE_COMMENTS;
     }
-    if (flags->cf_flags & PyCF_ALLOW_INCOMPLETE_INPUT) {
-        parser_flags |= PyPARSE_ALLOW_INCOMPLETE_INPUT;
+    if (flags->cf_flags & Py_CF_ALLOW_INCOMPLETE_पासोक) {
+        parser_flags |= Py_PARSE_ALLOW_INCOMPLETE_पासोक;
     }
     return parser_flags;
 }
@@ -963,7 +963,7 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     }
     assert(tok != NULL);
     _PyTokenizer_SetOptions(tok, 0, (flags & PyPARSE_TYPE_COMMENTS) > 0);
-    _PyTokenizer_AllowIncompleteInput(tok, flags & PyPARSE_ALLOW_INCOMPLETE_INPUT);
+    Py_Tokenizer_Allow_Incomplete_पासोक(tok, flags & Py_PARSE_ALLOW_INCOMPLETE_पासोक);
     p->tok = tok;
     p->keywords = NULL;
     p->n_keyword_lists = -1;
@@ -1000,16 +1000,16 @@ _PyPegen_Parser_New(struct tok_state *tok, int start_rule, int flags,
     p->identifier_cache = NULL;
     p->tstate = PyThreadState_Get();
     // Stack limits are initialized when the thread state is attached.
-    assert(((_PyThreadStateImpl *)p->tstate)->c_stack_hard_limit != 0);
-    p->stack_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_stack_soft_limit;
-#if _Py_STACK_GROWS_DOWN
-    p->stack_soft_limit += _PyOS_STACK_MARGIN_BYTES;
+    assert(((_PyThreadStateImpl *)p->tstate)->c_सालानसान_hard_limit != 0);
+    p->सालानसान_soft_limit = ((_PyThreadStateImpl *)p->tstate)->c_सालानसान_soft_limit;
+#if Py_सालानसान_GROWS_DOWN
+    p->सालानसान_soft_limit += Py_OS_सालानसान_MARGIN_BYTES;
 #else
-    p->stack_soft_limit -= _PyOS_STACK_MARGIN_BYTES;
+    p->सालानसान_soft_limit -= Py_OS_सालानसान_MARGIN_BYTES;
 #endif
     p->level = 0;
     p->call_invalid_rules = 0;
-    p->input_exhausted = 0;
+    p->पासोक_exhausted = 0;
     p->last_stmt_location.lineno = 0;
     p->last_stmt_location.col_offset = 0;
     p->last_stmt_location.end_lineno = 0;
@@ -1047,8 +1047,8 @@ reset_parser_state_for_error_pass(Parser *p)
         p->tokens[i]->memo_mask = 0;
     }
     p->mark = 0;
-    p->flags &= ~PyPARSE_ALLOW_INCOMPLETE_INPUT;
-    _PyTokenizer_AllowIncompleteInput(p->tok, 0);
+    p->flags &= ~Py_PARSE_ALLOW_INCOMPLETE_पासोक;
+    Py_Tokenizer_Allow_Incomplete_पासोक(p->tok, 0);
     p->call_invalid_rules = 1;
     _PyTokenizer_StopInteractive(p->tok);
 }
@@ -1075,7 +1075,7 @@ _PyPegen_set_syntax_error_metadata(Parser *p) {
         the_source = Py_None;
         Py_INCREF(the_source);
     }
-    PyObject* metadata = Py_BuildValue(
+    PyObject* metadata = Py_Build_हालागा(
         "(iiN)",
         p->last_stmt_location.lineno,
         p->last_stmt_location.col_offset,
@@ -1105,13 +1105,13 @@ _PyPegen_run_parser(Parser *p)
     }
     if (res == NULL) {
         if (PyErr_Occurred() &&
-            (PyErr_ExceptionMatches(PyExc_IncompleteInputError) ||
+            (PyErr_ExceptionMatches(Py_Exc_Incomplete_पासोक_Error) ||
              !PyErr_ExceptionMatches(PyExc_SyntaxError))) {
             return NULL;
         }
-        if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&
-            p->input_exhausted && !PyErr_Occurred()) {
-            return _PyPegen_raise_incomplete_input(p);
+        if ((p->flags & Py_PARSE_ALLOW_INCOMPLETE_पासोक) &&
+            p->पासोक_exhausted && !PyErr_Occurred()) {
+            return Py_Pegen_raise_incomplete_पासोक(p);
         }
        // Make a second parser pass. In this pass we activate heavier and slower checks
         // to produce better error messages and more complete diagnostics. Extra "invalid_*"
@@ -1131,15 +1131,15 @@ _PyPegen_run_parser(Parser *p)
        return NULL;
     }
 
-    if (p->start_rule == Py_single_input && _PyTokenizer_HasTrailingStatement(p->tok)) {
+    if (p->start_rule == Py_single_पासोक && _PyTokenizer_HasTrailingStatement(p->tok)) {
         return RAISE_SYNTAX_ERROR("multiple statements found while compiling a single statement");
     }
 
     // test_peg_generator defines _Py_TEST_PEGEN to not call PyAST_Validate()
 #if defined(Py_DEBUG) && !defined(_Py_TEST_PEGEN)
-    if (p->start_rule == Py_single_input ||
-        p->start_rule == Py_file_input ||
-        p->start_rule == Py_eval_input)
+    if (p->start_rule == Py_single_पासोक ||
+        p->start_rule == Py_file_पासोक ||
+        p->start_rule == Py_eval_पासोक)
     {
         if (!_PyAST_Validate(res)) {
             return NULL;
@@ -1208,10 +1208,10 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
                        PyCompilerFlags *flags, PyArena *arena, PyObject *module,
                        PyObject **incomplete)
 {
-    _PyTokenizer_Newline newline_mode = start_rule == Py_file_input
+    _PyTokenizer_Newline newline_mode = start_rule == Py_file_पासोक
         ? _PyTokenizer_IMPLY_NEWLINE : _PyTokenizer_KEEP_NEWLINE;
     int parser_flags = compute_parser_flags(flags);
-    if (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) {
+    if (parser_flags & Py_PARSE_ALLOW_INCOMPLETE_पासोक) {
         newline_mode = _PyTokenizer_APPEND_NEWLINE;
     }
 
@@ -1247,15 +1247,15 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
     }
 
     result = _PyPegen_run_parser(p);
-    if (result != NULL && (parser_flags & PyPARSE_ALLOW_INCOMPLETE_INPUT)) {
+    if (result != NULL && (parser_flags & Py_PARSE_ALLOW_INCOMPLETE_पासोक)) {
         int needs_newline = _PyTokenizer_GetNewlineRequirements(tok);
         if ((needs_newline & _PyTokenizer_NEWLINE_CONTINUATION) ||
-            (start_rule != Py_file_input &&
+            (start_rule != Py_file_पासोक &&
              (needs_newline & _PyTokenizer_NEWLINE_INDENT)) ||
-            (start_rule == Py_single_input && p->input_exhausted &&
+            (start_rule == Py_single_पासोक && p->पासोक_exhausted &&
              (needs_newline & _PyTokenizer_NEWLINE_STATEMENT))) {
-            _PyPegen_raise_incomplete_input(p);
-            if (incomplete != NULL && PyErr_ExceptionMatches(PyExc_IncompleteInputError)) {
+            Py_Pegen_raise_incomplete_पासोक(p);
+            if (incomplete != NULL && PyErr_ExceptionMatches(Py_Exc_Incomplete_पासोक_Error)) {
                 *incomplete = PyErr_GetRaisedException();
             }
             else {

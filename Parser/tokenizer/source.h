@@ -68,17 +68,17 @@ PyAPI_FUNC(void) _PyTok_SourceDiscard(_PyTok_SourceText *);
 /* Append one nonempty logical line and return its start offset. The input may
    contain one newline, as its final byte. An unterminated line must be the
    final line. The input must not point into source storage. */
-PyAPI_FUNC(_PyTok_Off) _PyTok_SourceAppendLine(
+PyAPI_FUNC(_PyTok_Off) Py_Tok_Source_Append_लिन्या(
     _PyTok_SourceText *source, const char *bytes, Py_ssize_t len);
 /* Append a line payload followed by '\n'. The payload may be empty and must
    contain no newline. Other SourceAppendLine constraints still apply. */
-PyAPI_FUNC(_PyTok_Off) _PyTok_SourceAppendLineWithNewline(
+PyAPI_FUNC(_PyTok_Off) Py_Tok_Source_Append_लिन्या_With_Newline(
     _PyTok_SourceText *source, const char *bytes, Py_ssize_t len);
 /* Return borrowed bytes excluding '\n', writing the byte length to *len.
    Line numbers are 1-based and clamp to the first or final line; a trailing
    '\n' adds an empty final line. The view need not be NUL-terminated.
    This does not set an exception. Append, discard, and clear invalidate the view. */
-PyAPI_FUNC(const char *) _PyTok_SourceLineView(
+PyAPI_FUNC(const char *) Py_Tok_Source_लिन्या_View(
     const _PyTok_SourceText *source, Py_ssize_t lineno, Py_ssize_t *len);
 
 #endif

@@ -152,7 +152,7 @@ static char *soft_keywords[] = {
 #define except_star_block_type 1063
 #define finally_block_type 1064
 #define match_stmt_type 1065
-#define subject_expr_type 1066
+#define subject_पाहायाग_type 1066
 #define case_block_type 1067
 #define guard_type 1068
 #define patterns_type 1069
@@ -161,16 +161,16 @@ static char *soft_keywords[] = {
 #define or_pattern_type 1072
 #define closed_pattern_type 1073
 #define literal_pattern_type 1074
-#define literal_expr_type 1075
-#define complex_number_type 1076
-#define signed_number_type 1077
-#define signed_real_number_type 1078
-#define real_number_type 1079
-#define imaginary_number_type 1080
+#define literal_पाहायाग_type 1075
+#define complex_नुमेरो_type 1076
+#define signed_नुमेरो_type 1077
+#define signed_real_नुमेरो_type 1078
+#define real_नुमेरो_type 1079
+#define imaginary_नुमेरो_type 1080
 #define capture_pattern_type 1081
 #define pattern_capture_target_type 1082
 #define wildcard_pattern_type 1083
-#define value_pattern_type 1084
+#define हालागा_pattern_type 1084
 #define attr_type 1085  // Left-recursive
 #define name_or_attr_type 1086  // Left-recursive
 #define group_pattern_type 1087
@@ -180,8 +180,8 @@ static char *soft_keywords[] = {
 #define maybe_star_pattern_type 1091
 #define star_pattern_type 1092
 #define mapping_pattern_type 1093
-#define items_pattern_type 1094
-#define key_value_pattern_type 1095
+#define मगा_बागाय_pattern_type 1094
+#define सुसि_हालागा_pattern_type 1095
 #define double_star_pattern_type 1096
 #define class_pattern_type 1097
 #define positional_patterns_type 1098
@@ -197,7 +197,7 @@ static char *soft_keywords[] = {
 #define expressions_type 1108
 #define expression_type 1109
 #define if_expression_type 1110
-#define yield_expr_type 1111
+#define yield_पाहायाग_type 1111
 #define star_expressions_type 1112
 #define star_expression_type 1113
 #define star_named_expressions_type 1114
@@ -212,7 +212,7 @@ static char *soft_keywords[] = {
 #define bitwise_or_type 1123  // Left-recursive
 #define bitwise_xor_type 1124  // Left-recursive
 #define bitwise_and_type 1125  // Left-recursive
-#define shift_expr_type 1126  // Left-recursive
+#define shift_पाहायाग_type 1126  // Left-recursive
 #define sum_type 1127  // Left-recursive
 #define term_type 1128  // Left-recursive
 #define factor_type 1129
@@ -234,7 +234,7 @@ static char *soft_keywords[] = {
 #define lambda_param_with_default_type 1145
 #define lambda_param_maybe_default_type 1146
 #define lambda_param_type 1147
-#define fstring_middle_type 1148
+#define fstring_गित्ना_type 1148
 #define fstring_replacement_field_type 1149
 #define fstring_conversion_type 1150
 #define fstring_full_format_spec_type 1151
@@ -244,11 +244,11 @@ static char *soft_keywords[] = {
 #define tstring_format_spec_type 1155
 #define tstring_full_format_spec_type 1156
 #define tstring_replacement_field_type 1157
-#define tstring_middle_type 1158
+#define tstring_गित्ना_type 1158
 #define tstring_type 1159
 #define string_type 1160
 #define strings_type 1161
-#define display_items_type 1162
+#define display_मगा_बागाय_type 1162
 #define display_item_type 1163
 #define list_type 1164
 #define tuple_type 1165
@@ -264,7 +264,7 @@ static char *soft_keywords[] = {
 #define genexp_type 1175
 #define dictcomp_type 1176
 #define arguments_type 1177
-#define args_type 1178
+#define मगा_कातविरान_type 1178
 #define kwargs_type 1179
 #define starred_expression_type 1180
 #define kwarg_or_starred_type 1181
@@ -274,7 +274,7 @@ static char *soft_keywords[] = {
 #define target_type 1185
 #define single_target_type 1186
 #define attribute_or_subscript_target_type 1187
-#define target_value_type 1188
+#define target_हालागा_type 1188
 #define del_targets_type 1189
 #define del_target_type 1190
 #define type_expressions_type 1191
@@ -542,7 +542,7 @@ static asdl_stmt_seq* simple_stmts_rule(Parser *p);
 static stmt_ty simple_stmt_rule(Parser *p);
 static stmt_ty compound_stmt_rule(Parser *p);
 static stmt_ty assignment_rule(Parser *p);
-static expr_ty annotated_rhs_rule(Parser *p);
+static पाहायाग_ty annotated_rhs_rule(Parser *p);
 static AugOperator* augassign_rule(Parser *p);
 static stmt_ty return_stmt_rule(Parser *p);
 static stmt_ty raise_stmt_rule(Parser *p);
@@ -562,9 +562,9 @@ static asdl_alias_seq* import_from_as_names_rule(Parser *p);
 static alias_ty import_from_as_name_rule(Parser *p);
 static asdl_alias_seq* dotted_as_names_rule(Parser *p);
 static alias_ty dotted_as_name_rule(Parser *p);
-static expr_ty dotted_name_rule(Parser *p);
+static पाहायाग_ty dotted_name_rule(Parser *p);
 static asdl_stmt_seq* block_rule(Parser *p);
-static asdl_expr_seq* decorators_rule(Parser *p);
+static asdl_पाहायाग_seq* decorators_rule(Parser *p);
 static stmt_ty class_def_rule(Parser *p);
 static stmt_ty class_def_raw_rule(Parser *p);
 static stmt_ty function_def_rule(Parser *p);
@@ -581,9 +581,9 @@ static NameDefaultPair* param_with_default_rule(Parser *p);
 static NameDefaultPair* param_maybe_default_rule(Parser *p);
 static arg_ty param_rule(Parser *p);
 static arg_ty param_star_annotation_rule(Parser *p);
-static expr_ty annotation_rule(Parser *p);
-static expr_ty star_annotation_rule(Parser *p);
-static expr_ty default_rule(Parser *p);
+static पाहायाग_ty annotation_rule(Parser *p);
+static पाहायाग_ty star_annotation_rule(Parser *p);
+static पाहायाग_ty default_rule(Parser *p);
 static stmt_ty if_stmt_rule(Parser *p);
 static stmt_ty elif_stmt_rule(Parser *p);
 static asdl_stmt_seq* else_block_rule(Parser *p);
@@ -596,27 +596,27 @@ static excepthandler_ty except_block_rule(Parser *p);
 static excepthandler_ty except_star_block_rule(Parser *p);
 static asdl_stmt_seq* finally_block_rule(Parser *p);
 static stmt_ty match_stmt_rule(Parser *p);
-static expr_ty subject_expr_rule(Parser *p);
+static पाहायाग_ty subject_पाहायाग_rule(Parser *p);
 static match_case_ty case_block_rule(Parser *p);
-static expr_ty guard_rule(Parser *p);
+static पाहायाग_ty guard_rule(Parser *p);
 static pattern_ty patterns_rule(Parser *p);
 static pattern_ty pattern_rule(Parser *p);
 static pattern_ty as_pattern_rule(Parser *p);
 static pattern_ty or_pattern_rule(Parser *p);
 static pattern_ty closed_pattern_rule(Parser *p);
 static pattern_ty literal_pattern_rule(Parser *p);
-static expr_ty literal_expr_rule(Parser *p);
-static expr_ty complex_number_rule(Parser *p);
-static expr_ty signed_number_rule(Parser *p);
-static expr_ty signed_real_number_rule(Parser *p);
-static expr_ty real_number_rule(Parser *p);
-static expr_ty imaginary_number_rule(Parser *p);
+static पाहायाग_ty literal_पाहायाग_rule(Parser *p);
+static पाहायाग_ty complex_नुमेरो_rule(Parser *p);
+static पाहायाग_ty signed_नुमेरो_rule(Parser *p);
+static पाहायाग_ty signed_real_नुमेरो_rule(Parser *p);
+static पाहायाग_ty real_नुमेरो_rule(Parser *p);
+static पाहायाग_ty imaginary_नुमेरो_rule(Parser *p);
 static pattern_ty capture_pattern_rule(Parser *p);
-static expr_ty pattern_capture_target_rule(Parser *p);
+static पाहायाग_ty pattern_capture_target_rule(Parser *p);
 static pattern_ty wildcard_pattern_rule(Parser *p);
-static pattern_ty value_pattern_rule(Parser *p);
-static expr_ty attr_rule(Parser *p);
-static expr_ty name_or_attr_rule(Parser *p);
+static pattern_ty हालागा_pattern_rule(Parser *p);
+static पाहायाग_ty attr_rule(Parser *p);
+static पाहायाग_ty name_or_attr_rule(Parser *p);
 static pattern_ty group_pattern_rule(Parser *p);
 static pattern_ty sequence_pattern_rule(Parser *p);
 static asdl_seq* open_sequence_pattern_rule(Parser *p);
@@ -624,50 +624,50 @@ static asdl_seq* maybe_sequence_pattern_rule(Parser *p);
 static pattern_ty maybe_star_pattern_rule(Parser *p);
 static pattern_ty star_pattern_rule(Parser *p);
 static pattern_ty mapping_pattern_rule(Parser *p);
-static asdl_seq* items_pattern_rule(Parser *p);
-static KeyPatternPair* key_value_pattern_rule(Parser *p);
-static expr_ty double_star_pattern_rule(Parser *p);
+static asdl_seq* मगा_बागाय_pattern_rule(Parser *p);
+static सुसि_Pattern_Pair* सुसि_हालागा_pattern_rule(Parser *p);
+static पाहायाग_ty double_star_pattern_rule(Parser *p);
 static pattern_ty class_pattern_rule(Parser *p);
 static asdl_pattern_seq* positional_patterns_rule(Parser *p);
 static asdl_seq* keyword_patterns_rule(Parser *p);
-static KeyPatternPair* keyword_pattern_rule(Parser *p);
+static सुसि_Pattern_Pair* keyword_pattern_rule(Parser *p);
 static stmt_ty type_alias_rule(Parser *p);
 static asdl_type_param_seq* type_params_rule(Parser *p);
 static asdl_type_param_seq* type_param_seq_rule(Parser *p);
 static type_param_ty type_param_rule(Parser *p);
-static expr_ty type_param_bound_rule(Parser *p);
-static expr_ty type_param_default_rule(Parser *p);
-static expr_ty type_param_starred_default_rule(Parser *p);
-static expr_ty expressions_rule(Parser *p);
-static expr_ty expression_rule(Parser *p);
-static expr_ty if_expression_rule(Parser *p);
-static expr_ty yield_expr_rule(Parser *p);
-static expr_ty star_expressions_rule(Parser *p);
-static expr_ty star_expression_rule(Parser *p);
-static asdl_expr_seq* star_named_expressions_rule(Parser *p);
-static expr_ty star_named_expression_rule(Parser *p);
-static expr_ty assignment_expression_rule(Parser *p);
-static expr_ty named_expression_rule(Parser *p);
-static expr_ty disjunction_rule(Parser *p);
-static expr_ty conjunction_rule(Parser *p);
-static expr_ty inversion_rule(Parser *p);
-static expr_ty comparison_rule(Parser *p);
-static CmpopExprPair* compare_op_bitwise_or_pair_rule(Parser *p);
-static expr_ty bitwise_or_rule(Parser *p);
-static expr_ty bitwise_xor_rule(Parser *p);
-static expr_ty bitwise_and_rule(Parser *p);
-static expr_ty shift_expr_rule(Parser *p);
-static expr_ty sum_rule(Parser *p);
-static expr_ty term_rule(Parser *p);
-static expr_ty factor_rule(Parser *p);
-static expr_ty power_rule(Parser *p);
-static expr_ty await_primary_rule(Parser *p);
-static expr_ty primary_rule(Parser *p);
-static expr_ty slices_rule(Parser *p);
-static expr_ty slice_rule(Parser *p);
-static expr_ty atom_rule(Parser *p);
-static expr_ty group_rule(Parser *p);
-static expr_ty lambdef_rule(Parser *p);
+static पाहायाग_ty type_param_bound_rule(Parser *p);
+static पाहायाग_ty type_param_default_rule(Parser *p);
+static पाहायाग_ty type_param_starred_default_rule(Parser *p);
+static पाहायाग_ty expressions_rule(Parser *p);
+static पाहायाग_ty expression_rule(Parser *p);
+static पाहायाग_ty if_expression_rule(Parser *p);
+static पाहायाग_ty yield_पाहायाग_rule(Parser *p);
+static पाहायाग_ty star_expressions_rule(Parser *p);
+static पाहायाग_ty star_expression_rule(Parser *p);
+static asdl_पाहायाग_seq* star_named_expressions_rule(Parser *p);
+static पाहायाग_ty star_named_expression_rule(Parser *p);
+static पाहायाग_ty assignment_expression_rule(Parser *p);
+static पाहायाग_ty named_expression_rule(Parser *p);
+static पाहायाग_ty disjunction_rule(Parser *p);
+static पाहायाग_ty conjunction_rule(Parser *p);
+static पाहायाग_ty inversion_rule(Parser *p);
+static पाहायाग_ty comparison_rule(Parser *p);
+static Cmpop_पाहायाग_Pair* compare_op_bitwise_or_pair_rule(Parser *p);
+static पाहायाग_ty bitwise_or_rule(Parser *p);
+static पाहायाग_ty bitwise_xor_rule(Parser *p);
+static पाहायाग_ty bitwise_and_rule(Parser *p);
+static पाहायाग_ty shift_पाहायाग_rule(Parser *p);
+static पाहायाग_ty sum_rule(Parser *p);
+static पाहायाग_ty term_rule(Parser *p);
+static पाहायाग_ty factor_rule(Parser *p);
+static पाहायाग_ty power_rule(Parser *p);
+static पाहायाग_ty await_primary_rule(Parser *p);
+static पाहायाग_ty primary_rule(Parser *p);
+static पाहायाग_ty slices_rule(Parser *p);
+static पाहायाग_ty slice_rule(Parser *p);
+static पाहायाग_ty atom_rule(Parser *p);
+static पाहायाग_ty group_rule(Parser *p);
+static पाहायाग_ty lambdef_rule(Parser *p);
 static arguments_ty lambda_params_rule(Parser *p);
 static arguments_ty lambda_parameters_rule(Parser *p);
 static asdl_arg_seq* lambda_slash_no_default_rule(Parser *p);
@@ -678,61 +678,61 @@ static arg_ty lambda_param_no_default_rule(Parser *p);
 static NameDefaultPair* lambda_param_with_default_rule(Parser *p);
 static NameDefaultPair* lambda_param_maybe_default_rule(Parser *p);
 static arg_ty lambda_param_rule(Parser *p);
-static expr_ty fstring_middle_rule(Parser *p);
-static expr_ty fstring_replacement_field_rule(Parser *p);
+static पाहायाग_ty fstring_गित्ना_rule(Parser *p);
+static पाहायाग_ty fstring_replacement_field_rule(Parser *p);
 static ResultTokenWithMetadata* fstring_conversion_rule(Parser *p);
 static ResultTokenWithMetadata* fstring_full_format_spec_rule(Parser *p);
-static expr_ty fstring_format_spec_rule(Parser *p);
-static expr_ty fstring_rule(Parser *p);
-static expr_ty tstring_format_spec_replacement_field_rule(Parser *p);
-static expr_ty tstring_format_spec_rule(Parser *p);
+static पाहायाग_ty fstring_format_spec_rule(Parser *p);
+static पाहायाग_ty fstring_rule(Parser *p);
+static पाहायाग_ty tstring_format_spec_replacement_field_rule(Parser *p);
+static पाहायाग_ty tstring_format_spec_rule(Parser *p);
 static ResultTokenWithMetadata* tstring_full_format_spec_rule(Parser *p);
-static expr_ty tstring_replacement_field_rule(Parser *p);
-static expr_ty tstring_middle_rule(Parser *p);
-static expr_ty tstring_rule(Parser *p);
-static expr_ty string_rule(Parser *p);
-static expr_ty strings_rule(Parser *p);
-static asdl_expr_seq* display_items_rule(Parser *p);
-static expr_ty display_item_rule(Parser *p);
-static expr_ty list_rule(Parser *p);
-static expr_ty tuple_rule(Parser *p);
-static expr_ty set_rule(Parser *p);
-static expr_ty dict_rule(Parser *p);
+static पाहायाग_ty tstring_replacement_field_rule(Parser *p);
+static पाहायाग_ty tstring_गित्ना_rule(Parser *p);
+static पाहायाग_ty tstring_rule(Parser *p);
+static पाहायाग_ty string_rule(Parser *p);
+static पाहायाग_ty strings_rule(Parser *p);
+static asdl_पाहायाग_seq* display_मगा_बागाय_rule(Parser *p);
+static पाहायाग_ty display_item_rule(Parser *p);
+static पाहायाग_ty list_rule(Parser *p);
+static पाहायाग_ty tuple_rule(Parser *p);
+static पाहायाग_ty set_rule(Parser *p);
+static पाहायाग_ty dict_rule(Parser *p);
 static asdl_seq* double_starred_kvpairs_rule(Parser *p);
-static KeyValuePair* double_starred_kvpair_rule(Parser *p);
-static KeyValuePair* kvpair_rule(Parser *p);
+static सुसि_हालागा_Pair* double_starred_kvpair_rule(Parser *p);
+static सुसि_हालागा_Pair* kvpair_rule(Parser *p);
 static asdl_comprehension_seq* for_if_clauses_rule(Parser *p);
 static comprehension_ty for_if_clause_rule(Parser *p);
-static expr_ty listcomp_rule(Parser *p);
-static expr_ty setcomp_rule(Parser *p);
-static expr_ty genexp_rule(Parser *p);
-static expr_ty dictcomp_rule(Parser *p);
-static expr_ty arguments_rule(Parser *p);
-static expr_ty args_rule(Parser *p);
+static पाहायाग_ty listcomp_rule(Parser *p);
+static पाहायाग_ty setcomp_rule(Parser *p);
+static पाहायाग_ty genexp_rule(Parser *p);
+static पाहायाग_ty dictcomp_rule(Parser *p);
+static पाहायाग_ty arguments_rule(Parser *p);
+static पाहायाग_ty मगा_कातविरान_rule(Parser *p);
 static asdl_seq* kwargs_rule(Parser *p);
-static expr_ty starred_expression_rule(Parser *p);
+static पाहायाग_ty starred_expression_rule(Parser *p);
 static KeywordOrStarred* kwarg_or_starred_rule(Parser *p);
 static KeywordOrStarred* kwarg_or_double_starred_rule(Parser *p);
-static expr_ty star_targets_rule(Parser *p);
-static expr_ty star_target_rule(Parser *p);
-static expr_ty target_rule(Parser *p);
-static expr_ty single_target_rule(Parser *p);
-static expr_ty attribute_or_subscript_target_rule(Parser *p);
-static expr_ty target_value_rule(Parser *p);
-static asdl_expr_seq* del_targets_rule(Parser *p);
-static expr_ty del_target_rule(Parser *p);
-static asdl_expr_seq* type_expressions_rule(Parser *p);
+static पाहायाग_ty star_targets_rule(Parser *p);
+static पाहायाग_ty star_target_rule(Parser *p);
+static पाहायाग_ty target_rule(Parser *p);
+static पाहायाग_ty single_target_rule(Parser *p);
+static पाहायाग_ty attribute_or_subscript_target_rule(Parser *p);
+static पाहायाग_ty target_हालागा_rule(Parser *p);
+static asdl_पाहायाग_seq* del_targets_rule(Parser *p);
+static पाहायाग_ty del_target_rule(Parser *p);
+static asdl_पाहायाग_seq* type_expressions_rule(Parser *p);
 static Token* func_type_comment_rule(Parser *p);
 static void *invalid_arguments_rule(Parser *p);
 static void *invalid_kwarg_rule(Parser *p);
-static expr_ty expression_without_invalid_rule(Parser *p);
+static पाहायाग_ty expression_without_invalid_rule(Parser *p);
 static void *invalid_legacy_expression_rule(Parser *p);
 static void *invalid_type_param_rule(Parser *p);
 static void *invalid_expression_rule(Parser *p);
 static void *invalid_if_expression_rule(Parser *p);
 static void *invalid_named_expression_rule(Parser *p);
 static void *invalid_assignment_rule(Parser *p);
-static expr_ty invalid_ann_assign_target_rule(Parser *p);
+static पाहायाग_ty invalid_ann_assign_target_rule(Parser *p);
 static void *invalid_raise_stmt_rule(Parser *p);
 static void *invalid_del_stmt_rule(Parser *p);
 static void *invalid_assert_stmt_rule(Parser *p);
@@ -979,8 +979,8 @@ static void *_tmp_178_rule(Parser *p);
 static mod_ty
 file_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1025,8 +1025,8 @@ file_rule(Parser *p)
 static mod_ty
 interactive_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1068,8 +1068,8 @@ interactive_rule(Parser *p)
 static mod_ty
 eval_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1084,7 +1084,7 @@ eval_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> eval[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expressions NEWLINE* $"));
         asdl_seq * _loop0_1_var;
-        expr_ty a;
+        पाहायाग_ty a;
         Token * endmarker_var;
         if (
             (a = expressions_rule(p))  // expressions
@@ -1117,8 +1117,8 @@ eval_rule(Parser *p)
 static mod_ty
 func_type_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1137,7 +1137,7 @@ func_type_rule(Parser *p)
         Token * _literal_2;
         asdl_seq * _loop0_1_var;
         void *a;
-        expr_ty b;
+        पाहायाग_ty b;
         Token * endmarker_var;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
@@ -1178,8 +1178,8 @@ func_type_rule(Parser *p)
 static asdl_stmt_seq*
 statements_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1221,8 +1221,8 @@ statements_rule(Parser *p)
 static asdl_stmt_seq*
 statement_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1288,8 +1288,8 @@ statement_rule(Parser *p)
 static asdl_stmt_seq*
 single_compound_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1331,8 +1331,8 @@ single_compound_stmt_rule(Parser *p)
 static asdl_stmt_seq*
 statement_newline_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1462,8 +1462,8 @@ statement_newline_rule(Parser *p)
 static asdl_stmt_seq*
 simple_stmts_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1555,8 +1555,8 @@ simple_stmts_rule(Parser *p)
 static stmt_ty
 simple_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -1644,7 +1644,7 @@ simple_stmt_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> simple_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expressions"));
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (e = star_expressions_rule(p))  // star_expressions
         )
@@ -1659,7 +1659,7 @@ simple_stmt_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Expr ( e , EXTRA );
+            _res = Py_AST_पाहायाग ( e , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -1883,7 +1883,7 @@ simple_stmt_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, simple_stmt_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, simple_stmt_type, _res);
     p->level--;
     return _res;
 }
@@ -1900,8 +1900,8 @@ simple_stmt_rule(Parser *p)
 static stmt_ty
 compound_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2090,8 +2090,8 @@ compound_stmt_rule(Parser *p)
 static stmt_ty
 assignment_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2115,8 +2115,8 @@ assignment_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME ':' expression ['=' annotated_rhs]"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         void *c;
         if (
             (a = _PyPegen_name_token(p))  // NAME
@@ -2138,7 +2138,7 @@ assignment_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = CHECK_VERSION ( stmt_ty , 6 , "Variable annotation syntax is" , _PyAST_AnnAssign ( CHECK ( expr_ty , _PyPegen_set_expr_context ( p , a , Store ) ) , b , c , 1 , EXTRA ) );
+            _res = CHECK_VERSION ( stmt_ty , 6 , "Variable annotation syntax is" , _PyAST_AnnAssign ( CHECK ( पाहायाग_ty , Py_Pegen_set_पाहायाग_context ( p , a , Store ) ) , b , c , 1 , EXTRA ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -2158,7 +2158,7 @@ assignment_rule(Parser *p)
         D(fprintf(stderr, "%*c> assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "('(' single_target ')' | attribute_or_subscript_target) ':' expression ['=' annotated_rhs]"));
         Token * _literal;
         void *a;
-        expr_ty b;
+        पाहायाग_ty b;
         void *c;
         if (
             (a = _tmp_11_rule(p))  // '(' single_target ')' | attribute_or_subscript_target
@@ -2198,11 +2198,11 @@ assignment_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "((star_targets '='))+ annotated_rhs !'=' TYPE_COMMENT?"));
-        asdl_expr_seq* a;
-        expr_ty b;
+        asdl_पाहायाग_seq* a;
+        पाहायाग_ty b;
         void *tc;
         if (
-            (a = (asdl_expr_seq*)_loop1_12_rule(p))  // ((star_targets '='))+
+            (a = (asdl_पाहायाग_seq*)_loop1_12_rule(p))  // ((star_targets '='))+
             &&
             (b = annotated_rhs_rule(p))  // annotated_rhs
             &&
@@ -2240,9 +2240,9 @@ assignment_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "single_target augassign ~ annotated_rhs"));
         int _cut_var = 0;
-        expr_ty a;
+        पाहायाग_ty a;
         AugOperator* b;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (a = single_target_rule(p))  // single_target
             &&
@@ -2305,17 +2305,17 @@ assignment_rule(Parser *p)
 }
 
 // annotated_rhs: yield_expr | star_expressions
-static expr_ty
+static पाहायाग_ty
 annotated_rhs_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // yield_expr
         if (p->error_indicator) {
@@ -2323,13 +2323,13 @@ annotated_rhs_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> annotated_rhs[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "yield_expr"));
-        expr_ty yield_expr_var;
+        पाहायाग_ty yield_पाहायाग_var;
         if (
-            (yield_expr_var = yield_expr_rule(p))  // yield_expr
+            (yield_पाहायाग_var = yield_पाहायाग_rule(p))  // yield_expr
         )
         {
             D(fprintf(stderr, "%*c+ annotated_rhs[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "yield_expr"));
-            _res = yield_expr_var;
+            _res = yield_पाहायाग_var;
             goto done;
         }
         p->mark = _mark;
@@ -2342,7 +2342,7 @@ annotated_rhs_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> annotated_rhs[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expressions"));
-        expr_ty star_expressions_var;
+        पाहायाग_ty star_expressions_var;
         if (
             (star_expressions_var = star_expressions_rule(p))  // star_expressions
         )
@@ -2378,8 +2378,8 @@ annotated_rhs_rule(Parser *p)
 static AugOperator*
 augassign_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2709,8 +2709,8 @@ augassign_rule(Parser *p)
 static stmt_ty
 return_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2777,8 +2777,8 @@ return_stmt_rule(Parser *p)
 static stmt_ty
 raise_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2803,8 +2803,8 @@ raise_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> raise_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'raise' expression 'from' expression"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (_keyword = _PyPegen_expect_token(p, 632))  // token='raise'
             &&
@@ -2863,7 +2863,7 @@ raise_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> raise_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'raise' expression"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 632))  // token='raise'
             &&
@@ -2935,8 +2935,8 @@ raise_stmt_rule(Parser *p)
 static stmt_ty
 pass_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -2996,8 +2996,8 @@ pass_stmt_rule(Parser *p)
 static stmt_ty
 break_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3057,8 +3057,8 @@ break_stmt_rule(Parser *p)
 static stmt_ty
 continue_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3118,8 +3118,8 @@ continue_stmt_rule(Parser *p)
 static stmt_ty
 global_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3143,11 +3143,11 @@ global_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> global_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'global' ','.NAME+"));
         Token * _keyword;
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
             (_keyword = _PyPegen_expect_token(p, 530))  // token='global'
             &&
-            (a = (asdl_expr_seq*)_gather_14_rule(p))  // ','.NAME+
+            (a = (asdl_पाहायाग_seq*)_gather_14_rule(p))  // ','.NAME+
         )
         {
             D(fprintf(stderr, "%*c+ global_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'global' ','.NAME+"));
@@ -3182,8 +3182,8 @@ global_stmt_rule(Parser *p)
 static stmt_ty
 nonlocal_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3207,11 +3207,11 @@ nonlocal_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> nonlocal_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'nonlocal' ','.NAME+"));
         Token * _keyword;
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
             (_keyword = _PyPegen_expect_token(p, 531))  // token='nonlocal'
             &&
-            (a = (asdl_expr_seq*)_gather_14_rule(p))  // ','.NAME+
+            (a = (asdl_पाहायाग_seq*)_gather_14_rule(p))  // ','.NAME+
         )
         {
             D(fprintf(stderr, "%*c+ nonlocal_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'nonlocal' ','.NAME+"));
@@ -3246,8 +3246,8 @@ nonlocal_stmt_rule(Parser *p)
 static stmt_ty
 del_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3271,7 +3271,7 @@ del_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> del_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'del' del_targets &(';' | NEWLINE)"));
         Token * _keyword;
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
             (_keyword = _PyPegen_expect_token(p, 634))  // token='del'
             &&
@@ -3331,8 +3331,8 @@ del_stmt_rule(Parser *p)
 static stmt_ty
 yield_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3355,9 +3355,9 @@ yield_stmt_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> yield_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "yield_expr"));
-        expr_ty y;
+        पाहायाग_ty y;
         if (
-            (y = yield_expr_rule(p))  // yield_expr
+            (y = yield_पाहायाग_rule(p))  // yield_expr
         )
         {
             D(fprintf(stderr, "%*c+ yield_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "yield_expr"));
@@ -3370,7 +3370,7 @@ yield_stmt_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Expr ( y , EXTRA );
+            _res = Py_AST_पाहायाग ( y , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -3392,8 +3392,8 @@ yield_stmt_rule(Parser *p)
 static stmt_ty
 assert_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3436,7 +3436,7 @@ assert_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> assert_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'assert' expression [',' expression]"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (_keyword = _PyPegen_expect_token(p, 638))  // token='assert'
@@ -3478,8 +3478,8 @@ assert_stmt_rule(Parser *p)
 static stmt_ty
 import_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3550,7 +3550,7 @@ import_stmt_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, import_stmt_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, import_stmt_type, _res);
     p->level--;
     return _res;
 }
@@ -3559,8 +3559,8 @@ import_stmt_rule(Parser *p)
 static stmt_ty
 import_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3629,8 +3629,8 @@ import_name_rule(Parser *p)
 static stmt_ty
 import_from_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3675,7 +3675,7 @@ import_from_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         asdl_seq * a;
-        expr_ty b;
+        पाहायाग_ty b;
         asdl_alias_seq* c;
         void *lazy;
         if (
@@ -3747,7 +3747,7 @@ import_from_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_ImportFrom ( NULL , b , _PyPegen_seq_count_dots ( a ) , lazy ? 1 : 0 , EXTRA );
+            _res = _PyAST_ImportFrom ( NULL , b , Py_Pegen_seq_बिलांग_dots ( a ) , lazy ? 1 : 0 , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -3773,8 +3773,8 @@ import_from_rule(Parser *p)
 static asdl_alias_seq*
 import_from_targets_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3908,8 +3908,8 @@ import_from_targets_rule(Parser *p)
 static asdl_alias_seq*
 import_from_as_names_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3951,8 +3951,8 @@ import_from_as_names_rule(Parser *p)
 static alias_ty
 import_from_as_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -3994,7 +3994,7 @@ import_from_as_name_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> import_from_as_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME ['as' NAME]"));
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
@@ -4012,7 +4012,7 @@ import_from_as_name_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_alias ( a -> v . Name . id , ( b ) ? ( ( expr_ty ) b ) -> v . Name . id : NULL , EXTRA );
+            _res = _PyAST_alias ( a -> v . Name . id , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Name . id : NULL , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -4034,8 +4034,8 @@ import_from_as_name_rule(Parser *p)
 static asdl_alias_seq*
 dotted_as_names_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4077,8 +4077,8 @@ dotted_as_names_rule(Parser *p)
 static alias_ty
 dotted_as_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4120,7 +4120,7 @@ dotted_as_name_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> dotted_as_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dotted_name ['as' NAME]"));
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (a = dotted_name_rule(p))  // dotted_name
@@ -4138,7 +4138,7 @@ dotted_as_name_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_alias ( a -> v . Name . id , ( b ) ? ( ( expr_ty ) b ) -> v . Name . id : NULL , EXTRA );
+            _res = _PyAST_alias ( a -> v . Name . id , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Name . id : NULL , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -4158,27 +4158,27 @@ dotted_as_name_rule(Parser *p)
 
 // Left-recursive
 // dotted_name: dotted_name '.' NAME | NAME
-static expr_ty dotted_name_raw(Parser *);
-static expr_ty
+static पाहायाग_ty dotted_name_raw(Parser *);
+static पाहायाग_ty
 dotted_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, dotted_name_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, dotted_name_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, dotted_name_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = dotted_name_raw(p);
@@ -4195,17 +4195,17 @@ dotted_name_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 dotted_name_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // dotted_name '.' NAME
         if (p->error_indicator) {
@@ -4214,8 +4214,8 @@ dotted_name_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> dotted_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dotted_name '.' NAME"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = dotted_name_rule(p))  // dotted_name
             &&
@@ -4243,7 +4243,7 @@ dotted_name_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> dotted_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME"));
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
         )
@@ -4266,8 +4266,8 @@ dotted_name_raw(Parser *p)
 static asdl_stmt_seq*
 block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4352,23 +4352,23 @@ block_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, block_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, block_type, _res);
     p->level--;
     return _res;
 }
 
 // decorators: (('@' named_expression NEWLINE))+
-static asdl_expr_seq*
+static asdl_पाहायाग_seq*
 decorators_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    asdl_expr_seq* _res = NULL;
+    asdl_पाहायाग_seq* _res = NULL;
     int _mark = p->mark;
     { // (('@' named_expression NEWLINE))+
         if (p->error_indicator) {
@@ -4376,9 +4376,9 @@ decorators_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> decorators[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "(('@' named_expression NEWLINE))+"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_loop1_24_rule(p))  // (('@' named_expression NEWLINE))+
+            (a = (asdl_पाहायाग_seq*)_loop1_24_rule(p))  // (('@' named_expression NEWLINE))+
         )
         {
             D(fprintf(stderr, "%*c+ decorators[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(('@' named_expression NEWLINE))+"));
@@ -4404,8 +4404,8 @@ decorators_rule(Parser *p)
 static stmt_ty
 class_def_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4419,7 +4419,7 @@ class_def_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> class_def[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "decorators class_def_raw"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         stmt_ty b;
         if (
             (a = decorators_rule(p))  // decorators
@@ -4471,8 +4471,8 @@ class_def_rule(Parser *p)
 static stmt_ty
 class_def_raw_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4516,7 +4516,7 @@ class_def_raw_rule(Parser *p)
         D(fprintf(stderr, "%*c> class_def_raw[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'class' NAME type_params? ['(' arguments? ')'] ':' block"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         asdl_stmt_seq* c;
         void *t;
@@ -4544,7 +4544,7 @@ class_def_raw_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_ClassDef ( a -> v . Name . id , ( b ) ? ( ( expr_ty ) b ) -> v . Call . args : NULL , ( b ) ? ( ( expr_ty ) b ) -> v . Call . keywords : NULL , c , NULL , t , EXTRA );
+            _res = _PyAST_ClassDef ( a -> v . Name . id , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Call . मगा_कातविरान : NULL , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Call . keywords : NULL , c , NULL , t , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -4566,8 +4566,8 @@ class_def_raw_rule(Parser *p)
 static stmt_ty
 function_def_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4581,7 +4581,7 @@ function_def_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> function_def[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "decorators function_def_raw"));
-        asdl_expr_seq* d;
+        asdl_पाहायाग_seq* d;
         stmt_ty f;
         if (
             (d = decorators_rule(p))  // decorators
@@ -4634,8 +4634,8 @@ function_def_rule(Parser *p)
 static stmt_ty
 function_def_raw_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4683,7 +4683,7 @@ function_def_raw_rule(Parser *p)
         Token * _literal_2;
         void *a;
         asdl_stmt_seq* b;
-        expr_ty n;
+        पाहायाग_ty n;
         void *params;
         void *t;
         void *tc;
@@ -4744,7 +4744,7 @@ function_def_raw_rule(Parser *p)
         Token * _literal_2;
         void *a;
         asdl_stmt_seq* b;
-        expr_ty n;
+        पाहायाग_ty n;
         void *params;
         void *t;
         void *tc;
@@ -4804,8 +4804,8 @@ function_def_raw_rule(Parser *p)
 static arguments_ty
 params_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -4866,8 +4866,8 @@ params_rule(Parser *p)
 static arguments_ty
 parameters_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5029,8 +5029,8 @@ parameters_rule(Parser *p)
 static asdl_arg_seq*
 slash_no_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5109,8 +5109,8 @@ slash_no_default_rule(Parser *p)
 static SlashWithDefault*
 slash_with_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5198,8 +5198,8 @@ slash_with_default_rule(Parser *p)
 static StarEtc*
 star_etc_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5359,8 +5359,8 @@ star_etc_rule(Parser *p)
 static arg_ty
 kwds_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5424,8 +5424,8 @@ kwds_rule(Parser *p)
 static arg_ty
 param_no_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5504,8 +5504,8 @@ param_no_default_rule(Parser *p)
 static arg_ty
 param_no_default_star_annotation_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5582,8 +5582,8 @@ param_no_default_star_annotation_rule(Parser *p)
 static NameDefaultPair*
 param_with_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5599,7 +5599,7 @@ param_with_default_rule(Parser *p)
         D(fprintf(stderr, "%*c> param_with_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "param default ',' TYPE_COMMENT?"));
         Token * _literal;
         arg_ty a;
-        expr_ty c;
+        पाहायाग_ty c;
         void *tc;
         if (
             (a = param_rule(p))  // param
@@ -5631,7 +5631,7 @@ param_with_default_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> param_with_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "param default TYPE_COMMENT? &')'"));
         arg_ty a;
-        expr_ty c;
+        पाहायाग_ty c;
         void *tc;
         if (
             (a = param_rule(p))  // param
@@ -5668,8 +5668,8 @@ param_with_default_rule(Parser *p)
 static NameDefaultPair*
 param_maybe_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5752,8 +5752,8 @@ param_maybe_default_rule(Parser *p)
 static arg_ty
 param_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5776,7 +5776,7 @@ param_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME annotation?"));
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
@@ -5816,8 +5816,8 @@ param_rule(Parser *p)
 static arg_ty
 param_star_annotation_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -5840,8 +5840,8 @@ param_star_annotation_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> param_star_annotation[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME star_annotation"));
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -5877,17 +5877,17 @@ param_star_annotation_rule(Parser *p)
 }
 
 // annotation: ':' expression
-static expr_ty
+static पाहायाग_ty
 annotation_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // ':' expression
         if (p->error_indicator) {
@@ -5896,7 +5896,7 @@ annotation_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> annotation[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "':' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -5923,17 +5923,17 @@ annotation_rule(Parser *p)
 }
 
 // star_annotation: ':' star_expression
-static expr_ty
+static पाहायाग_ty
 star_annotation_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // ':' star_expression
         if (p->error_indicator) {
@@ -5942,7 +5942,7 @@ star_annotation_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> star_annotation[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "':' star_expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -5969,17 +5969,17 @@ star_annotation_rule(Parser *p)
 }
 
 // default: '=' expression | invalid_default
-static expr_ty
+static पाहायाग_ty
 default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // '=' expression
         if (p->error_indicator) {
@@ -5988,7 +5988,7 @@ default_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'=' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
             &&
@@ -6040,8 +6040,8 @@ default_rule(Parser *p)
 static stmt_ty
 if_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6085,7 +6085,7 @@ if_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> if_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' named_expression ':' block elif_stmt"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* b;
         stmt_ty c;
         if (
@@ -6130,7 +6130,7 @@ if_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> if_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' named_expression ':' block else_block?"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* b;
         void *c;
         if (
@@ -6180,8 +6180,8 @@ if_stmt_rule(Parser *p)
 static stmt_ty
 elif_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6225,7 +6225,7 @@ elif_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> elif_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'elif' named_expression ':' block elif_stmt"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* b;
         stmt_ty c;
         if (
@@ -6270,7 +6270,7 @@ elif_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> elif_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'elif' named_expression ':' block else_block?"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* b;
         void *c;
         if (
@@ -6317,8 +6317,8 @@ elif_stmt_rule(Parser *p)
 static asdl_stmt_seq*
 else_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6385,8 +6385,8 @@ else_block_rule(Parser *p)
 static stmt_ty
 while_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6430,7 +6430,7 @@ while_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> while_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'while' named_expression ':' block else_block?"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* b;
         void *c;
         if (
@@ -6481,8 +6481,8 @@ while_stmt_rule(Parser *p)
 static stmt_ty
 for_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6530,8 +6530,8 @@ for_stmt_rule(Parser *p)
         Token * _literal;
         asdl_stmt_seq* b;
         void *el;
-        expr_ty ex;
-        expr_ty t;
+        पाहायाग_ty ex;
+        पाहायाग_ty t;
         void *tc;
         if (
             (_keyword = _PyPegen_expect_token(p, 712))  // token='for'
@@ -6592,8 +6592,8 @@ for_stmt_rule(Parser *p)
         Token * _literal;
         asdl_stmt_seq* b;
         void *el;
-        expr_ty ex;
-        expr_ty t;
+        पाहायाग_ty ex;
+        पाहायाग_ty t;
         void *tc;
         if (
             (_keyword = _PyPegen_expect_token(p, 716))  // token='async'
@@ -6678,8 +6678,8 @@ for_stmt_rule(Parser *p)
 static stmt_ty
 with_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6950,8 +6950,8 @@ with_stmt_rule(Parser *p)
 static withitem_ty
 with_item_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -6966,8 +6966,8 @@ with_item_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> with_item[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression 'as' star_target &(',' | ')' | ':')"));
         Token * _keyword;
-        expr_ty e;
-        expr_ty t;
+        पाहायाग_ty e;
+        पाहायाग_ty t;
         if (
             (e = expression_rule(p))  // expression
             &&
@@ -7016,7 +7016,7 @@ with_item_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> with_item[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression"));
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (e = expression_rule(p))  // expression
         )
@@ -7048,8 +7048,8 @@ with_item_rule(Parser *p)
 static stmt_ty
 try_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7239,8 +7239,8 @@ try_stmt_rule(Parser *p)
 static excepthandler_ty
 except_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7285,7 +7285,7 @@ except_block_rule(Parser *p)
         Token * _keyword;
         Token * _literal;
         asdl_stmt_seq* b;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7328,8 +7328,8 @@ except_block_rule(Parser *p)
         Token * _keyword_1;
         Token * _literal;
         asdl_stmt_seq* b;
-        expr_ty e;
-        expr_ty t;
+        पाहायाग_ty e;
+        पाहायाग_ty t;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7354,7 +7354,7 @@ except_block_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_ExceptHandler ( e , ( ( expr_ty ) t ) -> v . Name . id , b , EXTRA );
+            _res = _PyAST_ExceptHandler ( e , ( ( पाहायाग_ty ) t ) -> v . Name . id , b , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -7375,7 +7375,7 @@ except_block_rule(Parser *p)
         Token * _keyword;
         Token * _literal;
         asdl_stmt_seq* b;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7481,8 +7481,8 @@ except_block_rule(Parser *p)
 static excepthandler_ty
 except_star_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7528,7 +7528,7 @@ except_star_block_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_stmt_seq* b;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7574,8 +7574,8 @@ except_star_block_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_stmt_seq* b;
-        expr_ty e;
-        expr_ty t;
+        पाहायाग_ty e;
+        पाहायाग_ty t;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7602,7 +7602,7 @@ except_star_block_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_ExceptHandler ( e , ( ( expr_ty ) t ) -> v . Name . id , b , EXTRA );
+            _res = _PyAST_ExceptHandler ( e , ( ( पाहायाग_ty ) t ) -> v . Name . id , b , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -7624,7 +7624,7 @@ except_star_block_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_stmt_seq* b;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -7688,8 +7688,8 @@ except_star_block_rule(Parser *p)
 static asdl_stmt_seq*
 finally_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7758,8 +7758,8 @@ finally_block_rule(Parser *p)
 static stmt_ty
 match_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7782,17 +7782,17 @@ match_stmt_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> match_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"match\" subject_expr ':' NEWLINE INDENT case_block+ DEDENT"));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         Token * _literal;
         asdl_match_case_seq* cases;
         Token * dedent_var;
         Token * indent_var;
         Token * newline_var;
-        expr_ty subject;
+        पाहायाग_ty subject;
         if (
             (_keyword = _PyPegen_expect_soft_keyword(p, "match"))  // soft_keyword='"match"'
             &&
-            (subject = subject_expr_rule(p))  // subject_expr
+            (subject = subject_पाहायाग_rule(p))  // subject_expr
             &&
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -7853,17 +7853,17 @@ match_stmt_rule(Parser *p)
 }
 
 // subject_expr: star_named_expression ',' star_named_expressions? | named_expression
-static expr_ty
-subject_expr_rule(Parser *p)
+static पाहायाग_ty
+subject_पाहायाग_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -7881,14 +7881,14 @@ subject_expr_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> subject_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_named_expression ',' star_named_expressions?"));
         Token * _literal;
-        expr_ty value;
-        void *values;
+        पाहायाग_ty हालागा;
+        void *मगा_हालागा;
         if (
-            (value = star_named_expression_rule(p))  // star_named_expression
+            (हालागा = star_named_expression_rule(p))  // star_named_expression
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
-            (values = star_named_expressions_rule(p), !p->error_indicator)  // star_named_expressions?
+            (मगा_हालागा = star_named_expressions_rule(p), !p->error_indicator)  // star_named_expressions?
         )
         {
             D(fprintf(stderr, "%*c+ subject_expr[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "star_named_expression ',' star_named_expressions?"));
@@ -7901,7 +7901,7 @@ subject_expr_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , value , values ) ) , Load , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , हालागा , मगा_हालागा ) ) , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -7919,7 +7919,7 @@ subject_expr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> subject_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "named_expression"));
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         if (
             (named_expression_var = named_expression_rule(p))  // named_expression
         )
@@ -7942,8 +7942,8 @@ subject_expr_rule(Parser *p)
 static match_case_ty
 case_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -7976,7 +7976,7 @@ case_block_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> case_block[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"case\" patterns guard? ':' block"));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         Token * _literal;
         asdl_stmt_seq* body;
         void *guard;
@@ -8013,17 +8013,17 @@ case_block_rule(Parser *p)
 }
 
 // guard: 'if' named_expression
-static expr_ty
+static पाहायाग_ty
 guard_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // 'if' named_expression
         if (p->error_indicator) {
@@ -8032,7 +8032,7 @@ guard_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> guard[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' named_expression"));
         Token * _keyword;
-        expr_ty guard;
+        पाहायाग_ty guard;
         if (
             (_keyword = _PyPegen_expect_token(p, 700))  // token='if'
             &&
@@ -8062,8 +8062,8 @@ guard_rule(Parser *p)
 static pattern_ty
 patterns_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8142,8 +8142,8 @@ patterns_rule(Parser *p)
 static pattern_ty
 pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8199,8 +8199,8 @@ pattern_rule(Parser *p)
 static pattern_ty
 as_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8225,7 +8225,7 @@ as_pattern_rule(Parser *p)
         D(fprintf(stderr, "%*c> as_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "or_pattern 'as' pattern_capture_target"));
         Token * _keyword;
         pattern_ty pattern;
-        expr_ty target;
+        पाहायाग_ty target;
         if (
             (pattern = or_pattern_rule(p))  // or_pattern
             &&
@@ -8285,8 +8285,8 @@ as_pattern_rule(Parser *p)
 static pattern_ty
 or_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8354,8 +8354,8 @@ or_pattern_rule(Parser *p)
 static pattern_ty
 closed_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8430,13 +8430,13 @@ closed_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> closed_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "value_pattern"));
-        pattern_ty value_pattern_var;
+        pattern_ty हालागा_pattern_var;
         if (
-            (value_pattern_var = value_pattern_rule(p))  // value_pattern
+            (हालागा_pattern_var = हालागा_pattern_rule(p))  // value_pattern
         )
         {
             D(fprintf(stderr, "%*c+ closed_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "value_pattern"));
-            _res = value_pattern_var;
+            _res = हालागा_pattern_var;
             goto done;
         }
         p->mark = _mark;
@@ -8521,7 +8521,7 @@ closed_pattern_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, closed_pattern_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, closed_pattern_type, _res);
     p->level--;
     return _res;
 }
@@ -8536,8 +8536,8 @@ closed_pattern_rule(Parser *p)
 static pattern_ty
 literal_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -8560,9 +8560,9 @@ literal_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "signed_number !('+' | '-')"));
-        expr_ty value;
+        पाहायाग_ty हालागा;
         if (
-            (value = signed_number_rule(p))  // signed_number
+            (हालागा = signed_नुमेरो_rule(p))  // signed_number
             &&
             _PyPegen_lookahead(0, _tmp_41_rule, p)
         )
@@ -8577,7 +8577,7 @@ literal_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchValue ( value , EXTRA );
+            _res = Py_AST_Match_हालागा ( हालागा , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -8595,9 +8595,9 @@ literal_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "complex_number"));
-        expr_ty value;
+        पाहायाग_ty हालागा;
         if (
-            (value = complex_number_rule(p))  // complex_number
+            (हालागा = complex_नुमेरो_rule(p))  // complex_number
         )
         {
             D(fprintf(stderr, "%*c+ literal_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "complex_number"));
@@ -8610,7 +8610,7 @@ literal_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchValue ( value , EXTRA );
+            _res = Py_AST_Match_हालागा ( हालागा , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -8628,9 +8628,9 @@ literal_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "strings"));
-        expr_ty value;
+        पाहायाग_ty हालागा;
         if (
-            (value = strings_rule(p))  // strings
+            (हालागा = strings_rule(p))  // strings
         )
         {
             D(fprintf(stderr, "%*c+ literal_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "strings"));
@@ -8643,7 +8643,7 @@ literal_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchValue ( value , EXTRA );
+            _res = Py_AST_Match_हालागा ( हालागा , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -8767,17 +8767,17 @@ literal_pattern_rule(Parser *p)
 //     | 'None'
 //     | 'True'
 //     | 'False'
-static expr_ty
-literal_expr_rule(Parser *p)
+static पाहायाग_ty
+literal_पाहायाग_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -8794,15 +8794,15 @@ literal_expr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "signed_number !('+' | '-')"));
-        expr_ty signed_number_var;
+        पाहायाग_ty signed_नुमेरो_var;
         if (
-            (signed_number_var = signed_number_rule(p))  // signed_number
+            (signed_नुमेरो_var = signed_नुमेरो_rule(p))  // signed_number
             &&
             _PyPegen_lookahead(0, _tmp_41_rule, p)
         )
         {
             D(fprintf(stderr, "%*c+ literal_expr[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "signed_number !('+' | '-')"));
-            _res = signed_number_var;
+            _res = signed_नुमेरो_var;
             goto done;
         }
         p->mark = _mark;
@@ -8815,13 +8815,13 @@ literal_expr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "complex_number"));
-        expr_ty complex_number_var;
+        पाहायाग_ty complex_नुमेरो_var;
         if (
-            (complex_number_var = complex_number_rule(p))  // complex_number
+            (complex_नुमेरो_var = complex_नुमेरो_rule(p))  // complex_number
         )
         {
             D(fprintf(stderr, "%*c+ literal_expr[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "complex_number"));
-            _res = complex_number_var;
+            _res = complex_नुमेरो_var;
             goto done;
         }
         p->mark = _mark;
@@ -8834,7 +8834,7 @@ literal_expr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> literal_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "&(STRING | FSTRING_START | TSTRING_START) strings"));
-        expr_ty strings_var;
+        पाहायाग_ty strings_var;
         if (
             _PyPegen_lookahead(1, _tmp_42_rule, p)
             &&
@@ -8957,17 +8957,17 @@ literal_expr_rule(Parser *p)
 // complex_number:
 //     | signed_real_number '+' imaginary_number
 //     | signed_real_number '-' imaginary_number
-static expr_ty
-complex_number_rule(Parser *p)
+static पाहायाग_ty
+complex_नुमेरो_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -8985,14 +8985,14 @@ complex_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> complex_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "signed_real_number '+' imaginary_number"));
         Token * _literal;
-        expr_ty imag;
-        expr_ty real;
+        पाहायाग_ty imag;
+        पाहायाग_ty real;
         if (
-            (real = signed_real_number_rule(p))  // signed_real_number
+            (real = signed_real_नुमेरो_rule(p))  // signed_real_number
             &&
             (_literal = _PyPegen_expect_token(p, 14))  // token='+'
             &&
-            (imag = imaginary_number_rule(p))  // imaginary_number
+            (imag = imaginary_नुमेरो_rule(p))  // imaginary_number
         )
         {
             D(fprintf(stderr, "%*c+ complex_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "signed_real_number '+' imaginary_number"));
@@ -9024,14 +9024,14 @@ complex_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> complex_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "signed_real_number '-' imaginary_number"));
         Token * _literal;
-        expr_ty imag;
-        expr_ty real;
+        पाहायाग_ty imag;
+        पाहायाग_ty real;
         if (
-            (real = signed_real_number_rule(p))  // signed_real_number
+            (real = signed_real_नुमेरो_rule(p))  // signed_real_number
             &&
             (_literal = _PyPegen_expect_token(p, 15))  // token='-'
             &&
-            (imag = imaginary_number_rule(p))  // imaginary_number
+            (imag = imaginary_नुमेरो_rule(p))  // imaginary_number
         )
         {
             D(fprintf(stderr, "%*c+ complex_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "signed_real_number '-' imaginary_number"));
@@ -9063,17 +9063,17 @@ complex_number_rule(Parser *p)
 }
 
 // signed_number: NUMBER | '+' NUMBER | '-' NUMBER
-static expr_ty
-signed_number_rule(Parser *p)
+static पाहायाग_ty
+signed_नुमेरो_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -9084,19 +9084,19 @@ signed_number_rule(Parser *p)
     UNUSED(_start_lineno); // Only used by EXTRA macro
     int _start_col_offset = p->tokens[_mark]->col_offset;
     UNUSED(_start_col_offset); // Only used by EXTRA macro
-    { // NUMBER
+    { //नुमेरो
         if (p->error_indicator) {
             p->level--;
             return NULL;
         }
         D(fprintf(stderr, "%*c> signed_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-        expr_ty number_var;
+        पाहायाग_ty नुमेरो_var;
         if (
-            (number_var = _PyPegen_number_token(p))  // NUMBER
+            (नुमेरो_var = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ signed_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-            _res = number_var;
+            _res = नुमेरो_var;
             goto done;
         }
         p->mark = _mark;
@@ -9110,11 +9110,11 @@ signed_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> signed_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'+' NUMBER"));
         Token * _literal;
-        expr_ty number;
+        पाहायाग_ty नुमेरो_3;
         if (
             (_literal = _PyPegen_expect_token(p, 14))  // token='+'
             &&
-            (number = _PyPegen_number_token(p))  // NUMBER
+            (नुमेरो_3 = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ signed_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'+' NUMBER"));
@@ -9127,7 +9127,7 @@ signed_number_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_UnaryOp ( UAdd , number , EXTRA );
+            _res = _PyAST_UnaryOp ( UAdd , नुमेरो_3 , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9146,11 +9146,11 @@ signed_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> signed_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'-' NUMBER"));
         Token * _literal;
-        expr_ty number;
+        पाहायाग_ty नुमेरो_3;
         if (
             (_literal = _PyPegen_expect_token(p, 15))  // token='-'
             &&
-            (number = _PyPegen_number_token(p))  // NUMBER
+            (नुमेरो_3 = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ signed_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'-' NUMBER"));
@@ -9163,7 +9163,7 @@ signed_number_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_UnaryOp ( USub , number , EXTRA );
+            _res = _PyAST_UnaryOp ( USub , नुमेरो_3 , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9182,17 +9182,17 @@ signed_number_rule(Parser *p)
 }
 
 // signed_real_number: real_number | '+' real_number | '-' real_number
-static expr_ty
-signed_real_number_rule(Parser *p)
+static पाहायाग_ty
+signed_real_नुमेरो_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -9209,13 +9209,13 @@ signed_real_number_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> signed_real_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "real_number"));
-        expr_ty real_number_var;
+        पाहायाग_ty real_नुमेरो_var;
         if (
-            (real_number_var = real_number_rule(p))  // real_number
+            (real_नुमेरो_var = real_नुमेरो_rule(p))  // real_number
         )
         {
             D(fprintf(stderr, "%*c+ signed_real_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "real_number"));
-            _res = real_number_var;
+            _res = real_नुमेरो_var;
             goto done;
         }
         p->mark = _mark;
@@ -9229,11 +9229,11 @@ signed_real_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> signed_real_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'+' real_number"));
         Token * _literal;
-        expr_ty real;
+        पाहायाग_ty real;
         if (
             (_literal = _PyPegen_expect_token(p, 14))  // token='+'
             &&
-            (real = real_number_rule(p))  // real_number
+            (real = real_नुमेरो_rule(p))  // real_number
         )
         {
             D(fprintf(stderr, "%*c+ signed_real_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'+' real_number"));
@@ -9265,11 +9265,11 @@ signed_real_number_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> signed_real_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'-' real_number"));
         Token * _literal;
-        expr_ty real;
+        पाहायाग_ty real;
         if (
             (_literal = _PyPegen_expect_token(p, 15))  // token='-'
             &&
-            (real = real_number_rule(p))  // real_number
+            (real = real_नुमेरो_rule(p))  // real_number
         )
         {
             D(fprintf(stderr, "%*c+ signed_real_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'-' real_number"));
@@ -9301,27 +9301,27 @@ signed_real_number_rule(Parser *p)
 }
 
 // real_number: NUMBER
-static expr_ty
-real_number_rule(Parser *p)
+static पाहायाग_ty
+real_नुमेरो_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    { // NUMBER
+    { //नुमेरो
         if (p->error_indicator) {
             p->level--;
             return NULL;
         }
         D(fprintf(stderr, "%*c> real_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-        expr_ty real;
+        पाहायाग_ty real;
         if (
-            (real = _PyPegen_number_token(p))  // NUMBER
+            (real = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ real_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NUMBER"));
@@ -9344,27 +9344,27 @@ real_number_rule(Parser *p)
 }
 
 // imaginary_number: NUMBER
-static expr_ty
-imaginary_number_rule(Parser *p)
+static पाहायाग_ty
+imaginary_नुमेरो_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    { // NUMBER
+    { //नुमेरो
         if (p->error_indicator) {
             p->level--;
             return NULL;
         }
         D(fprintf(stderr, "%*c> imaginary_number[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-        expr_ty imag;
+        पाहायाग_ty imag;
         if (
-            (imag = _PyPegen_number_token(p))  // NUMBER
+            (imag = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ imaginary_number[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NUMBER"));
@@ -9390,8 +9390,8 @@ imaginary_number_rule(Parser *p)
 static pattern_ty
 capture_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9414,7 +9414,7 @@ capture_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> capture_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "pattern_capture_target"));
-        expr_ty target;
+        पाहायाग_ty target;
         if (
             (target = pattern_capture_target_rule(p))  // pattern_capture_target
         )
@@ -9448,17 +9448,17 @@ capture_pattern_rule(Parser *p)
 }
 
 // pattern_capture_target: !"_" NAME !('.' | '(' | '=')
-static expr_ty
+static पाहायाग_ty
 pattern_capture_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // !"_" NAME !('.' | '(' | '=')
         if (p->error_indicator) {
@@ -9466,7 +9466,7 @@ pattern_capture_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> pattern_capture_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!\"_\" NAME !('.' | '(' | '=')"));
-        expr_ty name;
+        पाहायाग_ty name;
         if (
             _PyPegen_lookahead_with_string(0, _PyPegen_expect_soft_keyword, p, "_")
             &&
@@ -9476,7 +9476,7 @@ pattern_capture_target_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ pattern_capture_target[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "!\"_\" NAME !('.' | '(' | '=')"));
-            _res = _PyPegen_set_expr_context ( p , name , Store );
+            _res = Py_Pegen_set_पाहायाग_context ( p , name , Store );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9498,8 +9498,8 @@ pattern_capture_target_rule(Parser *p)
 static pattern_ty
 wildcard_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9522,7 +9522,7 @@ wildcard_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> wildcard_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"_\""));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         if (
             (_keyword = _PyPegen_expect_soft_keyword(p, "_"))  // soft_keyword='"_"'
         )
@@ -9557,10 +9557,10 @@ wildcard_pattern_rule(Parser *p)
 
 // value_pattern: attr !('.' | '(' | '=')
 static pattern_ty
-value_pattern_rule(Parser *p)
+हालागा_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9583,7 +9583,7 @@ value_pattern_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> value_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "attr !('.' | '(' | '=')"));
-        expr_ty attr;
+        पाहायाग_ty attr;
         if (
             (attr = attr_rule(p))  // attr
             &&
@@ -9600,7 +9600,7 @@ value_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchValue ( attr , EXTRA );
+            _res = Py_AST_Match_हालागा ( attr , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9620,27 +9620,27 @@ value_pattern_rule(Parser *p)
 
 // Left-recursive
 // attr: name_or_attr '.' NAME
-static expr_ty attr_raw(Parser *);
-static expr_ty
+static पाहायाग_ty attr_raw(Parser *);
+static पाहायाग_ty
 attr_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, attr_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, attr_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, attr_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = attr_raw(p);
@@ -9657,17 +9657,17 @@ attr_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 attr_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -9685,10 +9685,10 @@ attr_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> attr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "name_or_attr '.' NAME"));
         Token * _literal;
-        expr_ty attr;
-        expr_ty value;
+        पाहायाग_ty attr;
+        पाहायाग_ty हालागा;
         if (
-            (value = name_or_attr_rule(p))  // name_or_attr
+            (हालागा = name_or_attr_rule(p))  // name_or_attr
             &&
             (_literal = _PyPegen_expect_token(p, 23))  // token='.'
             &&
@@ -9705,7 +9705,7 @@ attr_raw(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Attribute ( value , attr -> v . Name . id , Load , EXTRA );
+            _res = _PyAST_Attribute ( हालागा , attr -> v . Name . id , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9725,17 +9725,17 @@ attr_raw(Parser *p)
 
 // Left-recursive
 // name_or_attr: attr | NAME
-static expr_ty
+static पाहायाग_ty
 name_or_attr_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // attr
         if (p->error_indicator) {
@@ -9743,7 +9743,7 @@ name_or_attr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> name_or_attr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "attr"));
-        expr_ty attr_var;
+        पाहायाग_ty attr_var;
         if (
             (attr_var = attr_rule(p))  // attr
         )
@@ -9762,7 +9762,7 @@ name_or_attr_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> name_or_attr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME"));
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
         )
@@ -9785,8 +9785,8 @@ name_or_attr_rule(Parser *p)
 static pattern_ty
 group_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9834,8 +9834,8 @@ group_pattern_rule(Parser *p)
 static pattern_ty
 sequence_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9940,8 +9940,8 @@ sequence_pattern_rule(Parser *p)
 static asdl_seq*
 open_sequence_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -9967,7 +9967,7 @@ open_sequence_pattern_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ open_sequence_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "maybe_star_pattern ',' maybe_sequence_pattern?"));
-            _res = _PyPegen_seq_insert_in_front ( p , pattern , patterns );
+            _res = Py_Pegen_seq_इसिंगित_in_front ( p , pattern , patterns );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -9989,8 +9989,8 @@ open_sequence_pattern_rule(Parser *p)
 static asdl_seq*
 maybe_sequence_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10036,8 +10036,8 @@ maybe_sequence_pattern_rule(Parser *p)
 static pattern_ty
 maybe_star_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10093,8 +10093,8 @@ maybe_star_pattern_rule(Parser *p)
 static pattern_ty
 star_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10122,7 +10122,7 @@ star_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> star_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' pattern_capture_target"));
         Token * _literal;
-        expr_ty target;
+        पाहायाग_ty target;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -10189,7 +10189,7 @@ star_pattern_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, star_pattern_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, star_pattern_type, _res);
     p->level--;
     return _res;
 }
@@ -10203,8 +10203,8 @@ star_pattern_rule(Parser *p)
 static pattern_ty
 mapping_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10267,7 +10267,7 @@ mapping_pattern_rule(Parser *p)
         Token * _literal_1;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty rest;
+        पाहायाग_ty rest;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -10311,12 +10311,12 @@ mapping_pattern_rule(Parser *p)
         Token * _literal_2;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_seq* items;
-        expr_ty rest;
+        asdl_seq* मगा_बागाय;
+        पाहायाग_ty rest;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
-            (items = items_pattern_rule(p))  // items_pattern
+            (मगा_बागाय = मगा_बागाय_pattern_rule(p))  // items_pattern
             &&
             (_literal_1 = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -10337,7 +10337,7 @@ mapping_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchMapping ( CHECK ( asdl_expr_seq* , _PyPegen_get_pattern_keys ( p , items ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , items ) ) , rest -> v . Name . id , EXTRA );
+            _res = _PyAST_MatchMapping ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_pattern_मगा_सुसि ( p , मगा_बागाय ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , मगा_बागाय ) ) , rest -> v . Name . id , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10359,11 +10359,11 @@ mapping_pattern_rule(Parser *p)
         Token * _literal_1;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_seq* items;
+        asdl_seq* मगा_बागाय;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
-            (items = items_pattern_rule(p))  // items_pattern
+            (मगा_बागाय = मगा_बागाय_pattern_rule(p))  // items_pattern
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
             &&
@@ -10380,7 +10380,7 @@ mapping_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchMapping ( CHECK ( asdl_expr_seq* , _PyPegen_get_pattern_keys ( p , items ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , items ) ) , NULL , EXTRA );
+            _res = _PyAST_MatchMapping ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_pattern_मगा_सुसि ( p , मगा_बागाय ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , मगा_बागाय ) ) , NULL , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10419,10 +10419,10 @@ mapping_pattern_rule(Parser *p)
 
 // items_pattern: ','.key_value_pattern+
 static asdl_seq*
-items_pattern_rule(Parser *p)
+मगा_बागाय_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10456,17 +10456,17 @@ items_pattern_rule(Parser *p)
 }
 
 // key_value_pattern: (literal_expr | attr) ':' pattern
-static KeyPatternPair*
-key_value_pattern_rule(Parser *p)
+static सुसि_Pattern_Pair*
+सुसि_हालागा_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    KeyPatternPair* _res = NULL;
+    सुसि_Pattern_Pair* _res = NULL;
     int _mark = p->mark;
     { // (literal_expr | attr) ':' pattern
         if (p->error_indicator) {
@@ -10475,10 +10475,10 @@ key_value_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> key_value_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "(literal_expr | attr) ':' pattern"));
         Token * _literal;
-        void *key;
+        void *सुसि;
         pattern_ty pattern;
         if (
-            (key = _tmp_48_rule(p))  // literal_expr | attr
+            (सुसि = _tmp_48_rule(p))  // literal_expr | attr
             &&
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -10486,7 +10486,7 @@ key_value_pattern_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ key_value_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(literal_expr | attr) ':' pattern"));
-            _res = _PyPegen_key_pattern_pair ( p , key , pattern );
+            _res = Py_Pegen_सुसि_pattern_pair ( p , सुसि , pattern );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10505,17 +10505,17 @@ key_value_pattern_rule(Parser *p)
 }
 
 // double_star_pattern: '**' pattern_capture_target
-static expr_ty
+static पाहायाग_ty
 double_star_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // '**' pattern_capture_target
         if (p->error_indicator) {
@@ -10524,7 +10524,7 @@ double_star_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> double_star_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' pattern_capture_target"));
         Token * _literal;
-        expr_ty target;
+        पाहायाग_ty target;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -10559,8 +10559,8 @@ double_star_pattern_rule(Parser *p)
 static pattern_ty
 class_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10585,7 +10585,7 @@ class_pattern_rule(Parser *p)
         D(fprintf(stderr, "%*c> class_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "name_or_attr '(' ')'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty cls;
+        पाहायाग_ty cls;
         if (
             (cls = name_or_attr_rule(p))  // name_or_attr
             &&
@@ -10626,7 +10626,7 @@ class_pattern_rule(Parser *p)
         Token * _literal_1;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty cls;
+        पाहायाग_ty cls;
         asdl_pattern_seq* patterns;
         if (
             (cls = name_or_attr_rule(p))  // name_or_attr
@@ -10672,7 +10672,7 @@ class_pattern_rule(Parser *p)
         Token * _literal_1;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty cls;
+        पाहायाग_ty cls;
         asdl_seq* keywords;
         if (
             (cls = name_or_attr_rule(p))  // name_or_attr
@@ -10696,7 +10696,7 @@ class_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchClass ( cls , NULL , CHECK ( asdl_identifier_seq* , _PyPegen_map_names_to_ids ( p , CHECK ( asdl_expr_seq* , _PyPegen_get_pattern_keys ( p , keywords ) ) ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , keywords ) ) , EXTRA );
+            _res = _PyAST_MatchClass ( cls , NULL , CHECK ( asdl_identifier_seq* , _PyPegen_map_names_to_ids ( p , CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_pattern_मगा_सुसि ( p , keywords ) ) ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , keywords ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10719,7 +10719,7 @@ class_pattern_rule(Parser *p)
         Token * _literal_2;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty cls;
+        पाहायाग_ty cls;
         asdl_seq* keywords;
         asdl_pattern_seq* patterns;
         if (
@@ -10748,7 +10748,7 @@ class_pattern_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_MatchClass ( cls , patterns , CHECK ( asdl_identifier_seq* , _PyPegen_map_names_to_ids ( p , CHECK ( asdl_expr_seq* , _PyPegen_get_pattern_keys ( p , keywords ) ) ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , keywords ) ) , EXTRA );
+            _res = _PyAST_MatchClass ( cls , patterns , CHECK ( asdl_identifier_seq* , _PyPegen_map_names_to_ids ( p , CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_pattern_मगा_सुसि ( p , keywords ) ) ) ) , CHECK ( asdl_pattern_seq* , _PyPegen_get_patterns ( p , keywords ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10789,8 +10789,8 @@ class_pattern_rule(Parser *p)
 static asdl_pattern_seq*
 positional_patterns_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10804,13 +10804,13 @@ positional_patterns_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> positional_patterns[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.pattern+"));
-        asdl_pattern_seq* args;
+        asdl_pattern_seq* मगा_कातविरान;
         if (
-            (args = (asdl_pattern_seq*)_gather_50_rule(p))  // ','.pattern+
+            (मगा_कातविरान = (asdl_pattern_seq*)_gather_50_rule(p))  // ','.pattern+
         )
         {
             D(fprintf(stderr, "%*c+ positional_patterns[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "','.pattern+"));
-            _res = args;
+            _res = मगा_कातविरान;
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10832,8 +10832,8 @@ positional_patterns_rule(Parser *p)
 static asdl_seq*
 keyword_patterns_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10867,17 +10867,17 @@ keyword_patterns_rule(Parser *p)
 }
 
 // keyword_pattern: NAME '=' pattern
-static KeyPatternPair*
+static सुसि_Pattern_Pair*
 keyword_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    KeyPatternPair* _res = NULL;
+    सुसि_Pattern_Pair* _res = NULL;
     int _mark = p->mark;
     { // NAME '=' pattern
         if (p->error_indicator) {
@@ -10886,18 +10886,18 @@ keyword_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> keyword_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' pattern"));
         Token * _literal;
-        expr_ty arg;
-        pattern_ty value;
+        पाहायाग_ty arg;
+        pattern_ty हालागा;
         if (
             (arg = _PyPegen_name_token(p))  // NAME
             &&
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
             &&
-            (value = pattern_rule(p))  // pattern
+            (हालागा = pattern_rule(p))  // pattern
         )
         {
             D(fprintf(stderr, "%*c+ keyword_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NAME '=' pattern"));
-            _res = _PyPegen_key_pattern_pair ( p , arg , value );
+            _res = Py_Pegen_सुसि_pattern_pair ( p , arg , हालागा );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10919,8 +10919,8 @@ keyword_pattern_rule(Parser *p)
 static stmt_ty
 type_alias_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -10943,10 +10943,10 @@ type_alias_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> type_alias[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"type\" NAME type_params? '=' expression"));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         Token * _literal;
-        expr_ty b;
-        expr_ty n;
+        पाहायाग_ty b;
+        पाहायाग_ty n;
         void *t;
         if (
             (_keyword = _PyPegen_expect_soft_keyword(p, "type"))  // soft_keyword='"type"'
@@ -10970,7 +10970,7 @@ type_alias_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = CHECK_VERSION ( stmt_ty , 12 , "Type statement is" , _PyAST_TypeAlias ( CHECK ( expr_ty , _PyPegen_set_expr_context ( p , n , Store ) ) , t , b , EXTRA ) );
+            _res = CHECK_VERSION ( stmt_ty , 12 , "Type statement is" , _PyAST_TypeAlias ( CHECK ( पाहायाग_ty , Py_Pegen_set_पाहायाग_context ( p , n , Store ) ) , t , b , EXTRA ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -10992,8 +10992,8 @@ type_alias_rule(Parser *p)
 static asdl_type_param_seq*
 type_params_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -11060,8 +11060,8 @@ type_params_rule(Parser *p)
 static asdl_type_param_seq*
 type_param_seq_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -11111,8 +11111,8 @@ type_param_seq_rule(Parser *p)
 static type_param_ty
 type_param_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -11139,7 +11139,7 @@ type_param_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> type_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME type_param_bound? type_param_default?"));
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         void *c;
         if (
@@ -11198,7 +11198,7 @@ type_param_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' NAME type_param_starred_default?"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
@@ -11237,7 +11237,7 @@ type_param_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' NAME type_param_default?"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
@@ -11271,23 +11271,23 @@ type_param_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, type_param_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, type_param_type, _res);
     p->level--;
     return _res;
 }
 
 // type_param_bound: ':' expression
-static expr_ty
+static पाहायाग_ty
 type_param_bound_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // ':' expression
         if (p->error_indicator) {
@@ -11296,7 +11296,7 @@ type_param_bound_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_param_bound[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "':' expression"));
         Token * _literal;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -11323,17 +11323,17 @@ type_param_bound_rule(Parser *p)
 }
 
 // type_param_default: '=' expression
-static expr_ty
+static पाहायाग_ty
 type_param_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // '=' expression
         if (p->error_indicator) {
@@ -11342,7 +11342,7 @@ type_param_default_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_param_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'=' expression"));
         Token * _literal;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
             &&
@@ -11350,7 +11350,7 @@ type_param_default_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_param_default[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'=' expression"));
-            _res = CHECK_VERSION ( expr_ty , 13 , "Type parameter defaults are" , e );
+            _res = CHECK_VERSION ( पाहायाग_ty , 13 , "Type parameter defaults are" , e );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11369,17 +11369,17 @@ type_param_default_rule(Parser *p)
 }
 
 // type_param_starred_default: '=' star_expression
-static expr_ty
+static पाहायाग_ty
 type_param_starred_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // '=' star_expression
         if (p->error_indicator) {
@@ -11388,7 +11388,7 @@ type_param_starred_default_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_param_starred_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'=' star_expression"));
         Token * _literal;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
             &&
@@ -11396,7 +11396,7 @@ type_param_starred_default_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_param_starred_default[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'=' star_expression"));
-            _res = CHECK_VERSION ( expr_ty , 13 , "Type parameter defaults are" , e );
+            _res = CHECK_VERSION ( पाहायाग_ty , 13 , "Type parameter defaults are" , e );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11415,19 +11415,19 @@ type_param_starred_default_rule(Parser *p)
 }
 
 // expressions: expression ((',' expression))+ ','? | expression ',' | expression
-static expr_ty
+static पाहायाग_ty
 expressions_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_0_result = NULL;
+    पाहायाग_ty _prefix_0_result = NULL;
     int _prefix_0_end = 0, _prefix_0_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -11446,7 +11446,7 @@ expressions_rule(Parser *p)
         D(fprintf(stderr, "%*c> expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ((',' expression))+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_0_valid) ? (p->mark = _prefix_0_end, _prefix_0_result) : (_prefix_0_result = expression_rule(p), _prefix_0_end = p->mark, _prefix_0_valid = 1, _prefix_0_result)))  // expression
@@ -11466,7 +11466,7 @@ expressions_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , a , b ) ) , Load , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , a , b ) ) , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11485,7 +11485,7 @@ expressions_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ','"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = ((!p->call_invalid_rules && _prefix_0_valid) ? (p->mark = _prefix_0_end, _prefix_0_result) : (_prefix_0_result = expression_rule(p), _prefix_0_end = p->mark, _prefix_0_valid = 1, _prefix_0_result)))  // expression
             &&
@@ -11502,7 +11502,7 @@ expressions_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_singleton_seq ( p , a ) ) , Load , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , _PyPegen_singleton_seq ( p , a ) ) , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11520,7 +11520,7 @@ expressions_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_0_valid) ? (p->mark = _prefix_0_end, _prefix_0_result) : (_prefix_0_result = expression_rule(p), _prefix_0_end = p->mark, _prefix_0_valid = 1, _prefix_0_result)))  // expression
         )
@@ -11546,17 +11546,17 @@ expressions_rule(Parser *p)
 //     | if_expression
 //     | disjunction
 //     | lambdef
-static expr_ty
+static पाहायाग_ty
 expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, expression_type, &_res)) {
         p->level--;
         return _res;
@@ -11625,7 +11625,7 @@ expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "if_expression"));
-        expr_ty if_expression_var;
+        पाहायाग_ty if_expression_var;
         if (
             (if_expression_var = if_expression_rule(p))  // if_expression
         )
@@ -11644,7 +11644,7 @@ expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction"));
-        expr_ty disjunction_var;
+        पाहायाग_ty disjunction_var;
         if (
             (disjunction_var = disjunction_rule(p))  // disjunction
         )
@@ -11663,7 +11663,7 @@ expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "lambdef"));
-        expr_ty lambdef_var;
+        पाहायाग_ty lambdef_var;
         if (
             (lambdef_var = lambdef_rule(p))  // lambdef
         )
@@ -11678,23 +11678,23 @@ expression_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, expression_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, expression_type, _res);
     p->level--;
     return _res;
 }
 
 // if_expression: disjunction 'if' disjunction 'else' expression
-static expr_ty
+static पाहायाग_ty
 if_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -11713,9 +11713,9 @@ if_expression_rule(Parser *p)
         D(fprintf(stderr, "%*c> if_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction 'if' disjunction 'else' expression"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
-        expr_ty b;
-        expr_ty c;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        पाहायाग_ty c;
         if (
             (a = disjunction_rule(p))  // disjunction
             &&
@@ -11757,17 +11757,17 @@ if_expression_rule(Parser *p)
 }
 
 // yield_expr: 'yield' 'from' expression | 'yield' star_expressions?
-static expr_ty
-yield_expr_rule(Parser *p)
+static पाहायाग_ty
+yield_पाहायाग_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -11786,7 +11786,7 @@ yield_expr_rule(Parser *p)
         D(fprintf(stderr, "%*c> yield_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'yield' 'from' expression"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 588))  // token='yield'
             &&
@@ -11863,19 +11863,19 @@ yield_expr_rule(Parser *p)
 //     | star_expression ((',' star_expression))+ ','?
 //     | star_expression ','
 //     | star_expression
-static expr_ty
+static पाहायाग_ty
 star_expressions_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_1_result = NULL;
+    पाहायाग_ty _prefix_1_result = NULL;
     int _prefix_1_end = 0, _prefix_1_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -11894,7 +11894,7 @@ star_expressions_rule(Parser *p)
         D(fprintf(stderr, "%*c> star_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expression ((',' star_expression))+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_1_valid) ? (p->mark = _prefix_1_end, _prefix_1_result) : (_prefix_1_result = star_expression_rule(p), _prefix_1_end = p->mark, _prefix_1_valid = 1, _prefix_1_result)))  // star_expression
@@ -11914,7 +11914,7 @@ star_expressions_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , a , b ) ) , Load , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , a , b ) ) , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11933,7 +11933,7 @@ star_expressions_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> star_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expression ','"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = ((!p->call_invalid_rules && _prefix_1_valid) ? (p->mark = _prefix_1_end, _prefix_1_result) : (_prefix_1_result = star_expression_rule(p), _prefix_1_end = p->mark, _prefix_1_valid = 1, _prefix_1_result)))  // star_expression
             &&
@@ -11950,7 +11950,7 @@ star_expressions_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_singleton_seq ( p , a ) ) , Load , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , _PyPegen_singleton_seq ( p , a ) ) , Load , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -11968,7 +11968,7 @@ star_expressions_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> star_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expression"));
-        expr_ty star_expression_var;
+        पाहायाग_ty star_expression_var;
         if (
             (star_expression_var = ((!p->call_invalid_rules && _prefix_1_valid) ? (p->mark = _prefix_1_end, _prefix_1_result) : (_prefix_1_result = star_expression_rule(p), _prefix_1_end = p->mark, _prefix_1_valid = 1, _prefix_1_result)))  // star_expression
         )
@@ -11988,17 +11988,17 @@ star_expressions_rule(Parser *p)
 }
 
 // star_expression: '*' bitwise_or | expression
-static expr_ty
+static पाहायाग_ty
 star_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, star_expression_type, &_res)) {
         p->level--;
         return _res;
@@ -12020,7 +12020,7 @@ star_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> star_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -12055,7 +12055,7 @@ star_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> star_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
         )
@@ -12070,23 +12070,23 @@ star_expression_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, star_expression_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, star_expression_type, _res);
     p->level--;
     return _res;
 }
 
 // star_named_expressions: ','.star_named_expression+ ','?
-static asdl_expr_seq*
+static asdl_पाहायाग_seq*
 star_named_expressions_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    asdl_expr_seq* _res = NULL;
+    asdl_पाहायाग_seq* _res = NULL;
     int _mark = p->mark;
     { // ','.star_named_expression+ ','?
         if (p->error_indicator) {
@@ -12096,9 +12096,9 @@ star_named_expressions_rule(Parser *p)
         D(fprintf(stderr, "%*c> star_named_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.star_named_expression+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_gather_58_rule(p))  // ','.star_named_expression+
+            (a = (asdl_पाहायाग_seq*)_gather_58_rule(p))  // ','.star_named_expression+
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
         )
@@ -12123,17 +12123,17 @@ star_named_expressions_rule(Parser *p)
 }
 
 // star_named_expression: '*' bitwise_or | named_expression
-static expr_ty
+static पाहायाग_ty
 star_named_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -12151,7 +12151,7 @@ star_named_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> star_named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -12186,7 +12186,7 @@ star_named_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> star_named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "named_expression"));
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         if (
             (named_expression_var = named_expression_rule(p))  // named_expression
         )
@@ -12206,17 +12206,17 @@ star_named_expression_rule(Parser *p)
 }
 
 // assignment_expression: NAME ':=' ~ expression
-static expr_ty
+static पाहायाग_ty
 assignment_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -12235,8 +12235,8 @@ assignment_expression_rule(Parser *p)
         D(fprintf(stderr, "%*c> assignment_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME ':=' ~ expression"));
         int _cut_var = 0;
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -12257,7 +12257,7 @@ assignment_expression_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = CHECK_VERSION ( expr_ty , 8 , "Assignment expressions are" , _PyAST_NamedExpr ( CHECK ( expr_ty , _PyPegen_set_expr_context ( p , a , Store ) ) , b , EXTRA ) );
+            _res = CHECK_VERSION ( पाहायाग_ty , 8 , "Assignment expressions are" , Py_AST_Named_पाहायाग ( CHECK ( पाहायाग_ty , Py_Pegen_set_पाहायाग_context ( p , a , Store ) ) , b , EXTRA ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12280,17 +12280,17 @@ assignment_expression_rule(Parser *p)
 }
 
 // named_expression: assignment_expression | invalid_named_expression | expression !':='
-static expr_ty
+static पाहायाग_ty
 named_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // assignment_expression
         if (p->error_indicator) {
@@ -12298,7 +12298,7 @@ named_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "assignment_expression"));
-        expr_ty assignment_expression_var;
+        पाहायाग_ty assignment_expression_var;
         if (
             (assignment_expression_var = assignment_expression_rule(p))  // assignment_expression
         )
@@ -12336,7 +12336,7 @@ named_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression !':='"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -12358,23 +12358,23 @@ named_expression_rule(Parser *p)
 }
 
 // disjunction: conjunction (('or' conjunction))+ | conjunction
-static expr_ty
+static पाहायाग_ty
 disjunction_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, disjunction_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
-    expr_ty _prefix_2_result = NULL;
+    पाहायाग_ty _prefix_2_result = NULL;
     int _prefix_2_end = 0, _prefix_2_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -12391,7 +12391,7 @@ disjunction_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> disjunction[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "conjunction (('or' conjunction))+"));
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_2_valid) ? (p->mark = _prefix_2_end, _prefix_2_result) : (_prefix_2_result = conjunction_rule(p), _prefix_2_end = p->mark, _prefix_2_valid = 1, _prefix_2_result)))  // conjunction
@@ -12409,7 +12409,7 @@ disjunction_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_BoolOp ( Or , CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , a , b ) ) , EXTRA );
+            _res = _PyAST_BoolOp ( Or , CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , a , b ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12427,7 +12427,7 @@ disjunction_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> disjunction[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "conjunction"));
-        expr_ty conjunction_var;
+        पाहायाग_ty conjunction_var;
         if (
             (conjunction_var = ((!p->call_invalid_rules && _prefix_2_valid) ? (p->mark = _prefix_2_end, _prefix_2_result) : (_prefix_2_result = conjunction_rule(p), _prefix_2_end = p->mark, _prefix_2_valid = 1, _prefix_2_result)))  // conjunction
         )
@@ -12442,29 +12442,29 @@ disjunction_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, disjunction_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, disjunction_type, _res);
     p->level--;
     return _res;
 }
 
 // conjunction: inversion (('and' inversion))+ | inversion
-static expr_ty
+static पाहायाग_ty
 conjunction_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, conjunction_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
-    expr_ty _prefix_3_result = NULL;
+    पाहायाग_ty _prefix_3_result = NULL;
     int _prefix_3_end = 0, _prefix_3_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -12481,7 +12481,7 @@ conjunction_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> conjunction[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "inversion (('and' inversion))+"));
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_3_valid) ? (p->mark = _prefix_3_end, _prefix_3_result) : (_prefix_3_result = inversion_rule(p), _prefix_3_end = p->mark, _prefix_3_valid = 1, _prefix_3_result)))  // inversion
@@ -12499,7 +12499,7 @@ conjunction_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_BoolOp ( And , CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , a , b ) ) , EXTRA );
+            _res = _PyAST_BoolOp ( And , CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , a , b ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12517,7 +12517,7 @@ conjunction_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> conjunction[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "inversion"));
-        expr_ty inversion_var;
+        पाहायाग_ty inversion_var;
         if (
             (inversion_var = ((!p->call_invalid_rules && _prefix_3_valid) ? (p->mark = _prefix_3_end, _prefix_3_result) : (_prefix_3_result = inversion_rule(p), _prefix_3_end = p->mark, _prefix_3_valid = 1, _prefix_3_result)))  // inversion
         )
@@ -12532,23 +12532,23 @@ conjunction_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, conjunction_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, conjunction_type, _res);
     p->level--;
     return _res;
 }
 
 // inversion: 'not' inversion | comparison
-static expr_ty
+static पाहायाग_ty
 inversion_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, inversion_type, &_res)) {
         p->level--;
         return _res;
@@ -12570,7 +12570,7 @@ inversion_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> inversion[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'not' inversion"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 721))  // token='not'
             &&
@@ -12605,7 +12605,7 @@ inversion_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> inversion[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "comparison"));
-        expr_ty comparison_var;
+        पाहायाग_ty comparison_var;
         if (
             (comparison_var = comparison_rule(p))  // comparison
         )
@@ -12620,25 +12620,25 @@ inversion_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, inversion_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, inversion_type, _res);
     p->level--;
     return _res;
 }
 
 // comparison: bitwise_or compare_op_bitwise_or_pair+ | bitwise_or
-static expr_ty
+static पाहायाग_ty
 comparison_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_4_result = NULL;
+    पाहायाग_ty _prefix_4_result = NULL;
     int _prefix_4_end = 0, _prefix_4_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -12655,7 +12655,7 @@ comparison_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> comparison[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_or compare_op_bitwise_or_pair+"));
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_4_valid) ? (p->mark = _prefix_4_end, _prefix_4_result) : (_prefix_4_result = bitwise_or_rule(p), _prefix_4_end = p->mark, _prefix_4_valid = 1, _prefix_4_result)))  // bitwise_or
@@ -12673,7 +12673,7 @@ comparison_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Compare ( a , CHECK ( asdl_int_seq* , _PyPegen_get_cmpops ( p , b ) ) , CHECK ( asdl_expr_seq* , _PyPegen_get_exprs ( p , b ) ) , EXTRA );
+            _res = _PyAST_Compare ( a , CHECK ( asdl_int_seq* , _PyPegen_get_cmpops ( p , b ) ) , CHECK ( asdl_पाहायाग_seq* , _PyPegen_get_exprs ( p , b ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12691,7 +12691,7 @@ comparison_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> comparison[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_or"));
-        expr_ty bitwise_or_var;
+        पाहायाग_ty bitwise_or_var;
         if (
             (bitwise_or_var = ((!p->call_invalid_rules && _prefix_4_valid) ? (p->mark = _prefix_4_end, _prefix_4_result) : (_prefix_4_result = bitwise_or_rule(p), _prefix_4_end = p->mark, _prefix_4_valid = 1, _prefix_4_result)))  // bitwise_or
         )
@@ -12722,17 +12722,17 @@ comparison_rule(Parser *p)
 //     | 'in' bitwise_or
 //     | 'is' 'not' bitwise_or
 //     | 'is' bitwise_or
-static CmpopExprPair*
+static Cmpop_पाहायाग_Pair*
 compare_op_bitwise_or_pair_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    CmpopExprPair* _res = NULL;
+    Cmpop_पाहायाग_Pair* _res = NULL;
     int _mark = p->mark;
     { // '==' bitwise_or
         if (p->error_indicator) {
@@ -12741,7 +12741,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'==' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 27))  // token='=='
             &&
@@ -12749,7 +12749,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'==' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , Eq , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , Eq , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12768,7 +12768,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "('!=') bitwise_or"));
         void *_tmp_62_var;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_tmp_62_var = _tmp_62_rule(p))  // '!='
             &&
@@ -12776,7 +12776,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "('!=') bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , NotEq , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , NotEq , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12795,7 +12795,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'<=' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 29))  // token='<='
             &&
@@ -12803,7 +12803,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'<=' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , LtE , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , LtE , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12841,7 +12841,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'<' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 20))  // token='<'
             &&
@@ -12849,7 +12849,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'<' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , Lt , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , Lt , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12868,7 +12868,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'>=' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 30))  // token='>='
             &&
@@ -12876,7 +12876,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'>=' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , GtE , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , GtE , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12895,7 +12895,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'>' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 21))  // token='>'
             &&
@@ -12903,7 +12903,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'>' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , Gt , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , Gt , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12923,7 +12923,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'not' 'in' bitwise_or"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 721))  // token='not'
             &&
@@ -12933,7 +12933,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'not' 'in' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , NotIn , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , NotIn , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12952,7 +12952,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'in' bitwise_or"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 713))  // token='in'
             &&
@@ -12960,7 +12960,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'in' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , In , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , In , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -12980,7 +12980,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'is' 'not' bitwise_or"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 597))  // token='is'
             &&
@@ -12990,7 +12990,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'is' 'not' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , IsNot , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , IsNot , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -13009,7 +13009,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> compare_op_bitwise_or_pair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'is' bitwise_or"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 597))  // token='is'
             &&
@@ -13017,7 +13017,7 @@ compare_op_bitwise_or_pair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ compare_op_bitwise_or_pair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'is' bitwise_or"));
-            _res = _PyPegen_cmpop_expr_pair ( p , Is , a );
+            _res = Py_Pegen_cmpop_पाहायाग_pair ( p , Is , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -13037,27 +13037,27 @@ compare_op_bitwise_or_pair_rule(Parser *p)
 
 // Left-recursive
 // bitwise_or: bitwise_or '|' bitwise_xor | invalid_bitwise_or | bitwise_xor
-static expr_ty bitwise_or_raw(Parser *);
-static expr_ty
+static पाहायाग_ty bitwise_or_raw(Parser *);
+static पाहायाग_ty
 bitwise_or_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, bitwise_or_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, bitwise_or_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, bitwise_or_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = bitwise_or_raw(p);
@@ -13074,17 +13074,17 @@ bitwise_or_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 bitwise_or_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13102,8 +13102,8 @@ bitwise_or_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> bitwise_or[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_or '|' bitwise_xor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = bitwise_or_rule(p))  // bitwise_or
             &&
@@ -13159,7 +13159,7 @@ bitwise_or_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> bitwise_or[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_xor"));
-        expr_ty bitwise_xor_var;
+        पाहायाग_ty bitwise_xor_var;
         if (
             (bitwise_xor_var = bitwise_xor_rule(p))  // bitwise_xor
         )
@@ -13180,27 +13180,27 @@ bitwise_or_raw(Parser *p)
 
 // Left-recursive
 // bitwise_xor: bitwise_xor '^' bitwise_and | bitwise_and
-static expr_ty bitwise_xor_raw(Parser *);
-static expr_ty
+static पाहायाग_ty bitwise_xor_raw(Parser *);
+static पाहायाग_ty
 bitwise_xor_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, bitwise_xor_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, bitwise_xor_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, bitwise_xor_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = bitwise_xor_raw(p);
@@ -13217,17 +13217,17 @@ bitwise_xor_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 bitwise_xor_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13245,8 +13245,8 @@ bitwise_xor_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> bitwise_xor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_xor '^' bitwise_and"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = bitwise_xor_rule(p))  // bitwise_xor
             &&
@@ -13283,7 +13283,7 @@ bitwise_xor_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> bitwise_xor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_and"));
-        expr_ty bitwise_and_var;
+        पाहायाग_ty bitwise_and_var;
         if (
             (bitwise_and_var = bitwise_and_rule(p))  // bitwise_and
         )
@@ -13304,27 +13304,27 @@ bitwise_xor_raw(Parser *p)
 
 // Left-recursive
 // bitwise_and: bitwise_and '&' shift_expr | invalid_bitwise_and | shift_expr
-static expr_ty bitwise_and_raw(Parser *);
-static expr_ty
+static पाहायाग_ty bitwise_and_raw(Parser *);
+static पाहायाग_ty
 bitwise_and_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, bitwise_and_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, bitwise_and_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, bitwise_and_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = bitwise_and_raw(p);
@@ -13341,17 +13341,17 @@ bitwise_and_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 bitwise_and_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13369,14 +13369,14 @@ bitwise_and_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> bitwise_and[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_and '&' shift_expr"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = bitwise_and_rule(p))  // bitwise_and
             &&
             (_literal = _PyPegen_expect_token(p, 19))  // token='&'
             &&
-            (b = shift_expr_rule(p))  // shift_expr
+            (b = shift_पाहायाग_rule(p))  // shift_expr
         )
         {
             D(fprintf(stderr, "%*c+ bitwise_and[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "bitwise_and '&' shift_expr"));
@@ -13426,13 +13426,13 @@ bitwise_and_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> bitwise_and[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "shift_expr"));
-        expr_ty shift_expr_var;
+        पाहायाग_ty shift_पाहायाग_var;
         if (
-            (shift_expr_var = shift_expr_rule(p))  // shift_expr
+            (shift_पाहायाग_var = shift_पाहायाग_rule(p))  // shift_expr
         )
         {
             D(fprintf(stderr, "%*c+ bitwise_and[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "shift_expr"));
-            _res = shift_expr_var;
+            _res = shift_पाहायाग_var;
             goto done;
         }
         p->mark = _mark;
@@ -13447,30 +13447,30 @@ bitwise_and_raw(Parser *p)
 
 // Left-recursive
 // shift_expr: shift_expr '<<' sum | shift_expr '>>' sum | sum
-static expr_ty shift_expr_raw(Parser *);
-static expr_ty
-shift_expr_rule(Parser *p)
+static पाहायाग_ty shift_पाहायाग_raw(Parser *);
+static पाहायाग_ty
+shift_पाहायाग_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
-    if (_PyPegen_is_memoized(p, shift_expr_type, &_res)) {
+    पाहायाग_ty _res = NULL;
+    if (_PyPegen_is_memoized(p, shift_पाहायाग_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, shift_expr_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, shift_पाहायाग_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
-        void *_raw = shift_expr_raw(p);
+        void *_raw = shift_पाहायाग_raw(p);
         if (p->error_indicator) {
             p->level--;
             return NULL;
@@ -13484,19 +13484,19 @@ shift_expr_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
-shift_expr_raw(Parser *p)
+static पाहायाग_ty
+shift_पाहायाग_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_5_result = NULL;
+    पाहायाग_ty _prefix_5_result = NULL;
     int _prefix_5_end = 0, _prefix_5_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13514,10 +13514,10 @@ shift_expr_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> shift_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "shift_expr '<<' sum"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
-            (a = ((!p->call_invalid_rules && _prefix_5_valid) ? (p->mark = _prefix_5_end, _prefix_5_result) : (_prefix_5_result = shift_expr_rule(p), _prefix_5_end = p->mark, _prefix_5_valid = 1, _prefix_5_result)))  // shift_expr
+            (a = ((!p->call_invalid_rules && _prefix_5_valid) ? (p->mark = _prefix_5_end, _prefix_5_result) : (_prefix_5_result = shift_पाहायाग_rule(p), _prefix_5_end = p->mark, _prefix_5_valid = 1, _prefix_5_result)))  // shift_expr
             &&
             (_literal = _PyPegen_expect_token(p, 33))  // token='<<'
             &&
@@ -13553,10 +13553,10 @@ shift_expr_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> shift_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "shift_expr '>>' sum"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
-            (a = ((!p->call_invalid_rules && _prefix_5_valid) ? (p->mark = _prefix_5_end, _prefix_5_result) : (_prefix_5_result = shift_expr_rule(p), _prefix_5_end = p->mark, _prefix_5_valid = 1, _prefix_5_result)))  // shift_expr
+            (a = ((!p->call_invalid_rules && _prefix_5_valid) ? (p->mark = _prefix_5_end, _prefix_5_result) : (_prefix_5_result = shift_पाहायाग_rule(p), _prefix_5_end = p->mark, _prefix_5_valid = 1, _prefix_5_result)))  // shift_expr
             &&
             (_literal = _PyPegen_expect_token(p, 34))  // token='>>'
             &&
@@ -13591,7 +13591,7 @@ shift_expr_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> shift_expr[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "sum"));
-        expr_ty sum_var;
+        पाहायाग_ty sum_var;
         if (
             (sum_var = sum_rule(p))  // sum
         )
@@ -13612,27 +13612,27 @@ shift_expr_raw(Parser *p)
 
 // Left-recursive
 // sum: sum '+' term | sum '-' term | invalid_arithmetic | term
-static expr_ty sum_raw(Parser *);
-static expr_ty
+static पाहायाग_ty sum_raw(Parser *);
+static पाहायाग_ty
 sum_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, sum_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, sum_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, sum_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = sum_raw(p);
@@ -13649,19 +13649,19 @@ sum_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 sum_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_6_result = NULL;
+    पाहायाग_ty _prefix_6_result = NULL;
     int _prefix_6_end = 0, _prefix_6_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13679,8 +13679,8 @@ sum_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> sum[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "sum '+' term"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_6_valid) ? (p->mark = _prefix_6_end, _prefix_6_result) : (_prefix_6_result = sum_rule(p), _prefix_6_end = p->mark, _prefix_6_valid = 1, _prefix_6_result)))  // sum
             &&
@@ -13718,8 +13718,8 @@ sum_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> sum[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "sum '-' term"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_6_valid) ? (p->mark = _prefix_6_end, _prefix_6_result) : (_prefix_6_result = sum_rule(p), _prefix_6_end = p->mark, _prefix_6_valid = 1, _prefix_6_result)))  // sum
             &&
@@ -13775,7 +13775,7 @@ sum_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> sum[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term"));
-        expr_ty term_var;
+        पाहायाग_ty term_var;
         if (
             (term_var = term_rule(p))  // term
         )
@@ -13802,27 +13802,27 @@ sum_raw(Parser *p)
 //     | term '%' factor
 //     | term '@' factor
 //     | factor
-static expr_ty term_raw(Parser *);
-static expr_ty
+static पाहायाग_ty term_raw(Parser *);
+static पाहायाग_ty
 term_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, term_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, term_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, term_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = term_raw(p);
@@ -13839,19 +13839,19 @@ term_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 term_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_7_result = NULL;
+    पाहायाग_ty _prefix_7_result = NULL;
     int _prefix_7_end = 0, _prefix_7_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -13869,8 +13869,8 @@ term_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term '*' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_7_valid) ? (p->mark = _prefix_7_end, _prefix_7_result) : (_prefix_7_result = term_rule(p), _prefix_7_end = p->mark, _prefix_7_valid = 1, _prefix_7_result)))  // term
             &&
@@ -13908,8 +13908,8 @@ term_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term '/' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_7_valid) ? (p->mark = _prefix_7_end, _prefix_7_result) : (_prefix_7_result = term_rule(p), _prefix_7_end = p->mark, _prefix_7_valid = 1, _prefix_7_result)))  // term
             &&
@@ -13947,8 +13947,8 @@ term_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term '//' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_7_valid) ? (p->mark = _prefix_7_end, _prefix_7_result) : (_prefix_7_result = term_rule(p), _prefix_7_end = p->mark, _prefix_7_valid = 1, _prefix_7_result)))  // term
             &&
@@ -13986,8 +13986,8 @@ term_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term '%' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_7_valid) ? (p->mark = _prefix_7_end, _prefix_7_result) : (_prefix_7_result = term_rule(p), _prefix_7_end = p->mark, _prefix_7_valid = 1, _prefix_7_result)))  // term
             &&
@@ -14025,8 +14025,8 @@ term_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "term '@' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_7_valid) ? (p->mark = _prefix_7_end, _prefix_7_result) : (_prefix_7_result = term_rule(p), _prefix_7_end = p->mark, _prefix_7_valid = 1, _prefix_7_result)))  // term
             &&
@@ -14045,7 +14045,7 @@ term_raw(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = CHECK_VERSION ( expr_ty , 5 , "The '@' operator is" , _PyAST_BinOp ( a , MatMult , b , EXTRA ) );
+            _res = CHECK_VERSION ( पाहायाग_ty , 5 , "The '@' operator is" , _PyAST_BinOp ( a , MatMult , b , EXTRA ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -14063,7 +14063,7 @@ term_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> term[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "factor"));
-        expr_ty factor_var;
+        पाहायाग_ty factor_var;
         if (
             (factor_var = factor_rule(p))  // factor
         )
@@ -14083,17 +14083,17 @@ term_raw(Parser *p)
 }
 
 // factor: '+' factor | '-' factor | '~' factor | power | invalid_factor
-static expr_ty
+static पाहायाग_ty
 factor_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, factor_type, &_res)) {
         p->level--;
         return _res;
@@ -14115,7 +14115,7 @@ factor_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> factor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'+' factor"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 14))  // token='+'
             &&
@@ -14151,7 +14151,7 @@ factor_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> factor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'-' factor"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 15))  // token='-'
             &&
@@ -14187,7 +14187,7 @@ factor_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> factor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'~' factor"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 31))  // token='~'
             &&
@@ -14222,7 +14222,7 @@ factor_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> factor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "power"));
-        expr_ty power_var;
+        पाहायाग_ty power_var;
         if (
             (power_var = power_rule(p))  // power
         )
@@ -14256,25 +14256,25 @@ factor_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, factor_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, factor_type, _res);
     p->level--;
     return _res;
 }
 
 // power: await_primary '**' factor | await_primary
-static expr_ty
+static पाहायाग_ty
 power_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_8_result = NULL;
+    पाहायाग_ty _prefix_8_result = NULL;
     int _prefix_8_end = 0, _prefix_8_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -14292,8 +14292,8 @@ power_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> power[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "await_primary '**' factor"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_8_valid) ? (p->mark = _prefix_8_end, _prefix_8_result) : (_prefix_8_result = await_primary_rule(p), _prefix_8_end = p->mark, _prefix_8_valid = 1, _prefix_8_result)))  // await_primary
             &&
@@ -14330,7 +14330,7 @@ power_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> power[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "await_primary"));
-        expr_ty await_primary_var;
+        पाहायाग_ty await_primary_var;
         if (
             (await_primary_var = ((!p->call_invalid_rules && _prefix_8_valid) ? (p->mark = _prefix_8_end, _prefix_8_result) : (_prefix_8_result = await_primary_rule(p), _prefix_8_end = p->mark, _prefix_8_valid = 1, _prefix_8_result)))  // await_primary
         )
@@ -14350,17 +14350,17 @@ power_rule(Parser *p)
 }
 
 // await_primary: 'await' primary | primary
-static expr_ty
+static पाहायाग_ty
 await_primary_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, await_primary_type, &_res)) {
         p->level--;
         return _res;
@@ -14382,7 +14382,7 @@ await_primary_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> await_primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'await' primary"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 598))  // token='await'
             &&
@@ -14399,7 +14399,7 @@ await_primary_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = CHECK_VERSION ( expr_ty , 5 , "Await expressions are" , _PyAST_Await ( a , EXTRA ) );
+            _res = CHECK_VERSION ( पाहायाग_ty , 5 , "Await expressions are" , _PyAST_Await ( a , EXTRA ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -14417,7 +14417,7 @@ await_primary_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> await_primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary"));
-        expr_ty primary_var;
+        पाहायाग_ty primary_var;
         if (
             (primary_var = primary_rule(p))  // primary
         )
@@ -14432,7 +14432,7 @@ await_primary_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, await_primary_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, await_primary_type, _res);
     p->level--;
     return _res;
 }
@@ -14444,27 +14444,27 @@ await_primary_rule(Parser *p)
 //     | primary '(' arguments? ')'
 //     | primary '[' slices ']'
 //     | atom
-static expr_ty primary_raw(Parser *);
-static expr_ty
+static पाहायाग_ty primary_raw(Parser *);
+static पाहायाग_ty
 primary_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, primary_type, &_res)) {
         p->level--;
         return _res;
     }
     int _mark = p->mark;
     int _resmark = p->mark;
-    Memo *_memo = _PyPegen_insert_memo_direct(p, _mark, primary_type);
+    Memo *_memo = Py_Pegen_इसिंगित_memo_direct(p, _mark, primary_type);
     if (_memo == NULL) {
         p->level--;
         return NULL;
     }
     while (1) {
-        _memo->node = _res;
+        _memo->बुहोल = _res;
         _memo->mark = p->mark;
         p->mark = _mark;
         void *_raw = primary_raw(p);
@@ -14481,19 +14481,19 @@ primary_rule(Parser *p)
     p->level--;
     return _res;
 }
-static expr_ty
+static पाहायाग_ty
 primary_raw(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_9_result = NULL;
+    पाहायाग_ty _prefix_9_result = NULL;
     int _prefix_9_end = 0, _prefix_9_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -14511,8 +14511,8 @@ primary_raw(Parser *p)
         }
         D(fprintf(stderr, "%*c> primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary '.' NAME"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_9_valid) ? (p->mark = _prefix_9_end, _prefix_9_result) : (_prefix_9_result = primary_rule(p), _prefix_9_end = p->mark, _prefix_9_valid = 1, _prefix_9_result)))  // primary
             &&
@@ -14549,8 +14549,8 @@ primary_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary genexp"));
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_9_valid) ? (p->mark = _prefix_9_end, _prefix_9_result) : (_prefix_9_result = primary_rule(p), _prefix_9_end = p->mark, _prefix_9_valid = 1, _prefix_9_result)))  // primary
             &&
@@ -14567,7 +14567,7 @@ primary_raw(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Call ( a , CHECK ( asdl_expr_seq* , ( asdl_expr_seq* ) _PyPegen_singleton_seq ( p , b ) ) , NULL , EXTRA );
+            _res = _PyAST_Call ( a , CHECK ( asdl_पाहायाग_seq* , ( asdl_पाहायाग_seq* ) _PyPegen_singleton_seq ( p , b ) ) , NULL , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -14587,7 +14587,7 @@ primary_raw(Parser *p)
         D(fprintf(stderr, "%*c> primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary '(' arguments? ')'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         void *b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_9_valid) ? (p->mark = _prefix_9_end, _prefix_9_result) : (_prefix_9_result = primary_rule(p), _prefix_9_end = p->mark, _prefix_9_valid = 1, _prefix_9_result)))  // primary
@@ -14609,7 +14609,7 @@ primary_raw(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Call ( a , ( b ) ? ( ( expr_ty ) b ) -> v . Call . args : NULL , ( b ) ? ( ( expr_ty ) b ) -> v . Call . keywords : NULL , EXTRA );
+            _res = _PyAST_Call ( a , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Call . मगा_कातविरान : NULL , ( b ) ? ( ( पाहायाग_ty ) b ) -> v . Call . keywords : NULL , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -14629,8 +14629,8 @@ primary_raw(Parser *p)
         D(fprintf(stderr, "%*c> primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary '[' slices ']'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_9_valid) ? (p->mark = _prefix_9_end, _prefix_9_result) : (_prefix_9_result = primary_rule(p), _prefix_9_end = p->mark, _prefix_9_valid = 1, _prefix_9_result)))  // primary
             &&
@@ -14669,7 +14669,7 @@ primary_raw(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> primary[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "atom"));
-        expr_ty atom_var;
+        पाहायाग_ty atom_var;
         if (
             (atom_var = atom_rule(p))  // atom
         )
@@ -14689,17 +14689,17 @@ primary_raw(Parser *p)
 }
 
 // slices: slice !',' | ','.(slice | starred_expression)+ ','?
-static expr_ty
+static पाहायाग_ty
 slices_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -14716,7 +14716,7 @@ slices_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> slices[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "slice !','"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = slice_rule(p))  // slice
             &&
@@ -14744,9 +14744,9 @@ slices_rule(Parser *p)
         D(fprintf(stderr, "%*c> slices[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.(slice | starred_expression)+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_gather_64_rule(p))  // ','.(slice | starred_expression)+
+            (a = (asdl_पाहायाग_seq*)_gather_64_rule(p))  // ','.(slice | starred_expression)+
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
         )
@@ -14780,17 +14780,17 @@ slices_rule(Parser *p)
 }
 
 // slice: expression? ':' expression? [':' expression?] | named_expression
-static expr_ty
+static पाहायाग_ty
 slice_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -14849,7 +14849,7 @@ slice_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> slice[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "named_expression"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = named_expression_rule(p))  // named_expression
         )
@@ -14884,17 +14884,17 @@ slice_rule(Parser *p)
 //     | &'[' (listcomp | list)
 //     | &'{' (dictcomp | setcomp | dict | set)
 //     | '...'
-static expr_ty
+static पाहायाग_ty
 atom_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -14911,7 +14911,7 @@ atom_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> atom[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME"));
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
         )
@@ -15029,7 +15029,7 @@ atom_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> atom[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "&(STRING | FSTRING_START | TSTRING_START) strings"));
-        expr_ty strings_var;
+        पाहायाग_ty strings_var;
         if (
             _PyPegen_lookahead(1, _tmp_42_rule, p)
             &&
@@ -15044,19 +15044,19 @@ atom_rule(Parser *p)
         D(fprintf(stderr, "%*c%s atom[%d-%d]: %s failed!\n", p->level, ' ',
                   p->error_indicator ? "ERROR!" : "-", _mark, p->mark, "&(STRING | FSTRING_START | TSTRING_START) strings"));
     }
-    { // NUMBER
+    { //नुमेरो
         if (p->error_indicator) {
             p->level--;
             return NULL;
         }
         D(fprintf(stderr, "%*c> atom[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-        expr_ty number_var;
+        पाहायाग_ty नुमेरो_var;
         if (
-            (number_var = _PyPegen_number_token(p))  // NUMBER
+            (नुमेरो_var = Py_Pegen_नुमेरो_token(p))  //नुमेरो
         )
         {
             D(fprintf(stderr, "%*c+ atom[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NUMBER"));
-            _res = number_var;
+            _res = नुमेरो_var;
             goto done;
         }
         p->mark = _mark;
@@ -15166,17 +15166,17 @@ atom_rule(Parser *p)
 }
 
 // group: '(' (yield_expr | named_expression) ')' | invalid_group
-static expr_ty
+static पाहायाग_ty
 group_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // '(' (yield_expr | named_expression) ')'
         if (p->error_indicator) {
@@ -15234,17 +15234,17 @@ group_rule(Parser *p)
 }
 
 // lambdef: 'lambda' lambda_params? ':' expression
-static expr_ty
+static पाहायाग_ty
 lambdef_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -15264,7 +15264,7 @@ lambdef_rule(Parser *p)
         Token * _keyword;
         Token * _literal;
         void *a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (_keyword = _PyPegen_expect_token(p, 622))  // token='lambda'
             &&
@@ -15307,8 +15307,8 @@ lambdef_rule(Parser *p)
 static arguments_ty
 lambda_params_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15369,8 +15369,8 @@ lambda_params_rule(Parser *p)
 static arguments_ty
 lambda_parameters_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15534,8 +15534,8 @@ lambda_parameters_rule(Parser *p)
 static asdl_arg_seq*
 lambda_slash_no_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15614,8 +15614,8 @@ lambda_slash_no_default_rule(Parser *p)
 static SlashWithDefault*
 lambda_slash_with_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15702,8 +15702,8 @@ lambda_slash_with_default_rule(Parser *p)
 static StarEtc*
 lambda_star_etc_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15830,8 +15830,8 @@ lambda_star_etc_rule(Parser *p)
 static arg_ty
 lambda_kwds_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15895,8 +15895,8 @@ lambda_kwds_rule(Parser *p)
 static arg_ty
 lambda_param_no_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15967,8 +15967,8 @@ lambda_param_no_default_rule(Parser *p)
 static NameDefaultPair*
 lambda_param_with_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -15984,7 +15984,7 @@ lambda_param_with_default_rule(Parser *p)
         D(fprintf(stderr, "%*c> lambda_param_with_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "lambda_param default ','"));
         Token * _literal;
         arg_ty a;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (a = lambda_param_rule(p))  // lambda_param
             &&
@@ -16013,7 +16013,7 @@ lambda_param_with_default_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> lambda_param_with_default[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "lambda_param default &':'"));
         arg_ty a;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (a = lambda_param_rule(p))  // lambda_param
             &&
@@ -16045,8 +16045,8 @@ lambda_param_with_default_rule(Parser *p)
 static NameDefaultPair*
 lambda_param_maybe_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -16123,8 +16123,8 @@ lambda_param_maybe_default_rule(Parser *p)
 static arg_ty
 lambda_param_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -16147,7 +16147,7 @@ lambda_param_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> lambda_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = _PyPegen_name_token(p))  // NAME
         )
@@ -16181,17 +16181,17 @@ lambda_param_rule(Parser *p)
 }
 
 // fstring_middle: fstring_replacement_field | FSTRING_MIDDLE
-static expr_ty
-fstring_middle_rule(Parser *p)
+static पाहायाग_ty
+fstring_गित्ना_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // fstring_replacement_field
         if (p->error_indicator) {
@@ -16199,7 +16199,7 @@ fstring_middle_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> fstring_middle[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "fstring_replacement_field"));
-        expr_ty fstring_replacement_field_var;
+        पाहायाग_ty fstring_replacement_field_var;
         if (
             (fstring_replacement_field_var = fstring_replacement_field_rule(p))  // fstring_replacement_field
         )
@@ -16220,7 +16220,7 @@ fstring_middle_rule(Parser *p)
         D(fprintf(stderr, "%*c> fstring_middle[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "FSTRING_MIDDLE"));
         Token * t;
         if (
-            (t = _PyPegen_expect_token(p, FSTRING_MIDDLE))  // token='FSTRING_MIDDLE'
+            (t = _PyPegen_expect_token(p, FSTRING_गित्ना))  // token='FSTRING_MIDDLE'
         )
         {
             D(fprintf(stderr, "%*c+ fstring_middle[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "FSTRING_MIDDLE"));
@@ -16245,17 +16245,17 @@ fstring_middle_rule(Parser *p)
 // fstring_replacement_field:
 //     | '{' annotated_rhs '='? fstring_conversion? fstring_full_format_spec? '}'
 //     | invalid_fstring_replacement_field
-static expr_ty
+static पाहायाग_ty
 fstring_replacement_field_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -16273,9 +16273,9 @@ fstring_replacement_field_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> fstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs '='? fstring_conversion? fstring_full_format_spec? '}'"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *conversion;
-        void *debug_expr;
+        void *debug_पाहायाग;
         void *format;
         Token * rbrace;
         if (
@@ -16283,7 +16283,7 @@ fstring_replacement_field_rule(Parser *p)
             &&
             (a = annotated_rhs_rule(p))  // annotated_rhs
             &&
-            (debug_expr = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
+            (debug_पाहायाग = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
             &&
             (conversion = fstring_conversion_rule(p), !p->error_indicator)  // fstring_conversion?
             &&
@@ -16302,7 +16302,7 @@ fstring_replacement_field_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyPegen_formatted_value ( p , a , debug_expr , conversion , format , rbrace , EXTRA );
+            _res = Py_Pegen_formatted_हालागा ( p , a , debug_पाहायाग , conversion , format , rbrace , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16343,8 +16343,8 @@ fstring_replacement_field_rule(Parser *p)
 static ResultTokenWithMetadata*
 fstring_conversion_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -16358,7 +16358,7 @@ fstring_conversion_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> fstring_conversion[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"!\" NAME"));
-        expr_ty conv;
+        पाहायाग_ty conv;
         Token * conv_token;
         if (
             (conv_token = _PyPegen_expect_token(p, 54))  // token='!'
@@ -16389,8 +16389,8 @@ fstring_conversion_rule(Parser *p)
 static ResultTokenWithMetadata*
 fstring_full_format_spec_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -16431,7 +16431,7 @@ fstring_full_format_spec_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyPegen_setup_full_format_spec ( p , colon , ( asdl_expr_seq* ) spec , EXTRA );
+            _res = _PyPegen_setup_full_format_spec ( p , colon , ( asdl_पाहायाग_seq* ) spec , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16450,17 +16450,17 @@ fstring_full_format_spec_rule(Parser *p)
 }
 
 // fstring_format_spec: FSTRING_MIDDLE | fstring_replacement_field
-static expr_ty
+static पाहायाग_ty
 fstring_format_spec_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // FSTRING_MIDDLE
         if (p->error_indicator) {
@@ -16470,7 +16470,7 @@ fstring_format_spec_rule(Parser *p)
         D(fprintf(stderr, "%*c> fstring_format_spec[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "FSTRING_MIDDLE"));
         Token * t;
         if (
-            (t = _PyPegen_expect_token(p, FSTRING_MIDDLE))  // token='FSTRING_MIDDLE'
+            (t = _PyPegen_expect_token(p, FSTRING_गित्ना))  // token='FSTRING_MIDDLE'
         )
         {
             D(fprintf(stderr, "%*c+ fstring_format_spec[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "FSTRING_MIDDLE"));
@@ -16492,7 +16492,7 @@ fstring_format_spec_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> fstring_format_spec[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "fstring_replacement_field"));
-        expr_ty fstring_replacement_field_var;
+        पाहायाग_ty fstring_replacement_field_var;
         if (
             (fstring_replacement_field_var = fstring_replacement_field_rule(p))  // fstring_replacement_field
         )
@@ -16512,17 +16512,17 @@ fstring_format_spec_rule(Parser *p)
 }
 
 // fstring: FSTRING_START fstring_middle* FSTRING_END
-static expr_ty
+static पाहायाग_ty
 fstring_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // FSTRING_START fstring_middle* FSTRING_END
         if (p->error_indicator) {
@@ -16542,7 +16542,7 @@ fstring_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ fstring[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "FSTRING_START fstring_middle* FSTRING_END"));
-            _res = _PyPegen_joined_str ( p , a , ( asdl_expr_seq* ) b , c );
+            _res = _PyPegen_joined_str ( p , a , ( asdl_पाहायाग_seq* ) b , c );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16563,17 +16563,17 @@ fstring_rule(Parser *p)
 // tstring_format_spec_replacement_field:
 //     | '{' annotated_rhs '='? fstring_conversion? tstring_full_format_spec? '}'
 //     | invalid_tstring_replacement_field
-static expr_ty
+static पाहायाग_ty
 tstring_format_spec_replacement_field_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -16591,9 +16591,9 @@ tstring_format_spec_replacement_field_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> tstring_format_spec_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs '='? fstring_conversion? tstring_full_format_spec? '}'"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *conversion;
-        void *debug_expr;
+        void *debug_पाहायाग;
         void *format;
         Token * rbrace;
         if (
@@ -16601,7 +16601,7 @@ tstring_format_spec_replacement_field_rule(Parser *p)
             &&
             (a = annotated_rhs_rule(p))  // annotated_rhs
             &&
-            (debug_expr = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
+            (debug_पाहायाग = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
             &&
             (conversion = fstring_conversion_rule(p), !p->error_indicator)  // fstring_conversion?
             &&
@@ -16620,7 +16620,7 @@ tstring_format_spec_replacement_field_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyPegen_formatted_value ( p , a , debug_expr , conversion , format , rbrace , EXTRA );
+            _res = Py_Pegen_formatted_हालागा ( p , a , debug_पाहायाग , conversion , format , rbrace , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16658,17 +16658,17 @@ tstring_format_spec_replacement_field_rule(Parser *p)
 }
 
 // tstring_format_spec: TSTRING_MIDDLE | tstring_format_spec_replacement_field
-static expr_ty
+static पाहायाग_ty
 tstring_format_spec_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // TSTRING_MIDDLE
         if (p->error_indicator) {
@@ -16678,7 +16678,7 @@ tstring_format_spec_rule(Parser *p)
         D(fprintf(stderr, "%*c> tstring_format_spec[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "TSTRING_MIDDLE"));
         Token * t;
         if (
-            (t = _PyPegen_expect_token(p, TSTRING_MIDDLE))  // token='TSTRING_MIDDLE'
+            (t = _PyPegen_expect_token(p, TSTRING_गित्ना))  // token='TSTRING_MIDDLE'
         )
         {
             D(fprintf(stderr, "%*c+ tstring_format_spec[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "TSTRING_MIDDLE"));
@@ -16700,7 +16700,7 @@ tstring_format_spec_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> tstring_format_spec[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring_format_spec_replacement_field"));
-        expr_ty tstring_format_spec_replacement_field_var;
+        पाहायाग_ty tstring_format_spec_replacement_field_var;
         if (
             (tstring_format_spec_replacement_field_var = tstring_format_spec_replacement_field_rule(p))  // tstring_format_spec_replacement_field
         )
@@ -16723,8 +16723,8 @@ tstring_format_spec_rule(Parser *p)
 static ResultTokenWithMetadata*
 tstring_full_format_spec_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -16765,7 +16765,7 @@ tstring_full_format_spec_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyPegen_setup_full_format_spec ( p , colon , ( asdl_expr_seq* ) spec , EXTRA );
+            _res = _PyPegen_setup_full_format_spec ( p , colon , ( asdl_पाहायाग_seq* ) spec , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16786,17 +16786,17 @@ tstring_full_format_spec_rule(Parser *p)
 // tstring_replacement_field:
 //     | '{' annotated_rhs '='? fstring_conversion? tstring_full_format_spec? '}'
 //     | invalid_tstring_replacement_field
-static expr_ty
+static पाहायाग_ty
 tstring_replacement_field_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -16814,9 +16814,9 @@ tstring_replacement_field_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> tstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs '='? fstring_conversion? tstring_full_format_spec? '}'"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         void *conversion;
-        void *debug_expr;
+        void *debug_पाहायाग;
         void *format;
         Token * rbrace;
         if (
@@ -16824,7 +16824,7 @@ tstring_replacement_field_rule(Parser *p)
             &&
             (a = annotated_rhs_rule(p))  // annotated_rhs
             &&
-            (debug_expr = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
+            (debug_पाहायाग = _PyPegen_expect_token(p, 22), !p->error_indicator)  // '='?
             &&
             (conversion = fstring_conversion_rule(p), !p->error_indicator)  // fstring_conversion?
             &&
@@ -16843,7 +16843,7 @@ tstring_replacement_field_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyPegen_interpolation ( p , a , debug_expr , conversion , format , rbrace , EXTRA );
+            _res = _PyPegen_interpolation ( p , a , debug_पाहायाग , conversion , format , rbrace , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16881,17 +16881,17 @@ tstring_replacement_field_rule(Parser *p)
 }
 
 // tstring_middle: tstring_replacement_field | TSTRING_MIDDLE
-static expr_ty
-tstring_middle_rule(Parser *p)
+static पाहायाग_ty
+tstring_गित्ना_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // tstring_replacement_field
         if (p->error_indicator) {
@@ -16899,7 +16899,7 @@ tstring_middle_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> tstring_middle[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring_replacement_field"));
-        expr_ty tstring_replacement_field_var;
+        पाहायाग_ty tstring_replacement_field_var;
         if (
             (tstring_replacement_field_var = tstring_replacement_field_rule(p))  // tstring_replacement_field
         )
@@ -16920,7 +16920,7 @@ tstring_middle_rule(Parser *p)
         D(fprintf(stderr, "%*c> tstring_middle[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "TSTRING_MIDDLE"));
         Token * t;
         if (
-            (t = _PyPegen_expect_token(p, TSTRING_MIDDLE))  // token='TSTRING_MIDDLE'
+            (t = _PyPegen_expect_token(p, TSTRING_गित्ना))  // token='TSTRING_MIDDLE'
         )
         {
             D(fprintf(stderr, "%*c+ tstring_middle[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "TSTRING_MIDDLE"));
@@ -16943,17 +16943,17 @@ tstring_middle_rule(Parser *p)
 }
 
 // tstring: TSTRING_START tstring_middle* TSTRING_END
-static expr_ty
+static पाहायाग_ty
 tstring_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, tstring_type, &_res)) {
         p->level--;
         return _res;
@@ -16977,7 +16977,7 @@ tstring_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ tstring[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "TSTRING_START tstring_middle* TSTRING_END"));
-            _res = CHECK_VERSION ( expr_ty , 14 , "t-strings are" , _PyPegen_template_str ( p , a , ( asdl_expr_seq* ) b , c ) );
+            _res = CHECK_VERSION ( पाहायाग_ty , 14 , "t-strings are" , _PyPegen_template_str ( p , a , ( asdl_पाहायाग_seq* ) b , c ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -16991,23 +16991,23 @@ tstring_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, tstring_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, tstring_type, _res);
     p->level--;
     return _res;
 }
 
 // string: STRING
-static expr_ty
+static पाहायाग_ty
 string_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // STRING
         if (p->error_indicator) {
@@ -17040,17 +17040,17 @@ string_rule(Parser *p)
 }
 
 // strings: invalid_string_tstring_concat | ((fstring | string))+ | tstring+
-static expr_ty
+static पाहायाग_ty
 strings_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, strings_type, &_res)) {
         p->level--;
         return _res;
@@ -17090,9 +17090,9 @@ strings_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> strings[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "((fstring | string))+"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_loop1_80_rule(p))  // ((fstring | string))+
+            (a = (asdl_पाहायाग_seq*)_loop1_80_rule(p))  // ((fstring | string))+
         )
         {
             D(fprintf(stderr, "%*c+ strings[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "((fstring | string))+"));
@@ -17123,9 +17123,9 @@ strings_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> strings[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring+"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_loop1_81_rule(p))  // tstring+
+            (a = (asdl_पाहायाग_seq*)_loop1_81_rule(p))  // tstring+
         )
         {
             D(fprintf(stderr, "%*c+ strings[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "tstring+"));
@@ -17152,23 +17152,23 @@ strings_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, strings_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, strings_type, _res);
     p->level--;
     return _res;
 }
 
 // display_items: ','.display_item+ ','?
-static asdl_expr_seq*
-display_items_rule(Parser *p)
+static asdl_पाहायाग_seq*
+display_मगा_बागाय_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    asdl_expr_seq* _res = NULL;
+    asdl_पाहायाग_seq* _res = NULL;
     int _mark = p->mark;
     { // ','.display_item+ ','?
         if (p->error_indicator) {
@@ -17178,9 +17178,9 @@ display_items_rule(Parser *p)
         D(fprintf(stderr, "%*c> display_items[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.display_item+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_gather_83_rule(p))  // ','.display_item+
+            (a = (asdl_पाहायाग_seq*)_gather_83_rule(p))  // ','.display_item+
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
         )
@@ -17205,17 +17205,17 @@ display_items_rule(Parser *p)
 }
 
 // display_item: invalid_starred_expression_unpacking_sequence | star_named_expression
-static expr_ty
+static पाहायाग_ty
 display_item_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->call_invalid_rules) { // invalid_starred_expression_unpacking_sequence
         if (p->error_indicator) {
@@ -17242,7 +17242,7 @@ display_item_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> display_item[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_named_expression"));
-        expr_ty star_named_expression_var;
+        पाहायाग_ty star_named_expression_var;
         if (
             (star_named_expression_var = star_named_expression_rule(p))  // star_named_expression
         )
@@ -17262,17 +17262,17 @@ display_item_rule(Parser *p)
 }
 
 // list: '[' display_items? ']'
-static expr_ty
+static पाहायाग_ty
 list_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -17295,7 +17295,7 @@ list_rule(Parser *p)
         if (
             (_literal = _PyPegen_expect_token(p, 9))  // token='['
             &&
-            (a = display_items_rule(p), !p->error_indicator)  // display_items?
+            (a = display_मगा_बागाय_rule(p), !p->error_indicator)  // display_items?
             &&
             (_literal_1 = _PyPegen_expect_token(p, 10))  // token=']'
         )
@@ -17329,17 +17329,17 @@ list_rule(Parser *p)
 }
 
 // tuple: '(' [display_item ',' display_items?] ')'
-static expr_ty
+static पाहायाग_ty
 tuple_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -17396,17 +17396,17 @@ tuple_rule(Parser *p)
 }
 
 // set: '{' display_items '}'
-static expr_ty
+static पाहायाग_ty
 set_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -17425,11 +17425,11 @@ set_rule(Parser *p)
         D(fprintf(stderr, "%*c> set[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' display_items '}'"));
         Token * _literal;
         Token * _literal_1;
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
-            (a = display_items_rule(p))  // display_items
+            (a = display_मगा_बागाय_rule(p))  // display_items
             &&
             (_literal_1 = _PyPegen_expect_token(p, 26))  // token='}'
         )
@@ -17463,17 +17463,17 @@ set_rule(Parser *p)
 }
 
 // dict: '{' double_starred_kvpairs? '}' | '{' invalid_double_starred_kvpairs '}'
-static expr_ty
+static पाहायाग_ty
 dict_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -17511,7 +17511,7 @@ dict_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Dict ( CHECK ( asdl_expr_seq* , _PyPegen_get_keys ( p , a ) ) , CHECK ( asdl_expr_seq* , _PyPegen_get_values ( p , a ) ) , EXTRA );
+            _res = _PyAST_Dict ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_मगा_सुसि ( p , a ) ) , CHECK ( asdl_पाहायाग_seq* , Py_Pegen_get_मगा_हालागा ( p , a ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -17558,8 +17558,8 @@ dict_rule(Parser *p)
 static asdl_seq*
 double_starred_kvpairs_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -17602,17 +17602,17 @@ double_starred_kvpairs_rule(Parser *p)
 }
 
 // double_starred_kvpair: '**' bitwise_or | kvpair
-static KeyValuePair*
+static सुसि_हालागा_Pair*
 double_starred_kvpair_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    KeyValuePair* _res = NULL;
+    सुसि_हालागा_Pair* _res = NULL;
     int _mark = p->mark;
     { // '**' bitwise_or
         if (p->error_indicator) {
@@ -17621,7 +17621,7 @@ double_starred_kvpair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> double_starred_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' bitwise_or"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -17629,7 +17629,7 @@ double_starred_kvpair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ double_starred_kvpair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'**' bitwise_or"));
-            _res = _PyPegen_key_value_pair ( p , NULL , a );
+            _res = Py_Pegen_सुसि_हालागा_pair ( p , NULL , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -17647,7 +17647,7 @@ double_starred_kvpair_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> double_starred_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "kvpair"));
-        KeyValuePair* kvpair_var;
+        सुसि_हालागा_Pair* kvpair_var;
         if (
             (kvpair_var = kvpair_rule(p))  // kvpair
         )
@@ -17667,17 +17667,17 @@ double_starred_kvpair_rule(Parser *p)
 }
 
 // kvpair: expression ':' expression
-static KeyValuePair*
+static सुसि_हालागा_Pair*
 kvpair_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    KeyValuePair* _res = NULL;
+    सुसि_हालागा_Pair* _res = NULL;
     int _mark = p->mark;
     { // expression ':' expression
         if (p->error_indicator) {
@@ -17686,8 +17686,8 @@ kvpair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = expression_rule(p))  // expression
             &&
@@ -17697,7 +17697,7 @@ kvpair_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ kvpair[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "expression ':' expression"));
-            _res = _PyPegen_key_value_pair ( p , a , b );
+            _res = Py_Pegen_सुसि_हालागा_pair ( p , a , b );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -17719,8 +17719,8 @@ kvpair_rule(Parser *p)
 static asdl_comprehension_seq*
 for_if_clauses_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -17766,8 +17766,8 @@ for_if_clauses_rule(Parser *p)
 static comprehension_ty
 for_if_clause_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -17785,9 +17785,9 @@ for_if_clause_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         Token * _keyword_2;
-        expr_ty a;
-        expr_ty b;
-        asdl_expr_seq* c;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        asdl_पाहायाग_seq* c;
         if (
             (_keyword = _PyPegen_expect_token(p, 716))  // token='async'
             &&
@@ -17801,7 +17801,7 @@ for_if_clause_rule(Parser *p)
             &&
             (b = disjunction_rule(p))  // disjunction
             &&
-            (c = (asdl_expr_seq*)_loop0_88_rule(p))  // (('if' disjunction))*
+            (c = (asdl_पाहायाग_seq*)_loop0_88_rule(p))  // (('if' disjunction))*
         )
         {
             D(fprintf(stderr, "%*c+ for_if_clause[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'async' 'for' star_targets 'in' ~ disjunction (('if' disjunction))*"));
@@ -17830,9 +17830,9 @@ for_if_clause_rule(Parser *p)
         int _cut_var = 0;
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
-        expr_ty b;
-        asdl_expr_seq* c;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        asdl_पाहायाग_seq* c;
         if (
             (_keyword = _PyPegen_expect_token(p, 712))  // token='for'
             &&
@@ -17844,7 +17844,7 @@ for_if_clause_rule(Parser *p)
             &&
             (b = disjunction_rule(p))  // disjunction
             &&
-            (c = (asdl_expr_seq*)_loop0_88_rule(p))  // (('if' disjunction))*
+            (c = (asdl_पाहायाग_seq*)_loop0_88_rule(p))  // (('if' disjunction))*
         )
         {
             D(fprintf(stderr, "%*c+ for_if_clause[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'for' star_targets 'in' ~ disjunction (('if' disjunction))*"));
@@ -17909,17 +17909,17 @@ for_if_clause_rule(Parser *p)
 }
 
 // listcomp: '[' star_named_expression for_if_clauses ']' | invalid_comprehension
-static expr_ty
+static पाहायाग_ty
 listcomp_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -17938,7 +17938,7 @@ listcomp_rule(Parser *p)
         D(fprintf(stderr, "%*c> listcomp[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'[' star_named_expression for_if_clauses ']'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_comprehension_seq* b;
         if (
             (_literal = _PyPegen_expect_token(p, 9))  // token='['
@@ -17998,17 +17998,17 @@ listcomp_rule(Parser *p)
 }
 
 // setcomp: '{' star_named_expression for_if_clauses '}' | invalid_comprehension
-static expr_ty
+static पाहायाग_ty
 setcomp_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18027,7 +18027,7 @@ setcomp_rule(Parser *p)
         D(fprintf(stderr, "%*c> setcomp[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' star_named_expression for_if_clauses '}'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_comprehension_seq* b;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
@@ -18089,17 +18089,17 @@ setcomp_rule(Parser *p)
 // genexp:
 //     | '(' (assignment_expression | expression !':=' | starred_expression) for_if_clauses ')'
 //     | invalid_comprehension
-static expr_ty
+static पाहायाग_ty
 genexp_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18178,17 +18178,17 @@ genexp_rule(Parser *p)
 }
 
 // dictcomp: '{' kvpair for_if_clauses '}' | '{' '**' expression for_if_clauses '}'
-static expr_ty
+static पाहायाग_ty
 dictcomp_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18207,7 +18207,7 @@ dictcomp_rule(Parser *p)
         D(fprintf(stderr, "%*c> dictcomp[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' kvpair for_if_clauses '}'"));
         Token * _literal;
         Token * _literal_1;
-        KeyValuePair* a;
+        सुसि_हालागा_Pair* a;
         asdl_comprehension_seq* b;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
@@ -18229,7 +18229,7 @@ dictcomp_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_DictComp ( a -> key , a -> value , b , EXTRA );
+            _res = _PyAST_DictComp ( a -> सुसि , a -> हालागा , b , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -18250,7 +18250,7 @@ dictcomp_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         Token * _literal_2;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_comprehension_seq* b;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
@@ -18293,17 +18293,17 @@ dictcomp_rule(Parser *p)
 }
 
 // arguments: args ','? &')' | invalid_arguments
-static expr_ty
+static पाहायाग_ty
 arguments_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, arguments_type, &_res)) {
         p->level--;
         return _res;
@@ -18317,9 +18317,9 @@ arguments_rule(Parser *p)
         D(fprintf(stderr, "%*c> arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args ','? &')'"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         if (
-            (a = args_rule(p))  // args
+            (a = मगा_कातविरान_rule(p))  //मगा_कातविरान
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
             &&
@@ -18360,7 +18360,7 @@ arguments_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, arguments_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, arguments_type, _res);
     p->level--;
     return _res;
 }
@@ -18368,17 +18368,17 @@ arguments_rule(Parser *p)
 // args:
 //     | ','.(starred_expression | (assignment_expression | expression !':=') !'=')+ [',' kwargs]
 //     | kwargs
-static expr_ty
-args_rule(Parser *p)
+static पाहायाग_ty
+मगा_कातविरान_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18395,10 +18395,10 @@ args_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> args[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.(starred_expression | (assignment_expression | expression !':=') !'=')+ [',' kwargs]"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         void *b;
         if (
-            (a = (asdl_expr_seq*)_gather_91_rule(p))  // ','.(starred_expression | (assignment_expression | expression !':=') !'=')+
+            (a = (asdl_पाहायाग_seq*)_gather_91_rule(p))  // ','.(starred_expression | (assignment_expression | expression !':=') !'=')+
             &&
             (b = _tmp_92_rule(p), !p->error_indicator)  // [',' kwargs]
         )
@@ -18446,7 +18446,7 @@ args_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Call ( _PyPegen_dummy_name ( p ) , CHECK_NULL_ALLOWED ( asdl_expr_seq* , _PyPegen_seq_extract_starred_exprs ( p , a ) ) , CHECK_NULL_ALLOWED ( asdl_keyword_seq* , _PyPegen_seq_delete_starred_exprs ( p , a ) ) , EXTRA );
+            _res = _PyAST_Call ( _PyPegen_dummy_name ( p ) , CHECK_NULL_ALLOWED ( asdl_पाहायाग_seq* , _PyPegen_seq_extract_starred_exprs ( p , a ) ) , CHECK_NULL_ALLOWED ( asdl_keyword_seq* , _PyPegen_seq_delete_starred_exprs ( p , a ) ) , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -18470,8 +18470,8 @@ args_rule(Parser *p)
 static asdl_seq*
 kwargs_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -18535,17 +18535,17 @@ kwargs_rule(Parser *p)
 //     | invalid_starred_expression_unpacking
 //     | '*' expression
 //     | invalid_starred_expression
-static expr_ty
+static पाहायाग_ty
 starred_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18582,7 +18582,7 @@ starred_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> starred_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -18640,8 +18640,8 @@ starred_expression_rule(Parser *p)
 static KeywordOrStarred*
 kwarg_or_starred_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -18684,8 +18684,8 @@ kwarg_or_starred_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> kwarg_or_starred[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -18722,7 +18722,7 @@ kwarg_or_starred_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> kwarg_or_starred[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "starred_expression"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = starred_expression_rule(p))  // starred_expression
         )
@@ -18750,8 +18750,8 @@ kwarg_or_starred_rule(Parser *p)
 static KeywordOrStarred*
 kwarg_or_double_starred_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -18794,8 +18794,8 @@ kwarg_or_double_starred_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> kwarg_or_double_starred[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -18833,7 +18833,7 @@ kwarg_or_double_starred_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> kwarg_or_double_starred[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -18869,19 +18869,19 @@ kwarg_or_double_starred_rule(Parser *p)
 }
 
 // star_targets: star_target !',' | star_target ((',' star_target))* ','?
-static expr_ty
+static पाहायाग_ty
 star_targets_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_10_result = NULL;
+    पाहायाग_ty _prefix_10_result = NULL;
     int _prefix_10_end = 0, _prefix_10_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -18898,7 +18898,7 @@ star_targets_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> star_targets[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_target !','"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = ((!p->call_invalid_rules && _prefix_10_valid) ? (p->mark = _prefix_10_end, _prefix_10_result) : (_prefix_10_result = star_target_rule(p), _prefix_10_end = p->mark, _prefix_10_valid = 1, _prefix_10_result)))  // star_target
             &&
@@ -18926,7 +18926,7 @@ star_targets_rule(Parser *p)
         D(fprintf(stderr, "%*c> star_targets[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_target ((',' star_target))* ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_seq * b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_10_valid) ? (p->mark = _prefix_10_end, _prefix_10_result) : (_prefix_10_result = star_target_rule(p), _prefix_10_end = p->mark, _prefix_10_valid = 1, _prefix_10_result)))  // star_target
@@ -18946,7 +18946,7 @@ star_targets_rule(Parser *p)
             UNUSED(_end_lineno); // Only used by EXTRA macro
             int _end_col_offset = _token->end_col_offset;
             UNUSED(_end_col_offset); // Only used by EXTRA macro
-            _res = _PyAST_Tuple ( CHECK ( asdl_expr_seq* , _PyPegen_seq_insert_in_front ( p , a , b ) ) , Store , EXTRA );
+            _res = _PyAST_Tuple ( CHECK ( asdl_पाहायाग_seq* , Py_Pegen_seq_इसिंगित_in_front ( p , a , b ) ) , Store , EXTRA );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -18965,17 +18965,17 @@ star_targets_rule(Parser *p)
 }
 
 // star_target: '*' (!'*' star_target) | target
-static expr_ty
+static पाहायाग_ty
 star_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, star_target_type, &_res)) {
         p->level--;
         return _res;
@@ -19032,7 +19032,7 @@ star_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> star_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "target"));
-        expr_ty target_var;
+        पाहायाग_ty target_var;
         if (
             (target_var = target_rule(p))  // target
         )
@@ -19047,23 +19047,23 @@ star_target_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, star_target_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, star_target_type, _res);
     p->level--;
     return _res;
 }
 
 // target: target_value
-static expr_ty
+static पाहायाग_ty
 target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, target_type, &_res)) {
         p->level--;
         return _res;
@@ -19075,9 +19075,9 @@ target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "target_value"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
-            (a = target_value_rule(p))  // target_value
+            (a = target_हालागा_rule(p))  // target_value
         )
         {
             D(fprintf(stderr, "%*c+ target[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "target_value"));
@@ -19095,23 +19095,23 @@ target_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, target_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, target_type, _res);
     p->level--;
     return _res;
 }
 
 // single_target: target_value
-static expr_ty
+static पाहायाग_ty
 single_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // target_value
         if (p->error_indicator) {
@@ -19119,9 +19119,9 @@ single_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> single_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "target_value"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
-            (a = target_value_rule(p))  // target_value
+            (a = target_हालागा_rule(p))  // target_value
         )
         {
             D(fprintf(stderr, "%*c+ single_target[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "target_value"));
@@ -19144,17 +19144,17 @@ single_target_rule(Parser *p)
 }
 
 // attribute_or_subscript_target: target_value
-static expr_ty
+static पाहायाग_ty
 attribute_or_subscript_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // target_value
         if (p->error_indicator) {
@@ -19162,9 +19162,9 @@ attribute_or_subscript_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> attribute_or_subscript_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "target_value"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
-            (a = target_value_rule(p))  // target_value
+            (a = target_हालागा_rule(p))  // target_value
         )
         {
             D(fprintf(stderr, "%*c+ attribute_or_subscript_target[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "target_value"));
@@ -19187,17 +19187,17 @@ attribute_or_subscript_target_rule(Parser *p)
 }
 
 // target_value: primary !('(' | '[' | '.')
-static expr_ty
-target_value_rule(Parser *p)
+static पाहायाग_ty
+target_हालागा_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // primary !('(' | '[' | '.')
         if (p->error_indicator) {
@@ -19205,7 +19205,7 @@ target_value_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> target_value[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "primary !('(' | '[' | '.')"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = primary_rule(p))  // primary
             &&
@@ -19232,17 +19232,17 @@ target_value_rule(Parser *p)
 }
 
 // del_targets: ','.del_target+ ','?
-static asdl_expr_seq*
+static asdl_पाहायाग_seq*
 del_targets_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    asdl_expr_seq* _res = NULL;
+    asdl_पाहायाग_seq* _res = NULL;
     int _mark = p->mark;
     { // ','.del_target+ ','?
         if (p->error_indicator) {
@@ -19252,9 +19252,9 @@ del_targets_rule(Parser *p)
         D(fprintf(stderr, "%*c> del_targets[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.del_target+ ','?"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_gather_102_rule(p))  // ','.del_target+
+            (a = (asdl_पाहायाग_seq*)_gather_102_rule(p))  // ','.del_target+
             &&
             (_opt_var = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
         )
@@ -19279,17 +19279,17 @@ del_targets_rule(Parser *p)
 }
 
 // del_target: target_value
-static expr_ty
+static पाहायाग_ty
 del_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     if (_PyPegen_is_memoized(p, del_target_type, &_res)) {
         p->level--;
         return _res;
@@ -19301,9 +19301,9 @@ del_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> del_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "target_value"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
-            (a = target_value_rule(p))  // target_value
+            (a = target_हालागा_rule(p))  // target_value
         )
         {
             D(fprintf(stderr, "%*c+ del_target[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "target_value"));
@@ -19321,7 +19321,7 @@ del_target_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, del_target_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, del_target_type, _res);
     p->level--;
     return _res;
 }
@@ -19334,17 +19334,17 @@ del_target_rule(Parser *p)
 //     | '*' expression
 //     | '**' expression
 //     | ','.expression+
-static asdl_expr_seq*
+static asdl_पाहायाग_seq*
 type_expressions_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    asdl_expr_seq* _res = NULL;
+    asdl_पाहायाग_seq* _res = NULL;
     int _mark = p->mark;
     { // ','.expression+ ',' '*' expression ',' '**' expression
         if (p->error_indicator) {
@@ -19357,8 +19357,8 @@ type_expressions_rule(Parser *p)
         Token * _literal_2;
         Token * _literal_3;
         asdl_seq * a;
-        expr_ty b;
-        expr_ty c;
+        पाहायाग_ty b;
+        पाहायाग_ty c;
         if (
             (a = _gather_104_rule(p))  // ','.expression+
             &&
@@ -19376,7 +19376,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "','.expression+ ',' '*' expression ',' '**' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_seq_append_to_end ( p , CHECK ( asdl_seq* , _PyPegen_seq_append_to_end ( p , a , b ) ) , c );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_seq_append_to_end ( p , CHECK ( asdl_seq* , _PyPegen_seq_append_to_end ( p , a , b ) ) , c );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19397,7 +19397,7 @@ type_expressions_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_seq * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _gather_104_rule(p))  // ','.expression+
             &&
@@ -19409,7 +19409,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "','.expression+ ',' '*' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_seq_append_to_end ( p , a , b );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_seq_append_to_end ( p , a , b );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19430,7 +19430,7 @@ type_expressions_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_seq * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _gather_104_rule(p))  // ','.expression+
             &&
@@ -19442,7 +19442,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "','.expression+ ',' '**' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_seq_append_to_end ( p , a , b );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_seq_append_to_end ( p , a , b );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19463,8 +19463,8 @@ type_expressions_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         Token * _literal_2;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -19478,7 +19478,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'*' expression ',' '**' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_seq_append_to_end ( p , CHECK ( asdl_seq* , _PyPegen_singleton_seq ( p , a ) ) , b );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_seq_append_to_end ( p , CHECK ( asdl_seq* , _PyPegen_singleton_seq ( p , a ) ) , b );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19497,7 +19497,7 @@ type_expressions_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -19505,7 +19505,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'*' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_singleton_seq ( p , a );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_singleton_seq ( p , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19524,7 +19524,7 @@ type_expressions_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> type_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -19532,7 +19532,7 @@ type_expressions_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'**' expression"));
-            _res = ( asdl_expr_seq* ) _PyPegen_singleton_seq ( p , a );
+            _res = ( asdl_पाहायाग_seq* ) _PyPegen_singleton_seq ( p , a );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -19550,9 +19550,9 @@ type_expressions_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> type_expressions[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "','.expression+"));
-        asdl_expr_seq* a;
+        asdl_पाहायाग_seq* a;
         if (
-            (a = (asdl_expr_seq*)_gather_104_rule(p))  // ','.expression+
+            (a = (asdl_पाहायाग_seq*)_gather_104_rule(p))  // ','.expression+
         )
         {
             D(fprintf(stderr, "%*c+ type_expressions[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "','.expression+"));
@@ -19581,8 +19581,8 @@ type_expressions_rule(Parser *p)
 static Token*
 func_type_comment_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -19674,8 +19674,8 @@ func_type_comment_rule(Parser *p)
 static void *
 invalid_arguments_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -19722,7 +19722,7 @@ invalid_arguments_rule(Parser *p)
         Token * _literal;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_comprehension_seq* b;
         if (
             (a = expression_rule(p))  // expression
@@ -19753,9 +19753,9 @@ invalid_arguments_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' expression for_if_clauses"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (a = _PyPegen_name_token(p))  // NAME
@@ -19788,7 +19788,7 @@ invalid_arguments_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "[(args ',')] NAME '=' &(',' | ')')"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         if (
             (_opt_var = _tmp_110_rule(p), !p->error_indicator)  // [(args ',')]
@@ -19819,10 +19819,10 @@ invalid_arguments_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args for_if_clauses"));
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_comprehension_seq* b;
         if (
-            (a = args_rule(p))  // args
+            (a = मगा_कातविरान_rule(p))  //मगा_कातविरान
             &&
             (b = for_if_clauses_rule(p))  // for_if_clauses
         )
@@ -19847,11 +19847,11 @@ invalid_arguments_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args ',' expression for_if_clauses"));
         Token * _literal;
-        expr_ty a;
-        expr_ty args_var;
+        पाहायाग_ty a;
+        पाहायाग_ty मगा_कातविरान_var;
         asdl_comprehension_seq* b;
         if (
-            (args_var = args_rule(p))  // args
+            (मगा_कातविरान_var = मगा_कातविरान_rule(p))  //मगा_कातविरान
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -19880,14 +19880,14 @@ invalid_arguments_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_arguments[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args ',' args"));
         Token * _literal;
-        expr_ty a;
-        expr_ty args_var;
+        पाहायाग_ty a;
+        पाहायाग_ty मगा_कातविरान_var;
         if (
-            (a = args_rule(p))  // args
+            (a = मगा_कातविरान_rule(p))  //मगा_कातविरान
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
-            (args_var = args_rule(p))  // args
+            (मगा_कातविरान_var = मगा_कातविरान_rule(p))  //मगा_कातविरान
         )
         {
             D(fprintf(stderr, "%*c+ invalid_arguments[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "args ',' args"));
@@ -19919,8 +19919,8 @@ invalid_arguments_rule(Parser *p)
 static void *
 invalid_kwarg_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20015,9 +20015,9 @@ invalid_kwarg_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_kwarg[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' expression for_if_clauses"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (a = _PyPegen_name_token(p))  // NAME
@@ -20048,7 +20048,7 @@ invalid_kwarg_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_kwarg[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!(NAME '=') expression '='"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         if (
             _PyPegen_lookahead(0, _tmp_112_rule, p)
@@ -20079,8 +20079,8 @@ invalid_kwarg_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kwarg[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' expression '=' expression"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (a = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -20114,22 +20114,22 @@ invalid_kwarg_rule(Parser *p)
 //     | disjunction 'if' disjunction 'else' expression
 //     | disjunction
 //     | lambdef
-static expr_ty
+static पाहायाग_ty
 expression_without_invalid_rule(Parser *p)
 {
     int _prev_call_invalid = p->call_invalid_rules;
     p->call_invalid_rules = 0;
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->call_invalid_rules = _prev_call_invalid;
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_11_result = NULL;
+    पाहायाग_ty _prefix_11_result = NULL;
     int _prefix_11_end = 0, _prefix_11_valid = 0;
     if (p->mark == p->fill && _PyPegen_fill_token(p) < 0) {
         p->error_indicator = 1;
@@ -20150,9 +20150,9 @@ expression_without_invalid_rule(Parser *p)
         D(fprintf(stderr, "%*c> expression_without_invalid[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction 'if' disjunction 'else' expression"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
-        expr_ty b;
-        expr_ty c;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        पाहायाग_ty c;
         if (
             (a = ((!p->call_invalid_rules && _prefix_11_valid) ? (p->mark = _prefix_11_end, _prefix_11_result) : (_prefix_11_result = disjunction_rule(p), _prefix_11_end = p->mark, _prefix_11_valid = 1, _prefix_11_result)))  // disjunction
             &&
@@ -20196,7 +20196,7 @@ expression_without_invalid_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expression_without_invalid[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction"));
-        expr_ty disjunction_var;
+        पाहायाग_ty disjunction_var;
         if (
             (disjunction_var = ((!p->call_invalid_rules && _prefix_11_valid) ? (p->mark = _prefix_11_end, _prefix_11_result) : (_prefix_11_result = disjunction_rule(p), _prefix_11_end = p->mark, _prefix_11_valid = 1, _prefix_11_result)))  // disjunction
         )
@@ -20216,7 +20216,7 @@ expression_without_invalid_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> expression_without_invalid[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "lambdef"));
-        expr_ty lambdef_var;
+        पाहायाग_ty lambdef_var;
         if (
             (lambdef_var = lambdef_rule(p))  // lambdef
         )
@@ -20240,8 +20240,8 @@ expression_without_invalid_rule(Parser *p)
 static void *
 invalid_legacy_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20255,8 +20255,8 @@ invalid_legacy_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_legacy_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME !'(' star_expressions"));
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -20288,8 +20288,8 @@ invalid_legacy_expression_rule(Parser *p)
 static void *
 invalid_type_param_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20304,9 +20304,9 @@ invalid_type_param_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_type_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' NAME ':' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         Token * colon;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_literal = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -20337,9 +20337,9 @@ invalid_type_param_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_type_param[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' NAME ':' expression"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         Token * colon;
-        expr_ty e;
+        पाहायाग_ty e;
         if (
             (_literal = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -20380,8 +20380,8 @@ invalid_type_param_rule(Parser *p)
 static void *
 invalid_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20389,7 +20389,7 @@ invalid_expression_rule(Parser *p)
     }
     void * _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_12_result = NULL;
+    पाहायाग_ty _prefix_12_result = NULL;
     int _prefix_12_end = 0, _prefix_12_valid = 0;
     { // STRING ((!STRING expression_without_invalid))+ STRING
         if (p->error_indicator) {
@@ -20398,8 +20398,8 @@ invalid_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "STRING ((!STRING expression_without_invalid))+ STRING"));
         asdl_seq * a;
-        expr_ty string_var;
-        expr_ty string_var_1;
+        पाहायाग_ty string_var;
+        पाहायाग_ty string_var_1;
         if (
             (string_var = _PyPegen_string_token(p))  // STRING
             &&
@@ -20409,7 +20409,7 @@ invalid_expression_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "STRING ((!STRING expression_without_invalid))+ STRING"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_first_item ( a , expr_ty ) , PyPegen_last_item ( a , expr_ty ) , "invalid syntax. Is this intended to be part of the string?" );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_first_item ( a , पाहायाग_ty ) , PyPegen_last_item ( a , पाहायाग_ty ) , "invalid syntax. Is this intended to be part of the string?" );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -20427,8 +20427,8 @@ invalid_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!(NAME STRING | SOFT_KEYWORD) disjunction expression_without_invalid"));
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             _PyPegen_lookahead(0, _tmp_114_rule, p)
             &&
@@ -20457,8 +20457,8 @@ invalid_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction 'if' disjunction !('else' | ':')"));
         Token * _keyword;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_12_valid) ? (p->mark = _prefix_12_end, _prefix_12_result) : (_prefix_12_result = disjunction_rule(p), _prefix_12_end = p->mark, _prefix_12_valid = 1, _prefix_12_result)))  // disjunction
             &&
@@ -20490,8 +20490,8 @@ invalid_expression_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "disjunction 'if' disjunction 'else' !expression"));
         Token * _keyword;
         Token * _keyword_1;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = ((!p->call_invalid_rules && _prefix_12_valid) ? (p->mark = _prefix_12_end, _prefix_12_result) : (_prefix_12_result = disjunction_rule(p), _prefix_12_end = p->mark, _prefix_12_valid = 1, _prefix_12_result)))  // disjunction
             &&
@@ -20501,7 +20501,7 @@ invalid_expression_rule(Parser *p)
             &&
             (_keyword_1 = _PyPegen_expect_token(p, 704))  // token='else'
             &&
-            _PyPegen_lookahead_for_expr(0, expression_rule, p)
+            Py_Pegen_lookahead_for_पाहायाग(0, expression_rule, p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "disjunction 'if' disjunction 'else' !expression"));
@@ -20526,7 +20526,7 @@ invalid_expression_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         stmt_ty a;
-        expr_ty b;
+        पाहायाग_ty b;
         stmt_ty c;
         if (
             (a = (stmt_ty)_tmp_116_rule(p))  // pass_stmt | break_stmt | continue_stmt
@@ -20570,7 +20570,7 @@ invalid_expression_rule(Parser *p)
             &&
             (b = _PyPegen_expect_token(p, 11))  // token=':'
             &&
-            _PyPegen_lookahead_with_int(1, _PyPegen_expect_token, p, FSTRING_MIDDLE)  // token=FSTRING_MIDDLE
+            _PyPegen_lookahead_with_int(1, _PyPegen_expect_token, p, FSTRING_गित्ना)  // token=FSTRING_MIDDLE
         )
         {
             D(fprintf(stderr, "%*c+ invalid_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'lambda' lambda_params? ':' &FSTRING_MIDDLE"));
@@ -20603,7 +20603,7 @@ invalid_expression_rule(Parser *p)
             &&
             (b = _PyPegen_expect_token(p, 11))  // token=':'
             &&
-            _PyPegen_lookahead_with_int(1, _PyPegen_expect_token, p, TSTRING_MIDDLE)  // token=TSTRING_MIDDLE
+            _PyPegen_lookahead_with_int(1, _PyPegen_expect_token, p, TSTRING_गित्ना)  // token=TSTRING_MIDDLE
         )
         {
             D(fprintf(stderr, "%*c+ invalid_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'lambda' lambda_params? ':' &TSTRING_MIDDLE"));
@@ -20631,8 +20631,8 @@ invalid_expression_rule(Parser *p)
 static void *
 invalid_if_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20640,7 +20640,7 @@ invalid_if_expression_rule(Parser *p)
     }
     void * _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_13_result = NULL;
+    पाहायाग_ty _prefix_13_result = NULL;
     int _prefix_13_end = 0, _prefix_13_valid = 0;
     { // disjunction 'if' disjunction 'else' '*'
         if (p->error_indicator) {
@@ -20651,8 +20651,8 @@ invalid_if_expression_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         Token * a;
-        expr_ty b;
-        expr_ty disjunction_var;
+        पाहायाग_ty b;
+        पाहायाग_ty disjunction_var;
         if (
             (disjunction_var = ((!p->call_invalid_rules && _prefix_13_valid) ? (p->mark = _prefix_13_end, _prefix_13_result) : (_prefix_13_result = disjunction_rule(p), _prefix_13_end = p->mark, _prefix_13_valid = 1, _prefix_13_result)))  // disjunction
             &&
@@ -20687,8 +20687,8 @@ invalid_if_expression_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         Token * a;
-        expr_ty b;
-        expr_ty disjunction_var;
+        पाहायाग_ty b;
+        पाहायाग_ty disjunction_var;
         if (
             (disjunction_var = ((!p->call_invalid_rules && _prefix_13_valid) ? (p->mark = _prefix_13_end, _prefix_13_result) : (_prefix_13_result = disjunction_rule(p), _prefix_13_end = p->mark, _prefix_13_valid = 1, _prefix_13_result)))  // disjunction
             &&
@@ -20727,8 +20727,8 @@ invalid_if_expression_rule(Parser *p)
 static void *
 invalid_named_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20747,8 +20747,8 @@ invalid_named_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':=' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expression_var;
         if (
             (a = expression_rule(p))  // expression
             &&
@@ -20758,7 +20758,7 @@ invalid_named_expression_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_named_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "expression ':=' expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use assignment expressions with %s" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use assignment expressions with %s" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -20777,8 +20777,8 @@ invalid_named_expression_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '=' bitwise_or !('=' | ':=')"));
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_name_token(p))  // NAME
             &&
@@ -20808,9 +20808,9 @@ invalid_named_expression_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_named_expression[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!(list | tuple | genexp | 'True' | 'None' | 'False') bitwise_or '=' bitwise_or !('=' | ':=')"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
-        expr_ty bitwise_or_var;
+        पाहायाग_ty bitwise_or_var;
         if (
             _PyPegen_lookahead(0, _tmp_118_rule, p)
             &&
@@ -20824,7 +20824,7 @@ invalid_named_expression_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_named_expression[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "!(list | tuple | genexp | 'True' | 'None' | 'False') bitwise_or '=' bitwise_or !('=' | ':=')"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -20838,7 +20838,7 @@ invalid_named_expression_rule(Parser *p)
     }
     _res = NULL;
   done:
-    _PyPegen_insert_memo(p, _mark, invalid_named_expression_type, _res);
+    Py_Pegen_इसिंगित_memo(p, _mark, invalid_named_expression_type, _res);
     p->level--;
     return _res;
 }
@@ -20853,8 +20853,8 @@ invalid_named_expression_rule(Parser *p)
 static void *
 invalid_assignment_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -20869,8 +20869,8 @@ invalid_assignment_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "invalid_ann_assign_target ':' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expression_var;
         if (
             (a = invalid_ann_assign_target_rule(p))  // invalid_ann_assign_target
             &&
@@ -20880,7 +20880,7 @@ invalid_assignment_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_assignment[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "invalid_ann_assign_target ':' expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "only single target (not %s) can be annotated" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "only single target (not %s) can be annotated" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -20901,8 +20901,8 @@ invalid_assignment_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         asdl_seq * _loop0_119_var;
-        expr_ty a;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expression_var;
         if (
             (a = star_named_expression_rule(p))  // star_named_expression
             &&
@@ -20935,8 +20935,8 @@ invalid_assignment_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' expression"));
         Token * _literal;
-        expr_ty a;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expression_var;
         if (
             (a = expression_rule(p))  // expression
             &&
@@ -20966,7 +20966,7 @@ invalid_assignment_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "((star_targets '='))* star_expressions '='"));
         Token * _literal;
         asdl_seq * _loop0_120_var;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_loop0_120_var = _loop0_120_rule(p))  // ((star_targets '='))*
             &&
@@ -20996,11 +20996,11 @@ invalid_assignment_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "((star_targets '='))* yield_expr '='"));
         Token * _literal;
         asdl_seq * _loop0_120_var;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_loop0_120_var = _loop0_120_rule(p))  // ((star_targets '='))*
             &&
-            (a = yield_expr_rule(p))  // yield_expr
+            (a = yield_पाहायाग_rule(p))  // yield_expr
             &&
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
         )
@@ -21024,8 +21024,8 @@ invalid_assignment_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_assignment[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_expressions augassign annotated_rhs"));
-        expr_ty a;
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty a;
+        पाहायाग_ty annotated_rhs_var;
         AugOperator* augassign_var;
         if (
             (a = star_expressions_rule(p))  // star_expressions
@@ -21036,7 +21036,7 @@ invalid_assignment_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_assignment[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "star_expressions augassign annotated_rhs"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "'%s' is an illegal expression for augmented assignment" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "'%s' is an illegal expression for augmented assignment" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -21055,17 +21055,17 @@ invalid_assignment_rule(Parser *p)
 }
 
 // invalid_ann_assign_target: list | tuple | '(' invalid_ann_assign_target ')'
-static expr_ty
+static पाहायाग_ty
 invalid_ann_assign_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
         return NULL;
     }
-    expr_ty _res = NULL;
+    पाहायाग_ty _res = NULL;
     int _mark = p->mark;
     { // list
         if (p->error_indicator) {
@@ -21073,7 +21073,7 @@ invalid_ann_assign_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_ann_assign_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "list"));
-        expr_ty list_var;
+        पाहायाग_ty list_var;
         if (
             (list_var = list_rule(p))  // list
         )
@@ -21092,7 +21092,7 @@ invalid_ann_assign_target_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_ann_assign_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tuple"));
-        expr_ty tuple_var;
+        पाहायाग_ty tuple_var;
         if (
             (tuple_var = tuple_rule(p))  // tuple
         )
@@ -21113,7 +21113,7 @@ invalid_ann_assign_target_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_ann_assign_target[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'(' invalid_ann_assign_target ')'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
             &&
@@ -21145,8 +21145,8 @@ invalid_ann_assign_target_rule(Parser *p)
 static void *
 invalid_raise_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21189,7 +21189,7 @@ invalid_raise_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_raise_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'raise' expression 'from'"));
         Token * _keyword;
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 632))  // token='raise'
             &&
@@ -21221,8 +21221,8 @@ invalid_raise_stmt_rule(Parser *p)
 static void *
 invalid_del_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21237,7 +21237,7 @@ invalid_del_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_del_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'del' star_expressions"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_keyword = _PyPegen_expect_token(p, 634))  // token='del'
             &&
@@ -21271,8 +21271,8 @@ invalid_del_stmt_rule(Parser *p)
 static void *
 invalid_assert_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21288,8 +21288,8 @@ invalid_assert_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_assert_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'assert' expression '=' expression"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (_keyword = _PyPegen_expect_token(p, 638))  // token='assert'
             &&
@@ -21301,7 +21301,7 @@ invalid_assert_stmt_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_assert_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'assert' expression '=' expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , b , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , b , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -21322,9 +21322,9 @@ invalid_assert_stmt_rule(Parser *p)
         Token * _keyword;
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 638))  // token='assert'
             &&
@@ -21340,7 +21340,7 @@ invalid_assert_stmt_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_assert_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'assert' expression ',' expression '=' expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , b , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , b , "cannot assign to %s here. Maybe you meant '==' instead of '='?" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -21360,8 +21360,8 @@ invalid_assert_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_assert_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'assert' expression ':=' expression"));
         Token * _keyword;
         Token * _literal;
-        expr_ty a;
-        expr_ty b;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
         if (
             (_keyword = _PyPegen_expect_token(p, 638))  // token='assert'
             &&
@@ -21394,9 +21394,9 @@ invalid_assert_stmt_rule(Parser *p)
         Token * _keyword;
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 638))  // token='assert'
             &&
@@ -21434,8 +21434,8 @@ invalid_assert_stmt_rule(Parser *p)
 static void *
 invalid_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21483,8 +21483,8 @@ invalid_block_rule(Parser *p)
 static void *
 invalid_comprehension_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21500,7 +21500,7 @@ invalid_comprehension_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_comprehension[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'[' '**' expression for_if_clauses"));
         Token * _literal;
         Token * a;
-        expr_ty b;
+        पाहायाग_ty b;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (_literal = _PyPegen_expect_token(p, 9))  // token='['
@@ -21533,7 +21533,7 @@ invalid_comprehension_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_comprehension[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'(' '**' expression for_if_clauses"));
         Token * _literal;
         Token * a;
-        expr_ty b;
+        पाहायाग_ty b;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
@@ -21566,8 +21566,8 @@ invalid_comprehension_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_comprehension[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "('[' | '{') star_named_expression ',' star_named_expressions for_if_clauses"));
         Token * _literal;
         void *_tmp_121_var;
-        expr_ty a;
-        asdl_expr_seq* b;
+        पाहायाग_ty a;
+        asdl_पाहायाग_seq* b;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (_tmp_121_var = _tmp_121_rule(p))  // '[' | '{'
@@ -21582,7 +21582,7 @@ invalid_comprehension_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_comprehension[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "('[' | '{') star_named_expression ',' star_named_expressions for_if_clauses"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , PyPegen_last_item ( b , expr_ty ) , "did you forget parentheses around the comprehension target?" );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( a , PyPegen_last_item ( b , पाहायाग_ty ) , "did you forget parentheses around the comprehension target?" );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -21601,7 +21601,7 @@ invalid_comprehension_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_comprehension[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "('[' | '{') star_named_expression ',' for_if_clauses"));
         void *_tmp_121_var;
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
@@ -21643,8 +21643,8 @@ invalid_comprehension_rule(Parser *p)
 static void *
 invalid_parameters_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21860,8 +21860,8 @@ invalid_parameters_rule(Parser *p)
 static void *
 invalid_default_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -21909,8 +21909,8 @@ invalid_default_rule(Parser *p)
 static void *
 invalid_star_etc_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22051,8 +22051,8 @@ invalid_star_etc_rule(Parser *p)
 static void *
 invalid_kwds_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22166,8 +22166,8 @@ invalid_kwds_rule(Parser *p)
 static void *
 invalid_parameters_helper_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22234,8 +22234,8 @@ invalid_parameters_helper_rule(Parser *p)
 static void *
 invalid_lambda_parameters_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22453,8 +22453,8 @@ invalid_lambda_parameters_rule(Parser *p)
 static void *
 invalid_lambda_parameters_helper_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22518,8 +22518,8 @@ invalid_lambda_parameters_helper_rule(Parser *p)
 static void *
 invalid_lambda_star_etc_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22633,8 +22633,8 @@ invalid_lambda_star_etc_rule(Parser *p)
 static void *
 invalid_lambda_kwds_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22748,8 +22748,8 @@ invalid_lambda_kwds_rule(Parser *p)
 static void *
 invalid_double_type_comments_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22803,8 +22803,8 @@ invalid_double_type_comments_rule(Parser *p)
 static void *
 invalid_with_item_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22819,8 +22819,8 @@ invalid_with_item_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_with_item[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression 'as' expression &(',' | ')' | ':')"));
         Token * _keyword;
-        expr_ty a;
-        expr_ty expression_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -22854,8 +22854,8 @@ invalid_with_item_rule(Parser *p)
 static void *
 invalid_for_if_clause_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22906,8 +22906,8 @@ invalid_for_if_clause_rule(Parser *p)
 static void *
 invalid_for_target_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22924,7 +22924,7 @@ invalid_for_target_rule(Parser *p)
         Token * _keyword;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_opt_var = _PyPegen_expect_token(p, 716), !p->error_indicator)  // 'async'?
             &&
@@ -22956,8 +22956,8 @@ invalid_for_target_rule(Parser *p)
 static void *
 invalid_group_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -22973,7 +22973,7 @@ invalid_group_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_group[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'(' starred_expression ')'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
             &&
@@ -23004,7 +23004,7 @@ invalid_group_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
             &&
@@ -23038,8 +23038,8 @@ invalid_group_rule(Parser *p)
 static void *
 invalid_import_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23056,7 +23056,7 @@ invalid_import_rule(Parser *p)
         asdl_seq * _gather_136_var;
         Token * _keyword;
         Token * a;
-        expr_ty dotted_name_var;
+        पाहायाग_ty dotted_name_var;
         if (
             (a = _PyPegen_expect_token(p, 651))  // token='import'
             &&
@@ -23117,8 +23117,8 @@ invalid_import_rule(Parser *p)
 static void *
 invalid_dotted_as_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23133,8 +23133,8 @@ invalid_dotted_as_name_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_dotted_as_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dotted_name 'as' !(NAME (',' | ')' | ';' | NEWLINE)) expression"));
         Token * _keyword;
-        expr_ty a;
-        expr_ty dotted_name_var;
+        पाहायाग_ty a;
+        पाहायाग_ty dotted_name_var;
         if (
             (dotted_name_var = dotted_name_rule(p))  // dotted_name
             &&
@@ -23146,7 +23146,7 @@ invalid_dotted_as_name_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_dotted_as_name[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "dotted_name 'as' !(NAME (',' | ')' | ';' | NEWLINE)) expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as import target" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as import target" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -23168,8 +23168,8 @@ invalid_dotted_as_name_rule(Parser *p)
 static void *
 invalid_import_from_as_name_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23184,8 +23184,8 @@ invalid_import_from_as_name_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_import_from_as_name[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME 'as' !(NAME (',' | ')' | ';' | NEWLINE)) expression"));
         Token * _keyword;
-        expr_ty a;
-        expr_ty name_var;
+        पाहायाग_ty a;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
             &&
@@ -23197,7 +23197,7 @@ invalid_import_from_as_name_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_import_from_as_name[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NAME 'as' !(NAME (',' | ')' | ';' | NEWLINE)) expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as import target" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as import target" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -23220,8 +23220,8 @@ invalid_import_from_as_name_rule(Parser *p)
 static void *
 invalid_import_from_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23238,8 +23238,8 @@ invalid_import_from_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         asdl_seq * _loop0_17_var;
-        expr_ty a;
-        expr_ty dotted_name_var;
+        पाहायाग_ty a;
+        पाहायाग_ty dotted_name_var;
         asdl_alias_seq* import_from_targets_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 650))  // token='from'
@@ -23278,8 +23278,8 @@ invalid_import_from_rule(Parser *p)
 static void *
 invalid_import_from_targets_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23354,8 +23354,8 @@ invalid_import_from_targets_rule(Parser *p)
 static void *
 invalid_with_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23490,8 +23490,8 @@ invalid_with_stmt_rule(Parser *p)
 static void *
 invalid_with_stmt_indent_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23601,8 +23601,8 @@ invalid_with_stmt_indent_rule(Parser *p)
 static void *
 invalid_try_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23689,7 +23689,7 @@ invalid_try_stmt_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
         Token * b;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 674))  // token='try'
             &&
@@ -23780,8 +23780,8 @@ invalid_try_stmt_rule(Parser *p)
 static void *
 invalid_except_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23799,9 +23799,9 @@ invalid_except_stmt_rule(Parser *p)
         Token * _keyword_1;
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
-        expr_ty expressions_var;
-        expr_ty name_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expressions_var;
+        पाहायाग_ty name_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -23840,7 +23840,7 @@ invalid_except_stmt_rule(Parser *p)
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 695))  // token='except'
@@ -23901,9 +23901,9 @@ invalid_except_stmt_rule(Parser *p)
         Token * _keyword;
         Token * _keyword_1;
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* block_var;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -23919,7 +23919,7 @@ invalid_except_stmt_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_except_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'except' expression 'as' expression ':' block"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use except statement with %s" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use except statement with %s" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -23945,8 +23945,8 @@ invalid_except_stmt_rule(Parser *p)
 static void *
 invalid_except_star_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -23965,9 +23965,9 @@ invalid_except_star_stmt_rule(Parser *p)
         Token * _literal;
         Token * _literal_1;
         Token * _literal_2;
-        expr_ty a;
-        expr_ty expressions_var;
-        expr_ty name_var;
+        पाहायाग_ty a;
+        पाहायाग_ty expressions_var;
+        पाहायाग_ty name_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -24009,7 +24009,7 @@ invalid_except_star_stmt_rule(Parser *p)
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 695))  // token='except'
@@ -24076,9 +24076,9 @@ invalid_except_star_stmt_rule(Parser *p)
         Token * _keyword_1;
         Token * _literal;
         Token * _literal_1;
-        expr_ty a;
+        पाहायाग_ty a;
         asdl_stmt_seq* block_var;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 695))  // token='except'
             &&
@@ -24096,7 +24096,7 @@ invalid_except_star_stmt_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_except_star_stmt[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'except' '*' expression 'as' expression ':' block"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use except* statement with %s" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use except* statement with %s" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -24118,8 +24118,8 @@ invalid_except_star_stmt_rule(Parser *p)
 static void *
 invalid_finally_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24171,8 +24171,8 @@ invalid_finally_stmt_rule(Parser *p)
 static void *
 invalid_except_stmt_indent_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24190,7 +24190,7 @@ invalid_except_stmt_indent_rule(Parser *p)
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 695))  // token='except'
@@ -24262,8 +24262,8 @@ invalid_except_stmt_indent_rule(Parser *p)
 static void *
 invalid_except_star_stmt_indent_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24282,7 +24282,7 @@ invalid_except_star_stmt_indent_rule(Parser *p)
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 695))  // token='except'
@@ -24326,8 +24326,8 @@ invalid_except_star_stmt_indent_rule(Parser *p)
 static void *
 invalid_match_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24341,13 +24341,13 @@ invalid_match_stmt_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_match_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"match\" subject_expr NEWLINE"));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         Token * newline_var;
-        expr_ty subject_expr_var;
+        पाहायाग_ty subject_पाहायाग_var;
         if (
             (_keyword = _PyPegen_expect_soft_keyword(p, "match"))  // soft_keyword='"match"'
             &&
-            (subject_expr_var = subject_expr_rule(p))  // subject_expr
+            (subject_पाहायाग_var = subject_पाहायाग_rule(p))  // subject_expr
             &&
             (newline_var = _PyPegen_expect_token(p, NEWLINE))  // token='NEWLINE'
         )
@@ -24372,13 +24372,13 @@ invalid_match_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_match_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"match\" subject_expr ':' NEWLINE !INDENT"));
         Token * _literal;
-        expr_ty a;
+        पाहायाग_ty a;
         Token * newline_var;
-        expr_ty subject;
+        पाहायाग_ty subject;
         if (
             (a = _PyPegen_expect_soft_keyword(p, "match"))  // soft_keyword='"match"'
             &&
-            (subject = subject_expr_rule(p))  // subject_expr
+            (subject = subject_पाहायाग_rule(p))  // subject_expr
             &&
             (_literal = _PyPegen_expect_token(p, 11))  // token=':'
             &&
@@ -24408,7 +24408,7 @@ invalid_match_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_match_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"case\" patterns guard? ':' block"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         asdl_stmt_seq* block_var;
         pattern_ty patterns_var;
@@ -24449,8 +24449,8 @@ invalid_match_stmt_rule(Parser *p)
 static void *
 invalid_case_block_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24464,7 +24464,7 @@ invalid_case_block_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_case_block[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"case\" patterns guard? NEWLINE"));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * newline_var;
@@ -24501,7 +24501,7 @@ invalid_case_block_rule(Parser *p)
         Token * _literal;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty a;
+        पाहायाग_ty a;
         Token * newline_var;
         pattern_ty patterns_var;
         if (
@@ -24541,8 +24541,8 @@ invalid_case_block_rule(Parser *p)
 static void *
 invalid_as_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24557,7 +24557,7 @@ invalid_as_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_as_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "or_pattern 'as' \"_\""));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         pattern_ty or_pattern_var;
         if (
             (or_pattern_var = or_pattern_rule(p))  // or_pattern
@@ -24587,7 +24587,7 @@ invalid_as_pattern_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_as_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "or_pattern 'as' expression"));
         Token * _keyword;
-        expr_ty a;
+        पाहायाग_ty a;
         pattern_ty or_pattern_var;
         if (
             (or_pattern_var = or_pattern_rule(p))  // or_pattern
@@ -24598,7 +24598,7 @@ invalid_as_pattern_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_as_pattern[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "or_pattern 'as' expression"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as pattern target" , _PyPegen_get_expr_name ( a ) );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_LOCATION ( a , "cannot use %s as pattern target" , Py_Pegen_get_पाहायाग_name ( a ) );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -24620,8 +24620,8 @@ invalid_as_pattern_rule(Parser *p)
 static void *
 invalid_class_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24637,7 +24637,7 @@ invalid_class_pattern_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_class_pattern[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "name_or_attr '(' invalid_class_argument_pattern"));
         Token * _literal;
         asdl_pattern_seq* a;
-        expr_ty name_or_attr_var;
+        पाहायाग_ty name_or_attr_var;
         if (
             (name_or_attr_var = name_or_attr_rule(p))  // name_or_attr
             &&
@@ -24670,8 +24670,8 @@ invalid_class_pattern_rule(Parser *p)
 static void *
 invalid_mapping_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24692,8 +24692,8 @@ invalid_mapping_pattern_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        asdl_seq* items_pattern_var;
-        expr_ty rest;
+        asdl_seq* मगा_बागाय_pattern_var;
+        पाहायाग_ty rest;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -24703,7 +24703,7 @@ invalid_mapping_pattern_rule(Parser *p)
             &&
             (_literal_1 = _PyPegen_expect_token(p, 12))  // token=','
             &&
-            (items_pattern_var = items_pattern_rule(p))  // items_pattern
+            (मगा_बागाय_pattern_var = मगा_बागाय_pattern_rule(p))  // items_pattern
             &&
             (_opt_var_1 = _PyPegen_expect_token(p, 12), !p->error_indicator)  // ','?
             &&
@@ -24734,8 +24734,8 @@ invalid_mapping_pattern_rule(Parser *p)
 static asdl_pattern_seq*
 invalid_class_argument_pattern_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24789,8 +24789,8 @@ invalid_class_argument_pattern_rule(Parser *p)
 static void *
 invalid_if_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24805,7 +24805,7 @@ invalid_if_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_if_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' named_expression NEWLINE"));
         Token * _keyword;
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         Token * newline_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 700))  // token='if'
@@ -24836,7 +24836,7 @@ invalid_if_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_if_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' named_expression ':' NEWLINE !INDENT"));
         Token * _literal;
         Token * a;
-        expr_ty a_1;
+        पाहायाग_ty a_1;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 700))  // token='if'
@@ -24875,8 +24875,8 @@ invalid_if_stmt_rule(Parser *p)
 static void *
 invalid_elif_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -24891,7 +24891,7 @@ invalid_elif_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_elif_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'elif' named_expression NEWLINE"));
         Token * _keyword;
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         Token * newline_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 705))  // token='elif'
@@ -24922,7 +24922,7 @@ invalid_elif_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_elif_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'elif' named_expression ':' NEWLINE !INDENT"));
         Token * _literal;
         Token * a;
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 705))  // token='elif'
@@ -24959,8 +24959,8 @@ invalid_elif_stmt_rule(Parser *p)
 static void *
 invalid_else_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25045,8 +25045,8 @@ invalid_else_stmt_rule(Parser *p)
 static void *
 invalid_while_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25061,7 +25061,7 @@ invalid_while_stmt_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_while_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'while' named_expression NEWLINE"));
         Token * _keyword;
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         Token * newline_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 707))  // token='while'
@@ -25092,7 +25092,7 @@ invalid_while_stmt_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_while_stmt[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'while' named_expression ':' NEWLINE !INDENT"));
         Token * _literal;
         Token * a;
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 707))  // token='while'
@@ -25131,8 +25131,8 @@ invalid_while_stmt_rule(Parser *p)
 static void *
 invalid_for_stmt_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25151,8 +25151,8 @@ invalid_for_stmt_rule(Parser *p)
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
         Token * newline_var;
-        expr_ty star_expressions_var;
-        expr_ty star_targets_var;
+        पाहायाग_ty star_expressions_var;
+        पाहायाग_ty star_targets_var;
         if (
             (_opt_var = _PyPegen_expect_token(p, 716), !p->error_indicator)  // 'async'?
             &&
@@ -25192,8 +25192,8 @@ invalid_for_stmt_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         Token * a;
         Token * newline_var;
-        expr_ty star_expressions_var;
-        expr_ty star_targets_var;
+        पाहायाग_ty star_expressions_var;
+        पाहायाग_ty star_targets_var;
         if (
             (_opt_var = _PyPegen_expect_token(p, 716), !p->error_indicator)  // 'async'?
             &&
@@ -25237,8 +25237,8 @@ invalid_for_stmt_rule(Parser *p)
 static void *
 invalid_def_raw_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25264,7 +25264,7 @@ invalid_def_raw_rule(Parser *p)
         void *_opt_var_3;
         UNUSED(_opt_var_3); // Silence compiler warnings
         Token * a;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         Token * newline_var;
         if (
             (_opt_var = _PyPegen_expect_token(p, 716), !p->error_indicator)  // 'async'?
@@ -25324,7 +25324,7 @@ invalid_def_raw_rule(Parser *p)
         void *_opt_var_4;
         UNUSED(_opt_var_4); // Silence compiler warnings
         asdl_stmt_seq* block_var;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (_opt_var = _PyPegen_expect_token(p, 716), !p->error_indicator)  // 'async'?
             &&
@@ -25369,8 +25369,8 @@ invalid_def_raw_rule(Parser *p)
 static void *
 invalid_class_def_raw_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25389,7 +25389,7 @@ invalid_class_def_raw_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         Token * newline_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 719))  // token='class'
@@ -25428,7 +25428,7 @@ invalid_class_def_raw_rule(Parser *p)
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
         Token * a;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         Token * newline_var;
         if (
             (a = _PyPegen_expect_token(p, 719))  // token='class'
@@ -25472,8 +25472,8 @@ invalid_class_def_raw_rule(Parser *p)
 static void *
 invalid_double_starred_kvpairs_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25536,7 +25536,7 @@ invalid_double_starred_kvpairs_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_double_starred_kvpairs[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' &('}' | ',')"));
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -25573,8 +25573,8 @@ invalid_double_starred_kvpairs_rule(Parser *p)
 static void *
 invalid_kvpair_unpacking_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25582,7 +25582,7 @@ invalid_kvpair_unpacking_rule(Parser *p)
     }
     void * _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_14_result = NULL;
+    पाहायाग_ty _prefix_14_result = NULL;
     int _prefix_14_end = 0, _prefix_14_valid = 0;
     { // '**' if_expression
         if (p->error_indicator) {
@@ -25591,7 +25591,7 @@ invalid_kvpair_unpacking_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_kvpair_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' if_expression"));
         Token * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -25619,8 +25619,8 @@ invalid_kvpair_unpacking_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' bitwise_or ':' expression"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (a = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -25652,8 +25652,8 @@ invalid_kvpair_unpacking_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' bitwise_or ':' expression"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (a = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -25685,8 +25685,8 @@ invalid_kvpair_unpacking_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' '*' bitwise_or"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_14_valid) ? (p->mark = _prefix_14_end, _prefix_14_result) : (_prefix_14_result = expression_rule(p), _prefix_14_end = p->mark, _prefix_14_valid = 1, _prefix_14_result)))  // expression
             &&
@@ -25718,8 +25718,8 @@ invalid_kvpair_unpacking_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' '**' bitwise_or"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_14_valid) ? (p->mark = _prefix_14_end, _prefix_14_result) : (_prefix_14_result = expression_rule(p), _prefix_14_end = p->mark, _prefix_14_valid = 1, _prefix_14_result)))  // expression
             &&
@@ -25757,8 +25757,8 @@ invalid_kvpair_unpacking_rule(Parser *p)
 static void *
 invalid_kvpair_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25766,7 +25766,7 @@ invalid_kvpair_rule(Parser *p)
     }
     void * _res = NULL;
     int _mark = p->mark;
-    expr_ty _prefix_15_result = NULL;
+    पाहायाग_ty _prefix_15_result = NULL;
     int _prefix_15_end = 0, _prefix_15_valid = 0;
     { // expression !(':')
         if (p->error_indicator) {
@@ -25774,7 +25774,7 @@ invalid_kvpair_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression !(':')"));
-        expr_ty a;
+        पाहायाग_ty a;
         if (
             (a = ((!p->call_invalid_rules && _prefix_15_valid) ? (p->mark = _prefix_15_end, _prefix_15_result) : (_prefix_15_result = expression_rule(p), _prefix_15_end = p->mark, _prefix_15_valid = 1, _prefix_15_result)))  // expression
             &&
@@ -25802,8 +25802,8 @@ invalid_kvpair_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' '*' bitwise_or"));
         Token * _literal;
         Token * a;
-        expr_ty bitwise_or_var;
-        expr_ty expression_var;
+        पाहायाग_ty bitwise_or_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_15_valid) ? (p->mark = _prefix_15_end, _prefix_15_result) : (_prefix_15_result = expression_rule(p), _prefix_15_end = p->mark, _prefix_15_valid = 1, _prefix_15_result)))  // expression
             &&
@@ -25835,8 +25835,8 @@ invalid_kvpair_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' '**' bitwise_or"));
         Token * _literal;
         Token * a;
-        expr_ty bitwise_or_var;
-        expr_ty expression_var;
+        पाहायाग_ty bitwise_or_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_15_valid) ? (p->mark = _prefix_15_end, _prefix_15_result) : (_prefix_15_result = expression_rule(p), _prefix_15_end = p->mark, _prefix_15_valid = 1, _prefix_15_result)))  // expression
             &&
@@ -25867,7 +25867,7 @@ invalid_kvpair_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_kvpair[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ':' &('}' | ',')"));
         Token * a;
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = ((!p->call_invalid_rules && _prefix_15_valid) ? (p->mark = _prefix_15_end, _prefix_15_result) : (_prefix_15_result = expression_rule(p), _prefix_15_end = p->mark, _prefix_15_valid = 1, _prefix_15_result)))  // expression
             &&
@@ -25899,8 +25899,8 @@ invalid_kvpair_rule(Parser *p)
 static void *
 invalid_starred_expression_unpacking_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25915,7 +25915,7 @@ invalid_starred_expression_unpacking_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_starred_expression_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' if_expression"));
         Token * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -25943,8 +25943,8 @@ invalid_starred_expression_unpacking_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_starred_expression_unpacking[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'*' expression '=' expression"));
         Token * _literal;
         Token * a;
-        expr_ty b;
-        expr_ty expression_var;
+        पाहायाग_ty b;
+        पाहायाग_ty expression_var;
         if (
             (a = _PyPegen_expect_token(p, 16))  // token='*'
             &&
@@ -25980,8 +25980,8 @@ invalid_starred_expression_unpacking_rule(Parser *p)
 static void *
 invalid_starred_expression_unpacking_sequence_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -25996,7 +25996,7 @@ invalid_starred_expression_unpacking_sequence_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_starred_expression_unpacking_sequence[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'**' bitwise_or"));
         Token * a;
-        expr_ty bitwise_or_var;
+        पाहायाग_ty bitwise_or_var;
         if (
             (a = _PyPegen_expect_token(p, 35))  // token='**'
             &&
@@ -26045,8 +26045,8 @@ invalid_starred_expression_unpacking_sequence_rule(Parser *p)
 static void *
 invalid_starred_expression_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26099,8 +26099,8 @@ invalid_starred_expression_rule(Parser *p)
 static void *
 invalid_fstring_replacement_field_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26226,7 +26226,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
-            _PyPegen_lookahead_for_expr(0, annotated_rhs_rule, p)
+            Py_Pegen_lookahead_for_पाहायाग(0, annotated_rhs_rule, p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_fstring_replacement_field[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'{' !annotated_rhs"));
@@ -26249,7 +26249,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_fstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs !('=' | '!' | ':' | '}')"));
         Token * _literal;
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26279,7 +26279,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_fstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs '=' !('!' | ':' | '}')"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26312,7 +26312,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         Token * _literal;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         void *invalid_fstring_conversion_character_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
@@ -26343,7 +26343,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26382,7 +26382,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26423,7 +26423,7 @@ invalid_fstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26459,8 +26459,8 @@ invalid_fstring_replacement_field_rule(Parser *p)
 static void *
 invalid_fstring_conversion_character_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26504,7 +26504,7 @@ invalid_fstring_conversion_character_rule(Parser *p)
         if (
             (_literal = _PyPegen_expect_token(p, 54))  // token='!'
             &&
-            _PyPegen_lookahead_for_expr(0, _PyPegen_name_token, p)
+            Py_Pegen_lookahead_for_पाहायाग(0, _PyPegen_name_token, p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_fstring_conversion_character[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'!' !NAME"));
@@ -26541,8 +26541,8 @@ invalid_fstring_conversion_character_rule(Parser *p)
 static void *
 invalid_tstring_replacement_field_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26668,7 +26668,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
-            _PyPegen_lookahead_for_expr(0, annotated_rhs_rule, p)
+            Py_Pegen_lookahead_for_पाहायाग(0, annotated_rhs_rule, p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_tstring_replacement_field[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'{' !annotated_rhs"));
@@ -26691,7 +26691,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_tstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs !('=' | '!' | ':' | '}')"));
         Token * _literal;
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26721,7 +26721,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_tstring_replacement_field[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'{' annotated_rhs '=' !('!' | ':' | '}')"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26754,7 +26754,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         Token * _literal;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         void *invalid_tstring_conversion_character_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
@@ -26785,7 +26785,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26824,7 +26824,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26865,7 +26865,7 @@ invalid_tstring_replacement_field_rule(Parser *p)
         UNUSED(_opt_var); // Silence compiler warnings
         void *_opt_var_1;
         UNUSED(_opt_var_1); // Silence compiler warnings
-        expr_ty annotated_rhs_var;
+        पाहायाग_ty annotated_rhs_var;
         if (
             (_literal = _PyPegen_expect_token(p, 25))  // token='{'
             &&
@@ -26901,8 +26901,8 @@ invalid_tstring_replacement_field_rule(Parser *p)
 static void *
 invalid_tstring_conversion_character_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26946,7 +26946,7 @@ invalid_tstring_conversion_character_rule(Parser *p)
         if (
             (_literal = _PyPegen_expect_token(p, 54))  // token='!'
             &&
-            _PyPegen_lookahead_for_expr(0, _PyPegen_name_token, p)
+            Py_Pegen_lookahead_for_पाहायाग(0, _PyPegen_name_token, p)
         )
         {
             D(fprintf(stderr, "%*c+ invalid_tstring_conversion_character[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "'!' !NAME"));
@@ -26974,8 +26974,8 @@ invalid_tstring_conversion_character_rule(Parser *p)
 static void *
 invalid_string_tstring_concat_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -26990,15 +26990,15 @@ invalid_string_tstring_concat_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_string_tstring_concat[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "((fstring | string))+ tstring"));
         asdl_seq * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _loop1_80_rule(p))  // ((fstring | string))+
             &&
-            (b = (expr_ty)tstring_rule(p))  // tstring
+            (b = (पाहायाग_ty)tstring_rule(p))  // tstring
         )
         {
             D(fprintf(stderr, "%*c+ invalid_string_tstring_concat[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "((fstring | string))+ tstring"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_last_item ( a , expr_ty ) , b , "cannot mix t-string literals with string or bytes literals" );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_last_item ( a , पाहायाग_ty ) , b , "cannot mix t-string literals with string or bytes literals" );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -27017,15 +27017,15 @@ invalid_string_tstring_concat_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> invalid_string_tstring_concat[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring+ (fstring | string)"));
         asdl_seq * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (a = _loop1_81_rule(p))  // tstring+
             &&
-            (b = (expr_ty)_tmp_154_rule(p))  // fstring | string
+            (b = (पाहायाग_ty)_tmp_154_rule(p))  // fstring | string
         )
         {
             D(fprintf(stderr, "%*c+ invalid_string_tstring_concat[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "tstring+ (fstring | string)"));
-            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_last_item ( a , expr_ty ) , b , "cannot mix t-string literals with string or bytes literals" );
+            _res = RAISE_SYNTAX_ERROR_KNOWN_RANGE ( PyPegen_last_item ( a , पाहायाग_ty ) , b , "cannot mix t-string literals with string or bytes literals" );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -27048,8 +27048,8 @@ invalid_string_tstring_concat_rule(Parser *p)
 static void *
 invalid_arithmetic_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27065,8 +27065,8 @@ invalid_arithmetic_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_arithmetic[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "sum ('+' | '-' | '*' | '/' | '%' | '//' | '@') 'not' inversion"));
         void *_tmp_155_var;
         Token * a;
-        expr_ty b;
-        expr_ty sum_var;
+        पाहायाग_ty b;
+        पाहायाग_ty sum_var;
         if (
             (sum_var = sum_rule(p))  // sum
             &&
@@ -27100,8 +27100,8 @@ invalid_arithmetic_rule(Parser *p)
 static void *
 invalid_factor_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27117,7 +27117,7 @@ invalid_factor_rule(Parser *p)
         D(fprintf(stderr, "%*c> invalid_factor[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "('+' | '-' | '~') 'not' factor"));
         void *_tmp_156_var;
         Token * a;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (_tmp_156_var = _tmp_156_rule(p))  // '+' | '-' | '~'
             &&
@@ -27149,8 +27149,8 @@ invalid_factor_rule(Parser *p)
 static void *
 invalid_type_params_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27196,8 +27196,8 @@ invalid_type_params_rule(Parser *p)
 static void *
 invalid_bitwise_and_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27211,7 +27211,7 @@ invalid_bitwise_and_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_bitwise_and[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_and '&' '&'"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         Token * c;
         if (
@@ -27246,8 +27246,8 @@ invalid_bitwise_and_rule(Parser *p)
 static void *
 invalid_bitwise_or_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27261,7 +27261,7 @@ invalid_bitwise_or_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> invalid_bitwise_or[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "bitwise_or '|' '|'"));
-        expr_ty a;
+        पाहायाग_ty a;
         Token * b;
         Token * c;
         if (
@@ -27295,8 +27295,8 @@ invalid_bitwise_or_rule(Parser *p)
 static void *
 invalid_noteq_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27341,8 +27341,8 @@ invalid_noteq_rule(Parser *p)
 static asdl_seq *
 _loop0_1_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27399,8 +27399,8 @@ _loop0_1_rule(Parser *p)
 static asdl_seq *
 _loop1_2_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27462,8 +27462,8 @@ _loop1_2_rule(Parser *p)
 static asdl_seq *
 _loop0_3_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27529,8 +27529,8 @@ _loop0_3_rule(Parser *p)
 static asdl_seq *
 _gather_4_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27553,7 +27553,7 @@ _gather_4_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_4[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "simple_stmt _loop0_3"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -27570,8 +27570,8 @@ _gather_4_rule(Parser *p)
 static void *
 _tmp_5_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27623,7 +27623,7 @@ _tmp_5_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_5[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "\"lazy\""));
-        expr_ty _keyword;
+        पाहायाग_ty _keyword;
         if (
             (_keyword = _PyPegen_expect_soft_keyword(p, "lazy"))  // soft_keyword='"lazy"'
         )
@@ -27646,8 +27646,8 @@ _tmp_5_rule(Parser *p)
 static void *
 _tmp_6_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27722,8 +27722,8 @@ _tmp_6_rule(Parser *p)
 static void *
 _tmp_7_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27779,8 +27779,8 @@ _tmp_7_rule(Parser *p)
 static void *
 _tmp_8_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27836,8 +27836,8 @@ _tmp_8_rule(Parser *p)
 static void *
 _tmp_9_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27893,8 +27893,8 @@ _tmp_9_rule(Parser *p)
 static void *
 _tmp_10_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27909,7 +27909,7 @@ _tmp_10_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_10[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'=' annotated_rhs"));
         Token * _literal;
-        expr_ty d;
+        पाहायाग_ty d;
         if (
             (_literal = _PyPegen_expect_token(p, 22))  // token='='
             &&
@@ -27939,8 +27939,8 @@ _tmp_10_rule(Parser *p)
 static void *
 _tmp_11_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -27956,7 +27956,7 @@ _tmp_11_rule(Parser *p)
         D(fprintf(stderr, "%*c> _tmp_11[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'(' single_target ')'"));
         Token * _literal;
         Token * _literal_1;
-        expr_ty b;
+        पाहायाग_ty b;
         if (
             (_literal = _PyPegen_expect_token(p, 7))  // token='('
             &&
@@ -27984,7 +27984,7 @@ _tmp_11_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_11[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "attribute_or_subscript_target"));
-        expr_ty attribute_or_subscript_target_var;
+        पाहायाग_ty attribute_or_subscript_target_var;
         if (
             (attribute_or_subscript_target_var = attribute_or_subscript_target_rule(p))  // attribute_or_subscript_target
         )
@@ -28007,8 +28007,8 @@ _tmp_11_rule(Parser *p)
 static asdl_seq *
 _loop1_12_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28070,8 +28070,8 @@ _loop1_12_rule(Parser *p)
 static asdl_seq *
 _loop0_13_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28089,7 +28089,7 @@ _loop0_13_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_13[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' NAME"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -28137,8 +28137,8 @@ _loop0_13_rule(Parser *p)
 static asdl_seq *
 _gather_14_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28152,7 +28152,7 @@ _gather_14_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_14[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME _loop0_13"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = _PyPegen_name_token(p))  // NAME
@@ -28161,7 +28161,7 @@ _gather_14_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_14[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "NAME _loop0_13"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -28178,8 +28178,8 @@ _gather_14_rule(Parser *p)
 static void *
 _tmp_15_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28235,8 +28235,8 @@ _tmp_15_rule(Parser *p)
 static void *
 _tmp_16_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28251,7 +28251,7 @@ _tmp_16_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_16[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' expression"));
         Token * _literal;
-        expr_ty z;
+        पाहायाग_ty z;
         if (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -28281,8 +28281,8 @@ _tmp_16_rule(Parser *p)
 static asdl_seq *
 _loop0_17_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28339,8 +28339,8 @@ _loop0_17_rule(Parser *p)
 static asdl_seq *
 _loop1_18_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28402,8 +28402,8 @@ _loop1_18_rule(Parser *p)
 static asdl_seq *
 _loop0_19_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28469,8 +28469,8 @@ _loop0_19_rule(Parser *p)
 static asdl_seq *
 _gather_20_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28493,7 +28493,7 @@ _gather_20_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_20[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "import_from_as_name _loop0_19"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -28510,8 +28510,8 @@ _gather_20_rule(Parser *p)
 static void *
 _tmp_21_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28526,7 +28526,7 @@ _tmp_21_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_21[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'as' NAME"));
         Token * _keyword;
-        expr_ty z;
+        पाहायाग_ty z;
         if (
             (_keyword = _PyPegen_expect_token(p, 698))  // token='as'
             &&
@@ -28556,8 +28556,8 @@ _tmp_21_rule(Parser *p)
 static asdl_seq *
 _loop0_22_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28623,8 +28623,8 @@ _loop0_22_rule(Parser *p)
 static asdl_seq *
 _gather_23_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28647,7 +28647,7 @@ _gather_23_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_23[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "dotted_as_name _loop0_22"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -28664,8 +28664,8 @@ _gather_23_rule(Parser *p)
 static asdl_seq *
 _loop1_24_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28727,8 +28727,8 @@ _loop1_24_rule(Parser *p)
 static void *
 _tmp_25_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28776,8 +28776,8 @@ _tmp_25_rule(Parser *p)
 static void *
 _tmp_26_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28792,7 +28792,7 @@ _tmp_26_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_26[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'->' expression"));
         Token * _literal;
-        expr_ty z;
+        पाहायाग_ty z;
         if (
             (_literal = _PyPegen_expect_token(p, 51))  // token='->'
             &&
@@ -28822,8 +28822,8 @@ _tmp_26_rule(Parser *p)
 static asdl_seq *
 _loop0_27_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28880,8 +28880,8 @@ _loop0_27_rule(Parser *p)
 static asdl_seq *
 _loop0_28_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -28938,8 +28938,8 @@ _loop0_28_rule(Parser *p)
 static asdl_seq *
 _loop1_29_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29001,8 +29001,8 @@ _loop1_29_rule(Parser *p)
 static asdl_seq *
 _loop1_30_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29064,8 +29064,8 @@ _loop1_30_rule(Parser *p)
 static asdl_seq *
 _loop0_31_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29122,8 +29122,8 @@ _loop0_31_rule(Parser *p)
 static asdl_seq *
 _loop1_32_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29185,8 +29185,8 @@ _loop1_32_rule(Parser *p)
 static asdl_seq *
 _loop0_33_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29252,8 +29252,8 @@ _loop0_33_rule(Parser *p)
 static asdl_seq *
 _gather_34_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29276,7 +29276,7 @@ _gather_34_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_34[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "with_item _loop0_33"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -29293,8 +29293,8 @@ _gather_34_rule(Parser *p)
 static void *
 _tmp_35_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29369,8 +29369,8 @@ _tmp_35_rule(Parser *p)
 static asdl_seq *
 _loop1_36_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29432,8 +29432,8 @@ _loop1_36_rule(Parser *p)
 static asdl_seq *
 _loop1_37_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29495,8 +29495,8 @@ _loop1_37_rule(Parser *p)
 static asdl_seq *
 _loop1_38_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29558,8 +29558,8 @@ _loop1_38_rule(Parser *p)
 static asdl_seq *
 _loop0_39_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29625,8 +29625,8 @@ _loop0_39_rule(Parser *p)
 static asdl_seq *
 _gather_40_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29649,7 +29649,7 @@ _gather_40_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_40[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "closed_pattern _loop0_39"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -29666,8 +29666,8 @@ _gather_40_rule(Parser *p)
 static void *
 _tmp_41_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29723,8 +29723,8 @@ _tmp_41_rule(Parser *p)
 static void *
 _tmp_42_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29738,7 +29738,7 @@ _tmp_42_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_42[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "STRING"));
-        expr_ty string_var;
+        पाहायाग_ty string_var;
         if (
             (string_var = _PyPegen_string_token(p))  // STRING
         )
@@ -29799,8 +29799,8 @@ _tmp_42_rule(Parser *p)
 static void *
 _tmp_43_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29875,8 +29875,8 @@ _tmp_43_rule(Parser *p)
 static asdl_seq *
 _loop0_44_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29942,8 +29942,8 @@ _loop0_44_rule(Parser *p)
 static asdl_seq *
 _gather_45_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -29966,7 +29966,7 @@ _gather_45_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_45[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "maybe_star_pattern _loop0_44"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -29983,8 +29983,8 @@ _gather_45_rule(Parser *p)
 static asdl_seq *
 _loop0_46_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30002,11 +30002,11 @@ _loop0_46_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_46[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' key_value_pattern"));
         Token * _literal;
-        KeyPatternPair* elem;
+        सुसि_Pattern_Pair* elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
-            (elem = key_value_pattern_rule(p))  // key_value_pattern
+            (elem = सुसि_हालागा_pattern_rule(p))  // key_value_pattern
         )
         {
             _res = elem;
@@ -30050,8 +30050,8 @@ _loop0_46_rule(Parser *p)
 static asdl_seq *
 _gather_47_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30065,16 +30065,16 @@ _gather_47_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_47[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "key_value_pattern _loop0_46"));
-        KeyPatternPair* elem;
+        सुसि_Pattern_Pair* elem;
         asdl_seq * seq;
         if (
-            (elem = key_value_pattern_rule(p))  // key_value_pattern
+            (elem = सुसि_हालागा_pattern_rule(p))  // key_value_pattern
             &&
             (seq = _loop0_46_rule(p))  // _loop0_46
         )
         {
             D(fprintf(stderr, "%*c+ _gather_47[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "key_value_pattern _loop0_46"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -30091,8 +30091,8 @@ _gather_47_rule(Parser *p)
 static void *
 _tmp_48_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30106,13 +30106,13 @@ _tmp_48_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_48[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "literal_expr"));
-        expr_ty literal_expr_var;
+        पाहायाग_ty literal_पाहायाग_var;
         if (
-            (literal_expr_var = literal_expr_rule(p))  // literal_expr
+            (literal_पाहायाग_var = literal_पाहायाग_rule(p))  // literal_expr
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_48[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "literal_expr"));
-            _res = literal_expr_var;
+            _res = literal_पाहायाग_var;
             goto done;
         }
         p->mark = _mark;
@@ -30125,7 +30125,7 @@ _tmp_48_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_48[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "attr"));
-        expr_ty attr_var;
+        पाहायाग_ty attr_var;
         if (
             (attr_var = attr_rule(p))  // attr
         )
@@ -30148,8 +30148,8 @@ _tmp_48_rule(Parser *p)
 static asdl_seq *
 _loop0_49_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30215,8 +30215,8 @@ _loop0_49_rule(Parser *p)
 static asdl_seq *
 _gather_50_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30239,7 +30239,7 @@ _gather_50_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_50[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "pattern _loop0_49"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -30256,8 +30256,8 @@ _gather_50_rule(Parser *p)
 static asdl_seq *
 _loop0_51_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30275,7 +30275,7 @@ _loop0_51_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_51[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' keyword_pattern"));
         Token * _literal;
-        KeyPatternPair* elem;
+        सुसि_Pattern_Pair* elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -30323,8 +30323,8 @@ _loop0_51_rule(Parser *p)
 static asdl_seq *
 _gather_52_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30338,7 +30338,7 @@ _gather_52_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_52[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "keyword_pattern _loop0_51"));
-        KeyPatternPair* elem;
+        सुसि_Pattern_Pair* elem;
         asdl_seq * seq;
         if (
             (elem = keyword_pattern_rule(p))  // keyword_pattern
@@ -30347,7 +30347,7 @@ _gather_52_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_52[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "keyword_pattern _loop0_51"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -30364,8 +30364,8 @@ _gather_52_rule(Parser *p)
 static asdl_seq *
 _loop0_53_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30431,8 +30431,8 @@ _loop0_53_rule(Parser *p)
 static asdl_seq *
 _gather_54_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30455,7 +30455,7 @@ _gather_54_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_54[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "type_param _loop0_53"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -30472,8 +30472,8 @@ _gather_54_rule(Parser *p)
 static asdl_seq *
 _loop1_55_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30535,8 +30535,8 @@ _loop1_55_rule(Parser *p)
 static asdl_seq *
 _loop1_56_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30598,8 +30598,8 @@ _loop1_56_rule(Parser *p)
 static asdl_seq *
 _loop0_57_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30617,7 +30617,7 @@ _loop0_57_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_57[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' star_named_expression"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -30665,8 +30665,8 @@ _loop0_57_rule(Parser *p)
 static asdl_seq *
 _gather_58_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30680,7 +30680,7 @@ _gather_58_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_58[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_named_expression _loop0_57"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = star_named_expression_rule(p))  // star_named_expression
@@ -30689,7 +30689,7 @@ _gather_58_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_58[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "star_named_expression _loop0_57"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -30706,8 +30706,8 @@ _gather_58_rule(Parser *p)
 static asdl_seq *
 _loop1_59_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30769,8 +30769,8 @@ _loop1_59_rule(Parser *p)
 static asdl_seq *
 _loop1_60_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30832,8 +30832,8 @@ _loop1_60_rule(Parser *p)
 static asdl_seq *
 _loop1_61_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30850,7 +30850,7 @@ _loop1_61_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop1_61[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "compare_op_bitwise_or_pair"));
-        CmpopExprPair* compare_op_bitwise_or_pair_var;
+        Cmpop_पाहायाग_Pair* compare_op_bitwise_or_pair_var;
         while (
             (compare_op_bitwise_or_pair_var = compare_op_bitwise_or_pair_rule(p))  // compare_op_bitwise_or_pair
         )
@@ -30895,8 +30895,8 @@ _loop1_61_rule(Parser *p)
 static void *
 _tmp_62_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -30938,8 +30938,8 @@ _tmp_62_rule(Parser *p)
 static asdl_seq *
 _loop0_63_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31005,8 +31005,8 @@ _loop0_63_rule(Parser *p)
 static asdl_seq *
 _gather_64_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31029,7 +31029,7 @@ _gather_64_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_64[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(slice | starred_expression) _loop0_63"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -31046,8 +31046,8 @@ _gather_64_rule(Parser *p)
 static void *
 _tmp_65_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31092,8 +31092,8 @@ _tmp_65_rule(Parser *p)
 static void *
 _tmp_66_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31107,7 +31107,7 @@ _tmp_66_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_66[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "genexp"));
-        expr_ty genexp_var;
+        पाहायाग_ty genexp_var;
         if (
             (genexp_var = genexp_rule(p))  // genexp
         )
@@ -31126,7 +31126,7 @@ _tmp_66_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_66[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tuple"));
-        expr_ty tuple_var;
+        पाहायाग_ty tuple_var;
         if (
             (tuple_var = tuple_rule(p))  // tuple
         )
@@ -31145,7 +31145,7 @@ _tmp_66_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_66[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "group"));
-        expr_ty group_var;
+        पाहायाग_ty group_var;
         if (
             (group_var = group_rule(p))  // group
         )
@@ -31168,8 +31168,8 @@ _tmp_66_rule(Parser *p)
 static void *
 _tmp_67_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31183,7 +31183,7 @@ _tmp_67_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_67[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "listcomp"));
-        expr_ty listcomp_var;
+        पाहायाग_ty listcomp_var;
         if (
             (listcomp_var = listcomp_rule(p))  // listcomp
         )
@@ -31202,7 +31202,7 @@ _tmp_67_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_67[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "list"));
-        expr_ty list_var;
+        पाहायाग_ty list_var;
         if (
             (list_var = list_rule(p))  // list
         )
@@ -31225,8 +31225,8 @@ _tmp_67_rule(Parser *p)
 static void *
 _tmp_68_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31240,7 +31240,7 @@ _tmp_68_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_68[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dictcomp"));
-        expr_ty dictcomp_var;
+        पाहायाग_ty dictcomp_var;
         if (
             (dictcomp_var = dictcomp_rule(p))  // dictcomp
         )
@@ -31259,7 +31259,7 @@ _tmp_68_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_68[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "setcomp"));
-        expr_ty setcomp_var;
+        पाहायाग_ty setcomp_var;
         if (
             (setcomp_var = setcomp_rule(p))  // setcomp
         )
@@ -31278,7 +31278,7 @@ _tmp_68_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_68[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dict"));
-        expr_ty dict_var;
+        पाहायाग_ty dict_var;
         if (
             (dict_var = dict_rule(p))  // dict
         )
@@ -31297,7 +31297,7 @@ _tmp_68_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_68[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "set"));
-        expr_ty set_var;
+        पाहायाग_ty set_var;
         if (
             (set_var = set_rule(p))  // set
         )
@@ -31320,8 +31320,8 @@ _tmp_68_rule(Parser *p)
 static void *
 _tmp_69_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31335,13 +31335,13 @@ _tmp_69_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_69[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "yield_expr"));
-        expr_ty yield_expr_var;
+        पाहायाग_ty yield_पाहायाग_var;
         if (
-            (yield_expr_var = yield_expr_rule(p))  // yield_expr
+            (yield_पाहायाग_var = yield_पाहायाग_rule(p))  // yield_expr
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_69[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "yield_expr"));
-            _res = yield_expr_var;
+            _res = yield_पाहायाग_var;
             goto done;
         }
         p->mark = _mark;
@@ -31354,7 +31354,7 @@ _tmp_69_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_69[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "named_expression"));
-        expr_ty named_expression_var;
+        पाहायाग_ty named_expression_var;
         if (
             (named_expression_var = named_expression_rule(p))  // named_expression
         )
@@ -31377,8 +31377,8 @@ _tmp_69_rule(Parser *p)
 static asdl_seq *
 _loop0_70_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31435,8 +31435,8 @@ _loop0_70_rule(Parser *p)
 static asdl_seq *
 _loop0_71_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31493,8 +31493,8 @@ _loop0_71_rule(Parser *p)
 static asdl_seq *
 _loop1_72_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31556,8 +31556,8 @@ _loop1_72_rule(Parser *p)
 static asdl_seq *
 _loop1_73_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31619,8 +31619,8 @@ _loop1_73_rule(Parser *p)
 static asdl_seq *
 _loop0_74_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31677,8 +31677,8 @@ _loop0_74_rule(Parser *p)
 static asdl_seq *
 _loop1_75_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31740,8 +31740,8 @@ _loop1_75_rule(Parser *p)
 static asdl_seq *
 _loop0_76_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31758,7 +31758,7 @@ _loop0_76_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop0_76[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "fstring_format_spec"));
-        expr_ty fstring_format_spec_var;
+        पाहायाग_ty fstring_format_spec_var;
         while (
             (fstring_format_spec_var = fstring_format_spec_rule(p))  // fstring_format_spec
         )
@@ -31798,8 +31798,8 @@ _loop0_76_rule(Parser *p)
 static asdl_seq *
 _loop0_77_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31816,12 +31816,12 @@ _loop0_77_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop0_77[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "fstring_middle"));
-        expr_ty fstring_middle_var;
+        पाहायाग_ty fstring_गित्ना_var;
         while (
-            (fstring_middle_var = fstring_middle_rule(p))  // fstring_middle
+            (fstring_गित्ना_var = fstring_गित्ना_rule(p))  // fstring_middle
         )
         {
-            _res = fstring_middle_var;
+            _res = fstring_गित्ना_var;
             if (_n == _children_capacity) {
                 if (_PyPegen_grow_loop_buffer(&_children, &_children_capacity) < 0) {
                     p->error_indicator = 1;
@@ -31856,8 +31856,8 @@ _loop0_77_rule(Parser *p)
 static asdl_seq *
 _loop0_78_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31874,7 +31874,7 @@ _loop0_78_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop0_78[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring_format_spec"));
-        expr_ty tstring_format_spec_var;
+        पाहायाग_ty tstring_format_spec_var;
         while (
             (tstring_format_spec_var = tstring_format_spec_rule(p))  // tstring_format_spec
         )
@@ -31914,8 +31914,8 @@ _loop0_78_rule(Parser *p)
 static asdl_seq *
 _loop0_79_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -31932,12 +31932,12 @@ _loop0_79_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop0_79[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring_middle"));
-        expr_ty tstring_middle_var;
+        पाहायाग_ty tstring_गित्ना_var;
         while (
-            (tstring_middle_var = tstring_middle_rule(p))  // tstring_middle
+            (tstring_गित्ना_var = tstring_गित्ना_rule(p))  // tstring_middle
         )
         {
-            _res = tstring_middle_var;
+            _res = tstring_गित्ना_var;
             if (_n == _children_capacity) {
                 if (_PyPegen_grow_loop_buffer(&_children, &_children_capacity) < 0) {
                     p->error_indicator = 1;
@@ -31972,8 +31972,8 @@ _loop0_79_rule(Parser *p)
 static asdl_seq *
 _loop1_80_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32035,8 +32035,8 @@ _loop1_80_rule(Parser *p)
 static asdl_seq *
 _loop1_81_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32053,7 +32053,7 @@ _loop1_81_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop1_81[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tstring"));
-        expr_ty tstring_var;
+        पाहायाग_ty tstring_var;
         while (
             (tstring_var = tstring_rule(p))  // tstring
         )
@@ -32098,8 +32098,8 @@ _loop1_81_rule(Parser *p)
 static asdl_seq *
 _loop0_82_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32117,7 +32117,7 @@ _loop0_82_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_82[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' display_item"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -32165,8 +32165,8 @@ _loop0_82_rule(Parser *p)
 static asdl_seq *
 _gather_83_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32180,7 +32180,7 @@ _gather_83_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_83[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "display_item _loop0_82"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = display_item_rule(p))  // display_item
@@ -32189,7 +32189,7 @@ _gather_83_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_83[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "display_item _loop0_82"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -32206,8 +32206,8 @@ _gather_83_rule(Parser *p)
 static void *
 _tmp_84_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32222,18 +32222,18 @@ _tmp_84_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_84[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "display_item ',' display_items?"));
         Token * _literal;
-        expr_ty y;
+        पाहायाग_ty y;
         void *z;
         if (
             (y = display_item_rule(p))  // display_item
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
-            (z = display_items_rule(p), !p->error_indicator)  // display_items?
+            (z = display_मगा_बागाय_rule(p), !p->error_indicator)  // display_items?
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_84[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "display_item ',' display_items?"));
-            _res = _PyPegen_seq_insert_in_front ( p , y , z );
+            _res = Py_Pegen_seq_इसिंगित_in_front ( p , y , z );
             if ((_res == NULL || p->error_indicator) && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
@@ -32255,8 +32255,8 @@ _tmp_84_rule(Parser *p)
 static asdl_seq *
 _loop0_85_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32274,7 +32274,7 @@ _loop0_85_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_85[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' double_starred_kvpair"));
         Token * _literal;
-        KeyValuePair* elem;
+        सुसि_हालागा_Pair* elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -32322,8 +32322,8 @@ _loop0_85_rule(Parser *p)
 static asdl_seq *
 _gather_86_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32337,7 +32337,7 @@ _gather_86_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_86[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "double_starred_kvpair _loop0_85"));
-        KeyValuePair* elem;
+        सुसि_हालागा_Pair* elem;
         asdl_seq * seq;
         if (
             (elem = double_starred_kvpair_rule(p))  // double_starred_kvpair
@@ -32346,7 +32346,7 @@ _gather_86_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_86[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "double_starred_kvpair _loop0_85"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -32363,8 +32363,8 @@ _gather_86_rule(Parser *p)
 static asdl_seq *
 _loop1_87_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32426,8 +32426,8 @@ _loop1_87_rule(Parser *p)
 static asdl_seq *
 _loop0_88_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32484,8 +32484,8 @@ _loop0_88_rule(Parser *p)
 static void *
 _tmp_89_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32499,7 +32499,7 @@ _tmp_89_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_89[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "assignment_expression"));
-        expr_ty assignment_expression_var;
+        पाहायाग_ty assignment_expression_var;
         if (
             (assignment_expression_var = assignment_expression_rule(p))  // assignment_expression
         )
@@ -32518,7 +32518,7 @@ _tmp_89_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_89[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression !':='"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -32539,7 +32539,7 @@ _tmp_89_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_89[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "starred_expression"));
-        expr_ty starred_expression_var;
+        पाहायाग_ty starred_expression_var;
         if (
             (starred_expression_var = starred_expression_rule(p))  // starred_expression
         )
@@ -32562,8 +32562,8 @@ _tmp_89_rule(Parser *p)
 static asdl_seq *
 _loop0_90_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32630,8 +32630,8 @@ _loop0_90_rule(Parser *p)
 static asdl_seq *
 _gather_91_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32654,7 +32654,7 @@ _gather_91_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_91[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(starred_expression | (assignment_expression | expression !':=') !'=') _loop0_90"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -32671,8 +32671,8 @@ _gather_91_rule(Parser *p)
 static void *
 _tmp_92_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32717,8 +32717,8 @@ _tmp_92_rule(Parser *p)
 static asdl_seq *
 _loop0_93_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32784,8 +32784,8 @@ _loop0_93_rule(Parser *p)
 static asdl_seq *
 _gather_94_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32808,7 +32808,7 @@ _gather_94_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_94[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "kwarg_or_starred _loop0_93"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -32825,8 +32825,8 @@ _gather_94_rule(Parser *p)
 static void *
 _tmp_95_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32871,8 +32871,8 @@ _tmp_95_rule(Parser *p)
 static asdl_seq *
 _loop0_96_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32938,8 +32938,8 @@ _loop0_96_rule(Parser *p)
 static asdl_seq *
 _gather_97_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -32962,7 +32962,7 @@ _gather_97_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_97[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "kwarg_or_double_starred _loop0_96"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -32979,8 +32979,8 @@ _gather_97_rule(Parser *p)
 static asdl_seq *
 _loop0_98_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33037,8 +33037,8 @@ _loop0_98_rule(Parser *p)
 static void *
 _tmp_99_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33052,7 +33052,7 @@ _tmp_99_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_99[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!'*' star_target"));
-        expr_ty star_target_var;
+        पाहायाग_ty star_target_var;
         if (
             _PyPegen_lookahead_with_int(0, _PyPegen_expect_token, p, 16)  // token='*'
             &&
@@ -33077,8 +33077,8 @@ _tmp_99_rule(Parser *p)
 static void *
 _tmp_100_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33153,8 +33153,8 @@ _tmp_100_rule(Parser *p)
 static asdl_seq *
 _loop0_101_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33172,7 +33172,7 @@ _loop0_101_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_101[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' del_target"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -33220,8 +33220,8 @@ _loop0_101_rule(Parser *p)
 static asdl_seq *
 _gather_102_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33235,7 +33235,7 @@ _gather_102_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_102[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "del_target _loop0_101"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = del_target_rule(p))  // del_target
@@ -33244,7 +33244,7 @@ _gather_102_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_102[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "del_target _loop0_101"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -33261,8 +33261,8 @@ _gather_102_rule(Parser *p)
 static asdl_seq *
 _loop0_103_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33280,7 +33280,7 @@ _loop0_103_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_103[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' expression"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -33328,8 +33328,8 @@ _loop0_103_rule(Parser *p)
 static asdl_seq *
 _gather_104_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33343,7 +33343,7 @@ _gather_104_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_104[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression _loop0_103"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = expression_rule(p))  // expression
@@ -33352,7 +33352,7 @@ _gather_104_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_104[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "expression _loop0_103"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -33369,8 +33369,8 @@ _gather_104_rule(Parser *p)
 static void *
 _tmp_105_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33412,8 +33412,8 @@ _tmp_105_rule(Parser *p)
 static void *
 _tmp_106_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33469,8 +33469,8 @@ _tmp_106_rule(Parser *p)
 static asdl_seq *
 _loop0_107_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33536,8 +33536,8 @@ _loop0_107_rule(Parser *p)
 static asdl_seq *
 _gather_108_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33560,7 +33560,7 @@ _gather_108_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_108[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(starred_expression !'=') _loop0_107"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -33577,8 +33577,8 @@ _gather_108_rule(Parser *p)
 static void *
 _tmp_109_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33586,19 +33586,19 @@ _tmp_109_rule(Parser *p)
     }
     void * _res = NULL;
     int _mark = p->mark;
-    { // args
+    { //मगा_कातविरान
         if (p->error_indicator) {
             p->level--;
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_109[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args"));
-        expr_ty args_var;
+        पाहायाग_ty मगा_कातविरान_var;
         if (
-            (args_var = args_rule(p))  // args
+            (मगा_कातविरान_var = मगा_कातविरान_rule(p))  //मगा_कातविरान
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_109[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "args"));
-            _res = args_var;
+            _res = मगा_कातविरान_var;
             goto done;
         }
         p->mark = _mark;
@@ -33611,7 +33611,7 @@ _tmp_109_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_109[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression for_if_clauses"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         asdl_comprehension_seq* for_if_clauses_var;
         if (
             (expression_var = expression_rule(p))  // expression
@@ -33637,8 +33637,8 @@ _tmp_109_rule(Parser *p)
 static void *
 _tmp_110_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33653,15 +33653,15 @@ _tmp_110_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_110[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "args ','"));
         Token * _literal;
-        expr_ty args_var;
+        पाहायाग_ty मगा_कातविरान_var;
         if (
-            (args_var = args_rule(p))  // args
+            (मगा_कातविरान_var = मगा_कातविरान_rule(p))  //मगा_कातविरान
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_110[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "args ','"));
-            _res = _PyPegen_dummy_name(p, args_var, _literal);
+            _res = _PyPegen_dummy_name(p, मगा_कातविरान_var, _literal);
             goto done;
         }
         p->mark = _mark;
@@ -33678,8 +33678,8 @@ _tmp_110_rule(Parser *p)
 static void *
 _tmp_111_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33735,8 +33735,8 @@ _tmp_111_rule(Parser *p)
 static void *
 _tmp_112_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33751,7 +33751,7 @@ _tmp_112_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_112[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME '='"));
         Token * _literal;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
             &&
@@ -33776,8 +33776,8 @@ _tmp_112_rule(Parser *p)
 static asdl_seq *
 _loop1_113_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33839,8 +33839,8 @@ _loop1_113_rule(Parser *p)
 static void *
 _tmp_114_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33854,8 +33854,8 @@ _tmp_114_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_114[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME STRING"));
-        expr_ty name_var;
-        expr_ty string_var;
+        पाहायाग_ty name_var;
+        पाहायाग_ty string_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
             &&
@@ -33876,7 +33876,7 @@ _tmp_114_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_114[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "SOFT_KEYWORD"));
-        expr_ty soft_keyword_var;
+        पाहायाग_ty soft_keyword_var;
         if (
             (soft_keyword_var = _PyPegen_soft_keyword_token(p))  // SOFT_KEYWORD
         )
@@ -33899,8 +33899,8 @@ _tmp_114_rule(Parser *p)
 static void *
 _tmp_115_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -33956,8 +33956,8 @@ _tmp_115_rule(Parser *p)
 static void *
 _tmp_116_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34032,8 +34032,8 @@ _tmp_116_rule(Parser *p)
 static void *
 _tmp_117_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34089,8 +34089,8 @@ _tmp_117_rule(Parser *p)
 static void *
 _tmp_118_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34104,7 +34104,7 @@ _tmp_118_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_118[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "list"));
-        expr_ty list_var;
+        पाहायाग_ty list_var;
         if (
             (list_var = list_rule(p))  // list
         )
@@ -34123,7 +34123,7 @@ _tmp_118_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_118[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "tuple"));
-        expr_ty tuple_var;
+        पाहायाग_ty tuple_var;
         if (
             (tuple_var = tuple_rule(p))  // tuple
         )
@@ -34142,7 +34142,7 @@ _tmp_118_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_118[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "genexp"));
-        expr_ty genexp_var;
+        पाहायाग_ty genexp_var;
         if (
             (genexp_var = genexp_rule(p))  // genexp
         )
@@ -34222,8 +34222,8 @@ _tmp_118_rule(Parser *p)
 static asdl_seq *
 _loop0_119_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34240,7 +34240,7 @@ _loop0_119_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _loop0_119[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_named_expressions"));
-        asdl_expr_seq* star_named_expressions_var;
+        asdl_पाहायाग_seq* star_named_expressions_var;
         while (
             (star_named_expressions_var = star_named_expressions_rule(p))  // star_named_expressions
         )
@@ -34280,8 +34280,8 @@ _loop0_119_rule(Parser *p)
 static asdl_seq *
 _loop0_120_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34338,8 +34338,8 @@ _loop0_120_rule(Parser *p)
 static void *
 _tmp_121_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34395,8 +34395,8 @@ _tmp_121_rule(Parser *p)
 static void *
 _tmp_122_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34452,8 +34452,8 @@ _tmp_122_rule(Parser *p)
 static void *
 _tmp_123_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34509,8 +34509,8 @@ _tmp_123_rule(Parser *p)
 static void *
 _tmp_124_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34566,8 +34566,8 @@ _tmp_124_rule(Parser *p)
 static void *
 _tmp_125_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34626,8 +34626,8 @@ _tmp_125_rule(Parser *p)
 static void *
 _tmp_126_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34683,8 +34683,8 @@ _tmp_126_rule(Parser *p)
 static void *
 _tmp_127_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34759,8 +34759,8 @@ _tmp_127_rule(Parser *p)
 static void *
 _tmp_128_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34816,8 +34816,8 @@ _tmp_128_rule(Parser *p)
 static asdl_seq *
 _loop0_129_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34883,8 +34883,8 @@ _loop0_129_rule(Parser *p)
 static asdl_seq *
 _gather_130_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34907,7 +34907,7 @@ _gather_130_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_130[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "lambda_param _loop0_129"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -34924,8 +34924,8 @@ _gather_130_rule(Parser *p)
 static void *
 _tmp_131_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -34981,8 +34981,8 @@ _tmp_131_rule(Parser *p)
 static void *
 _tmp_132_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35041,8 +35041,8 @@ _tmp_132_rule(Parser *p)
 static void *
 _tmp_133_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35098,8 +35098,8 @@ _tmp_133_rule(Parser *p)
 static void *
 _tmp_134_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35116,7 +35116,7 @@ _tmp_134_rule(Parser *p)
         asdl_seq * _loop0_172_var;
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty bitwise_or_var;
+        पाहायाग_ty bitwise_or_var;
         if (
             (bitwise_or_var = bitwise_or_rule(p))  // bitwise_or
             &&
@@ -35143,8 +35143,8 @@ _tmp_134_rule(Parser *p)
 static asdl_seq *
 _loop0_135_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35162,7 +35162,7 @@ _loop0_135_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _loop0_135[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' dotted_name"));
         Token * _literal;
-        expr_ty elem;
+        पाहायाग_ty elem;
         while (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -35210,8 +35210,8 @@ _loop0_135_rule(Parser *p)
 static asdl_seq *
 _gather_136_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35225,7 +35225,7 @@ _gather_136_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _gather_136[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "dotted_name _loop0_135"));
-        expr_ty elem;
+        पाहायाग_ty elem;
         asdl_seq * seq;
         if (
             (elem = dotted_name_rule(p))  // dotted_name
@@ -35234,7 +35234,7 @@ _gather_136_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_136[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "dotted_name _loop0_135"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -35251,8 +35251,8 @@ _gather_136_rule(Parser *p)
 static void *
 _tmp_137_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35267,7 +35267,7 @@ _tmp_137_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_137[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "NAME (',' | ')' | ';' | NEWLINE)"));
         void *_tmp_173_var;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (name_var = _PyPegen_name_token(p))  // NAME
             &&
@@ -35292,8 +35292,8 @@ _tmp_137_rule(Parser *p)
 static asdl_seq *
 _loop0_138_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35359,8 +35359,8 @@ _loop0_138_rule(Parser *p)
 static asdl_seq *
 _gather_139_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35383,7 +35383,7 @@ _gather_139_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_139[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(expression ['as' star_target]) _loop0_138"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -35400,8 +35400,8 @@ _gather_139_rule(Parser *p)
 static asdl_seq *
 _loop0_140_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35467,8 +35467,8 @@ _loop0_140_rule(Parser *p)
 static asdl_seq *
 _gather_141_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35491,7 +35491,7 @@ _gather_141_rule(Parser *p)
         )
         {
             D(fprintf(stderr, "%*c+ _gather_141[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "(expressions ['as' star_target]) _loop0_140"));
-            _res = _PyPegen_seq_insert_in_front(p, elem, seq);
+            _res = Py_Pegen_seq_इसिंगित_in_front(p, elem, seq);
             goto done;
         }
         p->mark = _mark;
@@ -35508,8 +35508,8 @@ _gather_141_rule(Parser *p)
 static void *
 _tmp_142_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35565,8 +35565,8 @@ _tmp_142_rule(Parser *p)
 static asdl_seq *
 _loop0_143_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35623,8 +35623,8 @@ _loop0_143_rule(Parser *p)
 static void *
 _tmp_144_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35640,7 +35640,7 @@ _tmp_144_rule(Parser *p)
         D(fprintf(stderr, "%*c> _tmp_144[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ['as' NAME]"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -35665,8 +35665,8 @@ _tmp_144_rule(Parser *p)
 static void *
 _tmp_145_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35722,8 +35722,8 @@ _tmp_145_rule(Parser *p)
 static void *
 _tmp_146_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35738,15 +35738,15 @@ _tmp_146_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_146[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "items_pattern ','"));
         Token * _literal;
-        asdl_seq* items_pattern_var;
+        asdl_seq* मगा_बागाय_pattern_var;
         if (
-            (items_pattern_var = items_pattern_rule(p))  // items_pattern
+            (मगा_बागाय_pattern_var = मगा_बागाय_pattern_rule(p))  // items_pattern
             &&
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
         )
         {
             D(fprintf(stderr, "%*c+ _tmp_146[%d-%d]: %s succeeded!\n", p->level, ' ', _mark, p->mark, "items_pattern ','"));
-            _res = _PyPegen_dummy_name(p, items_pattern_var, _literal);
+            _res = _PyPegen_dummy_name(p, मगा_बागाय_pattern_var, _literal);
             goto done;
         }
         p->mark = _mark;
@@ -35763,8 +35763,8 @@ _tmp_146_rule(Parser *p)
 static void *
 _tmp_147_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35804,8 +35804,8 @@ _tmp_147_rule(Parser *p)
 static void *
 _tmp_148_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35861,8 +35861,8 @@ _tmp_148_rule(Parser *p)
 static void *
 _tmp_149_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -35918,8 +35918,8 @@ _tmp_149_rule(Parser *p)
 static void *
 _tmp_150_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36013,8 +36013,8 @@ _tmp_150_rule(Parser *p)
 static void *
 _tmp_151_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36089,8 +36089,8 @@ _tmp_151_rule(Parser *p)
 static void *
 _tmp_152_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36105,7 +36105,7 @@ _tmp_152_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_152[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'!' NAME"));
         Token * _literal;
-        expr_ty name_var;
+        पाहायाग_ty name_var;
         if (
             (_literal = _PyPegen_expect_token(p, 54))  // token='!'
             &&
@@ -36130,8 +36130,8 @@ _tmp_152_rule(Parser *p)
 static void *
 _tmp_153_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36187,8 +36187,8 @@ _tmp_153_rule(Parser *p)
 static void *
 _tmp_154_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36202,7 +36202,7 @@ _tmp_154_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_154[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "fstring"));
-        expr_ty fstring_var;
+        पाहायाग_ty fstring_var;
         if (
             (fstring_var = fstring_rule(p))  // fstring
         )
@@ -36221,7 +36221,7 @@ _tmp_154_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_154[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "string"));
-        expr_ty string_var;
+        पाहायाग_ty string_var;
         if (
             (string_var = string_rule(p))  // string
         )
@@ -36244,8 +36244,8 @@ _tmp_154_rule(Parser *p)
 static void *
 _tmp_155_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36396,8 +36396,8 @@ _tmp_155_rule(Parser *p)
 static void *
 _tmp_156_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36472,8 +36472,8 @@ _tmp_156_rule(Parser *p)
 static void *
 _tmp_157_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36488,7 +36488,7 @@ _tmp_157_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_157[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "star_targets '='"));
         Token * _literal;
-        expr_ty z;
+        पाहायाग_ty z;
         if (
             (z = star_targets_rule(p))  // star_targets
             &&
@@ -36518,8 +36518,8 @@ _tmp_157_rule(Parser *p)
 static void *
 _tmp_158_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36575,8 +36575,8 @@ _tmp_158_rule(Parser *p)
 static void *
 _tmp_159_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36591,7 +36591,7 @@ _tmp_159_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_159[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'@' named_expression NEWLINE"));
         Token * _literal;
-        expr_ty f;
+        पाहायाग_ty f;
         Token * newline_var;
         if (
             (_literal = _PyPegen_expect_token(p, 49))  // token='@'
@@ -36624,8 +36624,8 @@ _tmp_159_rule(Parser *p)
 static void *
 _tmp_160_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36640,7 +36640,7 @@ _tmp_160_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_160[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' star_expression"));
         Token * _literal;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -36670,8 +36670,8 @@ _tmp_160_rule(Parser *p)
 static void *
 _tmp_161_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36686,7 +36686,7 @@ _tmp_161_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_161[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'or' conjunction"));
         Token * _keyword;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (_keyword = _PyPegen_expect_token(p, 589))  // token='or'
             &&
@@ -36716,8 +36716,8 @@ _tmp_161_rule(Parser *p)
 static void *
 _tmp_162_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36732,7 +36732,7 @@ _tmp_162_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_162[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'and' inversion"));
         Token * _keyword;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (_keyword = _PyPegen_expect_token(p, 590))  // token='and'
             &&
@@ -36762,8 +36762,8 @@ _tmp_162_rule(Parser *p)
 static void *
 _tmp_163_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36777,7 +36777,7 @@ _tmp_163_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_163[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "slice"));
-        expr_ty slice_var;
+        पाहायाग_ty slice_var;
         if (
             (slice_var = slice_rule(p))  // slice
         )
@@ -36796,7 +36796,7 @@ _tmp_163_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_163[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "starred_expression"));
-        expr_ty starred_expression_var;
+        पाहायाग_ty starred_expression_var;
         if (
             (starred_expression_var = starred_expression_rule(p))  // starred_expression
         )
@@ -36819,8 +36819,8 @@ _tmp_163_rule(Parser *p)
 static void *
 _tmp_164_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36835,7 +36835,7 @@ _tmp_164_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_164[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'if' disjunction"));
         Token * _keyword;
-        expr_ty z;
+        पाहायाग_ty z;
         if (
             (_keyword = _PyPegen_expect_token(p, 700))  // token='if'
             &&
@@ -36865,8 +36865,8 @@ _tmp_164_rule(Parser *p)
 static void *
 _tmp_165_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36880,7 +36880,7 @@ _tmp_165_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_165[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "starred_expression"));
-        expr_ty starred_expression_var;
+        पाहायाग_ty starred_expression_var;
         if (
             (starred_expression_var = starred_expression_rule(p))  // starred_expression
         )
@@ -36924,8 +36924,8 @@ _tmp_165_rule(Parser *p)
 static void *
 _tmp_166_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -36940,7 +36940,7 @@ _tmp_166_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_166[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' star_target"));
         Token * _literal;
-        expr_ty c;
+        पाहायाग_ty c;
         if (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -36971,8 +36971,8 @@ _tmp_166_rule(Parser *p)
 static void *
 _tmp_167_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37015,8 +37015,8 @@ _tmp_167_rule(Parser *p)
 static void *
 _tmp_168_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37030,7 +37030,7 @@ _tmp_168_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_168[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "starred_expression !'='"));
-        expr_ty starred_expression_var;
+        पाहायाग_ty starred_expression_var;
         if (
             (starred_expression_var = starred_expression_rule(p))  // starred_expression
             &&
@@ -37055,8 +37055,8 @@ _tmp_168_rule(Parser *p)
 static void *
 _tmp_169_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37070,7 +37070,7 @@ _tmp_169_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_169[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "!STRING expression_without_invalid"));
-        expr_ty expression_without_invalid_var;
+        पाहायाग_ty expression_without_invalid_var;
         if (
             _PyPegen_lookahead(0, _PyPegen_string_token, p)
             &&
@@ -37095,8 +37095,8 @@ _tmp_169_rule(Parser *p)
 static void *
 _tmp_170_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37152,8 +37152,8 @@ _tmp_170_rule(Parser *p)
 static void *
 _tmp_171_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37209,8 +37209,8 @@ _tmp_171_rule(Parser *p)
 static asdl_seq *
 _loop0_172_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37267,8 +37267,8 @@ _loop0_172_rule(Parser *p)
 static void *
 _tmp_173_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37362,8 +37362,8 @@ _tmp_173_rule(Parser *p)
 static void *
 _tmp_174_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37379,7 +37379,7 @@ _tmp_174_rule(Parser *p)
         D(fprintf(stderr, "%*c> _tmp_174[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression ['as' star_target]"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -37404,8 +37404,8 @@ _tmp_174_rule(Parser *p)
 static void *
 _tmp_175_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37421,7 +37421,7 @@ _tmp_175_rule(Parser *p)
         D(fprintf(stderr, "%*c> _tmp_175[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expressions ['as' star_target]"));
         void *_opt_var;
         UNUSED(_opt_var); // Silence compiler warnings
-        expr_ty expressions_var;
+        पाहायाग_ty expressions_var;
         if (
             (expressions_var = expressions_rule(p))  // expressions
             &&
@@ -37446,8 +37446,8 @@ _tmp_175_rule(Parser *p)
 static void *
 _tmp_176_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37461,7 +37461,7 @@ _tmp_176_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_176[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "assignment_expression"));
-        expr_ty assignment_expression_var;
+        पाहायाग_ty assignment_expression_var;
         if (
             (assignment_expression_var = assignment_expression_rule(p))  // assignment_expression
         )
@@ -37480,7 +37480,7 @@ _tmp_176_rule(Parser *p)
             return NULL;
         }
         D(fprintf(stderr, "%*c> _tmp_176[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "expression !':='"));
-        expr_ty expression_var;
+        पाहायाग_ty expression_var;
         if (
             (expression_var = expression_rule(p))  // expression
             &&
@@ -37505,8 +37505,8 @@ _tmp_176_rule(Parser *p)
 static void *
 _tmp_177_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37521,7 +37521,7 @@ _tmp_177_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_177[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "',' bitwise_or"));
         Token * _literal;
-        expr_ty bitwise_or_var;
+        पाहायाग_ty bitwise_or_var;
         if (
             (_literal = _PyPegen_expect_token(p, 12))  // token=','
             &&
@@ -37546,8 +37546,8 @@ _tmp_177_rule(Parser *p)
 static void *
 _tmp_178_rule(Parser *p)
 {
-    if (p->level++ == MAXSTACK || _PyPegen_stack_exhausted(p)) {
-        _Pypegen_stack_overflow(p);
+    if (p->level++ == MAXSTACK || Py_Pegen_सालानसान_exhausted(p)) {
+        Pypegen_सालानसान_overflow(p);
     }
     if (p->error_indicator) {
         p->level--;
@@ -37562,7 +37562,7 @@ _tmp_178_rule(Parser *p)
         }
         D(fprintf(stderr, "%*c> _tmp_178[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "'as' star_target"));
         Token * _keyword;
-        expr_ty star_target_var;
+        पाहायाग_ty star_target_var;
         if (
             (_keyword = _PyPegen_expect_token(p, 698))  // token='as'
             &&
@@ -37593,13 +37593,13 @@ _PyPegen_parse(Parser *p)
 
     // Run parser
     void *result = NULL;
-    if (p->start_rule == Py_file_input) {
+    if (p->start_rule == Py_file_पासोक) {
         result = file_rule(p);
-    } else if (p->start_rule == Py_single_input) {
+    } else if (p->start_rule == Py_single_पासोक) {
         result = interactive_rule(p);
-    } else if (p->start_rule == Py_eval_input) {
+    } else if (p->start_rule == Py_eval_पासोक) {
         result = eval_rule(p);
-    } else if (p->start_rule == Py_func_type_input) {
+    } else if (p->start_rule == Py_func_type_पासोक) {
         result = func_type_rule(p);
     }
 

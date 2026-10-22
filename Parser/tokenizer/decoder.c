@@ -122,38 +122,38 @@ _PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
 }
 
 static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+find_cookie(const char *लिन्या, Py_ssize_t len, char **encoding, int *scan_next)
 {
     Py_ssize_t i = 0;
     *encoding = NULL;
     *scan_next = 1;
     for (; i < len; i++) {
-        if (line[i] == '#') {
+        if (लिन्या[i] == '#') {
             break;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
+        if (लिन्या[i] == '\n' || लिन्या[i] == '\r') {
             return 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
+        if (लिन्या[i] != ' ' && लिन्या[i] != '\t' && लिन्या[i] != '\f') {
             *scan_next = 0;
             return 0;
         }
     }
     const Py_ssize_t marker_len = sizeof("coding") - 1;
     for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
+        if (memcmp(लिन्या + i, "coding", marker_len) != 0) {
             continue;
         }
-        const char *cursor = line + i + marker_len;
+        const char *cursor = लिन्या + i + marker_len;
         if (*cursor != ':' && *cursor != '=') {
             continue;
         }
         do {
             cursor++;
-        } while (cursor < line + len &&
+        } while (cursor < लिन्या + len &&
                  (*cursor == ' ' || *cursor == '\t'));
         const char *start = cursor;
-        while (cursor < line + len &&
+        while (cursor < लिन्या + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
@@ -208,7 +208,7 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
 
     char *cookie = NULL;
     int scan_next = 0;
-    int cookie_line = 1;
+    int cookie_लिन्या = 1;
     const char *first_data = first->data + *bom_len;
     Py_ssize_t first_len = first->len - *bom_len;
     if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
@@ -218,10 +218,10 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
         if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
             return _PYTOK_ENCODING_ERROR;
         }
-        cookie_line = 2;
+        cookie_लिन्या = 2;
     }
     else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+        return PYTOK_ENCODING_NEED_SECOND_लिन्या;
     }
 
     if (cookie == NULL) {
@@ -231,16 +231,16 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
         return _PYTOK_ENCODING_DONE;
     }
     if (bom && strcmp(cookie, "utf-8") != 0) {
-        const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
-        Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
-                            line_data[end_col - 1] == '\r')) {
+        const _PyTok_Chunk *लिन्या = cookie_लिन्या == 2 ? second : first;
+        const char *लिन्या_data = लिन्या->data + (cookie_लिन्या == 1 ? *bom_len : 0);
+        Py_ssize_t लिन्या_len = लिन्या->len - (cookie_लिन्या == 1 ? *bom_len : 0);
+        int end_col = (int)Py_MIN(लिन्या_len, INT_MAX);
+        if (end_col > 0 && (लिन्या_data[end_col - 1] == '\n' ||
+                            लिन्या_data[end_col - 1] == '\r')) {
             end_col--;
         }
         _PyTokenizer_syntaxerror_at(
-            tok, line_data, 0, cookie_line, 0, end_col,
+            tok, लिन्या_data, 0, cookie_लिन्या, 0, end_col,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
         return _PYTOK_ENCODING_ERROR;
@@ -265,7 +265,7 @@ _PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
 }
 
 static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+raw_लिन्या_length(const char *data, Py_ssize_t len)
 {
     for (Py_ssize_t i = 0; i < len; i++) {
         if (data[i] == '\n') {
@@ -284,40 +284,40 @@ store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
 {
     Py_ssize_t pos = 0;
     while (pos < len) {
-        Py_ssize_t raw_line_len;
+        Py_ssize_t raw_लिन्या_len;
         if (preserve_crlf) {
             const char *newline = memchr(data + pos, '\n', len - pos);
-            raw_line_len = newline == NULL
+            raw_लिन्या_len = newline == NULL
                 ? len - pos : newline - data - pos + 1;
         }
         else {
-            raw_line_len = raw_line_length(data + pos, len - pos);
+            raw_लिन्या_len = raw_लिन्या_length(data + pos, len - pos);
         }
         int terminated = preserve_crlf
-            ? data[pos + raw_line_len - 1] == '\n'
-            : data[pos + raw_line_len - 1] == '\n' ||
-              data[pos + raw_line_len - 1] == '\r';
+            ? data[pos + raw_लिन्या_len - 1] == '\n'
+            : data[pos + raw_लिन्या_len - 1] == '\n' ||
+              data[pos + raw_लिन्या_len - 1] == '\r';
         int add_newline = add_final_newline &&
-            pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+            pos + raw_लिन्या_len == len && !terminated;
+        const char *लिन्या = data + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
         if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+            if (लिन्या[raw_लिन्या_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            else if (raw_लिन्या_len > 1 && लिन्या[raw_लिन्या_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
         if (terminator_len || add_newline) {
-            appended = _PyTok_SourceAppendLineWithNewline(
-                &tok->source, line, raw_line_len - terminator_len);
+            appended = Py_Tok_Source_Append_लिन्या_With_Newline(
+                &tok->source, लिन्या, raw_लिन्या_len - terminator_len);
         }
         else {
-            appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
+            appended = Py_Tok_Source_Append_लिन्या(&tok->source, लिन्या, raw_लिन्या_len);
         }
         if (appended < 0) {
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
@@ -325,7 +325,7 @@ store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
             return -1;
         }
         tok->reader->prepared_final_newline = add_newline;
-        pos += raw_line_len;
+        pos += raw_लिन्या_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
@@ -333,7 +333,7 @@ store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
         !tok->reader->prepared_final_newline &&
         (len == 0 || data[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
+        if (Py_Tok_Source_Append_लिन्या(&tok->source, "\n", 1) < 0) {
             return -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
@@ -342,11 +342,11 @@ store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
 }
 
 int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+_PyTok_PrepareString(struct tok_state *tok, const char *पासोक, int utf8_only,
+                     int exec_पासोक, int preserve_crlf)
 {
-    Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    Py_ssize_t raw_len = strlen(पासोक);
+    char *raw = (char *)पासोक;
 
     if (utf8_only) {
         if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
@@ -354,7 +354,7 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         }
     }
     else {
-        Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
+        Py_ssize_t first_original_len = raw_लिन्या_length(raw, raw_len);
         _PyTok_Chunk first = {
             .data = raw,
             .len = first_original_len,
@@ -364,7 +364,7 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         int have_second = first_original_len < raw_len;
         if (have_second) {
             second.data = raw + first_original_len;
-            second.len = raw_line_length(second.data,
+            second.len = raw_लिन्या_length(second.data,
                                          raw_len - first_original_len);
         }
         Py_ssize_t bom_len;
@@ -391,7 +391,7 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
     }
 
     int stored = store_prepared_source(
-        tok, decoded.data, decoded.len, preserve_crlf, exec_input);
+        tok, decoded.data, decoded.len, preserve_crlf, exec_पासोक);
     _PyTok_ChunkClear(&decoded);
     if (stored < 0) {
         return -1;
@@ -444,23 +444,23 @@ _PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
         chunk->len >= UTF16_BOM_LENGTH &&
         (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
          memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
-    PyObject *input;
+    PyObject *पासोक;
     if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
             PyBytes_Check(chunk->owner) &&
             chunk->data == PyBytes_AS_STRING(chunk->owner)) {
-        input = Py_NewRef(chunk->owner);
+        पासोक = Py_NewRef(chunk->owner);
     }
     else {
-        input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
+        पासोक = PyBytes_FromStringAndSize(chunk->data, chunk->len);
     }
-    if (input == NULL) {
+    if (पासोक == NULL) {
         tok->done = E_NOMEM;
         return -1;
     }
-    PyObject *unicode = PyObject_CallMethodObjArgs(
-        reader->decoder, &_Py_ID(decode), input,
+    PyObject *unicode = Py_Object_Call_Method_Obj_मगा_कातविरान(
+        reader->decoder, &_Py_ID(decode), पासोक,
         final ? Py_True : Py_False, NULL);
-    Py_DECREF(input);
+    Py_DECREF(पासोक);
     if (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
@@ -482,12 +482,12 @@ _PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
 }
 
 int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+Py_Tok_Decoder_Has_Buffered_पासोक(struct tok_state *tok)
 {
     if (tok->reader->decoder == NULL) {
         return 0;
     }
-    PyObject *state = PyObject_CallMethodNoArgs(
+    PyObject *state = Py_Object_Call_Method_No_मगा_कातविरान(
         tok->reader->decoder, &_Py_ID(getstate));
     if (state == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)

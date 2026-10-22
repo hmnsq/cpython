@@ -34,8 +34,8 @@ struct token {
 typedef struct {
     const char *text;
     Py_ssize_t length;
-    _PyTok_Span line_span;
-    _PyTok_Off end_line_start;
+    _PyTok_Span लिन्या_span;
+    _PyTok_Off end_लिन्या_start;
     int implicit_newline;
     int at_eof;
 } _PyToken_View;
@@ -54,8 +54,8 @@ typedef struct {
     _PyTokenizer_Diagnostic diagnostic;
     _PyTok_Loc location;
     _PyTok_Off cursor;
-    _PyTok_Span input_span;
-    _PyTok_Span line_span;
+    _PyTok_Span पासोक_span;
+    _PyTok_Span लिन्या_span;
     int level;
     char delimiter;
     _PyTok_Loc delimiter_loc;
@@ -100,7 +100,7 @@ const char *_PyTokenizer_SpanView(
     const struct tok_state *, _PyTok_Span, Py_ssize_t *);
 /* For retained input: 1-based lines clamp to the first or final line.
    The view excludes the newline and need not be NUL-terminated. */
-const char *_PyTokenizer_LineView(
+const char *Py_Tokenizer_लिन्या_View(
     const struct tok_state *, Py_ssize_t, Py_ssize_t *);
 /* Return NUL-terminated retained input, or NULL without setting an exception
    for streaming input or interactive input before its first line. */
@@ -109,16 +109,16 @@ void _PyTokenizer_SetContext(
     struct tok_state *tok, PyObject *filename, PyObject *module);
 void _PyTokenizer_SetOptions(
     struct tok_state *tok, int extra_tokens, int type_comments);
-void _PyTokenizer_AllowIncompleteInput(struct tok_state *, int);
+void Py_Tokenizer_Allow_Incomplete_पासोक(struct tok_state *, int);
 void _PyTokenizer_ImplyDedents(struct tok_state *);
 int _PyTokenizer_HasTrailingStatement(const struct tok_state *);
 int _PyTokenizer_IsInteractive(const struct tok_state *);
 void _PyTokenizer_StopInteractive(struct tok_state *);
 
 struct tok_state *_PyTokenizer_FromString(
-    const char *input, int exec_input, int preserve_crlf);
+    const char *पासोक, int exec_पासोक, int preserve_crlf);
 struct tok_state *_PyTokenizer_FromUTF8(
-    const char *input, int exec_input, int preserve_crlf);
+    const char *पासोक, int exec_पासोक, int preserve_crlf);
 struct tok_state *_PyTokenizer_FromReadline(
     PyObject *readline, const char *encoding);
 struct tok_state *_PyTokenizer_FromFile(

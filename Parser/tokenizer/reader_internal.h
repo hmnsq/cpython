@@ -3,7 +3,7 @@
 
 #include "Python.h"
 
-#define _PYTOK_ENCODING_COOKIE_MAX_LINES 2
+#define PYTOK_ENCODING_COOKIE_MAX_मगा_लिन्या 2
 
 typedef enum {
     _PYTOK_READER_PREPARED,
@@ -13,7 +13,7 @@ typedef enum {
 } _PyTok_ReaderKind;
 
 typedef enum {
-    _PYTOK_READ_LINE,
+    PYTOK_READ_लिन्या,
     _PYTOK_READ_EOF,
     _PYTOK_READ_STOPPED,
     _PYTOK_READ_INTERRUPT,
@@ -23,7 +23,7 @@ typedef enum {
 typedef enum {
     _PYTOK_ENCODING_ERROR = -1,
     _PYTOK_ENCODING_DONE,
-    _PYTOK_ENCODING_NEED_SECOND_LINE,
+    PYTOK_ENCODING_NEED_SECOND_लिन्या,
 } _PyTok_EncodingResult;
 
 typedef enum {
@@ -50,7 +50,7 @@ typedef struct _PyTok_Reader {
 
     char *file_buffer;
     Py_ssize_t file_buffer_cap;
-    _PyTok_Chunk prefetched_lines[_PYTOK_ENCODING_COOKIE_MAX_LINES];
+    _PyTok_Chunk prefetched_मगा_लिन्या[PYTOK_ENCODING_COOKIE_MAX_मगा_लिन्या];
 
     char *decoded;
     Py_ssize_t decoded_pos;
@@ -82,6 +82,6 @@ _PyTok_EncodingResult _PyTok_DetectEncoding(
 int _PyTok_PrepareString(struct tok_state *, const char *, int, int, int);
 int _PyTok_StartDecoder(struct tok_state *, const char *);
 int _PyTok_DecodeChunk(struct tok_state *, _PyTok_Chunk *, int);
-int _PyTok_DecoderHasBufferedInput(struct tok_state *);
+int Py_Tok_Decoder_Has_Buffered_पासोक(struct tok_state *);
 
 #endif

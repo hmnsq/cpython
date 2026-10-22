@@ -26,11 +26,11 @@ _PyTokenizer_GetInfo(const struct tok_state *tok)
         .status = tok->done,
         .implicit_newline = tok->implicit_newline,
         .diagnostic = tok->diagnostic,
-        .location = {tok->lineno, tok->line_start < 0
-            ? -1 : (int)(tok->cur - tok->line_start)},
+        .location = {tok->lineno, tok->लिन्या_start < 0
+            ? -1 : (int)(tok->cur - tok->लिन्या_start)},
         .cursor = tok->cur,
-        .input_span = {tok->buf_offset, tok->inp},
-        .line_span = {tok->line_start, tok->inp},
+        .पासोक_span = {tok->buf_offset, tok->inp},
+        .लिन्या_span = {tok->लिन्या_start, tok->inp},
         .level = tok->level,
         .delimiter_loc = {-1, -1},
         .in_formatted_string = tok->ftstring_depth != 0,
@@ -75,10 +75,10 @@ _PyToken_GetView(const struct tok_state *tok, const struct token *token,
 {
     assert(view != NULL);
     view->text = _PyToken_TextView(tok, token, &view->length);
-    view->end_line_start = tok->line_start;
-    view->line_span = (_PyTok_Span){
+    view->end_लिन्या_start = tok->लिन्या_start;
+    view->लिन्या_span = (_PyTok_Span){
         ISSTRINGLIT(token->type)
-            ? token->span.start - token->start_loc.byte_col : tok->line_start,
+            ? token->span.start - token->start_loc.byte_col : tok->लिन्या_start,
         tok->inp,
     };
     view->implicit_newline = tok->implicit_newline;
@@ -86,10 +86,10 @@ _PyToken_GetView(const struct tok_state *tok, const struct token *token,
 }
 
 const char *
-_PyTokenizer_LineView(const struct tok_state *tok, Py_ssize_t lineno,
+Py_Tokenizer_लिन्या_View(const struct tok_state *tok, Py_ssize_t lineno,
                       Py_ssize_t *length)
 {
-    return _PyTok_SourceLineView(&tok->source, lineno, length);
+    return Py_Tok_Source_लिन्या_View(&tok->source, lineno, length);
 }
 
 void
@@ -117,9 +117,9 @@ _PyTokenizer_ImplyDedents(struct tok_state *tok)
 }
 
 void
-_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, int allow)
+Py_Tokenizer_Allow_Incomplete_पासोक(struct tok_state *tok, int allow)
 {
-    tok->allow_incomplete_input = allow != 0;
+    tok->allow_incomplete_पासोक = allow != 0;
 }
 
 int

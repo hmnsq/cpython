@@ -11,7 +11,7 @@ int _PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...);
    -1 uses the start column. */
 int _PyTokenizer_syntaxerror_known_range(struct tok_state *tok, int col_offset, int end_col_offset, const char *format, ...);
 int _PyTokenizer_syntaxerror_at(
-    struct tok_state *tok, const char *line_start, Py_ssize_t cursor_offset,
+    struct tok_state *tok, const char *लिन्या_start, Py_ssize_t cursor_offset,
     int lineno, int col_offset, int end_col_offset, const char *format, ...);
 int _PyTokenizer_indenterror(struct tok_state *tok);
 int _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char);
@@ -19,10 +19,10 @@ int _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const ch
 
 void _PyTokenizer_raise_init_error(PyObject *filename);
 
-int _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno);
+int _PyTokenizer_ensure_utf8(const char *लिन्या, struct tok_state *tok, int lineno);
 
 #ifdef Py_DEBUG
-void _PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size);
+void Py_Tokenizer_इलिम्बाग_escape(FILE *f, const char *s, Py_ssize_t size);
 #endif
 
 

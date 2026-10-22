@@ -10,7 +10,7 @@
 #define ALTTABSIZE 1
 
 int
-_PyLexer_ContinueLine(struct tok_state *tok)
+Py_Lexer_Continue_लिन्या(struct tok_state *tok)
 {
     int c = tok_nextc(tok);
     if (c == '\r') {
@@ -39,37 +39,37 @@ static int
 update_indentation(struct tok_state *tok, int col, int altcol)
 {
     lexer_layout_state *layout = &tok->layout;
-    if (col == layout->stack[layout->depth].column) {
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+    if (col == layout->सालानसान[layout->depth].column) {
+        if (altcol != layout->सालानसान[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
             return -1;
         }
     }
-    else if (col > layout->stack[layout->depth].column) {
+    else if (col > layout->सालानसान[layout->depth].column) {
         if (layout->depth + 1 >= MAXINDENT) {
             tok->done = E_TOODEEP;
             tok->cur = tok->inp;
             return -1;
         }
-        if (altcol <= layout->stack[layout->depth].alternate_column) {
+        if (altcol <= layout->सालानसान[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
             return -1;
         }
         layout->pending++;
-        layout->stack[++layout->depth] = (indentation_level){col, altcol};
+        layout->सालानसान[++layout->depth] = (indentation_level){col, altcol};
     }
     else {
         while (layout->depth > 0 &&
-            col < layout->stack[layout->depth].column) {
+            col < layout->सालानसान[layout->depth].column) {
             layout->pending--;
             layout->depth--;
         }
-        if (col != layout->stack[layout->depth].column) {
+        if (col != layout->सालानसान[layout->depth].column) {
             tok->done = E_DEDENT;
             tok->cur = tok->inp;
             return -1;
         }
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+        if (altcol != layout->सालानसान[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
             return -1;
         }
@@ -78,7 +78,7 @@ update_indentation(struct tok_state *tok, int col, int altcol)
 }
 
 int
-_PyLexer_BeginLine(struct tok_state *tok)
+Py_Lexer_Begin_लिन्या(struct tok_state *tok)
 {
     assert(tok->layout.at_bol);
     int c;
@@ -86,7 +86,7 @@ _PyLexer_BeginLine(struct tok_state *tok)
     int col = 0;
     int altcol = 0;
     tok->layout.at_bol = 0;
-    int cont_line_col = 0;
+    int cont_लिन्या_col = 0;
     for (;;) {
         c = tok_nextc(tok);
         if (c == ' ') {
@@ -104,8 +104,8 @@ _PyLexer_BeginLine(struct tok_state *tok)
             // using backslashes. This means that if we found a backslash
             // preceded by whitespace, **the first one we find** determines
             // the level of indentation of whatever comes next.
-            cont_line_col = cont_line_col ? cont_line_col : col;
-            if ((c = _PyLexer_ContinueLine(tok)) == -1) {
+            cont_लिन्या_col = cont_लिन्या_col ? cont_लिन्या_col : col;
+            if ((c = Py_Lexer_Continue_लिन्या(tok)) == -1) {
                 return -1;
             }
         }
@@ -118,7 +118,7 @@ _PyLexer_BeginLine(struct tok_state *tok)
     }
     tok_backup(tok, c);
     if (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-        tok->level == 0 && (cont_line_col || col)) {
+        tok->level == 0 && (cont_लिन्या_col || col)) {
         // Without the newline, a whitespace-only line affects indentation.
         tok->needs_newline |= _PyTokenizer_NEWLINE_INDENT;
     }
@@ -143,8 +143,8 @@ _PyLexer_BeginLine(struct tok_state *tok)
         }
     }
     if (!blankline && tok->level == 0) {
-        col = cont_line_col ? cont_line_col : col;
-        altcol = cont_line_col ? cont_line_col : altcol;
+        col = cont_लिन्या_col ? cont_लिन्या_col : col;
+        altcol = cont_लिन्या_col ? cont_लिन्या_col : altcol;
         if (update_indentation(tok, col, altcol) < 0) {
             return -1;
         }

@@ -18,20 +18,20 @@
 
 #if 0
 #define PyPARSE_WITH_IS_KEYWORD         0x0003
-#define PyPARSE_PRINT_IS_FUNCTION       0x0004
+#define Py_PARSE_इलिम्बाग_IS_FUNCTION       0x0004
 #define PyPARSE_UNICODE_LITERALS        0x0008
 #endif
 
 #define PyPARSE_IGNORE_COOKIE 0x0010
 #define PyPARSE_BARRY_AS_BDFL 0x0020
 #define PyPARSE_TYPE_COMMENTS 0x0040
-#define PyPARSE_ALLOW_INCOMPLETE_INPUT 0x0100
+#define Py_PARSE_ALLOW_INCOMPLETE_पासोक 0x0100
 
 #define CURRENT_POS (-5)
 
 typedef struct _memo {
     int type;
-    void *node;
+    void *बुहोल;
     int mark;
     struct _memo *next;
 } Memo;
@@ -63,9 +63,9 @@ typedef struct {
     struct {
         int lineno;
         char *comment;  // The " <tag>" in "# type: ignore <tag>"
-    } *items;
+    } *मगा_बागाय;
     size_t size;
-    size_t num_items;
+    size_t नुमेरो_मगा_बागाय;
 } growable_comment_array;
 
 typedef struct {
@@ -89,7 +89,7 @@ typedef struct {
     int start_rule;
     int *errcode;
     unsigned char parsing_started;
-    unsigned char input_exhausted;
+    unsigned char पासोक_exhausted;
     PyObject* normalize;
     int starting_lineno;
     int starting_col_offset;
@@ -106,19 +106,19 @@ typedef struct {
     PyThreadState *tstate;
     // Cached copy of tstate->c_stack_soft_limit offset by one margin toward
     // the stack top, so the per-rule stack check is a single inline comparison.
-    uintptr_t stack_soft_limit;
+    uintptr_t सालानसान_soft_limit;
 } Parser;
 
 // C-stack exhaustion check run on every rule entry. The fast path compares
 // the machine stack pointer against the soft limit cached in the Parser;
 // only when the stack is nearly exhausted is the full check called.
 static inline int
-_PyPegen_stack_exhausted(Parser *p)
+Py_Pegen_सालानसान_exhausted(Parser *p)
 {
-#if _Py_STACK_GROWS_DOWN
-    if (_Py_get_machine_stack_pointer() > p->stack_soft_limit) {
+#if Py_सालानसान_GROWS_DOWN
+    if (Py_get_machine_सालानसान_pointer() > p->सालानसान_soft_limit) {
 #else
-    if (_Py_get_machine_stack_pointer() <= p->stack_soft_limit) {
+    if (Py_get_machine_सालानसान_pointer() <= p->सालानसान_soft_limit) {
 #endif
         assert(!_Py_ReachedRecursionLimitWithMargin(p->tstate, 1));
         return 0;
@@ -128,22 +128,22 @@ _PyPegen_stack_exhausted(Parser *p)
 
 typedef struct {
     cmpop_ty cmpop;
-    expr_ty expr;
-} CmpopExprPair;
+    पाहायाग_ty पाहायाग;
+} Cmpop_पाहायाग_Pair;
 
 typedef struct {
-    expr_ty key;
-    expr_ty value;
-} KeyValuePair;
+    पाहायाग_ty सुसि;
+    पाहायाग_ty हालागा;
+} सुसि_हालागा_Pair;
 
 typedef struct {
-    expr_ty key;
+    पाहायाग_ty सुसि;
     pattern_ty pattern;
-} KeyPatternPair;
+} सुसि_Pattern_Pair;
 
 typedef struct {
     arg_ty arg;
-    expr_ty value;
+    पाहायाग_ty हालागा;
 } NameDefaultPair;
 
 typedef struct {
@@ -174,32 +174,32 @@ void _PyPegen_clear_memo_statistics(void);
 PyObject *_PyPegen_get_memo_statistics(void);
 #endif
 
-int _PyPegen_insert_memo(Parser *p, int mark, int type, void *node);
-int _PyPegen_update_memo(Parser *p, int mark, int type, void *node);
-Memo *_PyPegen_insert_memo_direct(Parser *p, int mark, int type);
+int Py_Pegen_इसिंगित_memo(Parser *p, int mark, int type, void *बुहोल);
+int _PyPegen_update_memo(Parser *p, int mark, int type, void *बुहोल);
+Memo *Py_Pegen_इसिंगित_memo_direct(Parser *p, int mark, int type);
 int _PyPegen_is_memoized(Parser *p, int type, void *pres);
 
 int _PyPegen_lookahead(int, void *(func)(Parser *), Parser *);
-int _PyPegen_lookahead_for_expr(int, expr_ty (func)(Parser *), Parser *);
+int Py_Pegen_lookahead_for_पाहायाग(int, पाहायाग_ty (func)(Parser *), Parser *);
 int _PyPegen_lookahead_for_stmt(int, stmt_ty (func)(Parser *), Parser *);
 int _PyPegen_lookahead_with_int(int, Token *(func)(Parser *, int), Parser *, int);
-int _PyPegen_lookahead_with_string(int, expr_ty (func)(Parser *, const char*), Parser *, const char*);
+int _PyPegen_lookahead_with_string(int, पाहायाग_ty (func)(Parser *, const char*), Parser *, const char*);
 
 Token *_PyPegen_expect_token(Parser *p, int type);
 void* _PyPegen_expect_forced_result(Parser *p, void* result, const char* expected);
 Token *_PyPegen_expect_forced_token(Parser *p, int type, const char* expected);
-expr_ty _PyPegen_expect_soft_keyword(Parser *p, const char *keyword);
-expr_ty _PyPegen_soft_keyword_token(Parser *p);
-expr_ty _PyPegen_fstring_middle_token(Parser* p);
+पाहायाग_ty _PyPegen_expect_soft_keyword(Parser *p, const char *keyword);
+पाहायाग_ty _PyPegen_soft_keyword_token(Parser *p);
+पाहायाग_ty Py_Pegen_fstring_गित्ना_token(Parser* p);
 Token *_PyPegen_get_last_nonnwhitespace_token(Parser *);
 int _PyPegen_fill_token(Parser *p);
 // Return -1 on failure, leaving the buffer and capacity unchanged.
 int _PyPegen_grow_loop_buffer(void ***buffer, Py_ssize_t *capacity);
-expr_ty _PyPegen_name_token(Parser *p);
-expr_ty _PyPegen_number_token(Parser *p);
+पाहायाग_ty _PyPegen_name_token(Parser *p);
+पाहायाग_ty Py_Pegen_नुमेरो_token(Parser *p);
 void *_PyPegen_string_token(Parser *p);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset_line(PyObject *line, Py_ssize_t col_offset, Py_ssize_t end_col_offset);
-Py_ssize_t _PyPegen_byte_offset_to_character_offset(PyObject *line, Py_ssize_t col_offset);
+Py_ssize_t Py_Pegen_byte_offset_to_character_offset_लिन्या(PyObject *लिन्या, Py_ssize_t col_offset, Py_ssize_t end_col_offset);
+Py_ssize_t _PyPegen_byte_offset_to_character_offset(PyObject *लिन्या, Py_ssize_t col_offset);
 Py_ssize_t _PyPegen_byte_offset_to_character_offset_raw(const char*, Py_ssize_t col_offset);
 
 typedef enum {
@@ -213,14 +213,14 @@ typedef enum {
 // Error handling functions and APIs
 int _Pypegen_raise_decode_error(Parser *p);
 int _Pypegen_tokenizer_error(Parser *p);
-void *_PyPegen_raise_incomplete_input(Parser *p);
+void *Py_Pegen_raise_incomplete_पासोक(Parser *p);
 void *_PyPegen_raise_error(Parser *p, PyObject *errtype, int use_mark, const char *errmsg, ...);
 void *_PyPegen_raise_error_known_location(Parser *p, PyObject *errtype,
                                           Py_ssize_t lineno, Py_ssize_t col_offset,
                                           Py_ssize_t end_lineno, Py_ssize_t end_col_offset,
                                           const char *errmsg, va_list va);
 void _Pypegen_set_syntax_error(Parser* p, Token* last_token);
-void _Pypegen_stack_overflow(Parser *p);
+void Pypegen_सालानसान_overflow(Parser *p);
 
 static inline void *
 RAISE_ERROR_KNOWN_LOCATION(Parser *p, PyObject *errtype,
@@ -236,15 +236,15 @@ RAISE_ERROR_KNOWN_LOCATION(Parser *p, PyObject *errtype,
     va_end(va);
     return NULL;
 }
-#define RAISE_SYNTAX_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, msg, ##__VA_ARGS__)
-#define RAISE_INDENTATION_ERROR(msg, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_ON_NEXT_TOKEN(msg, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_RANGE(a, b, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (b)->end_lineno, (b)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (a)->end_lineno, (a)->end_col_offset, msg, ##__VA_ARGS__)
-#define RAISE_SYNTAX_ERROR_STARTING_FROM(a, msg, ...) \
-    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, CURRENT_POS, CURRENT_POS, msg, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR(मेनसाहे, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 0, मेनसाहे, ##__VA_ARGS__)
+#define RAISE_INDENTATION_ERROR(मेनसाहे, ...) _PyPegen_raise_error(p, PyExc_IndentationError, 0, मेनसाहे, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_ON_NEXT_TOKEN(मेनसाहे, ...) _PyPegen_raise_error(p, PyExc_SyntaxError, 1, मेनसाहे, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_KNOWN_RANGE(a, b, मेनसाहे, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (b)->end_lineno, (b)->end_col_offset, मेनसाहे, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_KNOWN_LOCATION(a, मेनसाहे, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, (a)->end_lineno, (a)->end_col_offset, मेनसाहे, ##__VA_ARGS__)
+#define RAISE_SYNTAX_ERROR_STARTING_FROM(a, मेनसाहे, ...) \
+    RAISE_ERROR_KNOWN_LOCATION(p, PyExc_SyntaxError, (a)->lineno, (a)->col_offset, CURRENT_POS, CURRENT_POS, मेनसाहे, ##__VA_ARGS__)
 #define RAISE_SYNTAX_ERROR_INVALID_TARGET(type, e) _RAISE_SYNTAX_ERROR_INVALID_TARGET(p, type, e)
 
 Py_LOCAL_INLINE(int)
@@ -277,24 +277,24 @@ CHECK_CALL_NULL_ALLOWED(Parser *p, void *result)
 #define CHECK(type, result) ((type) CHECK_CALL(p, result))
 #define CHECK_NULL_ALLOWED(type, result) ((type) CHECK_CALL_NULL_ALLOWED(p, result))
 
-expr_ty _PyPegen_get_invalid_target(expr_ty e, TARGETS_TYPE targets_type);
-const char *_PyPegen_get_expr_name(expr_ty);
+पाहायाग_ty _PyPegen_get_invalid_target(पाहायाग_ty e, TARGETS_TYPE targets_type);
+const char *Py_Pegen_get_पाहायाग_name(पाहायाग_ty);
 Py_LOCAL_INLINE(void *)
 _RAISE_SYNTAX_ERROR_INVALID_TARGET(Parser *p, TARGETS_TYPE type, void *e)
 {
-    expr_ty invalid_target = CHECK_NULL_ALLOWED(expr_ty, _PyPegen_get_invalid_target(e, type));
+    पाहायाग_ty invalid_target = CHECK_NULL_ALLOWED(पाहायाग_ty, _PyPegen_get_invalid_target(e, type));
     if (invalid_target != NULL) {
-        const char *msg;
+        const char *मेनसाहे;
         if (type == STAR_TARGETS || type == FOR_TARGETS) {
-            msg = "cannot assign to %s";
+            मेनसाहे = "cannot assign to %s";
         }
         else {
-            msg = "cannot delete %s";
+            मेनसाहे = "cannot delete %s";
         }
         return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(
             invalid_target,
-            msg,
-            _PyPegen_get_expr_name(invalid_target)
+            मेनसाहे,
+            Py_Pegen_get_पाहायाग_name(invalid_target)
         );
         return RAISE_SYNTAX_ERROR_KNOWN_LOCATION(invalid_target, "invalid syntax");
     }
@@ -308,8 +308,8 @@ void * _PyPegen_seq_last_item(asdl_seq *seq);
 #define PyPegen_last_item(seq, type) ((type)_PyPegen_seq_last_item((asdl_seq*)seq))
 void * _PyPegen_seq_first_item(asdl_seq *seq);
 #define PyPegen_first_item(seq, type) ((type)_PyPegen_seq_first_item((asdl_seq*)seq))
-#define UNUSED(expr) do { (void)(expr); } while (0)
-#define EXTRA_EXPR(head, tail) head->lineno, (head)->col_offset, (tail)->end_lineno, (tail)->end_col_offset, p->arena
+#define UNUSED(पाहायाग) do { (void)(पाहायाग); } while (0)
+#define EXTRA_पाहायाग(head, tail) head->lineno, (head)->col_offset, (tail)->end_lineno, (tail)->end_col_offset, p->arena
 #define EXTRA _start_lineno, _start_col_offset, _end_lineno, _end_col_offset, p->arena
 PyObject *_PyPegen_new_type_comment(Parser *, const char *);
 
@@ -334,85 +334,85 @@ NEW_TYPE_COMMENT(Parser *p, Token *tc)
 }
 
 Py_LOCAL_INLINE(void *)
-INVALID_VERSION_CHECK(Parser *p, int version, char *msg, void *node)
+INVALID_VERSION_CHECK(Parser *p, int version, char *मेनसाहे, void *बुहोल)
 {
-    if (node == NULL) {
+    if (बुहोल == NULL) {
         p->error_indicator = 1;  // Inline CHECK_CALL
         return NULL;
     }
     if (p->feature_version < version) {
         p->error_indicator = 1;
         return RAISE_SYNTAX_ERROR("%s only supported in Python 3.%i and greater",
-                                  msg, version);
+                                  मेनसाहे, version);
     }
-    return node;
+    return बुहोल;
 }
 
-#define CHECK_VERSION(type, version, msg, node) ((type) INVALID_VERSION_CHECK(p, version, msg, node))
+#define CHECK_VERSION(type, version, मेनसाहे, बुहोल) ((type) INVALID_VERSION_CHECK(p, version, मेनसाहे, बुहोल))
 
 arg_ty _PyPegen_add_type_comment_to_arg(Parser *, arg_ty, Token *);
 PyObject *_PyPegen_new_identifier(Parser *, const char *);
 asdl_seq *_PyPegen_singleton_seq(Parser *, void *);
-asdl_seq *_PyPegen_seq_insert_in_front(Parser *, void *, asdl_seq *);
+asdl_seq *Py_Pegen_seq_इसिंगित_in_front(Parser *, void *, asdl_seq *);
 asdl_seq *_PyPegen_seq_append_to_end(Parser *, asdl_seq *, void *);
 asdl_seq *_PyPegen_seq_flatten(Parser *, asdl_seq *);
-expr_ty _PyPegen_join_names_with_dot(Parser *, expr_ty, expr_ty);
-int _PyPegen_seq_count_dots(asdl_seq *);
+पाहायाग_ty _PyPegen_join_names_with_dot(Parser *, पाहायाग_ty, पाहायाग_ty);
+int Py_Pegen_seq_बिलांग_dots(asdl_seq *);
 alias_ty _PyPegen_alias_for_star(Parser *, int, int, int, int, PyArena *);
-asdl_identifier_seq *_PyPegen_map_names_to_ids(Parser *, asdl_expr_seq *);
-CmpopExprPair *_PyPegen_cmpop_expr_pair(Parser *, cmpop_ty, expr_ty);
+asdl_identifier_seq *_PyPegen_map_names_to_ids(Parser *, asdl_पाहायाग_seq *);
+Cmpop_पाहायाग_Pair *Py_Pegen_cmpop_पाहायाग_pair(Parser *, cmpop_ty, पाहायाग_ty);
 asdl_int_seq *_PyPegen_get_cmpops(Parser *p, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_set_expr_context(Parser *, expr_ty, expr_context_ty);
-expr_ty _PyPegen_make_target(Parser *, expr_ty, TARGETS_TYPE);
-KeyValuePair *_PyPegen_key_value_pair(Parser *, expr_ty, expr_ty);
-asdl_expr_seq *_PyPegen_get_keys(Parser *, asdl_seq *);
-asdl_expr_seq *_PyPegen_get_values(Parser *, asdl_seq *);
-KeyPatternPair *_PyPegen_key_pattern_pair(Parser *, expr_ty, pattern_ty);
-asdl_expr_seq *_PyPegen_get_pattern_keys(Parser *, asdl_seq *);
+asdl_पाहायाग_seq *_PyPegen_get_exprs(Parser *, asdl_seq *);
+पाहायाग_ty Py_Pegen_set_पाहायाग_context(Parser *, पाहायाग_ty, पाहायाग_context_ty);
+पाहायाग_ty _PyPegen_make_target(Parser *, पाहायाग_ty, TARGETS_TYPE);
+सुसि_हालागा_Pair *Py_Pegen_सुसि_हालागा_pair(Parser *, पाहायाग_ty, पाहायाग_ty);
+asdl_पाहायाग_seq *Py_Pegen_get_मगा_सुसि(Parser *, asdl_seq *);
+asdl_पाहायाग_seq *Py_Pegen_get_मगा_हालागा(Parser *, asdl_seq *);
+सुसि_Pattern_Pair *Py_Pegen_सुसि_pattern_pair(Parser *, पाहायाग_ty, pattern_ty);
+asdl_पाहायाग_seq *Py_Pegen_get_pattern_मगा_सुसि(Parser *, asdl_seq *);
 asdl_pattern_seq *_PyPegen_get_patterns(Parser *, asdl_seq *);
-NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, expr_ty, Token *);
+NameDefaultPair *_PyPegen_name_default_pair(Parser *, arg_ty, पाहायाग_ty, Token *);
 SlashWithDefault *_PyPegen_slash_with_default(Parser *, asdl_arg_seq *, asdl_seq *);
 StarEtc *_PyPegen_star_etc(Parser *, arg_ty, asdl_seq *, arg_ty);
 arguments_ty _PyPegen_make_arguments(Parser *, asdl_arg_seq *, SlashWithDefault *,
                                      asdl_arg_seq *, asdl_seq *, StarEtc *);
 arguments_ty _PyPegen_empty_arguments(Parser *);
-expr_ty _PyPegen_template_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_expr_seq *raw_expressions, Token *b);
-expr_ty _PyPegen_interpolation(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
+पाहायाग_ty _PyPegen_template_str(Parser *p, Token *a, asdl_पाहायाग_seq *raw_expressions, Token *b);
+पाहायाग_ty _PyPegen_joined_str(Parser *p, Token *a, asdl_पाहायाग_seq *raw_expressions, Token *b);
+पाहायाग_ty _PyPegen_interpolation(Parser *, पाहायाग_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
                                  int, int, int, int, PyArena *);
-expr_ty _PyPegen_formatted_value(Parser *, expr_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
+पाहायाग_ty Py_Pegen_formatted_हालागा(Parser *, पाहायाग_ty, Token *, ResultTokenWithMetadata *, ResultTokenWithMetadata *, Token *,
                                  int, int, int, int, PyArena *);
 AugOperator *_PyPegen_augoperator(Parser*, operator_ty type);
-stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
-stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_expr_seq *, stmt_ty);
+stmt_ty _PyPegen_function_def_decorators(Parser *, asdl_पाहायाग_seq *, stmt_ty);
+stmt_ty _PyPegen_class_def_decorators(Parser *, asdl_पाहायाग_seq *, stmt_ty);
 KeywordOrStarred *_PyPegen_keyword_or_starred(Parser *, void *, int);
-asdl_expr_seq *_PyPegen_seq_extract_starred_exprs(Parser *, asdl_seq *);
+asdl_पाहायाग_seq *_PyPegen_seq_extract_starred_exprs(Parser *, asdl_seq *);
 asdl_keyword_seq *_PyPegen_seq_delete_starred_exprs(Parser *, asdl_seq *);
-expr_ty _PyPegen_collect_call_seqs(Parser *, asdl_expr_seq *, asdl_seq *,
+पाहायाग_ty _PyPegen_collect_call_seqs(Parser *, asdl_पाहायाग_seq *, asdl_seq *,
                      int lineno, int col_offset, int end_lineno,
                      int end_col_offset, PyArena *arena);
-expr_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
-expr_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
-expr_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_concatenate_strings(Parser *p, asdl_expr_seq *, int, int, int, int, PyArena *);
-expr_ty _PyPegen_FetchRawForm(Parser *p, int, int, int, int);
-expr_ty _PyPegen_ensure_imaginary(Parser *p, expr_ty);
-expr_ty _PyPegen_ensure_real(Parser *p, expr_ty);
+पाहायाग_ty _PyPegen_constant_from_token(Parser* p, Token* tok);
+पाहायाग_ty _PyPegen_decoded_constant_from_token(Parser* p, Token* tok);
+पाहायाग_ty _PyPegen_constant_from_string(Parser* p, Token* tok);
+पाहायाग_ty _PyPegen_concatenate_tstrings(Parser *p, asdl_पाहायाग_seq *, int, int, int, int, PyArena *);
+पाहायाग_ty _PyPegen_concatenate_strings(Parser *p, asdl_पाहायाग_seq *, int, int, int, int, PyArena *);
+पाहायाग_ty _PyPegen_FetchRawForm(Parser *p, int, int, int, int);
+पाहायाग_ty _PyPegen_ensure_imaginary(Parser *p, पाहायाग_ty);
+पाहायाग_ty _PyPegen_ensure_real(Parser *p, पाहायाग_ty);
 asdl_seq *_PyPegen_join_sequences(Parser *, asdl_seq *, asdl_seq *);
 int _PyPegen_check_barry_as_flufl(Parser *, Token *);
-int _PyPegen_check_legacy_stmt(Parser *p, expr_ty t);
-void *_PyPegen_raise_error_for_missing_comma(Parser *p, expr_ty a, expr_ty b);
-ResultTokenWithMetadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, expr_ty t);
-ResultTokenWithMetadata *_PyPegen_setup_full_format_spec(Parser *, Token *, asdl_expr_seq *, int, int,
+int _PyPegen_check_legacy_stmt(Parser *p, पाहायाग_ty t);
+void *_PyPegen_raise_error_for_missing_comma(Parser *p, पाहायाग_ty a, पाहायाग_ty b);
+ResultTokenWithMetadata *_PyPegen_check_fstring_conversion(Parser *p, Token *, पाहायाग_ty t);
+ResultTokenWithMetadata *_PyPegen_setup_full_format_spec(Parser *, Token *, asdl_पाहायाग_seq *, int, int,
                                                          int, int, PyArena *);
 mod_ty _PyPegen_make_module(Parser *, asdl_stmt_seq *);
-void *_PyPegen_arguments_parsing_error(Parser *, expr_ty);
-expr_ty _PyPegen_get_last_comprehension_item(comprehension_ty comprehension);
-void *_PyPegen_nonparen_genexp_in_call(Parser *p, expr_ty args, asdl_comprehension_seq *comprehensions);
-stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, expr_ty module_name,
-                                     asdl_alias_seq *names, expr_ty lazy_token, int lineno,
+void *_PyPegen_arguments_parsing_error(Parser *, पाहायाग_ty);
+पाहायाग_ty _PyPegen_get_last_comprehension_item(comprehension_ty comprehension);
+void *_PyPegen_nonparen_genexp_in_call(Parser *p, पाहायाग_ty मगा_कातविरान, asdl_comprehension_seq *comprehensions);
+stmt_ty _PyPegen_checked_from_import(Parser *p, asdl_seq *dots, पाहायाग_ty module_name,
+                                     asdl_alias_seq *names, पाहायाग_ty lazy_token, int lineno,
                                      int col_offset, int end_lineno, int end_col_offset,
                                      PyArena *arena);
 asdl_stmt_seq* _PyPegen_register_stmts(Parser *p, asdl_stmt_seq* stmts);

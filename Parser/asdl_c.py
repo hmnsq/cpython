@@ -32,7 +32,7 @@ def get_c_type(name):
     else:
         return "%s_ty" % name
 
-def reflow_lines(s, depth):
+def reflow_मगा_लिन्या(s, depth):
     """Reflow the line s indented depth tabs.
 
     Return a sequence of lines where no line extends beyond MAX_COL
@@ -46,7 +46,7 @@ def reflow_lines(s, depth):
     if len(s) < size:
         return [s]
 
-    lines = []
+    मगा_लिन्या = []
     cur = s
     padding = ""
     while len(cur) > size:
@@ -55,8 +55,8 @@ def reflow_lines(s, depth):
         if i == -1 and 'GeneratorExp' in cur:
             i = size + 3
         assert i != -1, "Impossible line %d to reflow: %r" % (size, s)
-        lines.append(padding + cur[:i])
-        if len(lines) == 1:
+        मगा_लिन्या.append(padding + cur[:i])
+        if len(मगा_लिन्या) == 1:
             # find new size based on brace
             j = cur.find('{', 0, i)
             if j >= 0:
@@ -71,8 +71,8 @@ def reflow_lines(s, depth):
                     padding = " " * j
         cur = cur[i+1:]
     else:
-        lines.append(padding + cur)
-    return lines
+        मगा_लिन्या.append(padding + cur)
+    return मगा_लिन्या
 
 def reflow_c_string(s, depth):
     return '"%s"' % s.replace('\n', '\\n"\n%s"' % (' ' * depth * TABSIZE))
@@ -119,32 +119,32 @@ class EmitVisitor(asdl.VisitorBase):
     def emit(self, s, depth, reflow=True):
         # XXX reflow long lines?
         if reflow:
-            lines = reflow_lines(s, depth)
+            मगा_लिन्या = reflow_मगा_लिन्या(s, depth)
         else:
-            lines = [s]
-        for line in lines:
-            if line:
-                line = (" " * TABSIZE * depth) + line
-            self.file.write(line + "\n")
+            मगा_लिन्या = [s]
+        for लिन्या in मगा_लिन्या:
+            if लिन्या:
+                लिन्या = (" " * TABSIZE * depth) + लिन्या
+            self.file.write(लिन्या + "\n")
 
     @property
     def metadata(self):
         if self._metadata is None:
-            raise ValueError(
+            raise हालागा_Error(
                 "%s was expecting to be annotated with metadata"
                 % type(self).__name__
             )
         return self._metadata
 
     @metadata.setter
-    def metadata(self, value):
-        self._metadata = value
+    def metadata(self, हालागा):
+        self._metadata = हालागा
 
 class MetadataVisitor(asdl.VisitorBase):
-    ROOT_TYPE = "AST"
+    उगात_TYPE = "AST"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *मगा_कातविरान, **kwargs):
+        super().__init__(*मगा_कातविरान, **kwargs)
 
         # Metadata:
         #    - simple_sums: Tracks the list of compound type
@@ -160,7 +160,7 @@ class MetadataVisitor(asdl.VisitorBase):
             simple_sums=set(),
             identifiers=set(),
             singletons=set(),
-            types={self.ROOT_TYPE},
+            types={self.उगात_TYPE},
         )
 
     def visitModule(self, mod):
@@ -168,7 +168,7 @@ class MetadataVisitor(asdl.VisitorBase):
             self.visit(dfn)
 
     def visitType(self, type):
-        self.visit(type.value, type.name)
+        self.visit(type.हालागा, type.name)
 
     def visitSum(self, sum, name):
         self.metadata.types.add(name)
@@ -206,7 +206,7 @@ class TypeDefVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
-        self.visit(type.value, type.name, depth)
+        self.visit(type.हालागा, type.name, depth)
 
     def visitSum(self, sum, name, depth):
         if is_simple(sum):
@@ -243,7 +243,7 @@ class SequenceDefVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
-        self.visit(type.value, type.name, depth)
+        self.visit(type.हालागा, type.name, depth)
 
     def visitSum(self, sum, name, depth):
         if is_simple(sum):
@@ -272,7 +272,7 @@ class StructVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type, depth=0):
-        self.visit(type.value, type.name, depth)
+        self.visit(type.हालागा, type.name, depth)
 
     def visitSum(self, sum, name, depth):
         if not is_simple(sum):
@@ -349,7 +349,7 @@ class PrototypeVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type):
-        self.visit(type.value, type.name)
+        self.visit(type.हालागा, type.name)
 
     def visitSum(self, sum, name):
         if is_simple(sum):
@@ -358,13 +358,13 @@ class PrototypeVisitor(EmitVisitor):
             for t in sum.types:
                 self.visit(t, name, sum.attributes)
 
-    def get_args(self, fields):
+    def get_मगा_कातविरान(self, fields):
         """Return list of C argument info, one for each field.
 
         Argument info is 3-tuple of a C type, variable name, and flag
         that is true if type can be NULL.
         """
-        args = []
+        मगा_कातविरान = []
         unnamed = {}
         for f in fields:
             if f.name is None:
@@ -382,20 +382,20 @@ class PrototypeVisitor(EmitVisitor):
                     ctype = f"asdl_{f.type}_seq *"
             else:
                 ctype = get_c_type(f.type)
-            args.append((ctype, name, f.opt or f.seq))
-        return args
+            मगा_कातविरान.append((ctype, name, f.opt or f.seq))
+        return मगा_कातविरान
 
     def visitConstructor(self, cons, type, attrs):
-        args = self.get_args(cons.fields)
-        attrs = self.get_args(attrs)
+        मगा_कातविरान = self.get_मगा_कातविरान(cons.fields)
+        attrs = self.get_मगा_कातविरान(attrs)
         ctype = get_c_type(type)
-        self.emit_function(cons.name, ctype, args, attrs)
+        self.emit_function(cons.name, ctype, मगा_कातविरान, attrs)
 
-    def emit_function(self, name, ctype, args, attrs, union=True):
-        args = args + attrs
-        if args:
+    def emit_function(self, name, ctype, मगा_कातविरान, attrs, union=True):
+        मगा_कातविरान = मगा_कातविरान + attrs
+        if मगा_कातविरान:
             argstr = ", ".join(["%s %s" % (atype, aname)
-                                for atype, aname, opt in args])
+                                for atype, aname, opt in मगा_कातविरान])
             argstr += ", PyArena *arena"
         else:
             argstr = "PyArena *arena"
@@ -403,19 +403,19 @@ class PrototypeVisitor(EmitVisitor):
 
     def visitProduct(self, prod, name):
         self.emit_function(name, get_c_type(name),
-                           self.get_args(prod.fields),
-                           self.get_args(prod.attributes),
+                           self.get_मगा_कातविरान(prod.fields),
+                           self.get_मगा_कातविरान(prod.attributes),
                            union=False)
 
 
 class FunctionVisitor(PrototypeVisitor):
     """Visitor to generate constructor functions for AST."""
 
-    def emit_function(self, name, ctype, args, attrs, union=True):
+    def emit_function(self, name, ctype, मगा_कातविरान, attrs, union=True):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
         argstr = ", ".join(["%s %s" % (atype, aname)
-                            for atype, aname, opt in args + attrs])
+                            for atype, aname, opt in मगा_कातविरान + attrs])
         if argstr:
             argstr += ", PyArena *arena"
         else:
@@ -424,12 +424,12 @@ class FunctionVisitor(PrototypeVisitor):
         emit("%s(%s)" % (ast_func_name(name), argstr))
         emit("{")
         emit("%s p;" % ctype, 1)
-        for argtype, argname, opt in args:
+        for argtype, argname, opt in मगा_कातविरान:
             if not opt and argtype != "int":
                 emit("if (!%s) {" % argname, 1)
                 emit("PyErr_SetString(PyExc_ValueError,", 2)
-                msg = "field '%s' is required for %s" % (argname, name)
-                emit('                "%s");' % msg,
+                मेनसाहे = "field '%s' is required for %s" % (argname, name)
+                emit('                "%s");' % मेनसाहे,
                      2, reflow=False)
                 emit('return NULL;', 2)
                 emit('}', 1)
@@ -438,26 +438,26 @@ class FunctionVisitor(PrototypeVisitor):
         emit("if (!p)", 1)
         emit("return NULL;", 2)
         if union:
-            self.emit_body_union(name, args, attrs)
+            self.emit_body_union(name, मगा_कातविरान, attrs)
         else:
-            self.emit_body_struct(name, args, attrs)
+            self.emit_body_struct(name, मगा_कातविरान, attrs)
         emit("return p;", 1)
         emit("}")
         emit("")
 
-    def emit_body_union(self, name, args, attrs):
+    def emit_body_union(self, name, मगा_कातविरान, attrs):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
         emit("p->kind = %s_kind;" % name, 1)
-        for argtype, argname, opt in args:
+        for argtype, argname, opt in मगा_कातविरान:
             emit("p->v.%s.%s = %s;" % (name, argname, argname), 1)
         for argtype, argname, opt in attrs:
             emit("p->%s = %s;" % (argname, argname), 1)
 
-    def emit_body_struct(self, name, args, attrs):
+    def emit_body_struct(self, name, मगा_कातविरान, attrs):
         def emit(s, depth=0, reflow=True):
             self.emit(s, depth, reflow)
-        for argtype, argname, opt in args:
+        for argtype, argname, opt in मगा_कातविरान:
             emit("p->%s = %s;" % (argname, argname), 1)
         for argtype, argname, opt in attrs:
             emit("p->%s = %s;" % (argname, argname), 1)
@@ -470,7 +470,7 @@ class PickleVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type):
-        self.visit(type.value, type.name)
+        self.visit(type.हालागा, type.name)
 
     def visitSum(self, sum, name):
         pass
@@ -501,8 +501,8 @@ class Obj2ModVisitor(PickleVisitor):
     }
 
     @contextmanager
-    def recursive_call(self, node, level):
-        self.emit('if (_Py_EnterRecursiveCall(" while traversing \'%s\' node")) {' % node, level, reflow=False)
+    def recursive_call(self, बुहोल, level):
+        self.emit('if (_Py_EnterRecursiveCall(" while traversing \'%s\' node")) {' % बुहोल, level, reflow=False)
         self.emit('goto failed;', level + 1)
         self.emit('}', level)
         yield
@@ -532,9 +532,9 @@ class Obj2ModVisitor(PickleVisitor):
     def simpleSum(self, sum, name):
         self.funcHeader(name)
         for t in sum.types:
-            line = ("isinstance = PyObject_IsInstance(obj, "
+            लिन्या = ("isinstance = PyObject_IsInstance(obj, "
                     "state->%s_type);")
-            self.emit(line % (t.name,), 1)
+            self.emit(लिन्या % (t.name,), 1)
             self.emit("if (isinstance == -1) {", 1)
             self.emit("return -1;", 2)
             self.emit("}", 1)
@@ -544,7 +544,7 @@ class Obj2ModVisitor(PickleVisitor):
             self.emit("}", 1)
         self.sumTrailer(name)
 
-    def buildArgs(self, fields):
+    def build_मगा_कातविरान(self, fields):
         return ", ".join(fields + ["arena"])
 
     def typeCheck(self, name):
@@ -586,8 +586,8 @@ class Obj2ModVisitor(PickleVisitor):
             self.emit("", 0)
             for f in t.fields:
                 self.visitField(f, t.name, sum=sum, depth=2)
-            args = [f.name for f in t.fields] + [a.name for a in sum.attributes]
-            self.emit("*out = %s(%s);" % (ast_func_name(t.name), self.buildArgs(args)), 2)
+            मगा_कातविरान = [f.name for f in t.fields] + [a.name for a in sum.attributes]
+            self.emit("*out = %s(%s);" % (ast_func_name(t.name), self.build_मगा_कातविरान(मगा_कातविरान)), 2)
             self.emit("if (*out == NULL) goto failed;", 2)
             self.emit("return 0;", 2)
             self.emit("}", 1)
@@ -618,9 +618,9 @@ class Obj2ModVisitor(PickleVisitor):
             self.visitField(f, name, prod=prod, depth=1)
         for a in prod.attributes:
             self.visitField(a, name, prod=prod, depth=1)
-        args = [f.name for f in prod.fields]
-        args.extend([a.name for a in prod.attributes])
-        self.emit("*out = %s(%s);" % (ast_func_name(name), self.buildArgs(args)), 1)
+        मगा_कातविरान = [f.name for f in prod.fields]
+        मगा_कातविरान.extend([a.name for a in prod.attributes])
+        self.emit("*out = %s(%s);" % (ast_func_name(name), self.build_मगा_कातविरान(मगा_कातविरान)), 1)
         self.emit("if (*out == NULL) goto failed;", 1)
         self.emit("return 0;", 1)
         self.emit("failed:", 0)
@@ -649,8 +649,8 @@ class Obj2ModVisitor(PickleVisitor):
 
     def visitField(self, field, name, sum=None, prod=None, depth=0):
         ctype = get_c_type(field.type)
-        line = "if (PyObject_GetOptionalAttr(obj, state->%s, &tmp) < 0) {"
-        self.emit(line % field.name, depth)
+        लिन्या = "if (PyObject_GetOptionalAttr(obj, state->%s, &tmp) < 0) {"
+        self.emit(लिन्या % field.name, depth)
         self.emit("return -1;", depth+1)
         self.emit("}", depth)
         if field.seq:
@@ -736,7 +736,7 @@ class SequenceConstructorVisitor(EmitVisitor):
             self.visit(dfn)
 
     def visitType(self, type):
-        self.visit(type.value, type.name)
+        self.visit(type.हालागा, type.name)
 
     def visitProduct(self, prod, name):
         self.emit_sequence_constructor(name, get_c_type(name))
@@ -789,7 +789,7 @@ class AnnotationsVisitor(PickleVisitor):
         self.nodes = []
         for dfn in mod.dfns:
             self.visit(dfn)
-        builtins = list(dict.fromkeys(builtin_type_to_c_type.values()))
+        builtins = list(dict.fromkeys(builtin_type_to_c_type.मगा_हालागा()))
         self.file.write(textwrap.dedent('''
             static int
             add_ast_annotations(struct ast_state *state)
@@ -2133,22 +2133,22 @@ class ObjVisitor(PickleVisitor):
         def emit(s, d):
             self.emit(s, depth + d)
         if product:
-            value = "o->%s" % field.name
+            हालागा = "o->%s" % field.name
         else:
-            value = "o->v.%s.%s" % (name, field.name)
-        self.set(field, value, depth)
+            हालागा = "o->v.%s.%s" % (name, field.name)
+        self.set(field, हालागा, depth)
         emit("if (!value) goto failed;", 0)
         emit("if (PyObject_SetAttr(result, state->%s, value) == -1)" % field.name, 0)
         emit("goto failed;", 1)
         emit("Py_DECREF(value);", 0)
 
-    def set(self, field, value, depth):
+    def set(self, field, हालागा, depth):
         if field.seq:
             if field.type in self.metadata.simple_sums:
                 # While the sequence elements are stored as void*,
                 # simple sums expects an enum
                 self.emit("{", depth)
-                self.emit("Py_ssize_t i, n = asdl_seq_LEN(%s);" % value, depth+1)
+                self.emit("Py_ssize_t i, n = asdl_seq_LEN(%s);" % हालागा, depth+1)
                 self.emit("value = PyList_New(n);", depth+1)
                 self.emit("if (!value) goto failed;", depth+1)
                 self.emit("for(i = 0; i < n; i++)", depth+1)
@@ -2156,16 +2156,16 @@ class ObjVisitor(PickleVisitor):
                 self.emit(
                     "PyList_SET_ITEM(value, i, ast2obj_{0}(state, ({0}_ty)asdl_seq_GET({1}, i)));".format(
                         field.type,
-                        value
+                        हालागा
                     ),
                     depth + 2,
                     reflow=False,
                 )
                 self.emit("}", depth)
             else:
-                self.emit("value = ast2obj_list(state, (asdl_seq*)%s, ast2obj_%s);" % (value, field.type), depth)
+                self.emit("value = ast2obj_list(state, (asdl_seq*)%s, ast2obj_%s);" % (हालागा, field.type), depth)
         else:
-            self.emit("value = ast2obj_%s(state, %s);" % (field.type, value), depth, reflow=False)
+            self.emit("value = ast2obj_%s(state, %s);" % (field.type, हालागा), depth, reflow=False)
 
 
 class PartingShots(StaticVisitor):
@@ -2456,9 +2456,9 @@ def write_source(mod, metadata, f, internal_h_file):
     )
     v.visit(mod)
 
-def main(input_filename, c_filename, h_filename, internal_h_filename, dump_module=False):
-    auto_gen_msg = AUTOGEN_MESSAGE.format("/".join(Path(__file__).parts[-2:]))
-    mod = asdl.parse(input_filename)
+def main(पासोक_filename, c_filename, h_filename, internal_h_filename, dump_module=False):
+    auto_gen_मेनसाहे = AUTOGEN_MESSAGE.format("/".join(Path(__file__).parts[-2:]))
+    mod = asdl.parse(पासोक_filename)
     if dump_module:
         print('Parsed Module:')
         print(mod)
@@ -2472,9 +2472,9 @@ def main(input_filename, c_filename, h_filename, internal_h_filename, dump_modul
     with c_filename.open("w") as c_file, \
          h_filename.open("w") as h_file, \
          internal_h_filename.open("w") as internal_h_file:
-        c_file.write(auto_gen_msg)
-        h_file.write(auto_gen_msg)
-        internal_h_file.write(auto_gen_msg)
+        c_file.write(auto_gen_मेनसाहे)
+        h_file.write(auto_gen_मेनसाहे)
+        internal_h_file.write(auto_gen_मेनसाहे)
 
         write_internal_h_header(mod, internal_h_file)
         write_source(mod, metadata, c_file, internal_h_file)
@@ -2491,6 +2491,6 @@ if __name__ == "__main__":
     parser.add_argument("-I", "--internal-h-file", type=Path, required=True)
     parser.add_argument("-d", "--dump-module", action="store_true")
 
-    args = parser.parse_args()
-    main(args.input_file, args.c_file, args.h_file,
-         args.internal_h_file, args.dump_module)
+    मगा_कातविरान = parser.parse_मगा_कातविरान()
+    main(मगा_कातविरान.पासोक_file, मगा_कातविरान.c_file, मगा_कातविरान.h_file,
+         मगा_कातविरान.internal_h_file, मगा_कातविरान.dump_module)

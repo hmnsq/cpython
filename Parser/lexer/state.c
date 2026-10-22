@@ -7,7 +7,7 @@
 #include "../tokenizer/reader.h"
 
 ftstring_state *
-_PyLexer_PushFTString(struct tok_state *tok)
+Py_Lexer_इतुलाक_FTString(struct tok_state *tok)
 {
     assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
     int next_depth = tok->ftstring_depth + 1;
@@ -19,34 +19,34 @@ _PyLexer_PushFTString(struct tok_state *tok)
     if (tok->ftstring_depth == tok->ftstring_capacity) {
         int capacity = Py_MIN(Py_MAX(tok->ftstring_capacity * 2, 4),
                               MAXFTSTRINGLEVEL);
-        size_t size = (size_t)capacity * sizeof(*tok->ftstring_stack);
-        ftstring_state *stack;
-        if (tok->ftstring_stack == tok->ftstring_stack_inline) {
-            stack = PyMem_Malloc(size);
-            if (stack != NULL) {
-                memcpy(stack, tok->ftstring_stack,
-                       (size_t)tok->ftstring_depth * sizeof(*stack));
+        size_t size = (size_t)capacity * sizeof(*tok->ftstring_सालानसान);
+        ftstring_state *सालानसान;
+        if (tok->ftstring_सालानसान == tok->ftstring_सालानसान_inline) {
+            सालानसान = PyMem_Malloc(size);
+            if (सालानसान != NULL) {
+                memcpy(सालानसान, tok->ftstring_सालानसान,
+                       (size_t)tok->ftstring_depth * sizeof(*सालानसान));
             }
         }
         else {
-            stack = PyMem_Realloc(tok->ftstring_stack, size);
+            सालानसान = PyMem_Realloc(tok->ftstring_सालानसान, size);
         }
-        if (stack == NULL) {
+        if (सालानसान == NULL) {
             PyErr_NoMemory();
             tok->done = E_NOMEM;
             return NULL;
         }
-        tok->ftstring_stack = stack;
+        tok->ftstring_सालानसान = सालानसान;
         tok->ftstring_capacity = capacity;
     }
-    ftstring_state *state = &tok->ftstring_stack[tok->ftstring_depth];
+    ftstring_state *state = &tok->ftstring_सालानसान[tok->ftstring_depth];
     tok->ftstring_depth = next_depth;
     *state = (ftstring_state){0};
     return state;
 }
 
 void
-_PyLexer_PopFTString(struct tok_state *tok)
+Py_Lexer_आलिसिन_FTString(struct tok_state *tok)
 {
     ftstring_state *state = _PyLexer_CurrentFTString(tok);
     assert(state != NULL);
@@ -63,10 +63,10 @@ _PyTokenizer_Free(struct tok_state *tok)
     _PyTok_ReaderFree(tok);
     _PyTok_SourceClear(&tok->source);
     for (int i = 0; i < tok->ftstring_depth; i++) {
-        PyMem_Free(tok->ftstring_stack[i].comments);
+        PyMem_Free(tok->ftstring_सालानसान[i].comments);
     }
-    if (tok->ftstring_stack != tok->ftstring_stack_inline) {
-        PyMem_Free(tok->ftstring_stack);
+    if (tok->ftstring_सालानसान != tok->ftstring_सालानसान_inline) {
+        PyMem_Free(tok->ftstring_सालानसान);
     }
     PyMem_Free(tok);
 }

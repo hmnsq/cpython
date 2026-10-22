@@ -18,7 +18,7 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
         return 0;
     }
     unsigned char c = (unsigned char)*first_invalid_escape;
-    if ((t->type == FSTRING_MIDDLE || t->type == FSTRING_END || t->type == TSTRING_MIDDLE || t->type == TSTRING_END)
+    if ((t->type == FSTRING_गित्ना || t->type == FSTRING_END || t->type == TSTRING_गित्ना || t->type == TSTRING_END)
             && (c == '{' || c == '}')) {
         // in this case the tokenizer has already emitted a warning,
         // see Parser/tokenizer/helpers.c:warn_invalid_escape_sequence
@@ -26,7 +26,7 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
     }
 
     int octal = ('4' <= c && c <= '7');
-    PyObject *msg =
+    PyObject *मेनसाहे =
         octal
         ? PyUnicode_FromFormat(
               "\"\\%.3s\" is an invalid octal escape sequence. "
@@ -38,7 +38,7 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
               "Such sequences will not work in the future. "
               "Did you mean \"\\\\%c\"? A raw string is also an option.",
               c, c);
-    if (msg == NULL) {
+    if (मेनसाहे == NULL) {
         return -1;
     }
     PyObject *category;
@@ -68,26 +68,26 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
     // Count the number of quotes in the token
     char first_quote = 0;
     if (lineno == t->lineno) {
-        int quote_count = 0;
+        int quote_बिलांग = 0;
         const char* tok = PyBytes_AsString(t->bytes);
         for (int i = 0; i < PyBytes_Size(t->bytes); i++) {
             if (tok[i] == '\'' || tok[i] == '\"') {
-                if (quote_count == 0) {
+                if (quote_बिलांग == 0) {
                     first_quote = tok[i];
                 }
                 if (tok[i] == first_quote) {
-                    quote_count++;
+                    quote_बिलांग++;
                 }
             } else {
                 break;
             }
         }
 
-        col_offset += quote_count;
+        col_offset += quote_बिलांग;
     }
 
     _PyTokenizer_Info info = _PyTokenizer_GetInfo(p->tok);
-    if (PyErr_WarnExplicitObject(category, msg, info.filename,
+    if (PyErr_WarnExplicitObject(category, मेनसाहे, info.filename,
                                  lineno, info.module, NULL) < 0) {
         if (PyErr_ExceptionMatches(category)) {
             /* Replace the Syntax/DeprecationWarning exception with a SyntaxError
@@ -111,10 +111,10 @@ warn_invalid_escape_sequence(Parser *p, const char* buffer, const char *first_in
                     c, c);
             }
         }
-        Py_DECREF(msg);
+        Py_DECREF(मेनसाहे);
         return -1;
     }
-    Py_DECREF(msg);
+    Py_DECREF(मेनसाहे);
     return 0;
 }
 

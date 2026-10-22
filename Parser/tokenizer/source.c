@@ -70,7 +70,7 @@ reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
 }
 
 static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
+validate_लिन्या(const _PyTok_SourceText *source, const char *bytes,
               Py_ssize_t len, int append_newline)
 {
     if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
@@ -93,10 +93,10 @@ validate_line(const _PyTok_SourceText *source, const char *bytes,
 }
 
 static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
+append_लिन्या(_PyTok_SourceText *source, const char *bytes,
             Py_ssize_t len, int append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
+    if (validate_लिन्या(source, bytes, len, append_newline) < 0) {
         return -1;
     }
     if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
@@ -120,35 +120,35 @@ append_line(_PyTok_SourceText *source, const char *bytes,
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_लिन्या(_PyTok_SourceText *source, const char *bytes,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    return append_लिन्या(source, bytes, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_लिन्या_With_Newline(_PyTok_SourceText *source, const char *bytes,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    return append_लिन्या(source, bytes, len, 1);
 }
 
 const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+Py_Tok_Source_लिन्या_View(const _PyTok_SourceText *source, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
     assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
+    const char *लिन्या = _PyTok_SourceData(source);
+    const char *end = लिन्या + source->len;
     while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
+        const char *newline = memchr(लिन्या, '\n', end - लिन्या);
         if (newline == NULL) {
             break;
         }
-        line = newline + 1;
+        लिन्या = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    const char *newline = memchr(लिन्या, '\n', end - लिन्या);
+    *len = (newline != NULL ? newline : end) - लिन्या;
+    return लिन्या;
 }

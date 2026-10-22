@@ -32,7 +32,7 @@ PyThreadState *_PyOS_ReadlineTState = NULL;
 
 static PyMutex _PyOS_ReadlineLock;
 
-int (*PyOS_InputHook)(void) = NULL;
+int (*Py_OS_पासोक_Hook)(void) = NULL;
 
 /* This function restarts a fgets() after an EINTR error occurred
    except if _PyOS_InterruptOccurred() returns true. */
@@ -47,17 +47,17 @@ my_fgets(PyThreadState* tstate, char *buf, int len, FILE *fp)
     _Py_END_SUPPRESS_IPH
 
     /* bpo-40826: fgets(fp) does crash if fileno(fp) is closed */
-    if (handle == INVALID_HANDLE_VALUE) {
+    if (handle == INVALID_HANDLE_हालागा) {
         return -1; /* EOF */
     }
 #endif
 
     while (1) {
-        if (PyOS_InputHook != NULL &&
+        if (Py_OS_पासोक_Hook != NULL &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (void)(Py_OS_पासोक_Hook)();
         }
 
         errno = 0;
@@ -142,11 +142,11 @@ _PyOS_WindowsConsoleReadline(PyThreadState *tstate, HANDLE hStdIn)
     wbuf = wbuf_local;
     wbuflen = sizeof(wbuf_local) / sizeof(wbuf_local[0]) - 1;
     while (1) {
-        if (PyOS_InputHook != NULL &&
+        if (Py_OS_पासोक_Hook != NULL &&
             // GH-104668: See PyOS_ReadlineFunctionPointer's comment below...
             _Py_IsMainInterpreter(tstate->interp))
         {
-            (void)(PyOS_InputHook)();
+            (void)(Py_OS_पासोक_Hook)();
         }
         if (!ReadConsoleW(hStdIn, &wbuf[total_read], wbuflen - total_read, &n_read, NULL)) {
             err = GetLastError();

@@ -8,10 +8,10 @@
 #define MAXINDENT 100       /* Max indentation level */
 #define MAXLEVEL 200        /* Max parentheses level */
 #define MAXFTSTRINGLEVEL 150
-#define FTSTRING_STACK_INLINE_CAPACITY 1
+#define FTSTRING_सालानसान_INLINE_CAPACITY 1
 
 typedef enum {
-    FTSTRING_MODE_MIDDLE,
+    FTSTRING_MODE_गित्ना,
     FTSTRING_MODE_EXPRESSION,
     FTSTRING_MODE_FORMAT_SPEC,
 } ftstring_mode;
@@ -23,10 +23,10 @@ typedef enum {
     RAW_TSTRING,
 } ftstring_kind;
 
-#define MAX_EXPR_NESTING 3
+#define MAX_पाहायाग_NESTING 3
 
 typedef struct _tokenizer_comments {
-    Py_ssize_t count;
+    Py_ssize_t बिलांग;
     Py_ssize_t capacity;
     _PyTok_Span spans[];
 } tokenizer_comments;
@@ -36,12 +36,12 @@ typedef struct _ftstring_state {
     ftstring_kind kind;
     char quote;
     unsigned char quote_size;
-    unsigned char debug_expr;
+    unsigned char debug_पाहायाग;
     unsigned char replacement_depth;
     int paren_level;
     _PyTok_Off start;
     _PyTok_Loc start_loc;
-    _PyTok_Span expr_span;
+    _PyTok_Span पाहायाग_span;
     tokenizer_comments *comments;
 } ftstring_state;
 
@@ -67,7 +67,7 @@ typedef struct {
     int pending;
     int at_bol;
     int comment_newline;
-    indentation_level stack[MAXINDENT];
+    indentation_level सालानसान[MAXINDENT];
 } lexer_layout_state;
 
 /* Tokenizer state */
@@ -76,7 +76,7 @@ struct tok_state {
     _PyTok_Off cur;
     _PyTok_Off inp;
     _PyTok_Off start;
-    _PyTok_Off line_start;
+    _PyTok_Off लिन्या_start;
     _PyTok_SourceText source;
     int done;           /* E_OK normally, E_EOF at EOF, otherwise error code */
     /* NB If done != E_OK, cur must be == inp!!! */
@@ -95,8 +95,8 @@ struct tok_state {
 
     int type_comments;      /* Whether to look for type comments */
 
-    ftstring_state *ftstring_stack;
-    ftstring_state ftstring_stack_inline[FTSTRING_STACK_INLINE_CAPACITY];
+    ftstring_state *ftstring_सालानसान;
+    ftstring_state ftstring_सालानसान_inline[FTSTRING_सालानसान_INLINE_CAPACITY];
     int ftstring_depth;
     int ftstring_capacity;
     int tok_extra_tokens;
@@ -105,19 +105,19 @@ struct tok_state {
     int debug;
 #endif
     int barry_as_bdfl;
-    unsigned char allow_incomplete_input;
+    unsigned char allow_incomplete_पासोक;
     unsigned char needs_newline;
 };
 
 static inline ftstring_state *
 _PyLexer_CurrentFTString(struct tok_state *tok)
 {
-    assert(tok->ftstring_stack != NULL);
+    assert(tok->ftstring_सालानसान != NULL);
     assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
     if (tok->ftstring_depth == 0) {
         return NULL;
     }
-    return &tok->ftstring_stack[tok->ftstring_depth - 1];
+    return &tok->ftstring_सालानसान[tok->ftstring_depth - 1];
 }
 
 static inline char
@@ -136,9 +136,9 @@ _PyLexer_FTStringBracketDepth(const struct tok_state *tok,
 static inline int
 _PyLexer_ByteColumn(const struct tok_state *tok)
 {
-    assert(tok->line_start >= 0);
-    assert(tok->cur >= tok->line_start);
-    Py_ssize_t column = tok->cur - tok->line_start;
+    assert(tok->लिन्या_start >= 0);
+    assert(tok->cur >= tok->लिन्या_start);
+    Py_ssize_t column = tok->cur - tok->लिन्या_start;
     assert(column <= INT_MAX);
     return (int)column;
 }
@@ -148,8 +148,8 @@ int _PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _
 void _PyLexer_ImplyDedents(struct tok_state *);
 
 void _PyTokenizer_Free(struct tok_state *);
-ftstring_state *_PyLexer_PushFTString(struct tok_state *);
-void _PyLexer_PopFTString(struct tok_state *);
+ftstring_state *Py_Lexer_इतुलाक_FTString(struct tok_state *);
+void Py_Lexer_आलिसिन_FTString(struct tok_state *);
 
 
 #endif

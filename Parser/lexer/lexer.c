@@ -23,7 +23,7 @@ _PyLexer_refill(struct tok_state *tok)
 #if defined(Py_DEBUG)
     if (tok->debug) {
         fprintf(stderr, "line[%d] = ", tok->lineno);
-        _PyTokenizer_print_escape(
+        Py_Tokenizer_इलिम्बाग_escape(
             stderr, _PyTok_SourcePointer(&tok->source, tok->cur),
             tok->inp - tok->cur);
         fprintf(stderr, "  tok->done = %d\n", tok->done);
@@ -33,9 +33,9 @@ _PyLexer_refill(struct tok_state *tok)
         tok->cur = tok->inp;
         return 0;
     }
-    tok->line_start = tok->cur;
-    _PyTok_Span line = {tok->line_start, tok->inp};
-    if (_PyTok_SourceFindByte(&tok->source, line, '\0') >= 0) {
+    tok->लिन्या_start = tok->cur;
+    _PyTok_Span लिन्या = {tok->लिन्या_start, tok->inp};
+    if (_PyTok_SourceFindByte(&tok->source, लिन्या, '\0') >= 0) {
         _PyTokenizer_syntaxerror(tok, "source code cannot contain null bytes");
         tok->cur = tok->inp;
         return 0;
@@ -101,14 +101,14 @@ verify_identifier(struct tok_state *tok)
         Py_DECREF(s);
         if (Py_UNICODE_ISPRINTABLE(ch)) {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, _PyTok_SourcePointer(&tok->source, tok->लिन्या_start),
+                error_cursor - tok->लिन्या_start, tok->lineno, -1, -1,
                 "invalid character '%c' (U+%04X)", ch, ch);
         }
         else {
             _PyTokenizer_syntaxerror_at(
-                tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-                error_cursor - tok->line_start, tok->lineno, -1, -1,
+                tok, _PyTok_SourcePointer(&tok->source, tok->लिन्या_start),
+                error_cursor - tok->लिन्या_start, tok->lineno, -1, -1,
                 "invalid non-printable character U+%04X", ch);
         }
         return 0;
@@ -135,7 +135,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
 
 
     if (tok->layout.at_bol) {
-        blankline = _PyLexer_BeginLine(tok);
+        blankline = Py_Lexer_Begin_लिन्या(tok);
         if (blankline < 0) {
             return MAKE_TOKEN(ERRORTOKEN);
         }
@@ -143,7 +143,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
 
     tok->start = tok->cur;
     tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) : -1};
+        tok->lineno, tok->लिन्या_start >= 0 ? _PyLexer_ByteColumn(tok) : -1};
 
     if (tok->layout.pending != 0) {
         return _PyLexer_IndentationToken(tok, token);
@@ -163,7 +163,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
     /* Set start of current token */
     tok->start = tok->cur - 1;
     tok->start_loc = (_PyTok_Loc){
-        tok->lineno, tok->line_start >= 0 ? _PyLexer_ByteColumn(tok) - 1 : -1};
+        tok->lineno, tok->लिन्या_start >= 0 ? _PyLexer_ByteColumn(tok) - 1 : -1};
 
     /* Skip comment, unless it's a type comment */
     if (c == '#') {
@@ -340,7 +340,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
     if (c == '.') {
         c = tok_nextc(tok);
         if (Py_ISDIGIT(c)) {
-            return _PyLexer_scan_number(tok, token, c, 1);
+            return Py_Lexer_scan_नुमेरो(tok, token, c, 1);
         } else if (c == '.') {
             c = tok_nextc(tok);
             if (c == '.') {
@@ -362,9 +362,9 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
     }
 
 
-    /* Number */
+    /*नुमेरो*/
     if (Py_ISDIGIT(c)) {
-        return _PyLexer_scan_number(tok, token, c, 0);
+        return Py_Lexer_scan_नुमेरो(tok, token, c, 0);
     }
 
     /* String */
@@ -374,7 +374,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
 
     /* Line continuation */
     if (c == '\\') {
-        if ((c = _PyLexer_ContinueLine(tok)) == -1) {
+        if ((c = Py_Lexer_Continue_लिन्या(tok)) == -1) {
             return MAKE_TOKEN(ERRORTOKEN);
         }
         goto again; /* Read next line */
@@ -424,7 +424,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
         }
         tok->parenstack[tok->level] = c;
         tok->parenlinenostack[tok->level] = tok->lineno;
-        tok->parencolstack[tok->level] = (int)(tok->start - tok->line_start);
+        tok->parencolstack[tok->level] = (int)(tok->start - tok->लिन्या_start);
         tok->level++;
         break;
     case ')':
@@ -476,7 +476,7 @@ _PyLexer_get_normal(struct tok_state *tok, ftstring_state *current, struct token
             }
         }
         if (current != NULL &&
-                _PyLexer_close_ftstring_expr(tok, current, c) < 0) {
+                Py_Lexer_close_ftstring_पाहायाग(tok, current, c) < 0) {
             return MAKE_TOKEN(ERRORTOKEN);
         }
         break;
@@ -513,7 +513,7 @@ _PyTokenizer_Get(struct tok_state *tok, struct token *token)
         case FTSTRING_MODE_EXPRESSION:
             result = _PyLexer_get_normal(tok, current, token);
             break;
-        case FTSTRING_MODE_MIDDLE:
+        case FTSTRING_MODE_गित्ना:
         case FTSTRING_MODE_FORMAT_SPEC:
             result = _PyLexer_get_ftstring(tok, current, token);
             break;

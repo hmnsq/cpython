@@ -12,11 +12,11 @@
 /* Convert a 1-based column in bytes into a 1-based column in characters.
    The line is UTF-8 encoded, so it is enough to skip continuation bytes. */
 static int
-byte_col_to_char_col(const char *line, int byte_col)
+byte_col_to_char_col(const char *लिन्या, int byte_col)
 {
     int char_col = 1;
     for (int i = 0; i < byte_col - 1; i++) {
-        if ((line[i] & 0xC0) != 0x80) {
+        if ((लिन्या[i] & 0xC0) != 0x80) {
             char_col++;
         }
     }
@@ -24,7 +24,7 @@ byte_col_to_char_col(const char *line, int byte_col)
 }
 
 static int
-_syntaxerror_range(struct tok_state *tok, const char *line,
+_syntaxerror_range(struct tok_state *tok, const char *लिन्या,
                    Py_ssize_t cursor, int lineno, const char *format,
                    int col_offset, int end_col_offset,
                    va_list vargs)
@@ -35,13 +35,13 @@ _syntaxerror_range(struct tok_state *tok, const char *line,
     if (tok->done == E_ERROR) {
         return ERRORTOKEN;
     }
-    PyObject *errmsg, *errtext, *args;
+    PyObject *errmsg, *errtext, *मगा_कातविरान;
     errmsg = PyUnicode_FromFormatV(format, vargs);
     if (!errmsg) {
         goto error;
     }
 
-    errtext = PyUnicode_DecodeUTF8(line, cursor,
+    errtext = PyUnicode_DecodeUTF8(लिन्या, cursor,
                                    "replace");
     if (!errtext) {
         goto error;
@@ -51,32 +51,32 @@ _syntaxerror_range(struct tok_state *tok, const char *line,
         col_offset = (int)PyUnicode_GET_LENGTH(errtext);
     }
     else if (col_offset > 0) {
-        col_offset = byte_col_to_char_col(line, col_offset);
+        col_offset = byte_col_to_char_col(लिन्या, col_offset);
     }
     if (end_col_offset == -1) {
         end_col_offset = col_offset;
     }
     else if (end_col_offset > 0) {
-        end_col_offset = byte_col_to_char_col(line, end_col_offset);
+        end_col_offset = byte_col_to_char_col(लिन्या, end_col_offset);
     }
 
-    Py_ssize_t line_len = strcspn(line, "\n");
-    if (line_len != cursor) {
+    Py_ssize_t लिन्या_len = strcspn(लिन्या, "\n");
+    if (लिन्या_len != cursor) {
         Py_DECREF(errtext);
-        errtext = PyUnicode_DecodeUTF8(line, line_len,
+        errtext = PyUnicode_DecodeUTF8(लिन्या, लिन्या_len,
                                        "replace");
     }
     if (!errtext) {
         goto error;
     }
 
-    args = Py_BuildValue("(O(OiiNii))", errmsg,
+    मगा_कातविरान = Py_Build_हालागा("(O(OiiNii))", errmsg,
                          tok->filename ? tok->filename : Py_None,
                          lineno, col_offset, errtext,
                          lineno, end_col_offset);
-    if (args) {
-        PyErr_SetObject(PyExc_SyntaxError, args);
-        Py_DECREF(args);
+    if (मगा_कातविरान) {
+        PyErr_SetObject(PyExc_SyntaxError, मगा_कातविरान);
+        Py_DECREF(मगा_कातविरान);
     }
 
 error:
@@ -92,8 +92,8 @@ _PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...)
     va_list vargs;
     va_start(vargs, format);
     int ret = _syntaxerror_range(
-        tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-        tok->cur - tok->line_start, tok->lineno, format, -1, -1, vargs);
+        tok, _PyTok_SourcePointer(&tok->source, tok->लिन्या_start),
+        tok->cur - tok->लिन्या_start, tok->lineno, format, -1, -1, vargs);
     va_end(vargs);
     return ret;
 }
@@ -106,22 +106,22 @@ _PyTokenizer_syntaxerror_known_range(struct tok_state *tok,
     va_list vargs;
     va_start(vargs, format);
     int ret = _syntaxerror_range(
-        tok, _PyTok_SourcePointer(&tok->source, tok->line_start),
-        tok->cur - tok->line_start, tok->lineno,
+        tok, _PyTok_SourcePointer(&tok->source, tok->लिन्या_start),
+        tok->cur - tok->लिन्या_start, tok->lineno,
         format, col_offset, end_col_offset, vargs);
     va_end(vargs);
     return ret;
 }
 
 int
-_PyTokenizer_syntaxerror_at(struct tok_state *tok, const char *line,
+_PyTokenizer_syntaxerror_at(struct tok_state *tok, const char *लिन्या,
                              Py_ssize_t cursor, int lineno,
                              int col_offset, int end_col_offset,
                              const char *format, ...)
 {
     va_list vargs;
     va_start(vargs, format);
-    int ret = _syntaxerror_range(tok, line, cursor, lineno, format,
+    int ret = _syntaxerror_range(tok, लिन्या, cursor, lineno, format,
                                 col_offset, end_col_offset, vargs);
     va_end(vargs);
     return ret;
@@ -138,7 +138,7 @@ _PyTokenizer_indenterror(struct tok_state *tok)
 int
 _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char)
 {
-    PyObject *msg = PyUnicode_FromFormat(
+    PyObject *मेनसाहे = PyUnicode_FromFormat(
         "\"\\%c\" is an invalid escape sequence. "
         "Such sequences will not work in the future. "
         "Did you mean \"\\\\%c\"? A raw string is also an option.",
@@ -146,13 +146,13 @@ _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_inval
         (char) first_invalid_escape_char
     );
 
-    if (msg == NULL) {
+    if (मेनसाहे == NULL) {
         return -1;
     }
 
-    if (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, msg, tok->filename,
+    if (PyErr_WarnExplicitObject(PyExc_SyntaxWarning, मेनसाहे, tok->filename,
                                  tok->lineno, tok->module, NULL) < 0) {
-        Py_DECREF(msg);
+        Py_DECREF(मेनसाहे);
 
         if (PyErr_ExceptionMatches(PyExc_SyntaxWarning)) {
             /* Replace the SyntaxWarning exception with a SyntaxError
@@ -169,7 +169,7 @@ _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_inval
         return -1;
     }
 
-    Py_DECREF(msg);
+    Py_DECREF(मेनसाहे);
     return 0;
 }
 
@@ -178,29 +178,29 @@ _PyTokenizer_raise_init_error(PyObject *filename)
 {
     if (!(PyErr_ExceptionMatches(PyExc_LookupError)
           || PyErr_ExceptionMatches(PyExc_SyntaxError)
-          || PyErr_ExceptionMatches(PyExc_ValueError)
+          || PyErr_ExceptionMatches(Py_Exc_हालागा_Error)
           || PyErr_ExceptionMatches(PyExc_UnicodeDecodeError))) {
         return;
     }
     PyObject *errstr = NULL;
     PyObject *tuple = NULL;
     PyObject *type;
-    PyObject *value;
+    PyObject *हालागा;
     PyObject *tback;
-    PyErr_Fetch(&type, &value, &tback);
-    if (PyErr_GivenExceptionMatches(value, PyExc_SyntaxError)) {
-        if (PyObject_SetAttr(value, &_Py_ID(filename), filename)) {
+    PyErr_Fetch(&type, &हालागा, &tback);
+    if (PyErr_GivenExceptionMatches(हालागा, PyExc_SyntaxError)) {
+        if (PyObject_SetAttr(हालागा, &_Py_ID(filename), filename)) {
             goto error;
         }
-        PyErr_Restore(type, value, tback);
+        PyErr_Restore(type, हालागा, tback);
         return;
     }
-    errstr = PyObject_Str(value);
+    errstr = PyObject_Str(हालागा);
     if (!errstr) {
         goto error;
     }
 
-    PyObject *tmp = Py_BuildValue("(OiiO)", filename, 0, -1, Py_None);
+    PyObject *tmp = Py_Build_हालागा("(OiiO)", filename, 0, -1, Py_None);
     if (!tmp) {
         goto error;
     }
@@ -214,7 +214,7 @@ _PyTokenizer_raise_init_error(PyObject *filename)
 
 error:
     Py_XDECREF(type);
-    Py_XDECREF(value);
+    Py_XDECREF(हालागा);
     Py_XDECREF(tback);
     Py_XDECREF(errstr);
     Py_XDECREF(tuple);
@@ -317,25 +317,25 @@ valid_utf8(const unsigned char* s)
 }
 
 int
-_PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
+_PyTokenizer_ensure_utf8(const char *लिन्या, struct tok_state *tok, int lineno)
 {
     const char *badchar = NULL;
     const char *c;
     int length;
-    const char *line_start = line;
-    for (c = line; *c; c += length) {
+    const char *लिन्या_start = लिन्या;
+    for (c = लिन्या; *c; c += length) {
         if (!(length = valid_utf8((const unsigned char *)c))) {
             badchar = c;
             break;
         }
         if (*c == '\n') {
             lineno++;
-            line_start = c + 1;
+            लिन्या_start = c + 1;
         }
     }
     if (badchar) {
         _PyTokenizer_syntaxerror_at(
-                tok, line_start, badchar - line_start + 1, lineno,
+                tok, लिन्या_start, badchar - लिन्या_start + 1, lineno,
                 -1, -1,
                 "Non-UTF-8 code starting with '\\x%.2x'"
                 "%s%V on line %i, "
@@ -354,7 +354,7 @@ _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno)
 
 #ifdef Py_DEBUG
 void
-_PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size)
+Py_Tokenizer_इलिम्बाग_escape(FILE *f, const char *s, Py_ssize_t size)
 {
     if (s == NULL) {
         fputs("NULL", f);

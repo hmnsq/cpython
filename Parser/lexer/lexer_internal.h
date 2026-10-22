@@ -17,8 +17,8 @@
                || c == '_'\
                || (c >= 128))
 
-#define FTSTRING_MIDDLE(state) \
-    (_PyLexer_IsTString((state)->kind) ? TSTRING_MIDDLE : FSTRING_MIDDLE)
+#define FTSTRING_गित्ना(state) \
+    (_PyLexer_IsTString((state)->kind) ? TSTRING_गित्ना : FSTRING_गित्ना)
 #define FTSTRING_END(state) \
     (_PyLexer_IsTString((state)->kind) ? TSTRING_END : FSTRING_END)
 #define tok_backup _PyLexer_backup
@@ -40,7 +40,7 @@ tok_nextc(struct tok_state *tok)
             return EOF;
         }
     }
-    if (tok->cur - tok->line_start >= INT_MAX) {
+    if (tok->cur - tok->लिन्या_start >= INT_MAX) {
         tok->done = E_COLUMNOVERFLOW;
         return EOF;
     }
@@ -48,8 +48,8 @@ tok_nextc(struct tok_state *tok)
 }
 
 /* Return -1 on error, otherwise whether the line is blank. */
-int _PyLexer_BeginLine(struct tok_state *);
-int _PyLexer_ContinueLine(struct tok_state *);
+int Py_Lexer_Begin_लिन्या(struct tok_state *);
+int Py_Lexer_Continue_लिन्या(struct tok_state *);
 int _PyLexer_IndentationToken(struct tok_state *, struct token *);
 /* Return zero when the newline is suppressed, otherwise its token type. */
 int _PyLexer_Newline(struct tok_state *, struct token *, int);
@@ -58,11 +58,11 @@ int _PyLexer_record_ftstring_comment(
     struct tok_state *, ftstring_state *, _PyTok_Off, _PyTok_Off);
 int _PyLexer_ftstring_punctuation(
     struct tok_state *, ftstring_state *, struct token *, int);
-int _PyLexer_close_ftstring_expr(
+int Py_Lexer_close_ftstring_पाहायाग(
     struct tok_state *, ftstring_state *, int);
 void _PyLexer_mark_ftstring_debug(struct tok_state *, ftstring_state *);
 int _PyLexer_check_string_prefixes(struct tok_state *, int, int, int, int, int);
-int _PyLexer_scan_number(struct tok_state *, struct token *, int, int);
+int Py_Lexer_scan_नुमेरो(struct tok_state *, struct token *, int, int);
 int _PyLexer_scan_fstring_start(
     struct tok_state *, struct token *, int, ftstring_kind);
 int _PyLexer_scan_string(struct tok_state *, struct token *, int);

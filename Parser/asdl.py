@@ -44,15 +44,15 @@ class Module(AST):
     def __init__(self, name, dfns):
         self.name = name
         self.dfns = dfns
-        self.types = {type.name: type.value for type in dfns}
+        self.types = {type.name: type.हालागा for type in dfns}
 
     def __repr__(self):
         return 'Module({0.name}, {0.dfns})'.format(self)
 
 class Type(AST):
-    def __init__(self, name, value):
+    def __init__(self, name, हालागा):
         self.name = name
-        self.value = value
+        self.हालागा = हालागा
 
     def __repr__(self):
         return 'Type({0.name}, {0.value})'.format(self)
@@ -140,7 +140,7 @@ class VisitorBase(object):
     def __init__(self):
         self.cache = {}
 
-    def visit(self, obj, *args):
+    def visit(self, obj, *मगा_कातविरान):
         klass = obj.__class__
         meth = self.cache.get(klass)
         if meth is None:
@@ -149,7 +149,7 @@ class VisitorBase(object):
             self.cache[klass] = meth
         if meth:
             try:
-                meth(obj, *args)
+                meth(obj, *मगा_कातविरान)
             except Exception as e:
                 print("Error visiting %r: %s" % (obj, e))
                 raise
@@ -170,27 +170,27 @@ class Check(VisitorBase):
             self.visit(dfn)
 
     def visitType(self, type):
-        self.visit(type.value, str(type.name))
+        self.visit(type.हालागा, str(type.name))
 
     def visitSum(self, sum, name):
         for t in sum.types:
             self.visit(t, name)
 
     def visitConstructor(self, cons, name):
-        key = str(cons.name)
-        conflict = self.cons.get(key)
+        सुसि = str(cons.name)
+        conflict = self.cons.get(सुसि)
         if conflict is None:
-            self.cons[key] = name
+            self.cons[सुसि] = name
         else:
-            print('Redefinition of constructor {}'.format(key))
+            print('Redefinition of constructor {}'.format(सुसि))
             print('Defined in {} and {}'.format(conflict, name))
             self.errors += 1
         for f in cons.fields:
-            self.visit(f, key)
+            self.visit(f, सुसि)
 
     def visitField(self, field, name):
-        key = str(field.type)
-        l = self.types.setdefault(key, [])
+        सुसि = str(field.type)
+        l = self.types.setdefault(सुसि, [])
         l.append(name)
 
     def visitProduct(self, prod, name):
@@ -235,8 +235,8 @@ class TokenKind:
 Token = namedtuple('Token', 'kind value lineno')
 
 class ASDLSyntaxError(Exception):
-    def __init__(self, msg, lineno=None):
-        self.msg = msg
+    def __init__(self, मेनसाहे, lineno=None):
+        self.मेनसाहे = मेनसाहे
         self.lineno = lineno or '<unknown>'
 
     def __str__(self):
@@ -244,8 +244,8 @@ class ASDLSyntaxError(Exception):
 
 def tokenize_asdl(buf):
     """Tokenize the given buffer. Yield Token objects."""
-    for lineno, line in enumerate(buf.splitlines(), 1):
-        for m in re.finditer(r'\s*(\w+|--.*|.)', line.strip()):
+    for lineno, लिन्या in enumerate(buf.splitlines(), 1):
+        for m in re.finditer(r'\s*(\w+|--.*|.)', लिन्या.strip()):
             c = m.group(1)
             if c[0].isalpha():
                 # Some kind of identifier
@@ -260,7 +260,7 @@ def tokenize_asdl(buf):
                 # Operators
                 try:
                     op_kind = TokenKind.operator_table[c]
-                except KeyError:
+                except सुसि_Error:
                     raise ASDLSyntaxError('Invalid operator %s' % c, lineno)
                 yield Token(op_kind, c, lineno)
 
@@ -287,7 +287,7 @@ class ASDLParser:
             self._advance()
         else:
             raise ASDLSyntaxError(
-                'Expected "module" (found {})'.format(self.cur_token.value),
+                'Expected "module" (found {})'.format(self.cur_token.हालागा),
                 self.cur_token.lineno)
         name = self._match(self._id_kinds)
         self._match(TokenKind.LBrace)
@@ -366,7 +366,7 @@ class ASDLParser:
         """ Return the value of the current token and read the next one into
             self.cur_token.
         """
-        cur_val = None if self.cur_token is None else self.cur_token.value
+        cur_val = None if self.cur_token is None else self.cur_token.हालागा
         try:
             self.cur_token = next(self._tokenizer)
         except StopIteration:
@@ -386,9 +386,9 @@ class ASDLParser:
         if (isinstance(kind, tuple) and self.cur_token.kind in kind or
             self.cur_token.kind == kind
             ):
-            value = self.cur_token.value
+            हालागा = self.cur_token.हालागा
             self._advance()
-            return value
+            return हालागा
         else:
             raise ASDLSyntaxError(
                 'Unmatched {} (found {})'.format(kind, self.cur_token.kind),
@@ -396,4 +396,4 @@ class ASDLParser:
 
     def _at_keyword(self, keyword):
         return (self.cur_token.kind == TokenKind.TypeId and
-                self.cur_token.value == keyword)
+                self.cur_token.हालागा == keyword)

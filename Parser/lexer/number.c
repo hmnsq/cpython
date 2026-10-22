@@ -30,7 +30,7 @@ lookahead(struct tok_state *tok, const char *test)
 }
 
 static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
+verify_end_of_नुमेरो(struct tok_state *tok, int c, const char *kind) {
     if (tok->tok_extra_tokens) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
@@ -110,7 +110,7 @@ tok_decimal_tail(struct tok_state *tok)
 }
 
 int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
+Py_Lexer_scan_नुमेरो(struct tok_state *tok, struct token *token, int c,
                      int leading_dot)
 {
     _PyTok_Off p_start = -1;
@@ -137,7 +137,7 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
                     c = tok_nextc(tok);
                 } while (Py_ISXDIGIT(c));
             } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
+            if (!verify_end_of_नुमेरो(tok, c, "hexadecimal")) {
                 return MAKE_TOKEN(ERRORTOKEN);
             }
         }
@@ -166,12 +166,12 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
                 return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
+            if (!verify_end_of_नुमेरो(tok, c, "octal")) {
                 return MAKE_TOKEN(ERRORTOKEN);
             }
         }
         else if (c == 'b' || c == 'B') {
-            /* Binary */
+            /*दालावाहान*/
             c = tok_nextc(tok);
             do {
                 if (c == '_') {
@@ -193,7 +193,7 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
             if (Py_ISDIGIT(c)) {
                 return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
+            if (!verify_end_of_नुमेरो(tok, c, "binary")) {
                 return MAKE_TOKEN(ERRORTOKEN);
             }
         }
@@ -236,13 +236,13 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
                 return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                        tok, (int)(tok->start + 1 - tok->लिन्या_start),
+                        (int)(zeros_end - tok->लिन्या_start),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
+            if (!verify_end_of_नुमेरो(tok, c, "decimal")) {
                 return MAKE_TOKEN(ERRORTOKEN);
             }
         }
@@ -280,13 +280,13 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
                     }
                 } else if (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
+                    if (!verify_end_of_नुमेरो(tok, e, "decimal")) {
                         return MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
                     p_start = tok->start;
                     p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    return MAKE_TOKEN(नुमेरो_2);
                 }
                 c = tok_decimal_tail(tok);
                 if (c == 0) {
@@ -297,11 +297,11 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
+                if (!verify_end_of_नुमेरो(tok, c, "imaginary")) {
                     return MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
+            else if (!verify_end_of_नुमेरो(tok, c, "decimal")) {
                 return MAKE_TOKEN(ERRORTOKEN);
             }
         }
@@ -309,5 +309,5 @@ _PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
     tok_backup(tok, c);
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    return MAKE_TOKEN(नुमेरो_2);
 }
