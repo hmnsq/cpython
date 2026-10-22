@@ -5,7 +5,7 @@
 
 /* Token names */
 
-const char * const _PyParser_TokenNames[] = {
+const var_na * const _PyParser_TokenNames[] = {
     "ENDMARKER",
     "NAME",
     "NUMBER",
@@ -80,171 +80,171 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+puur_naa_nka
+_PyToken_OneChar(puur_naa_nka c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    pak_sa '!': ᯀᯮᯞ EXCLAMATION;
+    pak_sa '%': ᯀᯮᯞ PERCENT;
+    pak_sa '&': ᯀᯮᯞ AMPER;
+    pak_sa '(': ᯀᯮᯞ LPAR;
+    pak_sa ')': ᯀᯮᯞ RPAR;
+    pak_sa '*': ᯀᯮᯞ STAR;
+    pak_sa '+': ᯀᯮᯞ PLUS;
+    pak_sa ',': ᯀᯮᯞ COMMA;
+    pak_sa '-': ᯀᯮᯞ MINUS;
+    pak_sa '.': ᯀᯮᯞ DOT;
+    pak_sa '/': ᯀᯮᯞ SLASH;
+    pak_sa ':': ᯀᯮᯞ COLON;
+    pak_sa ';': ᯀᯮᯞ SEMI;
+    pak_sa '<': ᯀᯮᯞ LESS;
+    pak_sa '=': ᯀᯮᯞ EQUAL;
+    pak_sa '>': ᯀᯮᯞ GREATER;
+    pak_sa '@': ᯀᯮᯞ AT;
+    pak_sa '[': ᯀᯮᯞ LSQB;
+    pak_sa ']': ᯀᯮᯞ RSQB;
+    pak_sa '^': ᯀᯮᯞ CIRCUMFLEX;
+    pak_sa '{': ᯀᯮᯞ LBRACE;
+    pak_sa '|': ᯀᯮᯞ VBAR;
+    pak_sa '}': ᯀᯮᯞ RBRACE;
+    pak_sa '~': ᯀᯮᯞ TILDE;
     }
-    return OP;
+    ᯀᯮᯞ OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+puur_naa_nka
+_PyToken_TwoChars(puur_naa_nka c1, puur_naa_nka c2, puur_naa_nka BARRY_AS_BDFL)
 {
     switch (c1) {
-    case '!':
+    pak_sa '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        pak_sa '=': ᯀᯮᯞ NOTEQUAL;
         }
-        break;
-    case '%':
+        bha_nga;
+    pak_sa '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        pak_sa '=': ᯀᯮᯞ PERCENTEQUAL;
         }
-        break;
-    case '&':
+        bha_nga;
+    pak_sa '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        pak_sa '=': ᯀᯮᯞ AMPEREQUAL;
         }
-        break;
-    case '*':
+        bha_nga;
+    pak_sa '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        pak_sa '*': ᯀᯮᯞ DOUBLESTAR;
+        pak_sa '=': ᯀᯮᯞ STAREQUAL;
         }
-        break;
-    case '+':
+        bha_nga;
+    pak_sa '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        pak_sa '=': ᯀᯮᯞ PLUSEQUAL;
         }
-        break;
-    case '-':
+        bha_nga;
+    pak_sa '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        pak_sa '=': ᯀᯮᯞ MINEQUAL;
+        pak_sa '>': ᯀᯮᯞ RARROW;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        pak_sa '/': ᯀᯮᯞ DOUBLESLASH;
+        pak_sa '=': ᯀᯮᯞ SLASHEQUAL;
         }
-        break;
-    case ':':
+        bha_nga;
+    pak_sa ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        pak_sa '=': ᯀᯮᯞ COLONEQUAL;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        pak_sa '<': ᯀᯮᯞ LEFTSHIFT;
+        pak_sa '=': ᯀᯮᯞ LESSEQUAL;
+        pak_sa '>': ᯀᯮᯞ BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
-        break;
-    case '=':
+        bha_nga;
+    pak_sa '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        pak_sa '=': ᯀᯮᯞ EQEQUAL;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        pak_sa '=': ᯀᯮᯞ GREATEREQUAL;
+        pak_sa '>': ᯀᯮᯞ RIGHTSHIFT;
         }
-        break;
-    case '@':
+        bha_nga;
+    pak_sa '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        pak_sa '=': ᯀᯮᯞ ATEQUAL;
         }
-        break;
-    case '^':
+        bha_nga;
+    pak_sa '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        pak_sa '=': ᯀᯮᯞ CIRCUMFLEXEQUAL;
         }
-        break;
-    case '|':
+        bha_nga;
+    pak_sa '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        pak_sa '=': ᯀᯮᯞ VBAREQUAL;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ᯀᯮᯞ OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+puur_naa_nka
+_PyToken_ThreeChars(puur_naa_nka c1, puur_naa_nka c2, puur_naa_nka c3)
 {
     switch (c1) {
-    case '*':
+    pak_sa '*':
         switch (c2) {
-        case '*':
+        pak_sa '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            pak_sa '=': ᯀᯮᯞ DOUBLESTAREQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '.':
+        bha_nga;
+    pak_sa '.':
         switch (c2) {
-        case '.':
+        pak_sa '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            pak_sa '.': ᯀᯮᯞ ELLIPSIS;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/':
+        pak_sa '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            pak_sa '=': ᯀᯮᯞ DOUBLESLASHEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<':
+        pak_sa '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            pak_sa '=': ᯀᯮᯞ LEFTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '>':
+        pak_sa '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            pak_sa '=': ᯀᯮᯞ RIGHTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ᯀᯮᯞ OP;
 }
