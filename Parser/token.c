@@ -5,7 +5,7 @@
 
 /* Token names */
 
-const char * const _PyParser_TokenNames[] = {
+const var_na * const _PyParser_TokenNames[] = {
     "ENDMARKER",
     "NAME",
     "NUMBER",
@@ -80,171 +80,171 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+ကိန်းပြည့်
+_PyToken_OneChar(ကိန်းပြည့် c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    pak_sa '!': ပြန်ပေး EXCLAMATION;
+    pak_sa '%': ပြန်ပေး PERCENT;
+    pak_sa '&': ပြန်ပေး AMPER;
+    pak_sa '(': ပြန်ပေး LPAR;
+    pak_sa ')': ပြန်ပေး RPAR;
+    pak_sa '*': ပြန်ပေး STAR;
+    pak_sa '+': ပြန်ပေး PLUS;
+    pak_sa ',': ပြန်ပေး COMMA;
+    pak_sa '-': ပြန်ပေး MINUS;
+    pak_sa '.': ပြန်ပေး DOT;
+    pak_sa '/': ပြန်ပေး SLASH;
+    pak_sa ':': ပြန်ပေး COLON;
+    pak_sa ';': ပြန်ပေး SEMI;
+    pak_sa '<': ပြန်ပေး LESS;
+    pak_sa '=': ပြန်ပေး EQUAL;
+    pak_sa '>': ပြန်ပေး GREATER;
+    pak_sa '@': ပြန်ပေး AT;
+    pak_sa '[': ပြန်ပေး LSQB;
+    pak_sa ']': ပြန်ပေး RSQB;
+    pak_sa '^': ပြန်ပေး CIRCUMFLEX;
+    pak_sa '{': ပြန်ပေး LBRACE;
+    pak_sa '|': ပြန်ပေး VBAR;
+    pak_sa '}': ပြန်ပေး RBRACE;
+    pak_sa '~': ပြန်ပေး TILDE;
     }
-    return OP;
+    ပြန်ပေး OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+ကိန်းပြည့်
+_PyToken_TwoChars(ကိန်းပြည့် c1, ကိန်းပြည့် c2, ကိန်းပြည့် BARRY_AS_BDFL)
 {
     switch (c1) {
-    case '!':
+    pak_sa '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        pak_sa '=': ပြန်ပေး NOTEQUAL;
         }
-        break;
-    case '%':
+        bha_nga;
+    pak_sa '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        pak_sa '=': ပြန်ပေး PERCENTEQUAL;
         }
-        break;
-    case '&':
+        bha_nga;
+    pak_sa '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        pak_sa '=': ပြန်ပေး AMPEREQUAL;
         }
-        break;
-    case '*':
+        bha_nga;
+    pak_sa '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        pak_sa '*': ပြန်ပေး DOUBLESTAR;
+        pak_sa '=': ပြန်ပေး STAREQUAL;
         }
-        break;
-    case '+':
+        bha_nga;
+    pak_sa '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        pak_sa '=': ပြန်ပေး PLUSEQUAL;
         }
-        break;
-    case '-':
+        bha_nga;
+    pak_sa '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        pak_sa '=': ပြန်ပေး MINEQUAL;
+        pak_sa '>': ပြန်ပေး RARROW;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        pak_sa '/': ပြန်ပေး DOUBLESLASH;
+        pak_sa '=': ပြန်ပေး SLASHEQUAL;
         }
-        break;
-    case ':':
+        bha_nga;
+    pak_sa ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        pak_sa '=': ပြန်ပေး COLONEQUAL;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        pak_sa '<': ပြန်ပေး LEFTSHIFT;
+        pak_sa '=': ပြန်ပေး LESSEQUAL;
+        pak_sa '>': ပြန်ပေး BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
-        break;
-    case '=':
+        bha_nga;
+    pak_sa '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        pak_sa '=': ပြန်ပေး EQEQUAL;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        pak_sa '=': ပြန်ပေး GREATEREQUAL;
+        pak_sa '>': ပြန်ပေး RIGHTSHIFT;
         }
-        break;
-    case '@':
+        bha_nga;
+    pak_sa '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        pak_sa '=': ပြန်ပေး ATEQUAL;
         }
-        break;
-    case '^':
+        bha_nga;
+    pak_sa '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        pak_sa '=': ပြန်ပေး CIRCUMFLEXEQUAL;
         }
-        break;
-    case '|':
+        bha_nga;
+    pak_sa '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        pak_sa '=': ပြန်ပေး VBAREQUAL;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ပြန်ပေး OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+ကိန်းပြည့်
+_PyToken_ThreeChars(ကိန်းပြည့် c1, ကိန်းပြည့် c2, ကိန်းပြည့် c3)
 {
     switch (c1) {
-    case '*':
+    pak_sa '*':
         switch (c2) {
-        case '*':
+        pak_sa '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            pak_sa '=': ပြန်ပေး DOUBLESTAREQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '.':
+        bha_nga;
+    pak_sa '.':
         switch (c2) {
-        case '.':
+        pak_sa '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            pak_sa '.': ပြန်ပေး ELLIPSIS;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '/':
+        bha_nga;
+    pak_sa '/':
         switch (c2) {
-        case '/':
+        pak_sa '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            pak_sa '=': ပြန်ပေး DOUBLESLASHEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '<':
+        bha_nga;
+    pak_sa '<':
         switch (c2) {
-        case '<':
+        pak_sa '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            pak_sa '=': ပြန်ပေး LEFTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
-    case '>':
+        bha_nga;
+    pak_sa '>':
         switch (c2) {
-        case '>':
+        pak_sa '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            pak_sa '=': ပြန်ပေး RIGHTSHIFTEQUAL;
             }
-            break;
+            bha_nga;
         }
-        break;
+        bha_nga;
     }
-    return OP;
+    ပြန်ပေး OP;
 }

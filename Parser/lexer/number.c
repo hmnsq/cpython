@@ -6,35 +6,35 @@
 
 #define MAKE_TOKEN(token_type) _PyLexer_token_setup(tok, token, token_type, p_start, p_end)
 
-static int
-lookahead(struct tok_state *tok, const char *test)
+static ကိန်းပြည့်
+lookahead(sa_nracanaa tok_state *tok, const var_na *test)
 {
-    const char *s = test;
-    int res = 0;
-    while (1) {
-        int c = tok_nextc(tok);
-        if (*s == 0) {
+    const var_na *s = test;
+    ကိန်းပြည့် res = 0;
+    နေစဉ် (1) {
+        ကိန်းပြည့် c = tok_nextc(tok);
+        အကယ်၍ (*s == 0) {
             res = !is_potential_identifier_char(c);
         }
-        else if (c == *s) {
+        မဟုတ်ပါက အကယ်၍ (c == *s) {
             s++;
             continue;
         }
 
         tok_backup(tok, c);
-        while (s != test) {
+        နေစဉ် (s != test) {
             tok_backup(tok, *--s);
         }
-        return res;
+        ပြန်ပေး res;
     }
 }
 
-static int
-verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
-    if (tok->tok_extra_tokens) {
+static ကိန်းပြည့်
+verify_end_of_number(sa_nracanaa tok_state *tok, ကိန်းပြည့် c, const var_na *kind) {
+    အကယ်၍ (tok->tok_extra_tokens) {
         // When we are parsing extra tokens, we don't want to emit warnings
         // about invalid literals, because we want to be a bit more liberal.
-        return 1;
+        ပြန်ပေး 1;
     }
     /* Emit a deprecation warning only if the numeric literal is immediately
      * followed by one of keywords which can occur after a numeric literal
@@ -46,268 +46,268 @@ verify_end_of_number(struct tok_state *tok, int c, const char *kind) {
      * "invalid syntax" if the numeric literal is immediately followed by
      * other keyword or identifier.
      */
-    int r = 0;
-    if (c == 'a') {
+    ကိန်းပြည့် r = 0;
+    အကယ်၍ (c == 'a') {
         r = lookahead(tok, "nd");
     }
-    else if (c == 'e') {
+    မဟုတ်ပါက အကယ်၍ (c == 'e') {
         r = lookahead(tok, "lse");
     }
-    else if (c == 'f') {
+    မဟုတ်ပါက အကယ်၍ (c == 'f') {
         r = lookahead(tok, "or");
     }
-    else if (c == 'i') {
-        int c2 = tok_nextc(tok);
-        if (c2 == 'f' || c2 == 'n' || c2 == 's') {
+    မဟုတ်ပါက အကယ်၍ (c == 'i') {
+        ကိန်းပြည့် c2 = tok_nextc(tok);
+        အကယ်၍ (c2 == 'f' || c2 == 'n' || c2 == 's') {
             r = 1;
         }
         tok_backup(tok, c2);
     }
-    else if (c == 'o') {
+    မဟုတ်ပါက အကယ်၍ (c == 'o') {
         r = lookahead(tok, "r");
     }
-    else if (c == 'n') {
+    မဟုတ်ပါက အကယ်၍ (c == 'n') {
         r = lookahead(tok, "ot");
     }
-    if (r) {
+    အကယ်၍ (r) {
         tok_backup(tok, c);
-        if (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
+        အကယ်၍ (_PyTokenizer_parser_warn(tok, PyExc_SyntaxWarning,
                 "invalid %s literal", kind))
         {
-            return 0;
+            ပြန်ပေး 0;
         }
         tok_nextc(tok);
     }
-    else /* In future releases, only error will remain. */
-    if (c < 128 && is_potential_identifier_char(c)) {
+    မဟုတ်ပါက /* In future releases, only error will remain. */
+    အကယ်၍ (c < 128 && is_potential_identifier_char(c)) {
         tok_backup(tok, c);
         _PyTokenizer_syntaxerror(tok, "invalid %s literal", kind);
-        return 0;
+        ပြန်ပေး 0;
     }
-    return 1;
+    ပြန်ပေး 1;
 }
 
-static int
-tok_decimal_tail(struct tok_state *tok)
+static ကိန်းပြည့်
+tok_decimal_tail(sa_nracanaa tok_state *tok)
 {
-    int c;
+    ကိန်းပြည့် c;
 
-    while (1) {
+    နေစဉ် (1) {
         do {
             c = tok_nextc(tok);
-        } while (Py_ISDIGIT(c));
-        if (c != '_') {
-            break;
+        } နေစဉ် (Py_ISDIGIT(c));
+        အကယ်၍ (c != '_') {
+            bha_nga;
         }
         c = tok_nextc(tok);
-        if (!Py_ISDIGIT(c)) {
+        အကယ်၍ (!Py_ISDIGIT(c)) {
             tok_backup(tok, c);
             _PyTokenizer_syntaxerror(tok, "invalid decimal literal");
-            return 0;
+            ပြန်ပေး 0;
         }
     }
-    return c;
+    ပြန်ပေး c;
 }
 
-int
-_PyLexer_scan_number(struct tok_state *tok, struct token *token, int c,
-                     int leading_dot)
+ကိန်းပြည့်
+_PyLexer_scan_number(sa_nracanaa tok_state *tok, sa_nracanaa token *token, ကိန်းပြည့် c,
+                     ကိန်းပြည့် leading_dot)
 {
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
 
-    if (leading_dot) {
+    အကယ်၍ (leading_dot) {
         goto fraction;
     }
-    if (c == '0') {
+    အကယ်၍ (c == '0') {
         /* Hex, octal or binary -- maybe. */
         c = tok_nextc(tok);
-        if (c == 'x' || c == 'X') {
+        အကယ်၍ (c == 'x' || c == 'X') {
             /* Hex */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                အကယ်၍ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (!Py_ISXDIGIT(c)) {
+                အကယ်၍ (!Py_ISXDIGIT(c)) {
                     tok_backup(tok, c);
-                    return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
+                    ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid hexadecimal literal"));
                 }
                 do {
                     c = tok_nextc(tok);
-                } while (Py_ISXDIGIT(c));
-            } while (c == '_');
-            if (!verify_end_of_number(tok, c, "hexadecimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+                } နေစဉ် (Py_ISXDIGIT(c));
+            } နေစဉ် (c == '_');
+            အကယ်၍ (!verify_end_of_number(tok, c, "hexadecimal")) {
+                ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'o' || c == 'O') {
+        မဟုတ်ပါက အကယ်၍ (c == 'o' || c == 'O') {
             /* Octal */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                အကယ်၍ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c < '0' || c >= '8') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                အကယ်၍ (c < '0' || c >= '8') {
+                    အကယ်၍ (Py_ISDIGIT(c)) {
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                                 "invalid digit '%c' in octal literal", c));
                     }
-                    else {
+                    မဟုတ်ပါက {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid octal literal"));
                     }
                 }
                 do {
                     c = tok_nextc(tok);
-                } while ('0' <= c && c < '8');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
+                } နေစဉ် ('0' <= c && c < '8');
+            } နေစဉ် (c == '_');
+            အကယ်၍ (Py_ISDIGIT(c)) {
+                ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok,
                         "invalid digit '%c' in octal literal", c));
             }
-            if (!verify_end_of_number(tok, c, "octal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            အကယ်၍ (!verify_end_of_number(tok, c, "octal")) {
+                ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else if (c == 'b' || c == 'B') {
+        မဟုတ်ပါက အကယ်၍ (c == 'b' || c == 'B') {
             /* Binary */
             c = tok_nextc(tok);
             do {
-                if (c == '_') {
+                အကယ်၍ (c == '_') {
                     c = tok_nextc(tok);
                 }
-                if (c != '0' && c != '1') {
-                    if (Py_ISDIGIT(c)) {
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                အကယ်၍ (c != '0' && c != '1') {
+                    အကယ်၍ (Py_ISDIGIT(c)) {
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
                     }
-                    else {
+                    မဟုတ်ပါက {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid binary literal"));
                     }
                 }
                 do {
                     c = tok_nextc(tok);
-                } while (c == '0' || c == '1');
-            } while (c == '_');
-            if (Py_ISDIGIT(c)) {
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
+                } နေစဉ် (c == '0' || c == '1');
+            } နေစဉ် (c == '_');
+            အကယ်၍ (Py_ISDIGIT(c)) {
+                ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid digit '%c' in binary literal", c));
             }
-            if (!verify_end_of_number(tok, c, "binary")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            အကယ်၍ (!verify_end_of_number(tok, c, "binary")) {
+                ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
             }
         }
-        else {
-            int nonzero = 0;
+        မဟုတ်ပါက {
+            ကိန်းပြည့် nonzero = 0;
             /* maybe old-style octal; c is first char of it */
             /* in any case, allow '0' as a literal */
-            while (1) {
-                if (c == '_') {
+            နေစဉ် (1) {
+                အကယ်၍ (c == '_') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    အကယ်၍ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
                 }
-                if (c != '0') {
-                    break;
+                အကယ်၍ (c != '0') {
+                    bha_nga;
                 }
                 c = tok_nextc(tok);
             }
             _PyTok_Off zeros_end = tok->cur;
-            if (Py_ISDIGIT(c)) {
+            အကယ်၍ (Py_ISDIGIT(c)) {
                 nonzero = 1;
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                အကယ်၍ (c == 0) {
+                    ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == '.') {
+            အကယ်၍ (c == '.') {
                 c = tok_nextc(tok);
                 goto fraction;
             }
-            else if (c == 'e' || c == 'E') {
+            မဟုတ်ပါက အကယ်၍ (c == 'e' || c == 'E') {
                 goto exponent;
             }
-            else if (c == 'j' || c == 'J') {
+            မဟုတ်ပါက အကယ်၍ (c == 'j' || c == 'J') {
                 goto imaginary;
             }
-            else if (nonzero && !tok->tok_extra_tokens) {
+            မဟုတ်ပါက အကယ်၍ (nonzero && !tok->tok_extra_tokens) {
                 /* Old-style octal: now disallowed. */
                 tok_backup(tok, c);
-                return MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
-                        tok, (int)(tok->start + 1 - tok->line_start),
-                        (int)(zeros_end - tok->line_start),
+                ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror_known_range(
+                        tok, (ကိန်းပြည့်)(tok->start + 1 - tok->line_start),
+                        (ကိန်းပြည့်)(zeros_end - tok->line_start),
                         "leading zeros in decimal integer "
                         "literals are not permitted; "
                         "use an 0o prefix for octal integers"));
             }
-            if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            အကယ်၍ (!verify_end_of_number(tok, c, "decimal")) {
+                ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
-    else {
+    မဟုတ်ပါက {
         /* Decimal */
         c = tok_decimal_tail(tok);
-        if (c == 0) {
-            return MAKE_TOKEN(ERRORTOKEN);
+        အကယ်၍ (c == 0) {
+            ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
         }
         {
             /* Accept floating-point numbers. */
-            if (c == '.') {
+            အကယ်၍ (c == '.') {
                 c = tok_nextc(tok);
     fraction:
                 /* Fraction */
-                if (Py_ISDIGIT(c)) {
+                အကယ်၍ (Py_ISDIGIT(c)) {
                     c = tok_decimal_tail(tok);
-                    if (c == 0) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    အကယ်၍ (c == 0) {
+                        ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
                     }
                 }
             }
-            if (c == 'e' || c == 'E') {
-                int e;
+            အကယ်၍ (c == 'e' || c == 'E') {
+                ကိန်းပြည့် e;
               exponent:
                 e = c;
                 /* Exponent part */
                 c = tok_nextc(tok);
-                if (c == '+' || c == '-') {
+                အကယ်၍ (c == '+' || c == '-') {
                     c = tok_nextc(tok);
-                    if (!Py_ISDIGIT(c)) {
+                    အကယ်၍ (!Py_ISDIGIT(c)) {
                         tok_backup(tok, c);
-                        return MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
+                        ပြန်ပေး MAKE_TOKEN(_PyTokenizer_syntaxerror(tok, "invalid decimal literal"));
                     }
-                } else if (!Py_ISDIGIT(c)) {
+                } မဟုတ်ပါက အကယ်၍ (!Py_ISDIGIT(c)) {
                     tok_backup(tok, c);
-                    if (!verify_end_of_number(tok, e, "decimal")) {
-                        return MAKE_TOKEN(ERRORTOKEN);
+                    အကယ်၍ (!verify_end_of_number(tok, e, "decimal")) {
+                        ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
                     }
                     tok_backup(tok, e);
                     p_start = tok->start;
                     p_end = tok->cur;
-                    return MAKE_TOKEN(NUMBER);
+                    ပြန်ပေး MAKE_TOKEN(NUMBER);
                 }
                 c = tok_decimal_tail(tok);
-                if (c == 0) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                အကယ်၍ (c == 0) {
+                    ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            if (c == 'j' || c == 'J') {
+            အကယ်၍ (c == 'j' || c == 'J') {
                 /* Imaginary part */
     imaginary:
                 c = tok_nextc(tok);
-                if (!verify_end_of_number(tok, c, "imaginary")) {
-                    return MAKE_TOKEN(ERRORTOKEN);
+                အကယ်၍ (!verify_end_of_number(tok, c, "imaginary")) {
+                    ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
                 }
             }
-            else if (!verify_end_of_number(tok, c, "decimal")) {
-                return MAKE_TOKEN(ERRORTOKEN);
+            မဟုတ်ပါက အကယ်၍ (!verify_end_of_number(tok, c, "decimal")) {
+                ပြန်ပေး MAKE_TOKEN(ERRORTOKEN);
             }
         }
     }
     tok_backup(tok, c);
     p_start = tok->start;
     p_end = tok->cur;
-    return MAKE_TOKEN(NUMBER);
+    ပြန်ပေး MAKE_TOKEN(NUMBER);
 }

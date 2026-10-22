@@ -11,39 +11,39 @@
 #define UNICODE_BOM 0xFEFF
 #define UTF16_LE_BOM "\xff\xfe"
 #define UTF16_BE_BOM "\xfe\xff"
-#define UTF16_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF16_LE_BOM) - 1))
+#define UTF16_BOM_LENGTH ((Py_ssize_t)(parimaa_na(UTF16_LE_BOM) - 1))
 #define UTF8_BOM "\xef\xbb\xbf"
-#define UTF8_BOM_LENGTH ((Py_ssize_t)(sizeof(UTF8_BOM) - 1))
+#define UTF8_BOM_LENGTH ((Py_ssize_t)(parimaa_na(UTF8_BOM) - 1))
 
-char *
-_PyTok_CopyBytes(const char *data, Py_ssize_t len)
+var_na *
+_PyTok_CopyBytes(const var_na *data, Py_ssize_t len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    အကယ်၍ (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        ပြန်ပေး NULL;
     }
-    char *copy = PyMem_Malloc((size_t)len + 1);
-    if (copy == NULL) {
+    var_na *copy = PyMem_Malloc((size_t)len + 1);
+    အကယ်၍ (copy == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        ပြန်ပေး NULL;
     }
     memcpy(copy, data, (size_t)len);
     copy[len] = '\0';
-    return copy;
+    ပြန်ပေး copy;
 }
 
 static void
 chunk_release_data(_PyTok_Chunk *chunk)
 {
     switch (chunk->ownership) {
-        case _PYTOK_CHUNK_BORROWED:
-            break;
-        case _PYTOK_CHUNK_PYMEM:
+        pak_sa _PYTOK_CHUNK_BORROWED:
+            bha_nga;
+        pak_sa _PYTOK_CHUNK_PYMEM:
             PyMem_Free(chunk->data);
-            break;
-        case _PYTOK_CHUNK_PYOBJECT:
+            bha_nga;
+        pak_sa _PYTOK_CHUNK_PYOBJECT:
             Py_DECREF(chunk->owner);
-            break;
+            bha_nga;
     }
 }
 
@@ -54,49 +54,49 @@ _PyTok_ChunkClear(_PyTok_Chunk *chunk)
     *chunk = (_PyTok_Chunk){0};
 }
 
-static int
-chunk_set_unicode(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  PyObject *unicode, int strip_bom)
+static ကိန်းပြည့်
+chunk_set_unicode(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk,
+                  PyObject *unicode, ကိန်းပြည့် strip_bom)
 {
     Py_ssize_t utf8_len;
-    const char *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
-    if (utf8 == NULL) {
+    const var_na *utf8 = PyUnicode_AsUTF8AndSize(unicode, &utf8_len);
+    အကယ်၍ (utf8 == NULL) {
         Py_DECREF(unicode);
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ပြန်ပေး -1;
     }
-    if (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
+    အကယ်၍ (strip_bom && PyUnicode_GET_LENGTH(unicode) > 0 &&
             PyUnicode_ReadChar(unicode, 0) == UNICODE_BOM) {
         utf8 += UTF8_BOM_LENGTH;
         utf8_len -= UTF8_BOM_LENGTH;
     }
     chunk_release_data(chunk);
     chunk->owner = unicode;
-    chunk->data = (char *)utf8;
+    chunk->data = (var_na *)utf8;
     chunk->len = utf8_len;
     chunk->ownership = _PYTOK_CHUNK_PYOBJECT;
-    return 0;
+    ပြန်ပေး 0;
 }
 
-char *
-_PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
+var_na *
+_PyTok_NormalizeNewlines(const var_na *data, Py_ssize_t len,
                          Py_ssize_t *out_len)
 {
-    if (len < 0 || len == PY_SSIZE_T_MAX) {
+    အကယ်၍ (len < 0 || len == PY_SSIZE_T_MAX) {
         PyErr_NoMemory();
-        return NULL;
+        ပြန်ပေး NULL;
     }
-    char *result = PyMem_Malloc((size_t)len + 1);
-    if (result == NULL) {
+    var_na *result = PyMem_Malloc((size_t)len + 1);
+    အကယ်၍ (result == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        ပြန်ပေး NULL;
     }
     Py_ssize_t write = 0;
-    for (Py_ssize_t read = 0; read < len; read++) {
-        char c = data[read];
-        if (c == '\r') {
-            if (read + 1 < len && data[read + 1] == '\n') {
+    အတွက် (Py_ssize_t read = 0; read < len; read++) {
+        var_na c = data[read];
+        အကယ်၍ (c == '\r') {
+            အကယ်၍ (read + 1 < len && data[read + 1] == '\n') {
                 read++;
             }
             c = '\n';
@@ -105,137 +105,137 @@ _PyTok_NormalizeNewlines(const char *data, Py_ssize_t len,
     }
     result[write] = '\0';
     *out_len = write;
-    return result;
+    ပြန်ပေး result;
 }
 
-int
-_PyTok_SetEncoding(struct tok_state *tok, const char *encoding)
+ကိန်းပြည့်
+_PyTok_SetEncoding(sa_nracanaa tok_state *tok, const var_na *encoding)
 {
-    char *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
-    if (copy == NULL) {
+    var_na *copy = _PyTok_CopyBytes(encoding, strlen(encoding));
+    အကယ်၍ (copy == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        ပြန်ပေး -1;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = copy;
-    return 0;
+    ပြန်ပေး 0;
 }
 
-static int
-find_cookie(const char *line, Py_ssize_t len, char **encoding, int *scan_next)
+static ကိန်းပြည့်
+find_cookie(const var_na *line, Py_ssize_t len, var_na **encoding, ကိန်းပြည့် *scan_next)
 {
     Py_ssize_t i = 0;
     *encoding = NULL;
     *scan_next = 1;
-    for (; i < len; i++) {
-        if (line[i] == '#') {
-            break;
+    အတွက် (; i < len; i++) {
+        အကယ်၍ (line[i] == '#') {
+            bha_nga;
         }
-        if (line[i] == '\n' || line[i] == '\r') {
-            return 0;
+        အကယ်၍ (line[i] == '\n' || line[i] == '\r') {
+            ပြန်ပေး 0;
         }
-        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
+        အကယ်၍ (line[i] != ' ' && line[i] != '\t' && line[i] != '\f') {
             *scan_next = 0;
-            return 0;
+            ပြန်ပေး 0;
         }
     }
-    const Py_ssize_t marker_len = sizeof("coding") - 1;
-    for (; i < len - marker_len; i++) {
-        if (memcmp(line + i, "coding", marker_len) != 0) {
+    const Py_ssize_t marker_len = parimaa_na("coding") - 1;
+    အတွက် (; i < len - marker_len; i++) {
+        အကယ်၍ (memcmp(line + i, "coding", marker_len) != 0) {
             continue;
         }
-        const char *cursor = line + i + marker_len;
-        if (*cursor != ':' && *cursor != '=') {
+        const var_na *cursor = line + i + marker_len;
+        အကယ်၍ (*cursor != ':' && *cursor != '=') {
             continue;
         }
         do {
             cursor++;
-        } while (cursor < line + len &&
+        } နေစဉ် (cursor < line + len &&
                  (*cursor == ' ' || *cursor == '\t'));
-        const char *start = cursor;
-        while (cursor < line + len &&
+        const var_na *start = cursor;
+        နေစဉ် (cursor < line + len &&
                 (Py_ISALNUM(*cursor) || *cursor == '-' ||
                  *cursor == '_' || *cursor == '.')) {
             cursor++;
         }
-        if (cursor == start) {
+        အကယ်၍ (cursor == start) {
             continue;
         }
         Py_ssize_t encoding_len = cursor - start;
         // Include the longest recognized prefix and its NUL terminator.
-        char normalized[sizeof("iso-latin-1-")];
+        var_na normalized[parimaa_na("iso-latin-1-")];
         const Py_ssize_t prefix_len = Py_MIN(
-            encoding_len, (Py_ssize_t)sizeof(normalized) - 1);
+            encoding_len, (Py_ssize_t)parimaa_na(normalized) - 1);
         Py_ssize_t n;
-        for (n = 0; n < prefix_len; n++) {
+        အတွက် (n = 0; n < prefix_len; n++) {
             normalized[n] = start[n] == '_' ? '-' : Py_TOLOWER(start[n]);
         }
         normalized[n] = '\0';
-        const char *canonical = start;
-        if (strcmp(normalized, "utf-8") == 0 ||
-                strncmp(normalized, "utf-8-", sizeof("utf-8-") - 1) == 0) {
+        const var_na *canonical = start;
+        အကယ်၍ (strcmp(normalized, "utf-8") == 0 ||
+                strncmp(normalized, "utf-8-", parimaa_na("utf-8-") - 1) == 0) {
             canonical = "utf-8";
         }
-        else if (strcmp(normalized, "latin-1") == 0 ||
+        မဟုတ်ပါက အကယ်၍ (strcmp(normalized, "latin-1") == 0 ||
                  strcmp(normalized, "iso-8859-1") == 0 ||
                  strcmp(normalized, "iso-latin-1") == 0 ||
-                 strncmp(normalized, "latin-1-", sizeof("latin-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-8859-1-", sizeof("iso-8859-1-") - 1) == 0 ||
-                 strncmp(normalized, "iso-latin-1-", sizeof("iso-latin-1-") - 1) == 0) {
+                 strncmp(normalized, "latin-1-", parimaa_na("latin-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-8859-1-", parimaa_na("iso-8859-1-") - 1) == 0 ||
+                 strncmp(normalized, "iso-latin-1-", parimaa_na("iso-latin-1-") - 1) == 0) {
             canonical = "iso-8859-1";
         }
-        if (canonical != start) {
+        အကယ်၍ (canonical != start) {
             encoding_len = strlen(canonical);
         }
         *encoding = _PyTok_CopyBytes(canonical, encoding_len);
-        if (*encoding == NULL) {
-            return -1;
+        အကယ်၍ (*encoding == NULL) {
+            ပြန်ပေး -1;
         }
         *scan_next = 0;
-        return 0;
+        ပြန်ပေး 0;
     }
-    return 0;
+    ပြန်ပေး 0;
 }
 
 _PyTok_EncodingResult
-_PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
-                      const _PyTok_Chunk *second, int final,
+_PyTok_DetectEncoding(sa_nracanaa tok_state *tok, const _PyTok_Chunk *first,
+                      const _PyTok_Chunk *second, ကိန်းပြည့် final,
                       Py_ssize_t *bom_len)
 {
-    int bom = first->len >= UTF8_BOM_LENGTH &&
+    ကိန်းပြည့် bom = first->len >= UTF8_BOM_LENGTH &&
         memcmp(first->data, UTF8_BOM, UTF8_BOM_LENGTH) == 0;
     *bom_len = bom ? UTF8_BOM_LENGTH : 0;
 
-    char *cookie = NULL;
-    int scan_next = 0;
-    int cookie_line = 1;
-    const char *first_data = first->data + *bom_len;
+    var_na *cookie = NULL;
+    ကိန်းပြည့် scan_next = 0;
+    ကိန်းပြည့် cookie_line = 1;
+    const var_na *first_data = first->data + *bom_len;
     Py_ssize_t first_len = first->len - *bom_len;
-    if (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
-        return _PYTOK_ENCODING_ERROR;
+    အကယ်၍ (find_cookie(first_data, first_len, &cookie, &scan_next) < 0) {
+        ပြန်ပေး _PYTOK_ENCODING_ERROR;
     }
-    if (cookie == NULL && scan_next && second != NULL) {
-        if (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    အကယ်၍ (cookie == NULL && scan_next && second != NULL) {
+        အကယ်၍ (find_cookie(second->data, second->len, &cookie, &scan_next) < 0) {
+            ပြန်ပေး _PYTOK_ENCODING_ERROR;
         }
         cookie_line = 2;
     }
-    else if (cookie == NULL && scan_next && !final) {
-        return _PYTOK_ENCODING_NEED_SECOND_LINE;
+    မဟုတ်ပါက အကယ်၍ (cookie == NULL && scan_next && !final) {
+        ပြန်ပေး _PYTOK_ENCODING_NEED_SECOND_LINE;
     }
 
-    if (cookie == NULL) {
-        if (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return _PYTOK_ENCODING_ERROR;
+    အကယ်၍ (cookie == NULL) {
+        အကယ်၍ (bom && _PyTok_SetEncoding(tok, "utf-8") < 0) {
+            ပြန်ပေး _PYTOK_ENCODING_ERROR;
         }
-        return _PYTOK_ENCODING_DONE;
+        ပြန်ပေး _PYTOK_ENCODING_DONE;
     }
-    if (bom && strcmp(cookie, "utf-8") != 0) {
+    အကယ်၍ (bom && strcmp(cookie, "utf-8") != 0) {
         const _PyTok_Chunk *line = cookie_line == 2 ? second : first;
-        const char *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
+        const var_na *line_data = line->data + (cookie_line == 1 ? *bom_len : 0);
         Py_ssize_t line_len = line->len - (cookie_line == 1 ? *bom_len : 0);
-        int end_col = (int)Py_MIN(line_len, INT_MAX);
-        if (end_col > 0 && (line_data[end_col - 1] == '\n' ||
+        ကိန်းပြည့် end_col = (ကိန်းပြည့်)Py_MIN(line_len, INT_MAX);
+        အကယ်၍ (end_col > 0 && (line_data[end_col - 1] == '\n' ||
                             line_data[end_col - 1] == '\r')) {
             end_col--;
         }
@@ -243,117 +243,117 @@ _PyTok_DetectEncoding(struct tok_state *tok, const _PyTok_Chunk *first,
             tok, line_data, 0, cookie_line, 0, end_col,
             "encoding problem: %s with BOM", cookie);
         PyMem_Free(cookie);
-        return _PYTOK_ENCODING_ERROR;
+        ပြန်ပေး _PYTOK_ENCODING_ERROR;
     }
     PyMem_Free(tok->reader->encoding);
     tok->reader->encoding = cookie;
-    return _PYTOK_ENCODING_DONE;
+    ပြန်ပေး _PYTOK_ENCODING_DONE;
 }
 
-int
-_PyTok_DecodeOnce(struct tok_state *tok, _PyTok_Chunk *chunk,
-                  const char *encoding, const char *errors)
+ကိန်းပြည့်
+_PyTok_DecodeOnce(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk,
+                  const var_na *encoding, const var_na *errors)
 {
     PyObject *unicode = PyUnicode_Decode(
         chunk->data, chunk->len, encoding, errors);
-    if (unicode == NULL) {
+    အကယ်၍ (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ပြန်ပေး -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, 0);
+    ပြန်ပေး chunk_set_unicode(tok, chunk, unicode, 0);
 }
 
 static Py_ssize_t
-raw_line_length(const char *data, Py_ssize_t len)
+raw_line_length(const var_na *data, Py_ssize_t len)
 {
-    for (Py_ssize_t i = 0; i < len; i++) {
-        if (data[i] == '\n') {
-            return i + 1;
+    အတွက် (Py_ssize_t i = 0; i < len; i++) {
+        အကယ်၍ (data[i] == '\n') {
+            ပြန်ပေး i + 1;
         }
-        if (data[i] == '\r') {
-            return i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
+        အကယ်၍ (data[i] == '\r') {
+            ပြန်ပေး i + 1 < len && data[i + 1] == '\n' ? i + 2 : i + 1;
         }
     }
-    return len;
+    ပြန်ပေး len;
 }
 
-static int
-store_prepared_source(struct tok_state *tok, const char *data, Py_ssize_t len,
-                      int preserve_crlf, int add_final_newline)
+static ကိန်းပြည့်
+store_prepared_source(sa_nracanaa tok_state *tok, const var_na *data, Py_ssize_t len,
+                      ကိန်းပြည့် preserve_crlf, ကိန်းပြည့် add_final_newline)
 {
     Py_ssize_t pos = 0;
-    while (pos < len) {
+    နေစဉ် (pos < len) {
         Py_ssize_t raw_line_len;
-        if (preserve_crlf) {
-            const char *newline = memchr(data + pos, '\n', len - pos);
+        အကယ်၍ (preserve_crlf) {
+            const var_na *newline = memchr(data + pos, '\n', len - pos);
             raw_line_len = newline == NULL
                 ? len - pos : newline - data - pos + 1;
         }
-        else {
+        မဟုတ်ပါက {
             raw_line_len = raw_line_length(data + pos, len - pos);
         }
-        int terminated = preserve_crlf
+        ကိန်းပြည့် terminated = preserve_crlf
             ? data[pos + raw_line_len - 1] == '\n'
             : data[pos + raw_line_len - 1] == '\n' ||
               data[pos + raw_line_len - 1] == '\r';
-        int add_newline = add_final_newline &&
+        ကိန်းပြည့် add_newline = add_final_newline &&
             pos + raw_line_len == len && !terminated;
-        const char *line = data + pos;
+        const var_na *line = data + pos;
         // raw_line_length stops at the first CR or LF, so any CR is in
         // the line terminator.
         Py_ssize_t terminator_len = 0;
-        if (!preserve_crlf) {
-            if (line[raw_line_len - 1] == '\r') {
+        အကယ်၍ (!preserve_crlf) {
+            အကယ်၍ (line[raw_line_len - 1] == '\r') {
                 terminator_len = 1;
             }
-            else if (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
+            မဟုတ်ပါက အကယ်၍ (raw_line_len > 1 && line[raw_line_len - 2] == '\r') {
                 terminator_len = 2;
             }
         }
         _PyTok_Off appended;
-        if (terminator_len || add_newline) {
+        အကယ်၍ (terminator_len || add_newline) {
             appended = _PyTok_SourceAppendLineWithNewline(
                 &tok->source, line, raw_line_len - terminator_len);
         }
-        else {
+        မဟုတ်ပါက {
             appended = _PyTok_SourceAppendLine(&tok->source, line, raw_line_len);
         }
-        if (appended < 0) {
+        အကယ်၍ (appended < 0) {
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return -1;
+            ပြန်ပေး -1;
         }
         tok->reader->prepared_final_newline = add_newline;
         pos += raw_line_len;
     }
     // Partial input includes the newline submitted by the next Enter key.
     // A final CR pairs with that newline instead of starting a blank line.
-    if (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
+    အကယ်၍ (add_final_newline == _PyTokenizer_APPEND_NEWLINE &&
         !tok->reader->prepared_final_newline &&
         (len == 0 || data[len - 1] != '\r'))
     {
-        if (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
-            return -1;
+        အကယ်၍ (_PyTok_SourceAppendLine(&tok->source, "\n", 1) < 0) {
+            ပြန်ပေး -1;
         }
         tok->reader->prepared_final_newline = _PyTokenizer_APPEND_NEWLINE;
     }
-    return 0;
+    ပြန်ပေး 0;
 }
 
-int
-_PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
-                     int exec_input, int preserve_crlf)
+ကိန်းပြည့်
+_PyTok_PrepareString(sa_nracanaa tok_state *tok, const var_na *input, ကိန်းပြည့် utf8_only,
+                     ကိန်းပြည့် exec_input, ကိန်းပြည့် preserve_crlf)
 {
     Py_ssize_t raw_len = strlen(input);
-    char *raw = (char *)input;
+    var_na *raw = (var_na *)input;
 
-    if (utf8_only) {
-        if (_PyTok_SetEncoding(tok, "utf-8") < 0) {
-            return -1;
+    အကယ်၍ (utf8_only) {
+        အကယ်၍ (_PyTok_SetEncoding(tok, "utf-8") < 0) {
+            ပြန်ပေး -1;
         }
     }
-    else {
+    မဟုတ်ပါက {
         Py_ssize_t first_original_len = raw_line_length(raw, raw_len);
         _PyTok_Chunk first = {
             .data = raw,
@@ -361,8 +361,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
         _PyTok_Chunk second = {0};
-        int have_second = first_original_len < raw_len;
-        if (have_second) {
+        ကိန်းပြည့် have_second = first_original_len < raw_len;
+        အကယ်၍ (have_second) {
             second.data = raw + first_original_len;
             second.len = raw_line_length(second.data,
                                          raw_len - first_original_len);
@@ -370,8 +370,8 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         Py_ssize_t bom_len;
         _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
             tok, &first, have_second ? &second : NULL, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        အကယ်၍ (detection == _PYTOK_ENCODING_ERROR) {
+            ပြန်ပေး -1;
         }
         raw += bom_len;
         raw_len -= bom_len;
@@ -382,128 +382,128 @@ _PyTok_PrepareString(struct tok_state *tok, const char *input, int utf8_only,
         .len = raw_len,
         .ownership = _PYTOK_CHUNK_BORROWED,
     };
-    const char *encoding = tok->reader->encoding;
-    if (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
-        if (_PyTok_DecodeOnce(
+    const var_na *encoding = tok->reader->encoding;
+    အကယ်၍ (encoding != NULL && strcmp(encoding, "utf-8") != 0) {
+        အကယ်၍ (_PyTok_DecodeOnce(
                 tok, &decoded, encoding, NULL) < 0) {
-            return -1;
+            ပြန်ပေး -1;
         }
     }
 
-    int stored = store_prepared_source(
+    ကိန်းပြည့် stored = store_prepared_source(
         tok, decoded.data, decoded.len, preserve_crlf, exec_input);
     _PyTok_ChunkClear(&decoded);
-    if (stored < 0) {
-        return -1;
+    အကယ်၍ (stored < 0) {
+        ပြန်ပေး -1;
     }
-    if (!utf8_only &&
+    အကယ်၍ (!utf8_only &&
             (encoding == NULL || strcmp(encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(_PyTok_SourceData(&tok->source), tok, 1)) {
-        return -1;
+        ပြန်ပေး -1;
     }
-    return 0;
+    ပြန်ပေး 0;
 }
 
-int
-_PyTok_StartDecoder(struct tok_state *tok, const char *errors)
+ကိန်းပြည့်
+_PyTok_StartDecoder(sa_nracanaa tok_state *tok, const var_na *errors)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->encoding == NULL || reader->decoder != NULL) {
-        return 0;
+    အကယ်၍ (reader->encoding == NULL || reader->decoder != NULL) {
+        ပြန်ပေး 0;
     }
-    if (reader->kind == _PYTOK_READER_FILE &&
+    အကယ်၍ (reader->kind == _PYTOK_READER_FILE &&
             strcmp(reader->encoding, "utf-8") == 0) {
-        return 0;
+        ပြန်ပေး 0;
     }
 
     PyObject *codec = _PyCodec_LookupTextEncoding(reader->encoding, NULL);
-    if (codec != NULL) {
+    အကယ်၍ (codec != NULL) {
         reader->decoder = _PyCodecInfo_GetIncrementalDecoder(codec, errors);
         Py_DECREF(codec);
     }
-    if (reader->decoder == NULL) {
+    အကယ်၍ (reader->decoder == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        အကယ်၍ (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        ပြန်ပေး -1;
     }
-    return 0;
+    ပြန်ပေး 0;
 }
 
-int
-_PyTok_DecodeChunk(struct tok_state *tok, _PyTok_Chunk *chunk, int final)
+ကိန်းပြည့်
+_PyTok_DecodeChunk(sa_nracanaa tok_state *tok, _PyTok_Chunk *chunk, ကိန်းပြည့် final)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder == NULL) {
-        return 0;
+    အကယ်၍ (reader->decoder == NULL) {
+        ပြန်ပေး 0;
     }
-    int strip_bom = reader->kind == _PYTOK_READER_READLINE &&
+    ကိန်းပြည့် strip_bom = reader->kind == _PYTOK_READER_READLINE &&
         chunk->len >= UTF16_BOM_LENGTH &&
         (memcmp(chunk->data, UTF16_LE_BOM, UTF16_BOM_LENGTH) == 0 ||
          memcmp(chunk->data, UTF16_BE_BOM, UTF16_BOM_LENGTH) == 0);
     PyObject *input;
-    if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
+    အကယ်၍ (chunk->ownership == _PYTOK_CHUNK_PYOBJECT &&
             PyBytes_Check(chunk->owner) &&
             chunk->data == PyBytes_AS_STRING(chunk->owner)) {
         input = Py_NewRef(chunk->owner);
     }
-    else {
+    မဟုတ်ပါက {
         input = PyBytes_FromStringAndSize(chunk->data, chunk->len);
     }
-    if (input == NULL) {
+    အကယ်၍ (input == NULL) {
         tok->done = E_NOMEM;
-        return -1;
+        ပြန်ပေး -1;
     }
     PyObject *unicode = PyObject_CallMethodObjArgs(
         reader->decoder, &_Py_ID(decode), input,
         final ? Py_True : Py_False, NULL);
     Py_DECREF(input);
-    if (unicode == NULL) {
+    အကယ်၍ (unicode == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        if (reader->kind == _PYTOK_READER_FILE) {
+        အကယ်၍ (reader->kind == _PYTOK_READER_FILE) {
             _PyTokenizer_raise_init_error(
                 tok->filename != NULL ? tok->filename : Py_None);
         }
-        return -1;
+        ပြန်ပေး -1;
     }
-    if (!PyUnicode_Check(unicode)) {
+    အကယ်၍ (!PyUnicode_Check(unicode)) {
         PyErr_Format(PyExc_TypeError,
                      "decoder should return a string result, not '%.200s'",
                      Py_TYPE(unicode)->tp_name);
         Py_DECREF(unicode);
         tok->done = E_DECODE;
-        return -1;
+        ပြန်ပေး -1;
     }
-    return chunk_set_unicode(tok, chunk, unicode, strip_bom);
+    ပြန်ပေး chunk_set_unicode(tok, chunk, unicode, strip_bom);
 }
 
-int
-_PyTok_DecoderHasBufferedInput(struct tok_state *tok)
+ကိန်းပြည့်
+_PyTok_DecoderHasBufferedInput(sa_nracanaa tok_state *tok)
 {
-    if (tok->reader->decoder == NULL) {
-        return 0;
+    အကယ်၍ (tok->reader->decoder == NULL) {
+        ပြန်ပေး 0;
     }
     PyObject *state = PyObject_CallMethodNoArgs(
         tok->reader->decoder, &_Py_ID(getstate));
-    if (state == NULL) {
+    အကယ်၍ (state == NULL) {
         tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
             ? E_NOMEM : E_DECODE;
-        return -1;
+        ပြန်ပေး -1;
     }
-    if (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
+    အကယ်၍ (!PyTuple_Check(state) || PyTuple_GET_SIZE(state) != 2 ||
             !PyBytes_Check(PyTuple_GET_ITEM(state, 0)) ||
             !PyLong_Check(PyTuple_GET_ITEM(state, 1))) {
         Py_DECREF(state);
         PyErr_SetString(PyExc_TypeError,
                         "incremental decoder getstate() must return (bytes, int)");
         tok->done = E_DECODE;
-        return -1;
+        ပြန်ပေး -1;
     }
-    int pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
+    ကိန်းပြည့် pending = PyBytes_GET_SIZE(PyTuple_GET_ITEM(state, 0)) != 0;
     Py_DECREF(state);
-    return pending;
+    ပြန်ပေး pending;
 }
