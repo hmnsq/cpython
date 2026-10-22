@@ -1,42 +1,42 @@
-#include "Python.h"
+#شامل "Python.h"
 
-#include "pegen.h"
+#شامل "pegen.h"
 
 mod_ty
-_PyParser_ASTFromString(const char *str, PyObject* filename, int mode,
+_PyParser_ASTFromString(ثابت حرف *str, PyObject* filename, صحیح منوال,
                         PyCompilerFlags *flags, PyArena *arena,
                         PyObject *module, PyObject **incomplete)
 {
-    if (PySys_Audit("compile", "yO", str, filename) < 0) {
-        return NULL;
+    اگر (PySys_Audit("compile", "yO", str, filename) < 0) {
+        واپس تہی;
     }
 
-    mod_ty result = _PyPegen_run_parser_from_string(str, mode, filename, flags,
+    mod_ty نتیجہ = Py_Pegen_تسلسل_parser_from_string(str, منوال, filename, flags,
                                                     arena, module, incomplete);
-    return result;
+    واپس نتیجہ;
 }
 
 mod_ty
-_PyParser_ASTFromFile(FILE *fp, PyObject *filename_ob, const char *enc,
-                      int mode, const char *ps1, const char* ps2,
-                      PyCompilerFlags *flags, int *errcode, PyArena *arena)
+_PyParser_ASTFromFile(FILE *fp, PyObject *filename_ob, ثابت حرف *enc,
+                      صحیح منوال, ثابت حرف *ps1, ثابت حرف* ps2,
+                      PyCompilerFlags *flags, صحیح *errcode, PyArena *arena)
 {
-    if (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
-        return NULL;
+    اگر (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
+        واپس تہی;
     }
-    return _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
-                                        flags, errcode, NULL, arena);
+    واپس Py_Pegen_تسلسل_parser_from_file_اشارہ_گر(fp, منوال, filename_ob, enc, ps1, ps2,
+                                        flags, errcode, تہی, arena);
 }
 
 mod_ty
-_PyParser_InteractiveASTFromFile(FILE *fp, PyObject *filename_ob, const char *enc,
-                                 int mode, const char *ps1, const char* ps2,
-                                 PyCompilerFlags *flags, int *errcode,
+_PyParser_InteractiveASTFromFile(FILE *fp, PyObject *filename_ob, ثابت حرف *enc,
+                                 صحیح منوال, ثابت حرف *ps1, ثابت حرف* ps2,
+                                 PyCompilerFlags *flags, صحیح *errcode,
                                  PyObject **interactive_src, PyArena *arena)
 {
-    if (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
-        return NULL;
+    اگر (PySys_Audit("compile", "OO", Py_None, filename_ob) < 0) {
+        واپس تہی;
     }
-    return _PyPegen_run_parser_from_file_pointer(fp, mode, filename_ob, enc, ps1, ps2,
+    واپس Py_Pegen_تسلسل_parser_from_file_اشارہ_گر(fp, منوال, filename_ob, enc, ps1, ps2,
                                                  flags, errcode, interactive_src, arena);
 }

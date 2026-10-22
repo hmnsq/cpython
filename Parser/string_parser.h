@@ -1,11 +1,11 @@
-#ifndef STRINGS_H
-#define STRINGS_H
+#اگر_غیر_تعریف_شدہ لڑیاں_H
+#تعریف_کرو لڑیاں_H
 
-#include <Python.h>
-#include <pycore_ast.h>
-#include "pegen.h"
+#شامل <Python.h>
+#شامل <pycore_ast.h>
+#شامل "pegen.h"
 
 PyObject *_PyPegen_parse_string(Parser *, Token *);
-PyObject *_PyPegen_decode_string(Parser *, int, const char *, size_t, Token *);
+PyObject *_PyPegen_decode_string(Parser *, صحیح, ثابت حرف *, سائز_t, Token *);
 
-#endif
+#اگر_ختم

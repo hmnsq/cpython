@@ -1,84 +1,84 @@
-#ifndef Py_TOKENIZER_SOURCE_H
-#define Py_TOKENIZER_SOURCE_H
+#اگر_غیر_تعریف_شدہ Py_TOKENIZER_ماخذ_H
+#تعریف_کرو Py_TOKENIZER_ماخذ_H
 
-#include "Python.h"
+#شامل "Python.h"
 
-#include "types.h"
+#شامل "types.h"
 
-typedef struct {
-    char *bytes;
-    _PyTok_Off base_offset;
+قسمتعریف ساخت {
+    حرف *بائٹیں;
+    _PyTok_Off بنیاد_انحراف;
     _PyTok_Off len;
     _PyTok_Off cap;
-    int nlines;
-} _PyTok_SourceText;
+    صحیح nlines;
+} Py_Tok_ماخذ_متن;
 
-static inline const char *
-_PyTok_SourceData(const _PyTok_SourceText *source)
+ساکن اندرونی ثابت حرف *
+Py_Tok_ماخذ_ڈیٹا(ثابت Py_Tok_ماخذ_متن *ماخذ)
 {
-    return source->bytes != NULL ? source->bytes : "";
+    واپس ماخذ->بائٹیں != تہی ? ماخذ->بائٹیں : "";
 }
 
 /* Convert positions within the retained source window. Pointers and views
    are borrowed; append, discard, and clear invalidate them. */
-static inline const char *
-_PyTok_SourcePointer(const _PyTok_SourceText *source, _PyTok_Off offset)
+ساکن اندرونی ثابت حرف *
+Py_Tok_ماخذ_اشارہ_گر(ثابت Py_Tok_ماخذ_متن *ماخذ, _PyTok_Off انحراف)
 {
-    assert(offset >= source->base_offset);
-    assert(offset - source->base_offset <= source->len);
-    return _PyTok_SourceData(source) + (offset - source->base_offset);
+    أكد(انحراف >= ماخذ->بنیاد_انحراف);
+    أكد(انحراف - ماخذ->بنیاد_انحراف <= ماخذ->len);
+    واپس Py_Tok_ماخذ_ڈیٹا(ماخذ) + (انحراف - ماخذ->بنیاد_انحراف);
 }
 
-static inline unsigned char
-_PyTok_SourceByte(const _PyTok_SourceText *source, _PyTok_Off offset)
+ساکن اندرونی غیرعلامتی حرف
+Py_Tok_ماخذ_Byte(ثابت Py_Tok_ماخذ_متن *ماخذ, _PyTok_Off انحراف)
 {
-    assert(offset >= source->base_offset);
-    assert(offset - source->base_offset < source->len);
-    return (unsigned char)source->bytes[offset - source->base_offset];
+    أكد(انحراف >= ماخذ->بنیاد_انحراف);
+    أكد(انحراف - ماخذ->بنیاد_انحراف < ماخذ->len);
+    واپس (غیرعلامتی حرف)ماخذ->بائٹیں[انحراف - ماخذ->بنیاد_انحراف];
 }
 
-static inline const char *
-_PyTok_SourceSpanView(const _PyTok_SourceText *source, _PyTok_Span span,
-                      Py_ssize_t *length)
+ساکن اندرونی ثابت حرف *
+Py_Tok_ماخذ_وسعت_View(ثابت Py_Tok_ماخذ_متن *ماخذ, Py_Tok_وسعت وسعت,
+                      Py_ssize_t *لمبائی_2)
 {
-    assert(length != NULL);
-    assert(_PyTok_SpanIsValid(span));
-    assert(span.end - source->base_offset <= source->len);
-    *length = span.end - span.start;
-    return _PyTok_SourcePointer(source, span.start);
+    أكد(لمبائی_2 != تہی);
+    أكد(Py_Tok_وسعت_Is_Valid(وسعت));
+    أكد(وسعت.انتہا - ماخذ->بنیاد_انحراف <= ماخذ->len);
+    *لمبائی_2 = وسعت.انتہا - وسعت.آغاز;
+    واپس Py_Tok_ماخذ_اشارہ_گر(ماخذ, وسعت.آغاز);
 }
 
 /* Return the first matching offset within span, or -1 if absent. */
-static inline _PyTok_Off
-_PyTok_SourceFindByte(const _PyTok_SourceText *source, _PyTok_Span span,
-                      int byte)
+ساکن اندرونی _PyTok_Off
+Py_Tok_ماخذ_ڈھونڈو_Byte(ثابت Py_Tok_ماخذ_متن *ماخذ, Py_Tok_وسعت وسعت,
+                      صحیح byte)
 {
-    Py_ssize_t length;
-    const char *data = _PyTok_SourceSpanView(source, span, &length);
-    const char *found = memchr(data, byte, length);
-    return found != NULL ? span.start + (found - data) : -1;
+    Py_ssize_t لمبائی_2;
+    ثابت حرف *ڈیٹا = Py_Tok_ماخذ_وسعت_View(ماخذ, وسعت, &لمبائی_2);
+    ثابت حرف *ملا = memchr(ڈیٹا, byte, لمبائی_2);
+    واپس ملا != تہی ? وسعت.آغاز + (ملا - ڈیٹا) : -1;
 }
 
-PyAPI_FUNC(void) _PyTok_SourceInit(_PyTok_SourceText *);
+PyAPI_FUNC(خالی) Py_Tok_ماخذ_Init(Py_Tok_ماخذ_متن *);
 /* Clear invalidates all spans and views for the source. */
-PyAPI_FUNC(void) _PyTok_SourceClear(_PyTok_SourceText *);
+PyAPI_FUNC(خالی) Py_Tok_ماخذ_Clear(Py_Tok_ماخذ_متن *);
 /* Discard the retained window and invalidate its spans and views.
    Keep its allocation and advance the logical base to the end of the window. */
-PyAPI_FUNC(void) _PyTok_SourceDiscard(_PyTok_SourceText *);
+PyAPI_FUNC(خالی) Py_Tok_ماخذ_Discard(Py_Tok_ماخذ_متن *);
 /* Append one nonempty logical line and return its start offset. The input may
    contain one newline, as its final byte. An unterminated line must be the
    final line. The input must not point into source storage. */
-PyAPI_FUNC(_PyTok_Off) _PyTok_SourceAppendLine(
-    _PyTok_SourceText *source, const char *bytes, Py_ssize_t len);
+PyAPI_FUNC(_PyTok_Off) Py_Tok_ماخذ_Append_سطر(
+    Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں, Py_ssize_t len);
 /* Append a line payload followed by '\n'. The payload may be empty and must
    contain no newline. Other SourceAppendLine constraints still apply. */
-PyAPI_FUNC(_PyTok_Off) _PyTok_SourceAppendLineWithNewline(
-    _PyTok_SourceText *source, const char *bytes, Py_ssize_t len);
+PyAPI_FUNC(_PyTok_Off) Py_Tok_ماخذ_Append_سطر_With_Newline(
+    Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں, Py_ssize_t len);
 /* Return borrowed bytes excluding '\n', writing the byte length to *len.
    Line numbers are 1-based and clamp to the first or final line; a trailing
    '\n' adds an empty final line. The view need not be NUL-terminated.
    This does not set an exception. Append, discard, and clear invalidate the view. */
-PyAPI_FUNC(const char *) _PyTok_SourceLineView(
-    const _PyTok_SourceText *source, Py_ssize_t lineno, Py_ssize_t *len);
+PyAPI_FUNC(ثابت حرف *) Py_Tok_ماخذ_سطر_View(
+    ثابت Py_Tok_ماخذ_متن *ماخذ, Py_ssize_t lineno, Py_ssize_t *len);
 
-#endif
+#اگر_ختم

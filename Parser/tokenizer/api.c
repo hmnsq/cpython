@@ -1,99 +1,99 @@
-#include "Python.h"
-#include "errcode.h"
-#include "pycore_token.h"
+#شامل "Python.h"
+#شامل "errcode.h"
+#شامل "pycore_token.h"
 
-#include "tokenizer.h"
-#include "reader.h"
-#include "reader_internal.h"
-#include "../lexer/state.h"
+#شامل "tokenizer.h"
+#شامل "reader.h"
+#شامل "reader_internal.h"
+#شامل "../lexer/state.h"
 
-int
-_PyTokenizer_GetStatus(const struct tok_state *tok)
+صحیح
+Py_Tokenizer_Get_حالت(ثابت ساخت tok_state *tok)
 {
-    return tok->done;
+    واپس tok->مکمل;
 }
 
-int
-_PyTokenizer_GetNewlineRequirements(const struct tok_state *tok)
+صحیح
+_PyTokenizer_GetNewlineRequirements(ثابت ساخت tok_state *tok)
 {
-    return tok->needs_newline;
+    واپس tok->needs_newline;
 }
 
 _PyTokenizer_Info
-_PyTokenizer_GetInfo(const struct tok_state *tok)
+_PyTokenizer_GetInfo(ثابت ساخت tok_state *tok)
 {
     _PyTokenizer_Info info = {
-        .status = tok->done,
+        .حالت_2 = tok->مکمل,
         .implicit_newline = tok->implicit_newline,
         .diagnostic = tok->diagnostic,
-        .location = {tok->lineno, tok->line_start < 0
-            ? -1 : (int)(tok->cur - tok->line_start)},
+        .location = {tok->lineno, tok->سطر_آغاز < 0
+            ? -1 : (صحیح)(tok->cur - tok->سطر_آغاز)},
         .cursor = tok->cur,
-        .input_span = {tok->buf_offset, tok->inp},
-        .line_span = {tok->line_start, tok->inp},
+        .داخلہ_وسعت = {tok->buf_انحراف, tok->inp},
+        .سطر_وسعت = {tok->سطر_آغاز, tok->inp},
         .level = tok->level,
         .delimiter_loc = {-1, -1},
-        .in_formatted_string = tok->ftstring_depth != 0,
+        .اندر_formatted_string = tok->ftstring_گہرائی != 0,
         .is_interactive = _PyTok_ReaderIsInteractive(tok),
-        .is_file = tok->reader->fp != NULL && tok->reader->fp != stdin,
+        .is_file = tok->reader->fp != تہی && tok->reader->fp != stdin,
         .filename = tok->filename,
         .module = tok->module,
         .encoding = tok->reader->encoding,
     };
-    if (tok->level > 0) {
-        int level = tok->level - 1;
+    اگر (tok->level > 0) {
+        صحیح level = tok->level - 1;
         info.delimiter = tok->parenstack[level];
         info.delimiter_loc = (_PyTok_Loc){
             tok->parenlinenostack[level], tok->parencolstack[level]};
     }
-    return info;
+    واپس info;
 }
 
-const char *
-_PyToken_TextView(const struct tok_state *tok, const struct token *token,
-                  Py_ssize_t *length)
+ثابت حرف *
+Py_Token_متن_View(ثابت ساخت tok_state *tok, ثابت ساخت token *token,
+                  Py_ssize_t *لمبائی_2)
 {
-    assert(length != NULL);
-    if (token->span.start < 0) {
-        assert(token->span.start == -1 && token->span.end == -1);
-        *length = 0;
-        return "";
+    أكد(لمبائی_2 != تہی);
+    اگر (token->وسعت.آغاز < 0) {
+        أكد(token->وسعت.آغاز == -1 && token->وسعت.انتہا == -1);
+        *لمبائی_2 = 0;
+        واپس "";
     }
-    return _PyTok_SourceSpanView(&tok->source, token->span, length);
+    واپس Py_Tok_ماخذ_وسعت_View(&tok->ماخذ, token->وسعت, لمبائی_2);
 }
 
-const char *
-_PyTokenizer_SpanView(const struct tok_state *tok, _PyTok_Span span,
-                      Py_ssize_t *length)
+ثابت حرف *
+Py_Tokenizer_وسعت_View(ثابت ساخت tok_state *tok, Py_Tok_وسعت وسعت,
+                      Py_ssize_t *لمبائی_2)
 {
-    return _PyTok_SourceSpanView(&tok->source, span, length);
+    واپس Py_Tok_ماخذ_وسعت_View(&tok->ماخذ, وسعت, لمبائی_2);
 }
 
-void
-_PyToken_GetView(const struct tok_state *tok, const struct token *token,
+خالی
+_PyToken_GetView(ثابت ساخت tok_state *tok, ثابت ساخت token *token,
                  _PyToken_View *view)
 {
-    assert(view != NULL);
-    view->text = _PyToken_TextView(tok, token, &view->length);
-    view->end_line_start = tok->line_start;
-    view->line_span = (_PyTok_Span){
+    أكد(view != تہی);
+    view->متن = Py_Token_متن_View(tok, token, &view->لمبائی_2);
+    view->انتہا_سطر_آغاز = tok->سطر_آغاز;
+    view->سطر_وسعت = (Py_Tok_وسعت){
         ISSTRINGLIT(token->type)
-            ? token->span.start - token->start_loc.byte_col : tok->line_start,
+            ? token->وسعت.آغاز - token->آغاز_loc.byte_ستون : tok->سطر_آغاز,
         tok->inp,
     };
     view->implicit_newline = tok->implicit_newline;
-    view->at_eof = tok->done == E_EOF;
+    view->at_eof = tok->مکمل == E_EOF;
 }
 
-const char *
-_PyTokenizer_LineView(const struct tok_state *tok, Py_ssize_t lineno,
-                      Py_ssize_t *length)
+ثابت حرف *
+Py_Tokenizer_سطر_View(ثابت ساخت tok_state *tok, Py_ssize_t lineno,
+                      Py_ssize_t *لمبائی_2)
 {
-    return _PyTok_SourceLineView(&tok->source, lineno, length);
+    واپس Py_Tok_ماخذ_سطر_View(&tok->ماخذ, lineno, لمبائی_2);
 }
 
-void
-_PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
+خالی
+Py_Tokenizer_سیٹ_Context(ساخت tok_state *tok, PyObject *filename,
                         PyObject *module)
 {
     Py_XINCREF(filename);
@@ -102,61 +102,61 @@ _PyTokenizer_SetContext(struct tok_state *tok, PyObject *filename,
     Py_XSETREF(tok->module, module);
 }
 
-void
-_PyTokenizer_SetOptions(struct tok_state *tok, int extra_tokens,
-                        int type_comments)
+خالی
+Py_Tokenizer_سیٹ_Options(ساخت tok_state *tok, صحیح extra_علامات,
+                        صحیح type_comments)
 {
-    tok->tok_extra_tokens = extra_tokens;
+    tok->tok_extra_علامات = extra_علامات;
     tok->type_comments = type_comments;
 }
 
-void
-_PyTokenizer_ImplyDedents(struct tok_state *tok)
+خالی
+_PyTokenizer_ImplyDedents(ساخت tok_state *tok)
 {
     _PyLexer_ImplyDedents(tok);
 }
 
-void
-_PyTokenizer_AllowIncompleteInput(struct tok_state *tok, int allow)
+خالی
+Py_Tokenizer_Allow_Incomplete_داخلہ(ساخت tok_state *tok, صحیح allow)
 {
-    tok->allow_incomplete_input = allow != 0;
+    tok->allow_incomplete_داخلہ = allow != 0;
 }
 
-int
-_PyTokenizer_HasTrailingStatement(const struct tok_state *tok)
+صحیح
+_PyTokenizer_HasTrailingStatement(ثابت ساخت tok_state *tok)
 {
     _PyTok_Off cur = tok->cur;
-    _PyTok_Off end = tok->source.base_offset + tok->source.len;
-    while (cur < end) {
-        int c = _PyTok_SourceByte(&tok->source, cur++);
-        if (c == '\0') {
-            return 0;
+    _PyTok_Off انتہا = tok->ماخذ.بنیاد_انحراف + tok->ماخذ.len;
+    جب (cur < انتہا) {
+        صحیح c = Py_Tok_ماخذ_Byte(&tok->ماخذ, cur++);
+        اگر (c == '\0') {
+            واپس 0;
         }
-        if (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
-            continue;
+        اگر (c == ' ' || c == '\t' || c == '\n' || c == '\014') {
+            جاری;
         }
-        if (c != '#') {
-            return 1;
+        اگر (c != '#') {
+            واپس 1;
         }
-        while (cur < end) {
-            c = _PyTok_SourceByte(&tok->source, cur);
-            if (c == '\0' || c == '\n') {
-                break;
+        جب (cur < انتہا) {
+            c = Py_Tok_ماخذ_Byte(&tok->ماخذ, cur);
+            اگر (c == '\0' || c == '\n') {
+                توڑو;
             }
             cur++;
         }
     }
-    return 0;
+    واپس 0;
 }
 
-int
-_PyTokenizer_IsInteractive(const struct tok_state *tok)
+صحیح
+_PyTokenizer_IsInteractive(ثابت ساخت tok_state *tok)
 {
-    return _PyTok_ReaderIsInteractive(tok);
+    واپس _PyTok_ReaderIsInteractive(tok);
 }
 
-void
-_PyTokenizer_StopInteractive(struct tok_state *tok)
+خالی
+_PyTokenizer_StopInteractive(ساخت tok_state *tok)
 {
     _PyTok_ReaderStopInteractive(tok);
 }

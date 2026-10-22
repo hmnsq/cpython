@@ -1,87 +1,87 @@
-#ifndef Py_TOKENIZER_READER_INTERNAL_H
-#define Py_TOKENIZER_READER_INTERNAL_H
+#اگر_غیر_تعریف_شدہ Py_TOKENIZER_READER_اندرونی_H
+#تعریف_کرو Py_TOKENIZER_READER_اندرونی_H
 
-#include "Python.h"
+#شامل "Python.h"
 
-#define _PYTOK_ENCODING_COOKIE_MAX_LINES 2
+#تعریف_کرو PYTOK_ENCODING_COOKIE_MAX_سطریں 2
 
-typedef enum {
+قسمتعریف شمار {
     _PYTOK_READER_PREPARED,
     _PYTOK_READER_FILE,
     _PYTOK_READER_READLINE,
     _PYTOK_READER_INTERACTIVE,
-} _PyTok_ReaderKind;
+} Py_Tok_Reader_قسم;
 
-typedef enum {
-    _PYTOK_READ_LINE,
+قسمتعریف شمار {
+    PYTOK_READ_سطر,
     _PYTOK_READ_EOF,
     _PYTOK_READ_STOPPED,
-    _PYTOK_READ_INTERRUPT,
+    PYTOK_READ_مداخلت,
     _PYTOK_READ_ERROR,
-} _PyTok_ReadResult;
+} Py_Tok_Read_نتیجہ;
 
-typedef enum {
+قسمتعریف شمار {
     _PYTOK_ENCODING_ERROR = -1,
-    _PYTOK_ENCODING_DONE,
-    _PYTOK_ENCODING_NEED_SECOND_LINE,
-} _PyTok_EncodingResult;
+    PYTOK_ENCODING_مکمل,
+    PYTOK_ENCODING_NEED_دوسرا_سطر,
+} Py_Tok_Encoding_نتیجہ;
 
-typedef enum {
+قسمتعریف شمار {
     _PYTOK_CHUNK_BORROWED,
     _PYTOK_CHUNK_PYMEM,
     _PYTOK_CHUNK_PYOBJECT,
 } _PyTok_ChunkOwnership;
 
-typedef struct {
-    char *data;
+قسمتعریف ساخت {
+    حرف *ڈیٹا;
     PyObject *owner;
     Py_ssize_t len;
     _PyTok_ChunkOwnership ownership;
-    unsigned char implicit_newline;
+    غیرعلامتی حرف implicit_newline;
 } _PyTok_Chunk;
 
-typedef struct _PyTok_Reader {
+قسمتعریف ساخت _PyTok_Reader {
     FILE *fp;  // Borrowed input stream; NULL for string and readline input.
-    char *encoding;  // Owned source encoding.
+    حرف *encoding;  // Owned source encoding.
     PyObject *readline;
     PyObject *decoder;
-    const char *prompt;
-    const char *nextprompt;
+    ثابت حرف *prompt;
+    ثابت حرف *nextprompt;
 
-    char *file_buffer;
-    Py_ssize_t file_buffer_cap;
-    _PyTok_Chunk prefetched_lines[_PYTOK_ENCODING_COOKIE_MAX_LINES];
+    حرف *file_بفر;
+    Py_ssize_t file_بفر_cap;
+    _PyTok_Chunk prefetched_سطریں[PYTOK_ENCODING_COOKIE_MAX_سطریں];
 
-    char *decoded;
+    حرف *decoded;
     Py_ssize_t decoded_pos;
-    Py_ssize_t decoded_scan;  // First byte not yet scanned for a newline.
+    Py_ssize_t decoded_جائزہ;  // First byte not yet scanned for a newline.
     Py_ssize_t decoded_len;
     Py_ssize_t decoded_cap;
-    _PyTok_ReaderKind kind;
-    unsigned char prepared_final_newline;  // _PyTokenizer_Newline
-    unsigned char decoded_tail_is_implicit;
-    unsigned char file_initialized;
-    unsigned char file_eof;
-    unsigned char decoder_finalized;
-    unsigned char stop_interactive;
+    Py_Tok_Reader_قسم قسم;
+    غیرعلامتی حرف prepared_final_newline;  // _PyTokenizer_Newline
+    غیرعلامتی حرف decoded_دم_is_implicit;
+    غیرعلامتی حرف file_initialized;
+    غیرعلامتی حرف file_eof;
+    غیرعلامتی حرف decoder_finalized;
+    غیرعلامتی حرف stop_interactive;
 } _PyTok_Reader;
 
-struct tok_state;
+ساخت tok_state;
 
 // On failure, the buffer and capacity are unchanged.
-int _PyTok_ReserveBuffer(char **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
-char *_PyTok_CopyBytes(const char *, Py_ssize_t);
-int _PyTok_DecodeOnce(
-    struct tok_state *, _PyTok_Chunk *, const char *, const char *);
-char *_PyTok_NormalizeNewlines(const char *, Py_ssize_t, Py_ssize_t *);
-void _PyTok_ChunkClear(_PyTok_Chunk *);
-int _PyTok_SetEncoding(struct tok_state *, const char *);
-_PyTok_EncodingResult _PyTok_DetectEncoding(
-    struct tok_state *, const _PyTok_Chunk *, const _PyTok_Chunk *, int,
+صحیح Py_Tok_Reserve_بفر(حرف **, Py_ssize_t *, Py_ssize_t, Py_ssize_t);
+حرف *Py_Tok_Copy_بائٹیں(ثابت حرف *, Py_ssize_t);
+صحیح _PyTok_DecodeOnce(
+    ساخت tok_state *, _PyTok_Chunk *, ثابت حرف *, ثابت حرف *);
+حرف *_PyTok_NormalizeNewlines(ثابت حرف *, Py_ssize_t, Py_ssize_t *);
+خالی _PyTok_ChunkClear(_PyTok_Chunk *);
+صحیح Py_Tok_سیٹ_Encoding(ساخت tok_state *, ثابت حرف *);
+Py_Tok_Encoding_نتیجہ _PyTok_DetectEncoding(
+    ساخت tok_state *, ثابت _PyTok_Chunk *, ثابت _PyTok_Chunk *, صحیح,
     Py_ssize_t *);
-int _PyTok_PrepareString(struct tok_state *, const char *, int, int, int);
-int _PyTok_StartDecoder(struct tok_state *, const char *);
-int _PyTok_DecodeChunk(struct tok_state *, _PyTok_Chunk *, int);
-int _PyTok_DecoderHasBufferedInput(struct tok_state *);
+صحیح _PyTok_PrepareString(ساخت tok_state *, ثابت حرف *, صحیح, صحیح, صحیح);
+صحیح Py_Tok_آغاز_Decoder(ساخت tok_state *, ثابت حرف *);
+صحیح _PyTok_DecodeChunk(ساخت tok_state *, _PyTok_Chunk *, صحیح);
+صحیح Py_Tok_Decoder_Has_Buffered_داخلہ(ساخت tok_state *);
 
-#endif
+#اگر_ختم

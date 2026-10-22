@@ -1,99 +1,99 @@
-#include "Python.h"
-#include "pycore_token.h"
-#include "errcode.h"
+#شامل "Python.h"
+#شامل "pycore_token.h"
+#شامل "errcode.h"
 
-#include "state.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#شامل "state.h"
+#شامل "../tokenizer/helpers.h"
+#شامل "../tokenizer/reader.h"
 
 ftstring_state *
-_PyLexer_PushFTString(struct tok_state *tok)
+Py_Lexer_ڈالو_FTString(ساخت tok_state *tok)
 {
-    assert(tok->ftstring_depth >= 0 && tok->ftstring_depth <= tok->ftstring_capacity);
-    int next_depth = tok->ftstring_depth + 1;
-    if (next_depth >= MAXFTSTRINGLEVEL) {
+    أكد(tok->ftstring_گہرائی >= 0 && tok->ftstring_گہرائی <= tok->ftstring_استعداد);
+    صحیح اگلا_گہرائی = tok->ftstring_گہرائی + 1;
+    اگر (اگلا_گہرائی >= MAXFTSTRINGLEVEL) {
         _PyTokenizer_syntaxerror(
             tok, "too many nested f-strings or t-strings");
-        return NULL;
+        واپس تہی;
     }
-    if (tok->ftstring_depth == tok->ftstring_capacity) {
-        int capacity = Py_MIN(Py_MAX(tok->ftstring_capacity * 2, 4),
+    اگر (tok->ftstring_گہرائی == tok->ftstring_استعداد) {
+        صحیح استعداد = Py_MIN(Py_MAX(tok->ftstring_استعداد * 2, 4),
                               MAXFTSTRINGLEVEL);
-        size_t size = (size_t)capacity * sizeof(*tok->ftstring_stack);
-        ftstring_state *stack;
-        if (tok->ftstring_stack == tok->ftstring_stack_inline) {
-            stack = PyMem_Malloc(size);
-            if (stack != NULL) {
-                memcpy(stack, tok->ftstring_stack,
-                       (size_t)tok->ftstring_depth * sizeof(*stack));
+        سائز_t سائز = (سائز_t)استعداد * حجم(*tok->ftstring_ڈھیر);
+        ftstring_state *ڈھیر;
+        اگر (tok->ftstring_ڈھیر == tok->ftstring_ڈھیر_inline) {
+            ڈھیر = PyMem_Malloc(سائز);
+            اگر (ڈھیر != تہی) {
+                حافظہ_نقل(ڈھیر, tok->ftstring_ڈھیر,
+                       (سائز_t)tok->ftstring_گہرائی * حجم(*ڈھیر));
             }
         }
-        else {
-            stack = PyMem_Realloc(tok->ftstring_stack, size);
+        ورنہ {
+            ڈھیر = PyMem_Realloc(tok->ftstring_ڈھیر, سائز);
         }
-        if (stack == NULL) {
-            PyErr_NoMemory();
-            tok->done = E_NOMEM;
-            return NULL;
+        اگر (ڈھیر == تہی) {
+            Py_Err_No_حافظہ();
+            tok->مکمل = E_NOMEM;
+            واپس تہی;
         }
-        tok->ftstring_stack = stack;
-        tok->ftstring_capacity = capacity;
+        tok->ftstring_ڈھیر = ڈھیر;
+        tok->ftstring_استعداد = استعداد;
     }
-    ftstring_state *state = &tok->ftstring_stack[tok->ftstring_depth];
-    tok->ftstring_depth = next_depth;
+    ftstring_state *state = &tok->ftstring_ڈھیر[tok->ftstring_گہرائی];
+    tok->ftstring_گہرائی = اگلا_گہرائی;
     *state = (ftstring_state){0};
-    return state;
+    واپس state;
 }
 
-void
-_PyLexer_PopFTString(struct tok_state *tok)
+خالی
+Py_Lexer_نکالو_FTString(ساخت tok_state *tok)
 {
     ftstring_state *state = _PyLexer_CurrentFTString(tok);
-    assert(state != NULL);
+    أكد(state != تہی);
     PyMem_Free(state->comments);
-    tok->ftstring_depth--;
+    tok->ftstring_گہرائی--;
 }
 
 /* Free a tok_state structure */
-void
-_PyTokenizer_Free(struct tok_state *tok)
+خالی
+_PyTokenizer_Free(ساخت tok_state *tok)
 {
     Py_XDECREF(tok->filename);
     Py_XDECREF(tok->module);
     _PyTok_ReaderFree(tok);
-    _PyTok_SourceClear(&tok->source);
-    for (int i = 0; i < tok->ftstring_depth; i++) {
-        PyMem_Free(tok->ftstring_stack[i].comments);
+    Py_Tok_ماخذ_Clear(&tok->ماخذ);
+    برائے (صحیح i = 0; i < tok->ftstring_گہرائی; i++) {
+        PyMem_Free(tok->ftstring_ڈھیر[i].comments);
     }
-    if (tok->ftstring_stack != tok->ftstring_stack_inline) {
-        PyMem_Free(tok->ftstring_stack);
+    اگر (tok->ftstring_ڈھیر != tok->ftstring_ڈھیر_inline) {
+        PyMem_Free(tok->ftstring_ڈھیر);
     }
     PyMem_Free(tok);
 }
 
-void
-_PyToken_Init(struct token *token) {
-    *token = (struct token){
+خالی
+_PyToken_Init(ساخت token *token) {
+    *token = (ساخت token){
         .type = -1,
-        .span = {-1, -1},
-        .start_loc = {-1, -1},
-        .end_loc = {-1, -1},
+        .وسعت = {-1, -1},
+        .آغاز_loc = {-1, -1},
+        .انتہا_loc = {-1, -1},
     };
 }
 
-int
-_PyLexer_token_setup(struct tok_state *tok, struct token *token, int type, _PyTok_Off start, _PyTok_Off end)
+صحیح
+Py_Lexer_token_تیاری(ساخت tok_state *tok, ساخت token *token, صحیح type, _PyTok_Off آغاز, _PyTok_Off انتہا)
 {
     token->level = tok->level;
     token->is_raw = 0;
-    assert((start == -1 && end == -1) || (start >= 0 && end >= start));
-    token->span = (_PyTok_Span){start, end};
-    if (start >= 0) {
-        token->start_loc = tok->start_loc;
-        token->end_loc = (_PyTok_Loc){tok->lineno, _PyLexer_ByteColumn(tok)};
+    أكد((آغاز == -1 && انتہا == -1) || (آغاز >= 0 && انتہا >= آغاز));
+    token->وسعت = (Py_Tok_وسعت){آغاز, انتہا};
+    اگر (آغاز >= 0) {
+        token->آغاز_loc = tok->آغاز_loc;
+        token->انتہا_loc = (_PyTok_Loc){tok->lineno, Py_Lexer_Byte_عمود(tok)};
     }
-    else {
-        token->start_loc = token->end_loc = (_PyTok_Loc){tok->lineno, -1};
+    ورنہ {
+        token->آغاز_loc = token->انتہا_loc = (_PyTok_Loc){tok->lineno, -1};
     }
-    return type;
+    واپس type;
 }

@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#شامل "Python.h"
+#شامل "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#شامل "source.h"
 
-#define SOURCE_BUFFER_GROWTH_FACTOR 2
+#تعریف_کرو ماخذ_بفر_GROWTH_ضربی_عدد 2
 
-void
-_PyTok_SourceInit(_PyTok_SourceText *source)
+خالی
+Py_Tok_ماخذ_Init(Py_Tok_ماخذ_متن *ماخذ)
 {
-    *source = (_PyTok_SourceText){0};
+    *ماخذ = (Py_Tok_ماخذ_متن){0};
 }
 
-void
-_PyTok_SourceClear(_PyTok_SourceText *source)
+خالی
+Py_Tok_ماخذ_Clear(Py_Tok_ماخذ_متن *ماخذ)
 {
-    PyMem_Free(source->bytes);
-    _PyTok_SourceInit(source);
+    PyMem_Free(ماخذ->بائٹیں);
+    Py_Tok_ماخذ_Init(ماخذ);
 }
 
-void
-_PyTok_SourceDiscard(_PyTok_SourceText *source)
+خالی
+Py_Tok_ماخذ_Discard(Py_Tok_ماخذ_متن *ماخذ)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
-    source->base_offset += source->len;
-    source->len = 0;
-    if (source->bytes != NULL) {
-        source->bytes[0] = '\0';
+    أكد(ماخذ->بنیاد_انحراف <= PY_SSIZE_T_MAX - ماخذ->len);
+    ماخذ->بنیاد_انحراف += ماخذ->len;
+    ماخذ->len = 0;
+    اگر (ماخذ->بائٹیں != تہی) {
+        ماخذ->بائٹیں[0] = '\0';
     }
-    source->nlines = 0;
+    ماخذ->nlines = 0;
 }
 
-static int
-reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
+ساکن صحیح
+reserve_بائٹیں(Py_Tok_ماخذ_متن *ماخذ, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    اگر (needed <= ماخذ->cap) {
+        واپس 0;
     }
-    Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    Py_ssize_t cap = ماخذ->cap > 0 ? ماخذ->cap : BUFSIZ;
+    جب (cap < needed) {
+        اگر (cap > PY_SSIZE_T_MAX / ماخذ_بفر_GROWTH_ضربی_عدد) {
             cap = needed;
-            break;
+            توڑو;
         }
-        cap *= SOURCE_BUFFER_GROWTH_FACTOR;
+        cap *= ماخذ_بفر_GROWTH_ضربی_عدد;
     }
-    char *bytes;
-#ifdef Py_DEBUG
+    حرف *بائٹیں;
+#اگر_تعریف_شدہ Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
-    bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
-        memcpy(bytes, source->bytes, source->len);
+    بائٹیں = PyMem_Malloc(cap);
+    اگر (بائٹیں != تہی && ماخذ->len > 0) {
+        حافظہ_نقل(بائٹیں, ماخذ->بائٹیں, ماخذ->len);
     }
-#else
-    bytes = PyMem_Realloc(source->bytes, cap);
-#endif
-    if (bytes == NULL) {
-        PyErr_NoMemory();
-        return -1;
+#ورنہ
+    بائٹیں = PyMem_Realloc(ماخذ->بائٹیں, cap);
+#اگر_ختم
+    اگر (بائٹیں == تہی) {
+        Py_Err_No_حافظہ();
+        واپس -1;
     }
-#ifdef Py_DEBUG
-    if (source->bytes != NULL) {
-        memset(source->bytes, PYMEM_DEADBYTE, source->cap);
-        PyMem_Free(source->bytes);
+#اگر_تعریف_شدہ Py_DEBUG
+    اگر (ماخذ->بائٹیں != تہی) {
+        memset(ماخذ->بائٹیں, PYMEM_DEADBYTE, ماخذ->cap);
+        PyMem_Free(ماخذ->بائٹیں);
     }
-#endif
-    source->bytes = bytes;
-    source->cap = cap;
-    return 0;
+#اگر_ختم
+    ماخذ->بائٹیں = بائٹیں;
+    ماخذ->cap = cap;
+    واپس 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+ساکن صحیح
+validate_سطر(ثابت Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں,
+              Py_ssize_t len, صحیح append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
-            (source->nlines > 0 &&
-             (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    اگر (len < 0 || (len == 0 && !append_newline) || بائٹیں == تہی ||
+            (ماخذ->nlines > 0 &&
+             (ماخذ->len == 0 || ماخذ->بائٹیں[ماخذ->len - 1] != '\n'))) {
+        Py_Err_سیٹ_String(PyExc_SystemError, "invalid tokenizer source line");
+        واپس -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
-        PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+    ثابت حرف *newline = memchr(بائٹیں, '\n', len);
+    اگر (newline != تہی && (append_newline || newline != بائٹیں + len - 1)) {
+        Py_Err_سیٹ_String(PyExc_SystemError, "invalid tokenizer source line");
+        واپس -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
-        PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+    اگر (ماخذ->nlines == زیادہ_سے_زیادہ_عدد ||
+            (ماخذ->nlines == زیادہ_سے_زیادہ_عدد - 1 && (newline != تہی || append_newline))) {
+        Py_Err_سیٹ_String(Py_Exc_حد_سے_تجاوز_Error, "too many tokenizer source lines");
+        واپس -1;
     }
-    return 0;
+    واپس 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+ساکن _PyTok_Off
+append_سطر(Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں,
+            Py_ssize_t len, صحیح append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    اگر (validate_سطر(ماخذ, بائٹیں, len, append_newline) < 0) {
+        واپس -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
-            source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
-        PyErr_NoMemory();
-        return -1;
+    اگر (ماخذ->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+            ماخذ->بنیاد_انحراف > PY_SSIZE_T_MAX - ماخذ->len - len - append_newline) {
+        Py_Err_No_حافظہ();
+        واپس -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    اگر (reserve_بائٹیں(ماخذ, ماخذ->len + len + append_newline + 1) < 0) {
+        واپس -1;
     }
 
-    _PyTok_Off start = source->len;
-    memcpy(source->bytes + start, bytes, len);
-    source->len += len;
-    if (append_newline) {
-        source->bytes[source->len++] = '\n';
+    _PyTok_Off آغاز = ماخذ->len;
+    حافظہ_نقل(ماخذ->بائٹیں + آغاز, بائٹیں, len);
+    ماخذ->len += len;
+    اگر (append_newline) {
+        ماخذ->بائٹیں[ماخذ->len++] = '\n';
     }
-    source->bytes[source->len] = '\0';
-    source->nlines++;
-    return source->base_offset + start;
+    ماخذ->بائٹیں[ماخذ->len] = '\0';
+    ماخذ->nlines++;
+    واپس ماخذ->بنیاد_انحراف + آغاز;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ماخذ_Append_سطر(Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    واپس append_سطر(ماخذ, بائٹیں, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_ماخذ_Append_سطر_With_Newline(Py_Tok_ماخذ_متن *ماخذ, ثابت حرف *بائٹیں,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    واپس append_سطر(ماخذ, بائٹیں, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+ثابت حرف *
+Py_Tok_ماخذ_سطر_View(ثابت Py_Tok_ماخذ_متن *ماخذ, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    أكد(len != تہی);
+    ثابت حرف *سطر = Py_Tok_ماخذ_ڈیٹا(ماخذ);
+    ثابت حرف *انتہا = سطر + ماخذ->len;
+    جب (lineno > 1) {
+        ثابت حرف *newline = memchr(سطر, '\n', انتہا - سطر);
+        اگر (newline == تہی) {
+            توڑو;
         }
-        line = newline + 1;
+        سطر = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    ثابت حرف *newline = memchr(سطر, '\n', انتہا - سطر);
+    *len = (newline != تہی ? newline : انتہا) - سطر;
+    واپس سطر;
 }

@@ -1,29 +1,29 @@
-#ifndef _PY_TOKENIZER_HELPERS_H_
-#define _PY_TOKENIZER_HELPERS_H_
+#اگر_غیر_تعریف_شدہ _PY_TOKENIZER_HELPERS_H_
+#تعریف_کرو _PY_TOKENIZER_HELPERS_H_
 
-#include "Python.h"
+#شامل "Python.h"
 
-#include "../lexer/state.h"
+#شامل "../lexer/state.h"
 
-int _PyTokenizer_syntaxerror(struct tok_state *tok, const char *format, ...);
+صحیح _PyTokenizer_syntaxerror(ساخت tok_state *tok, ثابت حرف *format, ...);
 /* Positive range columns are 1-based byte columns. A start column of -1
    derives the character column from the reporting cursor; an end column of
    -1 uses the start column. */
-int _PyTokenizer_syntaxerror_known_range(struct tok_state *tok, int col_offset, int end_col_offset, const char *format, ...);
-int _PyTokenizer_syntaxerror_at(
-    struct tok_state *tok, const char *line_start, Py_ssize_t cursor_offset,
-    int lineno, int col_offset, int end_col_offset, const char *format, ...);
-int _PyTokenizer_indenterror(struct tok_state *tok);
-int _PyTokenizer_warn_invalid_escape_sequence(struct tok_state *tok, int first_invalid_escape_char);
-int _PyTokenizer_parser_warn(struct tok_state *tok, PyObject *category, const char *format, ...);
+صحیح Py_Tokenizer_syntaxerror_معلوم_range(ساخت tok_state *tok, صحیح ستون_انحراف, صحیح انتہا_ستون_انحراف, ثابت حرف *format, ...);
+صحیح _PyTokenizer_syntaxerror_at(
+    ساخت tok_state *tok, ثابت حرف *سطر_آغاز, Py_ssize_t cursor_انحراف,
+    صحیح lineno, صحیح ستون_انحراف, صحیح انتہا_ستون_انحراف, ثابت حرف *format, ...);
+صحیح _PyTokenizer_indenterror(ساخت tok_state *tok);
+صحیح _PyTokenizer_warn_invalid_escape_sequence(ساخت tok_state *tok, صحیح پہلا_invalid_escape_char);
+صحیح _PyTokenizer_parser_warn(ساخت tok_state *tok, PyObject *category, ثابت حرف *format, ...);
 
-void _PyTokenizer_raise_init_error(PyObject *filename);
+خالی _PyTokenizer_raise_init_error(PyObject *filename);
 
-int _PyTokenizer_ensure_utf8(const char *line, struct tok_state *tok, int lineno);
+صحیح _PyTokenizer_ensure_utf8(ثابت حرف *سطر, ساخت tok_state *tok, صحیح lineno);
 
-#ifdef Py_DEBUG
-void _PyTokenizer_print_escape(FILE *f, const char *s, Py_ssize_t size);
-#endif
+#اگر_تعریف_شدہ Py_DEBUG
+خالی _PyTokenizer_print_escape(FILE *f, ثابت حرف *s, Py_ssize_t سائز);
+#اگر_ختم
 
 
-#endif
+#اگر_ختم
