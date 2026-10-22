@@ -15,23 +15,23 @@
 #  include <unistd.h>
 #endif
 
-static inline int
+static inline ціле
 reader_is_streaming(_PyTok_ReaderKind kind)
 {
-    return kind == _PYTOK_READER_FILE || kind == _PYTOK_READER_READLINE;
+    повернути kind == _PYTOK_READER_FILE || kind == _PYTOK_READER_READLINE;
 }
 
 void
 _PyTok_ReaderFree(struct tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader == NULL) {
-        return;
+    якщо (reader == NULL) {
+        повернути;
     }
     Py_XDECREF(reader->readline);
     Py_XDECREF(reader->decoder);
-    for (int i = 0;
-         i < (int)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
+    для (ціле i = 0;
+         i < (ціле)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
         _PyTok_ChunkClear(&reader->prefetched_lines[i]);
     }
     PyMem_Free(reader->encoding);
@@ -41,7 +41,7 @@ _PyTok_ReaderFree(struct tok_state *tok)
     tok->reader = NULL;
 }
 
-int
+ціле
 _PyTokenizer_Traverse(struct tok_state *tok, visitproc visit, void *arg)
 {
     Py_VISIT(tok->filename);
@@ -49,50 +49,50 @@ _PyTokenizer_Traverse(struct tok_state *tok, visitproc visit, void *arg)
     _PyTok_Reader *reader = tok->reader;
     Py_VISIT(reader->readline);
     Py_VISIT(reader->decoder);
-    for (int i = 0;
-         i < (int)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
+    для (ціле i = 0;
+         i < (ціле)Py_ARRAY_LENGTH(reader->prefetched_lines); i++) {
         _PyTok_Chunk *chunk = &reader->prefetched_lines[i];
-        if (chunk->ownership == _PYTOK_CHUNK_PYOBJECT) {
+        якщо (chunk->ownership == _PYTOK_CHUNK_PYOBJECT) {
             Py_VISIT(chunk->owner);
         }
     }
-    return 0;
+    повернути 0;
 }
 
-int
+ціле
 _PyTok_ReserveBuffer(char **buffer, Py_ssize_t *capacity, Py_ssize_t needed,
                      Py_ssize_t initial_capacity)
 {
     assert(initial_capacity > 0);
-    if (needed <= *capacity) {
-        return 0;
+    якщо (needed <= *capacity) {
+        повернути 0;
     }
     // Grow geometrically to avoid reallocating for every longer line.
     Py_ssize_t cap = *capacity > 0 ? *capacity : initial_capacity;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / READER_BUFFER_GROWTH_FACTOR) {
+    поки (cap < needed) {
+        якщо (cap > PY_SSIZE_T_MAX / READER_BUFFER_GROWTH_FACTOR) {
             cap = needed;
             break;
         }
         cap *= READER_BUFFER_GROWTH_FACTOR;
     }
     char *resized = PyMem_Realloc(*buffer, cap);
-    if (resized == NULL) {
+    якщо (resized == NULL) {
         PyErr_NoMemory();
-        return -1;
+        повернути -1;
     }
     *buffer = resized;
     *capacity = cap;
-    return 0;
+    повернути 0;
 }
 
-static int
+static ціле
 append_decoded(_PyTok_Reader *reader, const char *data, Py_ssize_t len)
 {
-    if (len == 0) {
-        return 0;
+    якщо (len == 0) {
+        повернути 0;
     }
-    if (reader->decoded_pos > 0) {
+    якщо (reader->decoded_pos > 0) {
         Py_ssize_t remaining = reader->decoded_len - reader->decoded_pos;
         memmove(reader->decoded, reader->decoded + reader->decoded_pos,
                 (size_t)remaining);
@@ -100,48 +100,48 @@ append_decoded(_PyTok_Reader *reader, const char *data, Py_ssize_t len)
         reader->decoded_pos = 0;
         reader->decoded_len = remaining;
     }
-    if (len < 0 || reader->decoded_len > PY_SSIZE_T_MAX - len - 1 ||
+    якщо (len < 0 || reader->decoded_len > PY_SSIZE_T_MAX - len - 1 ||
             _PyTok_ReserveBuffer(&reader->decoded, &reader->decoded_cap,
                                 reader->decoded_len + len + 1, BUFSIZ) < 0) {
         PyErr_NoMemory();
-        return -1;
+        повернути -1;
     }
     memcpy(reader->decoded + reader->decoded_len, data, (size_t)len);
     reader->decoded_len += len;
     reader->decoded[reader->decoded_len] = '\0';
-    return 0;
+    повернути 0;
 }
 
-static int
+static ціле
 append_implicit_newline(_PyTok_Reader *reader)
 {
-    if (reader->decoded_pos == reader->decoded_len ||
+    якщо (reader->decoded_pos == reader->decoded_len ||
             reader->decoded[reader->decoded_len - 1] == '\n') {
-        return 0;
+        повернути 0;
     }
-    if (append_decoded(reader, "\n", 1) < 0) {
-        return -1;
+    якщо (append_decoded(reader, "\n", 1) < 0) {
+        повернути -1;
     }
     reader->decoded_tail_is_implicit = 1;
-    return 0;
+    повернути 0;
 }
 
-static int
+static ціле
 pop_decoded_line(_PyTok_Reader *reader, _PyTok_Chunk *chunk)
 {
     assert(reader->decoded_pos >= 0 && reader->decoded_pos <= reader->decoded_len);
     assert(reader->decoded_scan >= reader->decoded_pos &&
            reader->decoded_scan <= reader->decoded_len);
-    if (reader->decoded_pos == reader->decoded_len) {
-        return 0;
+    якщо (reader->decoded_pos == reader->decoded_len) {
+        повернути 0;
     }
     char *start = reader->decoded + reader->decoded_pos;
     // Previously scanned bytes cannot contain a newline.
     char *newline = memchr(reader->decoded + reader->decoded_scan, '\n',
                            reader->decoded_len - reader->decoded_scan);
-    if (newline == NULL) {
+    якщо (newline == NULL) {
         reader->decoded_scan = reader->decoded_len;
-        return 0;
+        повернути 0;
     }
     Py_ssize_t len = newline - start + 1;
     chunk->data = start;
@@ -151,28 +151,28 @@ pop_decoded_line(_PyTok_Reader *reader, _PyTok_Chunk *chunk)
     reader->decoded_scan = reader->decoded_pos;
     chunk->implicit_newline = reader->decoded_pos == reader->decoded_len &&
         reader->decoded_tail_is_implicit;
-    if (reader->decoded_pos == reader->decoded_len) {
+    якщо (reader->decoded_pos == reader->decoded_len) {
         reader->decoded_pos = reader->decoded_len = 0;
         reader->decoded_scan = 0;
         reader->decoded_tail_is_implicit = 0;
     }
-    return 1;
+    повернути 1;
 }
 
-static int
+static ціле
 chunk_is_line(const _PyTok_Chunk *chunk)
 {
-    if (chunk->len == 0 || chunk->data[chunk->len - 1] != '\n') {
-        return 0;
+    якщо (chunk->len == 0 || chunk->data[chunk->len - 1] != '\n') {
+        повернути 0;
     }
-    return memchr(chunk->data, '\n', chunk->len - 1) == NULL;
+    повернути memchr(chunk->data, '\n', chunk->len - 1) == NULL;
 }
 
 static _PyTok_ReadResult
 next_prepared(struct tok_state *tok, _PyTok_Chunk *chunk)
 {
-    if (tok->lineno >= tok->source.nlines) {
-        return _PYTOK_READ_EOF;
+    якщо (tok->lineno >= tok->source.nlines) {
+        повернути _PYTOK_READ_EOF;
     }
     _PyTok_Span tail = {tok->inp, tok->source.base_offset + tok->source.len};
     _PyTok_Off newline = _PyTok_SourceFindByte(&tok->source, tail, '\n');
@@ -182,7 +182,7 @@ next_prepared(struct tok_state *tok, _PyTok_Chunk *chunk)
     chunk->ownership = _PYTOK_CHUNK_BORROWED;
     chunk->implicit_newline = line.end == tail.end
         ? tok->reader->prepared_final_newline : 0;
-    return _PYTOK_READ_LINE;
+    повернути _PYTOK_READ_LINE;
 }
 
 static _PyTok_ReadResult
@@ -190,198 +190,198 @@ read_file_line(struct tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
     Py_ssize_t len = 0;
-    for (;;) {
-        if (len > PY_SSIZE_T_MAX - BUFSIZ) {
+    для (;;) {
+        якщо (len > PY_SSIZE_T_MAX - BUFSIZ) {
             PyErr_NoMemory();
-            return _PYTOK_READ_ERROR;
+            повернути _PYTOK_READ_ERROR;
         }
-        if (_PyTok_ReserveBuffer(&reader->file_buffer, &reader->file_buffer_cap,
+        якщо (_PyTok_ReserveBuffer(&reader->file_buffer, &reader->file_buffer_cap,
                                 len + BUFSIZ, BUFSIZ) < 0) {
-            return _PYTOK_READ_ERROR;
+            повернути _PYTOK_READ_ERROR;
         }
-        int available = (int)Py_MIN(reader->file_buffer_cap - len, INT_MAX);
+        ціле available = (ціле)Py_MIN(reader->file_buffer_cap - len, INT_MAX);
         size_t read = 0;
         char *result = _Py_UniversalNewlineFgetsWithSize(
             reader->file_buffer + len, available, reader->fp, NULL, &read);
-        if (result == NULL) {
-            if (len == 0) {
-                return _PYTOK_READ_EOF;
+        якщо (result == NULL) {
+            якщо (len == 0) {
+                повернути _PYTOK_READ_EOF;
             }
             break;
         }
         len += (Py_ssize_t)read;
-        if (len > 0 && reader->file_buffer[len - 1] == '\n') {
+        якщо (len > 0 && reader->file_buffer[len - 1] == '\n') {
             break;
         }
     }
-    int implicit = reader->file_buffer[len - 1] != '\n';
+    ціле implicit = reader->file_buffer[len - 1] != '\n';
     chunk->data = reader->file_buffer;
     chunk->len = len;
     chunk->implicit_newline = implicit;
     chunk->ownership = _PYTOK_CHUNK_BORROWED;
-    return _PYTOK_READ_LINE;
+    повернути _PYTOK_READ_LINE;
 }
 
-static int
+static ціле
 initialize_file(struct tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
     reader->file_initialized = 1;
-    if (reader->encoding != NULL) {
-        return _PyTok_StartDecoder(tok, "strict");
+    якщо (reader->encoding != NULL) {
+        повернути _PyTok_StartDecoder(tok, "strict");
     }
 
     _PyTok_ReadResult result = read_file_line(
         tok, &reader->prefetched_lines[0]);
-    if (result == _PYTOK_READ_EOF) {
+    якщо (result == _PYTOK_READ_EOF) {
         reader->file_eof = 1;
-        return 0;
+        повернути 0;
     }
-    if (result != _PYTOK_READ_LINE) {
-        return -1;
+    якщо (result != _PYTOK_READ_LINE) {
+        повернути -1;
     }
     Py_ssize_t bom_len;
     _PyTok_EncodingResult detection = _PyTok_DetectEncoding(
         tok, &reader->prefetched_lines[0], NULL, 0, &bom_len);
-    if (detection == _PYTOK_ENCODING_ERROR) {
-        return -1;
+    якщо (detection == _PYTOK_ENCODING_ERROR) {
+        повернути -1;
     }
-    if (detection == _PYTOK_ENCODING_NEED_SECOND_LINE) {
+    якщо (detection == _PYTOK_ENCODING_NEED_SECOND_LINE) {
         char *first = _PyTok_CopyBytes(
             reader->prefetched_lines[0].data,
             reader->prefetched_lines[0].len);
-        if (first == NULL) {
+        якщо (first == NULL) {
             tok->done = E_NOMEM;
-            return -1;
+            повернути -1;
         }
         reader->prefetched_lines[0].data = first;
         reader->prefetched_lines[0].ownership = _PYTOK_CHUNK_PYMEM;
         result = read_file_line(tok, &reader->prefetched_lines[1]);
-        if (result == _PYTOK_READ_EOF) {
+        якщо (result == _PYTOK_READ_EOF) {
             reader->file_eof = 1;
         }
-        else if (result != _PYTOK_READ_LINE) {
-            return -1;
+        інакше якщо (result != _PYTOK_READ_LINE) {
+            повернути -1;
         }
         _PyTok_Chunk *second = reader->prefetched_lines[1].data != NULL
             ? &reader->prefetched_lines[1] : NULL;
         detection = _PyTok_DetectEncoding(
             tok, &reader->prefetched_lines[0], second, 1, &bom_len);
-        if (detection == _PYTOK_ENCODING_ERROR) {
-            return -1;
+        якщо (detection == _PYTOK_ENCODING_ERROR) {
+            повернути -1;
         }
     }
-    if (bom_len != 0) {
+    якщо (bom_len != 0) {
         _PyTok_Chunk *first = &reader->prefetched_lines[0];
-        if (first->ownership == _PYTOK_CHUNK_PYMEM) {
+        якщо (first->ownership == _PYTOK_CHUNK_PYMEM) {
             memmove(first->data, first->data + bom_len,
                     (size_t)(first->len - bom_len));
             first->data[first->len - bom_len] = '\0';
         }
-        else {
+        інакше {
             first->data += bom_len;
         }
         first->len -= bom_len;
     }
-    if (_PyTok_StartDecoder(tok, "strict") < 0) {
-        return -1;
+    якщо (_PyTok_StartDecoder(tok, "strict") < 0) {
+        повернути -1;
     }
-    return 0;
+    повернути 0;
 }
 
-static int
+static ціле
 finalize_decoding(struct tok_state *tok)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->decoder_finalized) {
-        return 0;
+    якщо (reader->decoder_finalized) {
+        повернути 0;
     }
     reader->decoder_finalized = 1;
-    if (reader->decoder != NULL) {
+    якщо (reader->decoder != NULL) {
         _PyTok_Chunk input = {
             .data = "",
             .ownership = _PYTOK_CHUNK_BORROWED,
         };
-        int decoded = _PyTok_DecodeChunk(tok, &input, 1);
-        if (decoded == 0 &&
+        ціле decoded = _PyTok_DecodeChunk(tok, &input, 1);
+        якщо (decoded == 0 &&
                 append_decoded(reader, input.data, input.len) < 0) {
             tok->done = E_NOMEM;
             decoded = -1;
         }
         _PyTok_ChunkClear(&input);
-        if (decoded < 0) {
-            return -1;
+        якщо (decoded < 0) {
+            повернути -1;
         }
     }
-    if (append_implicit_newline(reader) < 0) {
+    якщо (append_implicit_newline(reader) < 0) {
         tok->done = E_NOMEM;
-        return -1;
+        повернути -1;
     }
-    return 0;
+    повернути 0;
 }
 
 static _PyTok_ReadResult
 next_file(struct tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (!reader->file_initialized && initialize_file(tok) < 0) {
-        return _PYTOK_READ_ERROR;
+    якщо (!reader->file_initialized && initialize_file(tok) < 0) {
+        повернути _PYTOK_READ_ERROR;
     }
-    for (;;) {
-        if (pop_decoded_line(reader, chunk)) {
-            return _PYTOK_READ_LINE;
+    для (;;) {
+        якщо (pop_decoded_line(reader, chunk)) {
+            повернути _PYTOK_READ_LINE;
         }
         _PyTok_Chunk input = {0};
-        if (reader->prefetched_lines[0].data != NULL) {
+        якщо (reader->prefetched_lines[0].data != NULL) {
             input = reader->prefetched_lines[0];
             reader->prefetched_lines[0] = (_PyTok_Chunk){0};
         }
-        else if (reader->prefetched_lines[1].data != NULL) {
+        інакше якщо (reader->prefetched_lines[1].data != NULL) {
             input = reader->prefetched_lines[1];
             reader->prefetched_lines[1] = (_PyTok_Chunk){0};
         }
-        else if (!reader->file_eof) {
+        інакше якщо (!reader->file_eof) {
             _PyTok_ReadResult result = read_file_line(tok, &input);
-            if (result == _PYTOK_READ_ERROR) {
-                return result;
+            якщо (result == _PYTOK_READ_ERROR) {
+                повернути result;
             }
-            if (result == _PYTOK_READ_EOF) {
+            якщо (result == _PYTOK_READ_EOF) {
                 reader->file_eof = 1;
             }
         }
-        if (input.data != NULL) {
-            int implicit = input.implicit_newline;
-            if (reader->decoder == NULL && !implicit) {
+        якщо (input.data != NULL) {
+            ціле implicit = input.implicit_newline;
+            якщо (reader->decoder == NULL && !implicit) {
                 *chunk = input;
-                return _PYTOK_READ_LINE;
+                повернути _PYTOK_READ_LINE;
             }
-            int decoded = _PyTok_DecodeChunk(tok, &input, 0);
-            if (decoded == 0 && reader->decoded_pos == reader->decoded_len &&
+            ціле decoded = _PyTok_DecodeChunk(tok, &input, 0);
+            якщо (decoded == 0 && reader->decoded_pos == reader->decoded_len &&
                     chunk_is_line(&input)) {
                 *chunk = input;
-                return _PYTOK_READ_LINE;
+                повернути _PYTOK_READ_LINE;
             }
-            if (decoded == 0 &&
+            якщо (decoded == 0 &&
                     append_decoded(reader, input.data, input.len) < 0) {
                 tok->done = E_NOMEM;
                 decoded = -1;
             }
-            if (decoded == 0 && implicit) {
+            якщо (decoded == 0 && implicit) {
                 reader->decoded_tail_is_implicit = 1;
             }
             _PyTok_ChunkClear(&input);
-            if (decoded < 0) {
-                return _PYTOK_READ_ERROR;
+            якщо (decoded < 0) {
+                повернути _PYTOK_READ_ERROR;
             }
             continue;
         }
-        if (!reader->decoder_finalized) {
-            if (finalize_decoding(tok) < 0) {
-                return _PYTOK_READ_ERROR;
+        якщо (!reader->decoder_finalized) {
+            якщо (finalize_decoding(tok) < 0) {
+                повернути _PYTOK_READ_ERROR;
             }
             continue;
         }
-        return _PYTOK_READ_EOF;
+        повернути _PYTOK_READ_EOF;
     }
 }
 
@@ -389,41 +389,41 @@ static _PyTok_ReadResult
 next_readline(struct tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    for (;;) {
-        if (pop_decoded_line(reader, chunk)) {
-            return _PYTOK_READ_LINE;
+    для (;;) {
+        якщо (pop_decoded_line(reader, chunk)) {
+            повернути _PYTOK_READ_LINE;
         }
-        if (reader->decoder_finalized) {
-            return _PYTOK_READ_EOF;
+        якщо (reader->decoder_finalized) {
+            повернути _PYTOK_READ_EOF;
         }
 
         PyObject *raw = PyObject_CallNoArgs(reader->readline);
-        if (raw == NULL) {
-            if (PyErr_ExceptionMatches(PyExc_StopIteration)) {
+        якщо (raw == NULL) {
+            якщо (PyErr_ExceptionMatches(PyExc_StopIteration)) {
                 PyErr_Clear();
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+                якщо (finalize_decoding(tok) < 0) {
+                    повернути _PYTOK_READ_ERROR;
                 }
                 continue;
             }
-            return _PYTOK_READ_ERROR;
+            повернути _PYTOK_READ_ERROR;
         }
 
         _PyTok_Chunk input = {0};
-        if (reader->encoding != NULL) {
-            if (!PyBytes_Check(raw)) {
+        якщо (reader->encoding != NULL) {
+            якщо (!PyBytes_Check(raw)) {
                 PyErr_SetString(PyExc_TypeError,
                                 "readline() returned a non-bytes object");
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                повернути _PYTOK_READ_ERROR;
             }
-            if (PyBytes_GET_SIZE(raw) == 0) {
+            якщо (PyBytes_GET_SIZE(raw) == 0) {
                 Py_DECREF(raw);
-                if (_PyTok_StartDecoder(tok, "replace") < 0) {
-                    return _PYTOK_READ_ERROR;
+                якщо (_PyTok_StartDecoder(tok, "replace") < 0) {
+                    повернути _PYTOK_READ_ERROR;
                 }
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+                якщо (finalize_decoding(tok) < 0) {
+                    повернути _PYTOK_READ_ERROR;
                 }
                 continue;
             }
@@ -431,71 +431,71 @@ next_readline(struct tok_state *tok, _PyTok_Chunk *chunk)
             input.data = PyBytes_AS_STRING(raw);
             input.len = PyBytes_GET_SIZE(raw);
             input.ownership = _PYTOK_CHUNK_PYOBJECT;
-            int decoded;
-            if (reader->decoder == NULL &&
+            ціле decoded;
+            якщо (reader->decoder == NULL &&
                     strcmp(reader->encoding, "utf-8") == 0 &&
                     chunk_is_line(&input)) {
                 decoded = _PyTok_DecodeOnce(
                     tok, &input, "utf-8", "replace");
             }
-            else {
+            інакше {
                 decoded = _PyTok_StartDecoder(tok, "replace");
-                if (decoded == 0) {
+                якщо (decoded == 0) {
                     decoded = _PyTok_DecodeChunk(tok, &input, 0);
                 }
             }
-            if (decoded < 0) {
+            якщо (decoded < 0) {
                 _PyTok_ChunkClear(&input);
-                return _PYTOK_READ_ERROR;
+                повернути _PYTOK_READ_ERROR;
             }
         }
-        else {
-            if (!PyUnicode_Check(raw)) {
+        інакше {
+            якщо (!PyUnicode_Check(raw)) {
                 PyErr_SetString(PyExc_TypeError,
                                 "readline() returned a non-string object");
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                повернути _PYTOK_READ_ERROR;
             }
             Py_ssize_t utf8_len;
             const char *utf8 = PyUnicode_AsUTF8AndSize(raw, &utf8_len);
-            if (utf8 == NULL) {
+            якщо (utf8 == NULL) {
                 Py_DECREF(raw);
-                return _PYTOK_READ_ERROR;
+                повернути _PYTOK_READ_ERROR;
             }
             input.owner = raw;
             input.data = (char *)utf8;
             input.len = utf8_len;
             input.ownership = _PYTOK_CHUNK_PYOBJECT;
-            if (input.len == 0) {
+            якщо (input.len == 0) {
                 _PyTok_ChunkClear(&input);
-                if (finalize_decoding(tok) < 0) {
-                    return _PYTOK_READ_ERROR;
+                якщо (finalize_decoding(tok) < 0) {
+                    повернути _PYTOK_READ_ERROR;
                 }
                 continue;
             }
         }
 
-        if (reader->decoded_pos == reader->decoded_len &&
+        якщо (reader->decoded_pos == reader->decoded_len &&
                 chunk_is_line(&input)) {
             *chunk = input;
-            return _PYTOK_READ_LINE;
+            повернути _PYTOK_READ_LINE;
         }
 
-        if (append_decoded(reader, input.data, input.len) < 0) {
+        якщо (append_decoded(reader, input.data, input.len) < 0) {
             _PyTok_ChunkClear(&input);
             tok->done = E_NOMEM;
-            return _PYTOK_READ_ERROR;
+            повернути _PYTOK_READ_ERROR;
         }
         _PyTok_ChunkClear(&input);
-        if (reader->decoded_pos < reader->decoded_len &&
+        якщо (reader->decoded_pos < reader->decoded_len &&
                 reader->decoded[reader->decoded_len - 1] != '\n') {
-            int pending = _PyTok_DecoderHasBufferedInput(tok);
-            if (pending < 0) {
-                return _PYTOK_READ_ERROR;
+            ціле pending = _PyTok_DecoderHasBufferedInput(tok);
+            якщо (pending < 0) {
+                повернути _PYTOK_READ_ERROR;
             }
-            if (!pending && append_implicit_newline(reader) < 0) {
+            якщо (!pending && append_implicit_newline(reader) < 0) {
                 tok->done = E_NOMEM;
-                return _PYTOK_READ_ERROR;
+                повернути _PYTOK_READ_ERROR;
             }
         }
     }
@@ -505,70 +505,70 @@ static _PyTok_ReadResult
 next_interactive(struct tok_state *tok, _PyTok_Chunk *chunk)
 {
     _PyTok_Reader *reader = tok->reader;
-    if (reader->stop_interactive) {
-        return _PYTOK_READ_STOPPED;
+    якщо (reader->stop_interactive) {
+        повернути _PYTOK_READ_STOPPED;
     }
     char *input = PyOS_Readline(
         reader->fp != NULL ? reader->fp : stdin, stdout, reader->prompt);
-    if (reader->nextprompt != NULL) {
+    якщо (reader->nextprompt != NULL) {
         reader->prompt = reader->nextprompt;
     }
-    if (input == NULL) {
-        return _PYTOK_READ_INTERRUPT;
+    якщо (input == NULL) {
+        повернути _PYTOK_READ_INTERRUPT;
     }
     Py_ssize_t len = strlen(input);
-    if (len == 0) {
+    якщо (len == 0) {
         PyMem_Free(input);
-        return _PYTOK_READ_EOF;
+        повернути _PYTOK_READ_EOF;
     }
     _PyTok_Chunk decoded = {
         .data = input,
         .len = len,
         .ownership = _PYTOK_CHUNK_PYMEM,
     };
-    if (reader->encoding != NULL &&
+    якщо (reader->encoding != NULL &&
             _PyTok_DecodeOnce(
                 tok, &decoded, reader->encoding, NULL) < 0) {
         _PyTok_ChunkClear(&decoded);
-        return _PYTOK_READ_ERROR;
+        повернути _PYTOK_READ_ERROR;
     }
-    if (memchr(decoded.data, '\r', decoded.len) == NULL) {
+    якщо (memchr(decoded.data, '\r', decoded.len) == NULL) {
         *chunk = decoded;
-        return _PYTOK_READ_LINE;
+        повернути _PYTOK_READ_LINE;
     }
     chunk->data = _PyTok_NormalizeNewlines(
         decoded.data, decoded.len, &chunk->len);
     _PyTok_ChunkClear(&decoded);
-    if (chunk->data == NULL) {
+    якщо (chunk->data == NULL) {
         tok->done = E_NOMEM;
-        return _PYTOK_READ_ERROR;
+        повернути _PYTOK_READ_ERROR;
     }
     chunk->ownership = _PYTOK_CHUNK_PYMEM;
-    return _PYTOK_READ_LINE;
+    повернути _PYTOK_READ_LINE;
 }
 
-int
+ціле
 _PyTok_ReaderIsInteractive(const struct tok_state *tok)
 {
-    return tok->reader->kind == _PYTOK_READER_INTERACTIVE;
+    повернути tok->reader->kind == _PYTOK_READER_INTERACTIVE;
 }
 
 const char *
 _PyTokenizer_RetainedSource(const struct tok_state *tok)
 {
-    if (tok->reader->kind == _PYTOK_READER_PREPARED) {
-        return _PyTok_SourceData(&tok->source);
+    якщо (tok->reader->kind == _PYTOK_READER_PREPARED) {
+        повернути _PyTok_SourceData(&tok->source);
     }
-    if (tok->reader->kind == _PYTOK_READER_INTERACTIVE) {
-        return tok->source.bytes;
+    якщо (tok->reader->kind == _PYTOK_READER_INTERACTIVE) {
+        повернути tok->source.bytes;
     }
-    return NULL;
+    повернути NULL;
 }
 
 void
 _PyTok_ReaderStopInteractive(struct tok_state *tok)
 {
-    if (_PyTok_ReaderIsInteractive(tok)) {
+    якщо (_PyTok_ReaderIsInteractive(tok)) {
         tok->reader->stop_interactive = 1;
     }
 }
@@ -579,13 +579,13 @@ reader_next(struct tok_state *tok, _PyTok_Chunk *chunk)
     *chunk = (_PyTok_Chunk){0};
     switch (tok->reader->kind) {
         case _PYTOK_READER_PREPARED:
-            return next_prepared(tok, chunk);
+            повернути next_prepared(tok, chunk);
         case _PYTOK_READER_FILE:
-            return next_file(tok, chunk);
+            повернути next_file(tok, chunk);
         case _PYTOK_READER_READLINE:
-            return next_readline(tok, chunk);
+            повернути next_readline(tok, chunk);
         case _PYTOK_READER_INTERACTIVE:
-            return next_interactive(tok, chunk);
+            повернути next_interactive(tok, chunk);
     }
     Py_UNREACHABLE();
 }
@@ -600,72 +600,72 @@ reset_streaming_buffer(struct tok_state *tok)
     tok->line_start = tok->buf_offset;
 }
 
-int
+ціле
 _PyTok_ReaderUnderflow(struct tok_state *tok)
 {
     assert(tok->cur >= tok->buf_offset && tok->cur <= tok->inp);
     _PyTok_Reader *reader = tok->reader;
     _PyTok_ReaderKind kind = reader->kind;
-    int prepared = kind == _PYTOK_READER_PREPARED;
-    int streaming = reader_is_streaming(kind);
-    int reset_buffer = tok->start < 0 &&
+    ціле prepared = kind == _PYTOK_READER_PREPARED;
+    ціле streaming = reader_is_streaming(kind);
+    ціле reset_buffer = tok->start < 0 &&
         _PyLexer_CurrentFTString(tok) == NULL;
 
     _PyTok_Chunk chunk;
     _PyTok_ReadResult result = reader_next(tok, &chunk);
-    if (result != _PYTOK_READ_LINE) {
-        if (reset_buffer && streaming) {
+    якщо (result != _PYTOK_READ_LINE) {
+        якщо (reset_buffer && streaming) {
             reset_streaming_buffer(tok);
         }
-        if (result == _PYTOK_READ_EOF) {
+        якщо (result == _PYTOK_READ_EOF) {
             tok->done = E_EOF;
         }
-        else if (result == _PYTOK_READ_STOPPED) {
+        інакше якщо (result == _PYTOK_READ_STOPPED) {
             tok->done = E_INTERACT_STOP;
         }
-        else if (result == _PYTOK_READ_INTERRUPT) {
+        інакше якщо (result == _PYTOK_READ_INTERRUPT) {
             tok->done = E_INTR;
         }
-        else {
-            if (tok->done == E_OK) {
+        інакше {
+            якщо (tok->done == E_OK) {
                 tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                     ? E_NOMEM : E_ERROR;
             }
         }
-        if (kind == _PYTOK_READER_INTERACTIVE &&
+        якщо (kind == _PYTOK_READER_INTERACTIVE &&
                 result != _PYTOK_READ_STOPPED) {
             PySys_WriteStderr("\n");
         }
-        return 0;
+        повернути 0;
     }
-    if (tok->lineno == INT_MAX) {
+    якщо (tok->lineno == INT_MAX) {
         PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
         tok->done = E_ERROR;
         _PyTok_ChunkClear(&chunk);
-        return 0;
+        повернути 0;
     }
 
-    if (!prepared) {
-        if (streaming && reset_buffer) {
+    якщо (!prepared) {
+        якщо (streaming && reset_buffer) {
             reset_streaming_buffer(tok);
         }
         _PyTok_Off source_start = _PyTok_SourceAppendLine(
             &tok->source, chunk.data, chunk.len);
-        if (source_start < 0) {
+        якщо (source_start < 0) {
             _PyTok_ChunkClear(&chunk);
             tok->done = PyErr_ExceptionMatches(PyExc_MemoryError)
                 ? E_NOMEM : E_ERROR;
-            return 0;
+            повернути 0;
         }
-        if (reset_buffer) {
+        якщо (reset_buffer) {
             tok->cur = source_start;
             tok->buf_offset = source_start;
             tok->line_start = tok->buf_offset;
         }
         tok->inp = source_start + chunk.len;
     }
-    else {
-        if (reset_buffer) {
+    інакше {
+        якщо (reset_buffer) {
             tok->buf_offset = tok->inp;
         }
         tok->inp += chunk.len;
@@ -673,26 +673,26 @@ _PyTok_ReaderUnderflow(struct tok_state *tok)
     tok->implicit_newline = chunk.implicit_newline;
 
     tok->lineno++;
-    if (kind == _PYTOK_READER_FILE &&
+    якщо (kind == _PYTOK_READER_FILE &&
             (reader->encoding == NULL ||
              strcmp(reader->encoding, "utf-8") == 0) &&
             !_PyTokenizer_ensure_utf8(
                 _PyTok_SourcePointer(&tok->source, tok->cur),
                 tok, tok->lineno)) {
         _PyTok_ChunkClear(&chunk);
-        return 0;
+        повернути 0;
     }
     _PyTok_ChunkClear(&chunk);
-    return 1;
+    повернути 1;
 }
 
 static struct tok_state *
 tokenizer_new_with_reader(_PyTok_ReaderKind kind)
 {
     struct tok_state *tok = PyMem_Calloc(1, sizeof(*tok));
-    if (tok == NULL) {
+    якщо (tok == NULL) {
         PyErr_NoMemory();
-        return NULL;
+        повернути NULL;
     }
     tok->start = tok->line_start = -1;
     _PyTok_SourceInit(&tok->source);
@@ -705,65 +705,65 @@ tokenizer_new_with_reader(_PyTok_ReaderKind kind)
     tok->debug = _Py_GetConfig()->parser_debug;
 #endif
     tok->reader = PyMem_Calloc(1, sizeof(*tok->reader));
-    if (tok->reader == NULL) {
+    якщо (tok->reader == NULL) {
         PyErr_NoMemory();
         _PyTokenizer_Free(tok);
-        return NULL;
+        повернути NULL;
     }
     tok->reader->kind = kind;
-    if (kind == _PYTOK_READER_PREPARED) {
-        return tok;
+    якщо (kind == _PYTOK_READER_PREPARED) {
+        повернути tok;
     }
-    if (reader_is_streaming(kind)) {
+    якщо (reader_is_streaming(kind)) {
         tok->cur = tok->inp = tok->source.base_offset;
         tok->line_start = tok->buf_offset;
     }
-    return tok;
+    повернути tok;
 }
 
 static struct tok_state *
-tokenizer_from_string(const char *input, int utf8_only, int exec_input,
-                      int preserve_crlf)
+tokenizer_from_string(const char *input, ціле utf8_only, ціле exec_input,
+                      ціле preserve_crlf)
 {
     struct tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_PREPARED);
-    if (tok == NULL) {
-        return NULL;
+    якщо (tok == NULL) {
+        повернути NULL;
     }
-    if (_PyTok_PrepareString(
+    якщо (_PyTok_PrepareString(
             tok, input, utf8_only, exec_input, preserve_crlf) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        повернути NULL;
     }
     tok->cur = tok->inp = tok->source.base_offset;
     tok->line_start = tok->source.base_offset;
-    return tok;
+    повернути tok;
 }
 
 struct tok_state *
-_PyTokenizer_FromString(const char *input, int exec_input, int preserve_crlf)
+_PyTokenizer_FromString(const char *input, ціле exec_input, ціле preserve_crlf)
 {
-    return tokenizer_from_string(input, 0, exec_input, preserve_crlf);
+    повернути tokenizer_from_string(input, 0, exec_input, preserve_crlf);
 }
 
 struct tok_state *
-_PyTokenizer_FromUTF8(const char *input, int exec_input, int preserve_crlf)
+_PyTokenizer_FromUTF8(const char *input, ціле exec_input, ціле preserve_crlf)
 {
-    return tokenizer_from_string(input, 1, exec_input, preserve_crlf);
+    повернути tokenizer_from_string(input, 1, exec_input, preserve_crlf);
 }
 
 struct tok_state *
 _PyTokenizer_FromReadline(PyObject *readline, const char *encoding)
 {
     struct tok_state *tok = tokenizer_new_with_reader(_PYTOK_READER_READLINE);
-    if (tok == NULL) {
-        return NULL;
+    якщо (tok == NULL) {
+        повернути NULL;
     }
-    if (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
+    якщо (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        повернути NULL;
     }
     tok->reader->readline = Py_NewRef(readline);
-    return tok;
+    повернути tok;
 }
 
 struct tok_state *
@@ -773,78 +773,78 @@ _PyTokenizer_FromFile(FILE *fp, const char *encoding,
     _PyTok_ReaderKind kind = ps1 != NULL || ps2 != NULL
         ? _PYTOK_READER_INTERACTIVE : _PYTOK_READER_FILE;
     struct tok_state *tok = tokenizer_new_with_reader(kind);
-    if (tok == NULL) {
-        return NULL;
+    якщо (tok == NULL) {
+        повернути NULL;
     }
-    if (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
+    якщо (encoding != NULL && _PyTok_SetEncoding(tok, encoding) < 0) {
         _PyTokenizer_Free(tok);
-        return NULL;
+        повернути NULL;
     }
     tok->reader->fp = fp;
     tok->reader->prompt = ps1;
     tok->reader->nextprompt = ps2;
-    return tok;
+    повернути tok;
 }
 
-#if defined(__wasi__) || (defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3))
+#якщо defined(__wasi__) || (defined(__EMSCRIPTEN__) && (__EMSCRIPTEN_major__ >= 3))
 /* WASI has no dup(), and Emscripten's emulation is slow. */
 typedef union {
     void *cookie;
-    int fd;
+    ціле fd;
 } borrowed_fd;
 
 static ssize_t
 borrow_read(void *cookie, char *buffer, size_t size)
 {
     borrowed_fd borrowed = {.cookie = cookie};
-    return read(borrowed.fd, buffer, size);
+    повернути read(borrowed.fd, buffer, size);
 }
 
 static FILE *
-fdopen_borrow(int fd)
+fdopen_borrow(ціле fd)
 {
     cookie_io_functions_t callbacks = {borrow_read, NULL, NULL, NULL};
     borrowed_fd borrowed = {.fd = fd};
-    return fopencookie(borrowed.cookie, "r", callbacks);
+    повернути fopencookie(borrowed.cookie, "r", callbacks);
 }
-#else
+#інакше
 static FILE *
-fdopen_borrow(int fd)
+fdopen_borrow(ціле fd)
 {
-    int copy = _Py_dup(fd);
-    if (copy < 0) {
-        return NULL;
+    ціле copy = _Py_dup(fd);
+    якщо (copy < 0) {
+        повернути NULL;
     }
     FILE *fp = fdopen(copy, "r");
-    if (fp == NULL) {
-        int saved_errno = errno;
+    якщо (fp == NULL) {
+        ціле saved_errno = errno;
         close(copy);
         errno = saved_errno;
     }
-    return fp;
+    повернути fp;
 }
 #endif
 
 char *
-_PyTokenizer_FindEncodingFilename(int fd, PyObject *filename)
+_PyTokenizer_FindEncodingFilename(ціле fd, PyObject *filename)
 {
     FILE *fp = fdopen_borrow(fd);
-    if (fp == NULL) {
-        return NULL;
+    якщо (fp == NULL) {
+        повернути NULL;
     }
     struct tok_state *tok = _PyTokenizer_FromFile(fp, NULL, NULL, NULL);
-    if (tok == NULL) {
+    якщо (tok == NULL) {
         fclose(fp);
-        return NULL;
+        повернути NULL;
     }
     _Py_DECLARE_STR(anon_string, "<string>");
     tok->filename = Py_NewRef(filename != NULL ? filename : &_Py_STR(anon_string));
     char *encoding = NULL;
-    if (initialize_file(tok) == 0) {
+    якщо (initialize_file(tok) == 0) {
         encoding = tok->reader->encoding;
         tok->reader->encoding = NULL;
     }
     fclose(fp);
     _PyTokenizer_Free(tok);
-    return encoding;
+    повернути encoding;
 }

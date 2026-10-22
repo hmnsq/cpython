@@ -24,21 +24,21 @@ _PyTok_SourceDiscard(_PyTok_SourceText *source)
     assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
     source->base_offset += source->len;
     source->len = 0;
-    if (source->bytes != NULL) {
+    якщо (source->bytes != NULL) {
         source->bytes[0] = '\0';
     }
     source->nlines = 0;
 }
 
-static int
+static ціле
 reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    якщо (needed <= source->cap) {
+        повернути 0;
     }
     Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    поки (cap < needed) {
+        якщо (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
             cap = needed;
             break;
         }
@@ -48,89 +48,89 @@ reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
 #ifdef Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
     bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
+    якщо (bytes != NULL && source->len > 0) {
         memcpy(bytes, source->bytes, source->len);
     }
-#else
+#інакше
     bytes = PyMem_Realloc(source->bytes, cap);
 #endif
-    if (bytes == NULL) {
+    якщо (bytes == NULL) {
         PyErr_NoMemory();
-        return -1;
+        повернути -1;
     }
 #ifdef Py_DEBUG
-    if (source->bytes != NULL) {
+    якщо (source->bytes != NULL) {
         memset(source->bytes, PYMEM_DEADBYTE, source->cap);
         PyMem_Free(source->bytes);
     }
 #endif
     source->bytes = bytes;
     source->cap = cap;
-    return 0;
+    повернути 0;
 }
 
-static int
+static ціле
 validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+              Py_ssize_t len, ціле append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
+    якщо (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
             (source->nlines > 0 &&
              (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        повернути -1;
     }
     const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
+    якщо (newline != NULL && (append_newline || newline != bytes + len - 1)) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        повернути -1;
     }
-    if (source->nlines == INT_MAX ||
+    якщо (source->nlines == INT_MAX ||
             (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
         PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+        повернути -1;
     }
-    return 0;
+    повернути 0;
 }
 
 static _PyTok_Off
 append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+            Py_ssize_t len, ціле append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    якщо (validate_line(source, bytes, len, append_newline) < 0) {
+        повернути -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+    якщо (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
             source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
         PyErr_NoMemory();
-        return -1;
+        повернути -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    якщо (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
+        повернути -1;
     }
 
     _PyTok_Off start = source->len;
     memcpy(source->bytes + start, bytes, len);
     source->len += len;
-    if (append_newline) {
+    якщо (append_newline) {
         source->bytes[source->len++] = '\n';
     }
     source->bytes[source->len] = '\0';
     source->nlines++;
-    return source->base_offset + start;
+    повернути source->base_offset + start;
 }
 
 _PyTok_Off
 _PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    повернути append_line(source, bytes, len, 0);
 }
 
 _PyTok_Off
 _PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    повернути append_line(source, bytes, len, 1);
 }
 
 const char *
@@ -140,9 +140,9 @@ _PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
     assert(len != NULL);
     const char *line = _PyTok_SourceData(source);
     const char *end = line + source->len;
-    while (lineno > 1) {
+    поки (lineno > 1) {
         const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
+        якщо (newline == NULL) {
             break;
         }
         line = newline + 1;
@@ -150,5 +150,5 @@ _PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
     }
     const char *newline = memchr(line, '\n', end - line);
     *len = (newline != NULL ? newline : end) - line;
-    return line;
+    повернути line;
 }

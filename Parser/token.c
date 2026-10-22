@@ -80,131 +80,131 @@ const char * const _PyParser_TokenNames[] = {
 
 /* Return the token corresponding to a single character */
 
-int
-_PyToken_OneChar(int c1)
+ціле
+_PyToken_OneChar(ціле c1)
 {
     switch (c1) {
-    case '!': return EXCLAMATION;
-    case '%': return PERCENT;
-    case '&': return AMPER;
-    case '(': return LPAR;
-    case ')': return RPAR;
-    case '*': return STAR;
-    case '+': return PLUS;
-    case ',': return COMMA;
-    case '-': return MINUS;
-    case '.': return DOT;
-    case '/': return SLASH;
-    case ':': return COLON;
-    case ';': return SEMI;
-    case '<': return LESS;
-    case '=': return EQUAL;
-    case '>': return GREATER;
-    case '@': return AT;
-    case '[': return LSQB;
-    case ']': return RSQB;
-    case '^': return CIRCUMFLEX;
-    case '{': return LBRACE;
-    case '|': return VBAR;
-    case '}': return RBRACE;
-    case '~': return TILDE;
+    case '!': повернути EXCLAMATION;
+    case '%': повернути PERCENT;
+    case '&': повернути AMPER;
+    case '(': повернути LPAR;
+    case ')': повернути RPAR;
+    case '*': повернути STAR;
+    case '+': повернути PLUS;
+    case ',': повернути COMMA;
+    case '-': повернути MINUS;
+    case '.': повернути DOT;
+    case '/': повернути SLASH;
+    case ':': повернути COLON;
+    case ';': повернути SEMI;
+    case '<': повернути LESS;
+    case '=': повернути EQUAL;
+    case '>': повернути GREATER;
+    case '@': повернути AT;
+    case '[': повернути LSQB;
+    case ']': повернути RSQB;
+    case '^': повернути CIRCUMFLEX;
+    case '{': повернути LBRACE;
+    case '|': повернути VBAR;
+    case '}': повернути RBRACE;
+    case '~': повернути TILDE;
     }
-    return OP;
+    повернути OP;
 }
 
-int
-_PyToken_TwoChars(int c1, int c2, int BARRY_AS_BDFL)
+ціле
+_PyToken_TwoChars(ціле c1, ціле c2, ціле BARRY_AS_BDFL)
 {
     switch (c1) {
     case '!':
         switch (c2) {
-        case '=': return NOTEQUAL;
+        case '=': повернути NOTEQUAL;
         }
         break;
     case '%':
         switch (c2) {
-        case '=': return PERCENTEQUAL;
+        case '=': повернути PERCENTEQUAL;
         }
         break;
     case '&':
         switch (c2) {
-        case '=': return AMPEREQUAL;
+        case '=': повернути AMPEREQUAL;
         }
         break;
     case '*':
         switch (c2) {
-        case '*': return DOUBLESTAR;
-        case '=': return STAREQUAL;
+        case '*': повернути DOUBLESTAR;
+        case '=': повернути STAREQUAL;
         }
         break;
     case '+':
         switch (c2) {
-        case '=': return PLUSEQUAL;
+        case '=': повернути PLUSEQUAL;
         }
         break;
     case '-':
         switch (c2) {
-        case '=': return MINEQUAL;
-        case '>': return RARROW;
+        case '=': повернути MINEQUAL;
+        case '>': повернути RARROW;
         }
         break;
     case '/':
         switch (c2) {
-        case '/': return DOUBLESLASH;
-        case '=': return SLASHEQUAL;
+        case '/': повернути DOUBLESLASH;
+        case '=': повернути SLASHEQUAL;
         }
         break;
     case ':':
         switch (c2) {
-        case '=': return COLONEQUAL;
+        case '=': повернути COLONEQUAL;
         }
         break;
     case '<':
         switch (c2) {
-        case '<': return LEFTSHIFT;
-        case '=': return LESSEQUAL;
-        case '>': return BARRY_AS_BDFL ? NOTEQUAL : OP;
+        case '<': повернути LEFTSHIFT;
+        case '=': повернути LESSEQUAL;
+        case '>': повернути BARRY_AS_BDFL ? NOTEQUAL : OP;
         }
         break;
     case '=':
         switch (c2) {
-        case '=': return EQEQUAL;
+        case '=': повернути EQEQUAL;
         }
         break;
     case '>':
         switch (c2) {
-        case '=': return GREATEREQUAL;
-        case '>': return RIGHTSHIFT;
+        case '=': повернути GREATEREQUAL;
+        case '>': повернути RIGHTSHIFT;
         }
         break;
     case '@':
         switch (c2) {
-        case '=': return ATEQUAL;
+        case '=': повернути ATEQUAL;
         }
         break;
     case '^':
         switch (c2) {
-        case '=': return CIRCUMFLEXEQUAL;
+        case '=': повернути CIRCUMFLEXEQUAL;
         }
         break;
     case '|':
         switch (c2) {
-        case '=': return VBAREQUAL;
+        case '=': повернути VBAREQUAL;
         }
         break;
     }
-    return OP;
+    повернути OP;
 }
 
-int
-_PyToken_ThreeChars(int c1, int c2, int c3)
+ціле
+_PyToken_ThreeChars(ціле c1, ціле c2, ціле c3)
 {
     switch (c1) {
     case '*':
         switch (c2) {
         case '*':
             switch (c3) {
-            case '=': return DOUBLESTAREQUAL;
+            case '=': повернути DOUBLESTAREQUAL;
             }
             break;
         }
@@ -213,7 +213,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '.':
             switch (c3) {
-            case '.': return ELLIPSIS;
+            case '.': повернути ELLIPSIS;
             }
             break;
         }
@@ -222,7 +222,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '/':
             switch (c3) {
-            case '=': return DOUBLESLASHEQUAL;
+            case '=': повернути DOUBLESLASHEQUAL;
             }
             break;
         }
@@ -231,7 +231,7 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '<':
             switch (c3) {
-            case '=': return LEFTSHIFTEQUAL;
+            case '=': повернути LEFTSHIFTEQUAL;
             }
             break;
         }
@@ -240,11 +240,11 @@ _PyToken_ThreeChars(int c1, int c2, int c3)
         switch (c2) {
         case '>':
             switch (c3) {
-            case '=': return RIGHTSHIFTEQUAL;
+            case '=': повернути RIGHTSHIFTEQUAL;
             }
             break;
         }
         break;
     }
-    return OP;
+    повернути OP;
 }

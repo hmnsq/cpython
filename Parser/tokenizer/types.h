@@ -14,14 +14,14 @@ typedef struct {
 
 /* Lines are 1-based and byte columns are 0-based. */
 typedef struct {
-    int lineno;
-    int byte_col;
+    ціле lineno;
+    ціле byte_col;
 } _PyTok_Loc;
 
-static inline int
+static inline ціле
 _PyTok_SpanIsValid(_PyTok_Span span)
 {
-    return span.start >= 0 && span.end >= span.start;
+    повернути span.start >= 0 && span.end >= span.start;
 }
 
 #endif
