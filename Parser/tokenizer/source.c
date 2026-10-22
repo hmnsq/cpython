@@ -1,154 +1,154 @@
-#include "Python.h"
-#include "pycore_pymem.h"  // PYMEM_DEADBYTE
+#અન્તર્ભાવ "Python.h"
+#અન્તર્ભાવ "pycore_pymem.h"  // PYMEM_DEADBYTE
 
-#include "source.h"
+#અન્તર્ભાવ "source.h"
 
 #define SOURCE_BUFFER_GROWTH_FACTOR 2
 
-void
+શૂન્ય
 _PyTok_SourceInit(_PyTok_SourceText *source)
 {
     *source = (_PyTok_SourceText){0};
 }
 
-void
+શૂન્ય
 _PyTok_SourceClear(_PyTok_SourceText *source)
 {
     PyMem_Free(source->bytes);
     _PyTok_SourceInit(source);
 }
 
-void
+શૂન્ય
 _PyTok_SourceDiscard(_PyTok_SourceText *source)
 {
-    assert(source->base_offset <= PY_SSIZE_T_MAX - source->len);
+    પ્રતિજ્ઞા(source->base_offset <= PY_SSIZE_T_MAX - source->len);
     source->base_offset += source->len;
     source->len = 0;
-    if (source->bytes != NULL) {
+    જો (source->bytes != ખાલી) {
         source->bytes[0] = '\0';
     }
     source->nlines = 0;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 reserve_bytes(_PyTok_SourceText *source, Py_ssize_t needed)
 {
-    if (needed <= source->cap) {
-        return 0;
+    જો (needed <= source->cap) {
+        પાછા 0;
     }
     Py_ssize_t cap = source->cap > 0 ? source->cap : BUFSIZ;
-    while (cap < needed) {
-        if (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
+    જ્યારે (cap < needed) {
+        જો (cap > PY_SSIZE_T_MAX / SOURCE_BUFFER_GROWTH_FACTOR) {
             cap = needed;
-            break;
+            તોડો;
         }
         cap *= SOURCE_BUFFER_GROWTH_FACTOR;
     }
-    char *bytes;
+    અક્ષર *bytes;
 #ifdef Py_DEBUG
     /* Moving on growth makes stale interior pointers fail in debug builds. */
     bytes = PyMem_Malloc(cap);
-    if (bytes != NULL && source->len > 0) {
+    જો (bytes != ખાલી && source->len > 0) {
         memcpy(bytes, source->bytes, source->len);
     }
-#else
+#નહીંતર
     bytes = PyMem_Realloc(source->bytes, cap);
 #endif
-    if (bytes == NULL) {
+    જો (bytes == ખાલી) {
         PyErr_NoMemory();
-        return -1;
+        પાછા -1;
     }
 #ifdef Py_DEBUG
-    if (source->bytes != NULL) {
+    જો (source->bytes != ખાલી) {
         memset(source->bytes, PYMEM_DEADBYTE, source->cap);
         PyMem_Free(source->bytes);
     }
 #endif
     source->bytes = bytes;
     source->cap = cap;
-    return 0;
+    પાછા 0;
 }
 
-static int
-validate_line(const _PyTok_SourceText *source, const char *bytes,
-              Py_ssize_t len, int append_newline)
+સ્થિર પૂર્ણાંક
+validate_લીટી(અચલ _PyTok_SourceText *source, અચલ અક્ષર *bytes,
+              Py_ssize_t len, પૂર્ણાંક append_newline)
 {
-    if (len < 0 || (len == 0 && !append_newline) || bytes == NULL ||
+    જો (len < 0 || (len == 0 && !append_newline) || bytes == ખાલી ||
             (source->nlines > 0 &&
              (source->len == 0 || source->bytes[source->len - 1] != '\n'))) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        પાછા -1;
     }
-    const char *newline = memchr(bytes, '\n', len);
-    if (newline != NULL && (append_newline || newline != bytes + len - 1)) {
+    અચલ અક્ષર *newline = memchr(bytes, '\n', len);
+    જો (newline != ખાલી && (append_newline || newline != bytes + len - 1)) {
         PyErr_SetString(PyExc_SystemError, "invalid tokenizer source line");
-        return -1;
+        પાછા -1;
     }
-    if (source->nlines == INT_MAX ||
-            (source->nlines == INT_MAX - 1 && (newline != NULL || append_newline))) {
+    જો (source->nlines == INT_MAX ||
+            (source->nlines == INT_MAX - 1 && (newline != ખાલી || append_newline))) {
         PyErr_SetString(PyExc_OverflowError, "too many tokenizer source lines");
-        return -1;
+        પાછા -1;
     }
-    return 0;
+    પાછા 0;
 }
 
-static _PyTok_Off
-append_line(_PyTok_SourceText *source, const char *bytes,
-            Py_ssize_t len, int append_newline)
+સ્થિર _PyTok_Off
+append_લીટી(_PyTok_SourceText *source, અચલ અક્ષર *bytes,
+            Py_ssize_t len, પૂર્ણાંક append_newline)
 {
-    if (validate_line(source, bytes, len, append_newline) < 0) {
-        return -1;
+    જો (validate_લીટી(source, bytes, len, append_newline) < 0) {
+        પાછા -1;
     }
-    if (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
+    જો (source->len > PY_SSIZE_T_MAX - len - append_newline - 1 ||
             source->base_offset > PY_SSIZE_T_MAX - source->len - len - append_newline) {
         PyErr_NoMemory();
-        return -1;
+        પાછા -1;
     }
-    if (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
-        return -1;
+    જો (reserve_bytes(source, source->len + len + append_newline + 1) < 0) {
+        પાછા -1;
     }
 
     _PyTok_Off start = source->len;
     memcpy(source->bytes + start, bytes, len);
     source->len += len;
-    if (append_newline) {
+    જો (append_newline) {
         source->bytes[source->len++] = '\n';
     }
     source->bytes[source->len] = '\0';
     source->nlines++;
-    return source->base_offset + start;
+    પાછા source->base_offset + start;
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLine(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_લીટી(_PyTok_SourceText *source, અચલ અક્ષર *bytes,
                         Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 0);
+    પાછા append_લીટી(source, bytes, len, 0);
 }
 
 _PyTok_Off
-_PyTok_SourceAppendLineWithNewline(_PyTok_SourceText *source, const char *bytes,
+Py_Tok_Source_Append_લીટી_With_Newline(_PyTok_SourceText *source, અચલ અક્ષર *bytes,
                                    Py_ssize_t len)
 {
-    return append_line(source, bytes, len, 1);
+    પાછા append_લીટી(source, bytes, len, 1);
 }
 
-const char *
-_PyTok_SourceLineView(const _PyTok_SourceText *source, Py_ssize_t lineno,
+અચલ અક્ષર *
+Py_Tok_Source_લીટી_View(અચલ _PyTok_SourceText *source, Py_ssize_t lineno,
                       Py_ssize_t *len)
 {
-    assert(len != NULL);
-    const char *line = _PyTok_SourceData(source);
-    const char *end = line + source->len;
-    while (lineno > 1) {
-        const char *newline = memchr(line, '\n', end - line);
-        if (newline == NULL) {
-            break;
+    પ્રતિજ્ઞા(len != ખાલી);
+    અચલ અક્ષર *લીટી = _PyTok_SourceData(source);
+    અચલ અક્ષર *end = લીટી + source->len;
+    જ્યારે (lineno > 1) {
+        અચલ અક્ષર *newline = memchr(લીટી, '\n', end - લીટી);
+        જો (newline == ખાલી) {
+            તોડો;
         }
-        line = newline + 1;
+        લીટી = newline + 1;
         lineno--;
     }
-    const char *newline = memchr(line, '\n', end - line);
-    *len = (newline != NULL ? newline : end) - line;
-    return line;
+    અચલ અક્ષર *newline = memchr(લીટી, '\n', end - લીટી);
+    *len = (newline != ખાલી ? newline : end) - લીટી;
+    પાછા લીટી;
 }

@@ -1,206 +1,206 @@
-#include "Python.h"
-#include "errcode.h"
-#include "pycore_token.h"
+#અન્તર્ભાવ "Python.h"
+#અન્તર્ભાવ "errcode.h"
+#અન્તર્ભાવ "pycore_token.h"
 
-#include "lexer_internal.h"
-#include "../tokenizer/helpers.h"
-#include "../tokenizer/reader.h"
+#અન્તર્ભાવ "lexer_internal.h"
+#અન્તર્ભાવ "../tokenizer/helpers.h"
+#અન્તર્ભાવ "../tokenizer/reader.h"
 
 #define TABSIZE 8
 #define ALTTABSIZE 1
 
-int
-_PyLexer_ContinueLine(struct tok_state *tok)
+પૂર્ણાંક
+Py_Lexer_Continue_લીટી(સંરચના tok_state *tok)
 {
-    int c = tok_nextc(tok);
-    if (c == '\r') {
+    પૂર્ણાંક c = tok_nextc(tok);
+    જો (c == '\r') {
         c = tok_nextc(tok);
     }
-    if (c != '\n') {
+    જો (c != '\n') {
         tok->done = E_LINECONT;
-        return -1;
+        પાછા -1;
     }
     c = tok_nextc(tok);
-    if (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
+    જો (tok->implicit_newline == _PyTokenizer_APPEND_NEWLINE) {
         tok->needs_newline |= _PyTokenizer_NEWLINE_CONTINUATION;
     }
-    if (c == EOF) {
+    જો (c == EOF) {
         tok->done = E_EOF;
         tok->cur = tok->inp;
-        return -1;
-    } else {
+        પાછા -1;
+    } નહીંતર {
         tok_backup(tok, c);
     }
-    return c;
+    પાછા c;
 }
 
 
-static int
-update_indentation(struct tok_state *tok, int col, int altcol)
+સ્થિર પૂર્ણાંક
+update_indentation(સંરચના tok_state *tok, પૂર્ણાંક col, પૂર્ણાંક altcol)
 {
     lexer_layout_state *layout = &tok->layout;
-    if (col == layout->stack[layout->depth].column) {
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+    જો (col == layout->ઢગલો[layout->depth].column) {
+        જો (altcol != layout->ઢગલો[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            પાછા -1;
         }
     }
-    else if (col > layout->stack[layout->depth].column) {
-        if (layout->depth + 1 >= MAXINDENT) {
+    નહીંતર જો (col > layout->ઢગલો[layout->depth].column) {
+        જો (layout->depth + 1 >= MAXINDENT) {
             tok->done = E_TOODEEP;
             tok->cur = tok->inp;
-            return -1;
+            પાછા -1;
         }
-        if (altcol <= layout->stack[layout->depth].alternate_column) {
+        જો (altcol <= layout->ઢગલો[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            પાછા -1;
         }
         layout->pending++;
-        layout->stack[++layout->depth] = (indentation_level){col, altcol};
+        layout->ઢગલો[++layout->depth] = (indentation_level){col, altcol};
     }
-    else {
-        while (layout->depth > 0 &&
-            col < layout->stack[layout->depth].column) {
+    નહીંતર {
+        જ્યારે (layout->depth > 0 &&
+            col < layout->ઢગલો[layout->depth].column) {
             layout->pending--;
             layout->depth--;
         }
-        if (col != layout->stack[layout->depth].column) {
+        જો (col != layout->ઢગલો[layout->depth].column) {
             tok->done = E_DEDENT;
             tok->cur = tok->inp;
-            return -1;
+            પાછા -1;
         }
-        if (altcol != layout->stack[layout->depth].alternate_column) {
+        જો (altcol != layout->ઢગલો[layout->depth].alternate_column) {
             _PyTokenizer_indenterror(tok);
-            return -1;
+            પાછા -1;
         }
     }
-    return 0;
+    પાછા 0;
 }
 
-int
-_PyLexer_BeginLine(struct tok_state *tok)
+પૂર્ણાંક
+Py_Lexer_Begin_લીટી(સંરચના tok_state *tok)
 {
-    assert(tok->layout.at_bol);
-    int c;
-    int blankline = 0;
-    int col = 0;
-    int altcol = 0;
+    પ્રતિજ્ઞા(tok->layout.at_bol);
+    પૂર્ણાંક c;
+    પૂર્ણાંક blankline = 0;
+    પૂર્ણાંક col = 0;
+    પૂર્ણાંક altcol = 0;
     tok->layout.at_bol = 0;
-    int cont_line_col = 0;
-    for (;;) {
+    પૂર્ણાંક cont_લીટી_col = 0;
+    માટે (;;) {
         c = tok_nextc(tok);
-        if (c == ' ') {
+        જો (c == ' ') {
             col++, altcol++;
         }
-        else if (c == '\t') {
+        નહીંતર જો (c == '\t') {
             col = (col / TABSIZE + 1) * TABSIZE;
             altcol = (altcol / ALTTABSIZE + 1) * ALTTABSIZE;
         }
-        else if (c == '\014')  {/* Control-L (formfeed) */
+        નહીંતર જો (c == '\014')  {/* Control-L (formfeed) */
             col = altcol = 0; /* For Emacs users */
         }
-        else if (c == '\\') {
+        નહીંતર જો (c == '\\') {
             // Indentation cannot be split over multiple physical lines
             // using backslashes. This means that if we found a backslash
             // preceded by whitespace, **the first one we find** determines
             // the level of indentation of whatever comes next.
-            cont_line_col = cont_line_col ? cont_line_col : col;
-            if ((c = _PyLexer_ContinueLine(tok)) == -1) {
-                return -1;
+            cont_લીટી_col = cont_લીટી_col ? cont_લીટી_col : col;
+            જો ((c = Py_Lexer_Continue_લીટી(tok)) == -1) {
+                પાછા -1;
             }
         }
-        else if (c == EOF && PyErr_Occurred()) {
-            return -1;
+        નહીંતર જો (c == EOF && PyErr_Occurred()) {
+            પાછા -1;
         }
-        else {
-            break;
+        નહીંતર {
+            તોડો;
         }
     }
     tok_backup(tok, c);
-    if (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
-        tok->level == 0 && (cont_line_col || col)) {
+    જો (c == '\n' && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE &&
+        tok->level == 0 && (cont_લીટી_col || col)) {
         // Without the newline, a whitespace-only line affects indentation.
         tok->needs_newline |= _PyTokenizer_NEWLINE_INDENT;
     }
-    if (c == '#' || c == '\n' || c == '\r') {
-        int interactive = _PyTok_ReaderIsInteractive(tok);
+    જો (c == '#' || c == '\n' || c == '\r') {
+        પૂર્ણાંક interactive = _PyTok_ReaderIsInteractive(tok);
         /* Lines with only whitespace and/or comments
            shouldn't affect the indentation and are
            not passed to the parser as NEWLINE tokens,
            except *totally* empty lines in interactive
            mode, which signal the end of a command group. */
-        if (col == 0 && c == '\n' && interactive) {
+        જો (col == 0 && c == '\n' && interactive) {
             blankline = 0; /* Let it through */
         }
-        else if (interactive && tok->lineno == 1) {
+        નહીંતર જો (interactive && tok->lineno == 1) {
             /* In interactive mode, if the first line contains
                only spaces and/or a comment, let it through. */
             blankline = 0;
             col = altcol = 0;
         }
-        else {
+        નહીંતર {
             blankline = 1; /* Ignore completely */
         }
     }
-    if (!blankline && tok->level == 0) {
-        col = cont_line_col ? cont_line_col : col;
-        altcol = cont_line_col ? cont_line_col : altcol;
-        if (update_indentation(tok, col, altcol) < 0) {
-            return -1;
+    જો (!blankline && tok->level == 0) {
+        col = cont_લીટી_col ? cont_લીટી_col : col;
+        altcol = cont_લીટી_col ? cont_લીટી_col : altcol;
+        જો (update_indentation(tok, col, altcol) < 0) {
+            પાછા -1;
         }
     }
-    return blankline;
+    પાછા blankline;
 }
 
-int
-_PyLexer_IndentationToken(struct tok_state *tok, struct token *token)
+પૂર્ણાંક
+_PyLexer_IndentationToken(સંરચના tok_state *tok, સંરચના token *token)
 {
-    assert(tok->layout.pending != 0);
+    પ્રતિજ્ઞા(tok->layout.pending != 0);
     _PyTok_Off p_start = -1;
     _PyTok_Off p_end = -1;
-    if (tok->layout.pending < 0) {
-        if (tok->tok_extra_tokens) {
+    જો (tok->layout.pending < 0) {
+        જો (tok->tok_extra_tokens) {
             p_start = tok->cur;
             p_end = tok->cur;
         }
         tok->layout.pending++;
-        return _PyLexer_token_setup(tok, token, DEDENT, p_start, p_end);
+        પાછા _PyLexer_token_setup(tok, token, DEDENT, p_start, p_end);
     }
-    else {
-        if (tok->tok_extra_tokens) {
+    નહીંતર {
+        જો (tok->tok_extra_tokens) {
             p_start = tok->buf_offset;
             p_end = tok->cur;
         }
         tok->layout.pending--;
-        return _PyLexer_token_setup(tok, token, INDENT, p_start, p_end);
+        પાછા _PyLexer_token_setup(tok, token, INDENT, p_start, p_end);
     }
 }
 
-int
-_PyLexer_Newline(struct tok_state *tok, struct token *token, int blankline)
+પૂર્ણાંક
+_PyLexer_Newline(સંરચના tok_state *tok, સંરચના token *token, પૂર્ણાંક blankline)
 {
-    if (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
+    જો (!blankline && tok->implicit_newline == _PyTokenizer_IMPLY_NEWLINE) {
         // The statement's terminating newline was not in the input.
         tok->needs_newline |= _PyTokenizer_NEWLINE_STATEMENT;
     }
     tok->layout.at_bol = 1;
-    if (blankline || tok->level > 0) {
-        if (!tok->tok_extra_tokens) {
-            return 0;
+    જો (blankline || tok->level > 0) {
+        જો (!tok->tok_extra_tokens) {
+            પાછા 0;
         }
     }
-    else if (!tok->layout.comment_newline || !tok->tok_extra_tokens) {
-        return _PyLexer_token_setup(tok, token, NEWLINE,
+    નહીંતર જો (!tok->layout.comment_newline || !tok->tok_extra_tokens) {
+        પાછા _PyLexer_token_setup(tok, token, NEWLINE,
                                     tok->start, tok->cur - 1);
     }
     tok->layout.comment_newline = 0;
-    return _PyLexer_token_setup(tok, token, NL, tok->start, tok->cur);
+    પાછા _PyLexer_token_setup(tok, token, NL, tok->start, tok->cur);
 }
 
-void
-_PyLexer_ImplyDedents(struct tok_state *tok)
+શૂન્ય
+_PyLexer_ImplyDedents(સંરચના tok_state *tok)
 {
-    if (tok->layout.depth != 0) {
+    જો (tok->layout.depth != 0) {
         tok->layout.pending = -tok->layout.depth;
         tok->layout.depth = 0;
     }
